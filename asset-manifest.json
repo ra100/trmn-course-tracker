@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/trmn-course-tracker/static/css/main.05e2e276.css",
+    "main.js": "/trmn-course-tracker/static/js/main.a413095d.js",
+    "index.html": "/trmn-course-tracker/index.html",
+    "main.05e2e276.css.map": "/trmn-course-tracker/static/css/main.05e2e276.css.map",
+    "main.a413095d.js.map": "/trmn-course-tracker/static/js/main.a413095d.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.05e2e276.css",
+    "static/js/main.a413095d.js"
+  ]
+}
