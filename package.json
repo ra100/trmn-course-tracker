@@ -2,6 +2,7 @@
   "name": "trmn-course-tracker",
   "version": "1.0.0",
   "description": "TRMN Course Skill Tree Tracker",
+  "homepage": "https://ra100.github.io/trmn-course-tracker",
   "private": true,
   "dependencies": {
     "d3": "^7.8.5",
@@ -26,6 +27,7 @@
     "@types/styled-components": "^5.1.26",
     "@types/uuid": "^9.0.0",
     "@vitest/ui": "^3.2.1",
+    "gh-pages": "^6.3.0",
     "jsdom": "^26.1.0",
     "vitest": "^3.2.1"
   },
@@ -35,6 +37,8 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
