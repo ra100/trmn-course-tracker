@@ -224,7 +224,7 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
     const filtered = applyFilters(updated)
     setFilteredCourses(filtered)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseData, userProgress, filters, searchTerm, eligibilityEngine])
+  }, [courseData, userProgress, filters, settings, searchTerm, eligibilityEngine])
 
   const applyFilters = (courses: Course[]): Course[] => {
     return courses.filter((course) => {

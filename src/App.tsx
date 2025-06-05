@@ -6,6 +6,7 @@ import { SkillTreeView } from './components/SkillTreeView'
 import { CourseDetails } from './components/CourseDetails'
 import { ProgressPanel } from './components/ProgressPanel'
 import { FilterPanel } from './components/FilterPanel'
+import { SettingsPanel } from './components/SettingsPanel'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from './types'
 
 const AppContainer = styled.div`
@@ -94,7 +95,7 @@ function App() {
     theme: 'light',
     layout: 'tree',
     showCompleted: true,
-    showUnavailable: false,
+    showUnavailable: true,
     autoSave: true
   })
   const [loading, setLoading] = useState(true)
@@ -104,6 +105,7 @@ function App() {
   useEffect(() => {
     loadCourseData()
     loadUserProgress()
+    loadSettings()
   }, [])
 
   const loadCourseData = async () => {
@@ -145,6 +147,25 @@ function App() {
       }
     } catch (err) {
       console.error('Error loading user progress:', err)
+    }
+  }
+
+  const loadSettings = () => {
+    try {
+      const saved = localStorage.getItem('trmn-user-settings')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        setSettings({
+          theme: 'light',
+          layout: 'tree',
+          showCompleted: true,
+          showUnavailable: true,
+          autoSave: true,
+          ...parsed
+        })
+      }
+    } catch (err) {
+      console.error('Error loading settings:', err)
     }
   }
 
@@ -203,6 +224,16 @@ function App() {
     setFilters(newFilters)
   }
 
+  const handleSettingsChange = (newSettings: UserSettings) => {
+    setSettings(newSettings)
+    // Save settings to localStorage
+    try {
+      localStorage.setItem('trmn-user-settings', JSON.stringify(newSettings))
+    } catch (err) {
+      console.error('Error saving settings:', err)
+    }
+  }
+
   if (loading) {
     return (
       <LoadingOverlay>
@@ -236,6 +267,7 @@ function App() {
       <Sidebar>
         <ProgressPanel userProgress={userProgress} courseData={courseData} eligibilityEngine={eligibilityEngine} />
         <FilterPanel filters={filters} courseData={courseData} onFilterChange={handleFilterChange} />
+        <SettingsPanel settings={settings} onSettingsChange={handleSettingsChange} />
       </Sidebar>
 
       <MainContent>
