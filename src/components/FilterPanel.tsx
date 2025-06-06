@@ -4,11 +4,11 @@ import { FilterOptions, ParsedCourseData, CourseLevel, NodeStatus } from '../typ
 
 const PanelContainer = styled.div`
   padding: 1.5rem;
-  border-bottom: 1px solid #34495e;
+  border-bottom: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const PanelTitle = styled.h3`
-  color: #ecf0f1;
+  color: ${(props) => props.theme.colors.text};
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
 `
@@ -19,7 +19,7 @@ const FilterSection = styled.div`
 
 const FilterLabel = styled.label`
   display: block;
-  color: #bdc3c7;
+  color: ${(props) => props.theme.colors.textSecondary};
   font-size: 0.9rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
@@ -35,24 +35,24 @@ const CheckboxItem = styled.label`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #ecf0f1;
+  color: ${(props) => props.theme.colors.text};
   font-size: 0.85rem;
   cursor: pointer;
   padding: 0.2rem 0;
 
   &:hover {
-    color: #3498db;
+    color: ${(props) => props.theme.colors.primary};
   }
 `
 
 const Checkbox = styled.input.attrs({ type: 'checkbox' })`
-  accent-color: #3498db;
+  accent-color: ${(props) => props.theme.colors.primary};
   width: 16px;
   height: 16px;
 `
 
 const ClearButton = styled.button`
-  background: #e74c3c;
+  background: ${(props) => props.theme.colors.error};
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -63,27 +63,28 @@ const ClearButton = styled.button`
   width: 100%;
 
   &:hover {
-    background: #c0392b;
+    opacity: 0.9;
   }
 `
 
 const FilterCount = styled.div`
-  background: #34495e;
+  background: ${(props) => props.theme.colors.surface};
   padding: 0.8rem;
   border-radius: 4px;
   margin-bottom: 1rem;
   text-align: center;
+  border: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const CountValue = styled.div`
   font-size: 1.2rem;
-  color: #3498db;
+  color: ${(props) => props.theme.colors.primary};
   font-weight: bold;
 `
 
 const CountLabel = styled.div`
   font-size: 0.8rem;
-  color: #bdc3c7;
+  color: ${(props) => props.theme.colors.textSecondary};
 `
 
 interface FilterPanelProps {

@@ -5,11 +5,11 @@ import { EligibilityEngine } from '../utils/eligibilityEngine'
 
 const PanelContainer = styled.div`
   padding: 1.5rem;
-  border-bottom: 1px solid #34495e;
+  border-bottom: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const PanelTitle = styled.h3`
-  color: #ecf0f1;
+  color: ${(props) => props.theme.colors.text};
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
 `
@@ -22,36 +22,38 @@ const StatsGrid = styled.div`
 `
 
 const StatCard = styled.div`
-  background: #34495e;
+  background: ${(props) => props.theme.colors.surface};
   padding: 1rem;
   border-radius: 6px;
   text-align: center;
+  border: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const StatValue = styled.div`
   font-size: 1.8rem;
   font-weight: bold;
-  color: #3498db;
+  color: ${(props) => props.theme.colors.primary};
   margin-bottom: 0.3rem;
 `
 
 const StatLabel = styled.div`
   font-size: 0.8rem;
-  color: #bdc3c7;
+  color: ${(props) => props.theme.colors.textSecondary};
   font-weight: 500;
 `
 
 const ProgressBar = styled.div`
-  background: #34495e;
+  background: ${(props) => props.theme.colors.surface};
   border-radius: 10px;
   height: 8px;
   margin: 0.5rem 0;
   overflow: hidden;
+  border: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const ProgressFill = styled.div<{ percentage: number; color?: string }>`
   height: 100%;
-  background: ${(props) => props.color || '#3498db'};
+  background: ${(props) => props.color || props.theme.colors.primary};
   width: ${(props) => props.percentage}%;
   transition: width 0.3s ease;
 `
@@ -60,7 +62,7 @@ const ProgressLabel = styled.div`
   display: flex;
   justify-content: space-between;
   font-size: 0.8rem;
-  color: #bdc3c7;
+  color: ${(props) => props.theme.colors.textSecondary};
   margin-bottom: 0.2rem;
 `
 
@@ -70,7 +72,7 @@ const SectionProgress = styled.div`
 
 const SectionTitle = styled.div`
   font-size: 0.9rem;
-  color: #ecf0f1;
+  color: ${(props) => props.theme.colors.text};
   font-weight: 500;
   margin-bottom: 0.5rem;
 `
@@ -83,18 +85,20 @@ const AchievementsList = styled.div`
 
 const AchievementItem = styled.div<{ completed: boolean }>`
   padding: 0.7rem;
-  background: ${(props) => (props.completed ? '#27ae60' : '#34495e')};
+  background: ${(props) => (props.completed ? props.theme.colors.success : props.theme.colors.surface)};
   border-radius: 4px;
   font-size: 0.85rem;
-  color: ${(props) => (props.completed ? 'white' : '#bdc3c7')};
-  border-left: 3px solid ${(props) => (props.completed ? '#2ecc71' : '#7f8c8d')};
+  color: ${(props) => (props.completed ? 'white' : props.theme.colors.textSecondary)};
+  border-left: 3px solid ${(props) => (props.completed ? props.theme.colors.success : props.theme.colors.secondary)};
+  border: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const QuickStats = styled.div`
-  background: #34495e;
+  background: ${(props) => props.theme.colors.surface};
   padding: 1rem;
   border-radius: 6px;
   margin-bottom: 1rem;
+  border: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const QuickStatRow = styled.div`
@@ -109,11 +113,11 @@ const QuickStatRow = styled.div`
 `
 
 const QuickStatLabel = styled.span`
-  color: #bdc3c7;
+  color: ${(props) => props.theme.colors.textSecondary};
 `
 
 const QuickStatValue = styled.span`
-  color: #ecf0f1;
+  color: ${(props) => props.theme.colors.text};
   font-weight: 500;
 `
 

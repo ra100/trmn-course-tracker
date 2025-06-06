@@ -7,20 +7,25 @@ const TreeContainer = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
-  background-color: #f8f9fa;
+  background-color: ${(props) => props.theme.colors.background};
   overflow: auto;
 `
 
 const CategorySection = styled.div`
   margin: 2rem;
-  background: white;
+  background: ${(props) => props.theme.colors.surface};
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: ${(props) => props.theme.shadows.medium};
   overflow: hidden;
+  border: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const CategoryHeader = styled.div`
-  background: linear-gradient(135deg, #3498db, #2980b9);
+  background: linear-gradient(
+    135deg,
+    ${(props) => props.theme.colors.primary},
+    ${(props) => props.theme.colors.primaryHover}
+  );
   color: white;
   padding: 1rem;
   font-weight: bold;
@@ -33,10 +38,10 @@ const SubsectionContainer = styled.div`
 
 const SubsectionHeader = styled.div`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${(props) => props.theme.colors.text};
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 2px solid #ecf0f1;
+  border-bottom: 2px solid ${(props) => props.theme.colors.borderLight};
 `
 
 const CourseGrid = styled.div`
@@ -50,13 +55,13 @@ const CourseNode = styled.div<{ status: NodeStatus }>`
   background: ${(props) => {
     switch (props.status) {
       case 'completed':
-        return 'linear-gradient(135deg, #27ae60, #229954)'
+        return `linear-gradient(135deg, ${props.theme.colors.courseCompleted}, #22543d)`
       case 'available':
-        return 'linear-gradient(135deg, #3498db, #2980b9)'
+        return `linear-gradient(135deg, ${props.theme.colors.courseAvailable}, #1a365d)`
       case 'locked':
-        return 'linear-gradient(135deg, #95a5a6, #7f8c8d)'
+        return `linear-gradient(135deg, ${props.theme.colors.courseLocked}, ${props.theme.colors.secondary})`
       default:
-        return 'linear-gradient(135deg, #e74c3c, #c0392b)'
+        return `linear-gradient(135deg, ${props.theme.colors.error}, #c53030)`
     }
   }};
   color: white;
@@ -65,11 +70,12 @@ const CourseNode = styled.div<{ status: NodeStatus }>`
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: ${(props) => props.theme.shadows.small};
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: ${(props) => props.theme.shadows.large};
+    filter: brightness(1.1);
   }
 
   ${(props) =>
@@ -134,7 +140,7 @@ const StatusIcon = styled.div<{ status: NodeStatus }>`
   align-items: center;
   justify-content: center;
   font-size: 0.8rem;
-  color: ${(props) => (props.status === 'completed' ? '#27ae60' : 'white')};
+  color: ${(props) => (props.status === 'completed' ? props.theme.colors.success : 'white')};
 
   &::after {
     content: '${(props) => {
@@ -154,21 +160,23 @@ const StatusIcon = styled.div<{ status: NodeStatus }>`
 
 const SearchContainer = styled.div`
   padding: 1rem;
-  background: white;
-  border-bottom: 1px solid #ddd;
+  background: ${(props) => props.theme.colors.surface};
+  border-bottom: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const SearchInput = styled.input`
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 4px;
   font-size: 1rem;
+  background: ${(props) => props.theme.colors.background};
+  color: ${(props) => props.theme.colors.text};
 
   &:focus {
     outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    border-color: ${(props) => props.theme.colors.primary};
+    box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.2);
   }
 `
 
@@ -176,8 +184,8 @@ const StatsContainer = styled.div`
   display: flex;
   gap: 1rem;
   padding: 1rem;
-  background: white;
-  border-bottom: 1px solid #ddd;
+  background: ${(props) => props.theme.colors.surface};
+  border-bottom: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const StatItem = styled.div`
@@ -188,12 +196,12 @@ const StatItem = styled.div`
 const StatValue = styled.div`
   font-size: 1.5rem;
   font-weight: bold;
-  color: #2c3e50;
+  color: ${(props) => props.theme.colors.text};
 `
 
 const StatLabel = styled.div`
   font-size: 0.9rem;
-  color: #7f8c8d;
+  color: ${(props) => props.theme.colors.textSecondary};
 `
 
 interface SkillTreeViewProps {

@@ -10,11 +10,11 @@ import {
 
 const PanelContainer = styled.div`
   padding: 1.5rem;
-  border-bottom: 1px solid #34495e;
+  border-bottom: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const PanelTitle = styled.h3`
-  color: #ecf0f1;
+  color: ${(props) => props.theme.colors.text};
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
 `
@@ -25,7 +25,7 @@ const SettingSection = styled.div`
 
 const SettingLabel = styled.label`
   display: block;
-  color: #bdc3c7;
+  color: ${(props) => props.theme.colors.textSecondary};
   font-size: 0.9rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
@@ -40,18 +40,18 @@ const ToggleItem = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  color: #ecf0f1;
+  color: ${(props) => props.theme.colors.text};
   font-size: 0.85rem;
   cursor: pointer;
   padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid ${(props) => props.theme.colors.borderLight};
 
   &:last-child {
     border-bottom: none;
   }
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: ${(props) => props.theme.colors.surfaceSecondary};
     border-radius: 4px;
   }
 `
@@ -70,15 +70,16 @@ const ToggleSwitch = styled.div<{ checked: boolean }>`
   position: relative;
   width: 48px;
   height: 26px;
-  background-color: ${(props) => (props.checked ? '#27ae60' : '#525862')};
+  background-color: ${(props) => (props.checked ? props.theme.colors.success : props.theme.colors.secondary)};
   border-radius: 13px;
   transition: all 0.3s ease;
   cursor: pointer;
   flex-shrink: 0;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 1px 3px ${(props) => props.theme.colors.shadow};
 
   &:hover {
-    background-color: ${(props) => (props.checked ? '#2ecc71' : '#5a6270')};
+    background-color: ${(props) => (props.checked ? props.theme.colors.success : props.theme.colors.secondary)};
+    opacity: 0.8;
   }
 
   &:before {
@@ -91,7 +92,7 @@ const ToggleSwitch = styled.div<{ checked: boolean }>`
     background-color: white;
     border-radius: 50%;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: ${(props) => props.theme.shadows.small};
   }
 `
 
@@ -101,13 +102,13 @@ const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
 
 const SettingDescription = styled.div`
   font-size: 0.75rem;
-  color: #95a5a6;
+  color: ${(props) => props.theme.colors.textMuted};
   margin-top: 0.2rem;
   line-height: 1.3;
 `
 
 const ResetButton = styled.button`
-  background: #e67e22;
+  background: ${(props) => props.theme.colors.warning};
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -118,12 +119,12 @@ const ResetButton = styled.button`
   width: 100%;
 
   &:hover {
-    background: #d35400;
+    opacity: 0.9;
   }
 `
 
 const ImportButton = styled.button`
-  background: #3498db;
+  background: ${(props) => props.theme.colors.primary};
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -134,11 +135,11 @@ const ImportButton = styled.button`
   width: 100%;
 
   &:hover {
-    background: #2980b9;
+    background: ${(props) => props.theme.colors.primaryHover};
   }
 
   &:disabled {
-    background: #7f8c8d;
+    background: ${(props) => props.theme.colors.secondary};
     cursor: not-allowed;
   }
 `
@@ -147,10 +148,10 @@ const TextArea = styled.textarea`
   width: 100%;
   min-height: 120px;
   padding: 0.5rem;
-  border: 1px solid #525862;
+  border: 1px solid ${(props) => props.theme.colors.border};
   border-radius: 4px;
-  background-color: #34495e;
-  color: #ecf0f1;
+  background-color: ${(props) => props.theme.colors.surface};
+  color: ${(props) => props.theme.colors.text};
   font-size: 0.8rem;
   font-family: monospace;
   resize: vertical;
@@ -158,11 +159,11 @@ const TextArea = styled.textarea`
 
   &:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: ${(props) => props.theme.colors.primary};
   }
 
   &::placeholder {
-    color: #95a5a6;
+    color: ${(props) => props.theme.colors.textMuted};
   }
 `
 
@@ -172,14 +173,14 @@ const ImportSection = styled.div`
 
 const ImportSteps = styled.ol`
   font-size: 0.75rem;
-  color: #95a5a6;
+  color: ${(props) => props.theme.colors.textMuted};
   margin: 0.5rem 0;
   padding-left: 1.2rem;
   line-height: 1.4;
 `
 
 const ImportResults = styled.div<{ type: 'success' | 'error' }>`
-  background: ${(props) => (props.type === 'success' ? '#27ae60' : '#e74c3c')};
+  background: ${(props) => (props.type === 'success' ? props.theme.colors.success : props.theme.colors.error)};
   color: white;
   padding: 0.5rem;
   border-radius: 4px;
@@ -207,6 +208,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
     onSettingsChange({
       ...settings,
       [key]: value
+    })
+  }
+
+  const handleThemeToggle = () => {
+    onSettingsChange({
+      ...settings,
+      theme: settings.theme === 'light' ? 'dark' : 'light'
     })
   }
 
@@ -308,6 +316,15 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
       <SettingSection>
         <SettingLabel>Application</SettingLabel>
         <ToggleGroup>
+          <ToggleItem onClick={handleThemeToggle}>
+            <ToggleContent>
+              <ToggleLabel>Dark Mode</ToggleLabel>
+              <SettingDescription>Switch between light and dark theme</SettingDescription>
+            </ToggleContent>
+            <HiddenCheckbox checked={settings.theme === 'dark'} onChange={handleThemeToggle} />
+            <ToggleSwitch checked={settings.theme === 'dark'} />
+          </ToggleItem>
+
           <ToggleItem onClick={() => handleToggle('autoSave', !settings.autoSave)}>
             <ToggleContent>
               <ToggleLabel>Auto-save Progress</ToggleLabel>

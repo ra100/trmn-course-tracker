@@ -1,8 +1,11 @@
+import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { ThemeProvider } from 'styled-components'
 import { SettingsPanel } from './SettingsPanel'
 import { UserSettings } from '../types'
+import { lightTheme } from '../theme'
 
 describe('SettingsPanel', () => {
   const defaultSettings: UserSettings = {
@@ -13,6 +16,10 @@ describe('SettingsPanel', () => {
     autoSave: true
   }
 
+  const renderWithTheme = (ui: React.ReactElement) => {
+    return render(<ThemeProvider theme={lightTheme}>{ui}</ThemeProvider>)
+  }
+
   const mockOnSettingsChange = vi.fn()
 
   beforeEach(() => {
@@ -20,7 +27,7 @@ describe('SettingsPanel', () => {
   })
 
   it('renders the settings panel with all sections', () => {
-    render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+    renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
     expect(screen.getByText('Display Settings')).toBeInTheDocument()
     expect(screen.getByText('Course Visibility')).toBeInTheDocument()
@@ -42,7 +49,7 @@ describe('SettingsPanel', () => {
       render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
-      expect(checkboxes).toHaveLength(3) // showCompleted, showUnavailable, autoSave
+      expect(checkboxes).toHaveLength(4) // showCompleted, showUnavailable, darkMode, autoSave
     })
 
     it('toggles showCompleted when checkbox changes', async () => {
@@ -84,7 +91,7 @@ describe('SettingsPanel', () => {
       render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
-      const autoSaveCheckbox = checkboxes[2] // Third checkbox should be autoSave
+      const autoSaveCheckbox = checkboxes[3] // Fourth checkbox should be autoSave (after dark mode)
 
       expect(autoSaveCheckbox).toBeChecked()
 
@@ -101,6 +108,7 @@ describe('SettingsPanel', () => {
         ...defaultSettings,
         showCompleted: false,
         showUnavailable: false,
+        theme: 'light', // dark mode off
         autoSave: false
       }
 
@@ -110,16 +118,55 @@ describe('SettingsPanel', () => {
 
       expect(checkboxes[0]).not.toBeChecked() // showCompleted
       expect(checkboxes[1]).not.toBeChecked() // showUnavailable
-      expect(checkboxes[2]).not.toBeChecked() // autoSave
+      expect(checkboxes[2]).not.toBeChecked() // dark mode
+      expect(checkboxes[3]).not.toBeChecked() // autoSave
     })
   })
 
   describe('Application settings', () => {
+    it('displays dark mode toggle', () => {
+      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+
+      expect(screen.getByText('Dark Mode')).toBeInTheDocument()
+      expect(screen.getByText('Switch between light and dark theme')).toBeInTheDocument()
+    })
+
     it('displays auto-save toggle', () => {
       render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       expect(screen.getByText('Auto-save Progress')).toBeInTheDocument()
       expect(screen.getByText('Automatically save your course completion progress')).toBeInTheDocument()
+    })
+
+    it('toggles dark mode when clicked', async () => {
+      const user = userEvent.setup()
+      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+
+      const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
+      const darkModeCheckbox = checkboxes[2] // Third checkbox should be dark mode
+
+      expect(darkModeCheckbox).not.toBeChecked() // light mode by default
+
+      await user.click(darkModeCheckbox)
+
+      expect(mockOnSettingsChange).toHaveBeenCalledWith({
+        ...defaultSettings,
+        theme: 'dark'
+      })
+    })
+
+    it('shows dark mode as checked when theme is dark', () => {
+      const darkSettings: UserSettings = {
+        ...defaultSettings,
+        theme: 'dark'
+      }
+
+      render(<SettingsPanel settings={darkSettings} onSettingsChange={mockOnSettingsChange} />)
+
+      const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
+      const darkModeCheckbox = checkboxes[2] // Third checkbox should be dark mode
+
+      expect(darkModeCheckbox).toBeChecked()
     })
   })
 
@@ -179,7 +226,7 @@ describe('SettingsPanel', () => {
 
       // Check for checkboxes (even though they're hidden)
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
-      expect(checkboxes).toHaveLength(3)
+      expect(checkboxes).toHaveLength(4)
     })
 
     it('has proper button accessibility', () => {

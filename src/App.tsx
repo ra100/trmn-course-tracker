@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import styled from 'styled-components'
+import styled, { ThemeProvider } from 'styled-components'
 import { parseCourseData } from './utils/courseParser'
 import { EligibilityEngine } from './utils/eligibilityEngine'
 import { SkillTreeView } from './components/SkillTreeView'
@@ -8,21 +8,24 @@ import { ProgressPanel } from './components/ProgressPanel'
 import { FilterPanel } from './components/FilterPanel'
 import { SettingsPanel } from './components/SettingsPanel'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from './types'
+import { getTheme } from './theme'
 
 const AppContainer = styled.div`
   display: flex;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: ${(props) => props.theme.colors.background};
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: ${(props) => props.theme.colors.text};
 `
 
 const Sidebar = styled.div`
   width: 300px;
-  background-color: #2c3e50;
-  color: white;
+  background-color: ${(props) => props.theme.colors.backgroundSecondary};
+  color: ${(props) => props.theme.colors.text};
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  border-right: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const MainContent = styled.div`
@@ -33,10 +36,11 @@ const MainContent = styled.div`
 `
 
 const Header = styled.header`
-  background-color: #34495e;
-  color: white;
+  background-color: ${(props) => props.theme.colors.surface};
+  color: ${(props) => props.theme.colors.text};
   padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: ${(props) => props.theme.shadows.medium};
+  border-bottom: 1px solid ${(props) => props.theme.colors.border};
 `
 
 const ContentArea = styled.div`
@@ -48,12 +52,13 @@ const ContentArea = styled.div`
 const SkillTreeContainer = styled.div`
   flex: 1;
   overflow: hidden;
+  background-color: ${(props) => props.theme.colors.surface};
 `
 
 const DetailsPanel = styled.div`
   width: 350px;
-  background-color: white;
-  border-left: 1px solid #ddd;
+  background-color: ${(props) => props.theme.colors.surface};
+  border-left: 1px solid ${(props) => props.theme.colors.border};
   overflow-y: auto;
 `
 
@@ -63,17 +68,17 @@ const LoadingOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: ${(props) => props.theme.colors.overlay};
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: ${(props) => props.theme.colors.text};
   font-size: 1.2rem;
   z-index: 1000;
 `
 
 const ErrorMessage = styled.div`
-  background-color: #e74c3c;
+  background-color: ${(props) => props.theme.colors.error};
   color: white;
   padding: 1rem;
   margin: 1rem;
@@ -278,76 +283,86 @@ function App() {
     }
   }
 
+  const currentTheme = getTheme(settings.theme)
+
   if (loading) {
     return (
-      <LoadingOverlay>
-        <div>Loading TRMN Course Data...</div>
-      </LoadingOverlay>
+      <ThemeProvider theme={currentTheme}>
+        <LoadingOverlay>
+          <div>Loading TRMN Course Data...</div>
+        </LoadingOverlay>
+      </ThemeProvider>
     )
   }
 
   if (error) {
     return (
-      <AppContainer>
-        <ErrorMessage>
-          <h3>Error Loading Application</h3>
-          <p>{error}</p>
-          <button onClick={loadCourseData}>Retry</button>
-        </ErrorMessage>
-      </AppContainer>
+      <ThemeProvider theme={currentTheme}>
+        <AppContainer>
+          <ErrorMessage>
+            <h3>Error Loading Application</h3>
+            <p>{error}</p>
+            <button onClick={loadCourseData}>Retry</button>
+          </ErrorMessage>
+        </AppContainer>
+      </ThemeProvider>
     )
   }
 
   if (!courseData || !eligibilityEngine) {
     return (
-      <AppContainer>
-        <ErrorMessage>No course data available. Please check your connection and try again.</ErrorMessage>
-      </AppContainer>
+      <ThemeProvider theme={currentTheme}>
+        <AppContainer>
+          <ErrorMessage>No course data available. Please check your connection and try again.</ErrorMessage>
+        </AppContainer>
+      </ThemeProvider>
     )
   }
 
   return (
-    <AppContainer>
-      <Sidebar>
-        <ProgressPanel userProgress={userProgress} courseData={courseData} eligibilityEngine={eligibilityEngine} />
-        <FilterPanel filters={filters} courseData={courseData} onFilterChange={handleFilterChange} />
-        <SettingsPanel
-          settings={settings}
-          onSettingsChange={handleSettingsChange}
-          onImportMedusaCourses={handleImportMedusaCourses}
-        />
-      </Sidebar>
+    <ThemeProvider theme={currentTheme}>
+      <AppContainer>
+        <Sidebar>
+          <ProgressPanel userProgress={userProgress} courseData={courseData} eligibilityEngine={eligibilityEngine} />
+          <FilterPanel filters={filters} courseData={courseData} onFilterChange={handleFilterChange} />
+          <SettingsPanel
+            settings={settings}
+            onSettingsChange={handleSettingsChange}
+            onImportMedusaCourses={handleImportMedusaCourses}
+          />
+        </Sidebar>
 
-      <MainContent>
-        <Header>
-          <h1>TRMN Course Tracker</h1>
-          <p>Track your progress through The Royal Manticoran Navy course system</p>
-        </Header>
+        <MainContent>
+          <Header>
+            <h1>TRMN Course Tracker</h1>
+            <p>Track your progress through The Royal Manticoran Navy course system</p>
+          </Header>
 
-        <ContentArea>
-          <SkillTreeContainer>
-            <SkillTreeView
-              courseData={courseData}
-              userProgress={userProgress}
-              filters={filters}
-              settings={settings}
-              eligibilityEngine={eligibilityEngine}
-              onCourseSelect={handleCourseSelect}
-              onCourseToggle={toggleCourseCompletion}
-            />
-          </SkillTreeContainer>
+          <ContentArea>
+            <SkillTreeContainer>
+              <SkillTreeView
+                courseData={courseData}
+                userProgress={userProgress}
+                filters={filters}
+                settings={settings}
+                eligibilityEngine={eligibilityEngine}
+                onCourseSelect={handleCourseSelect}
+                onCourseToggle={toggleCourseCompletion}
+              />
+            </SkillTreeContainer>
 
-          <DetailsPanel>
-            <CourseDetails
-              course={selectedCourse}
-              userProgress={userProgress}
-              eligibilityEngine={eligibilityEngine}
-              onCourseToggle={toggleCourseCompletion}
-            />
-          </DetailsPanel>
-        </ContentArea>
-      </MainContent>
-    </AppContainer>
+            <DetailsPanel>
+              <CourseDetails
+                course={selectedCourse}
+                userProgress={userProgress}
+                eligibilityEngine={eligibilityEngine}
+                onCourseToggle={toggleCourseCompletion}
+              />
+            </DetailsPanel>
+          </ContentArea>
+        </MainContent>
+      </AppContainer>
+    </ThemeProvider>
   )
 }
 
