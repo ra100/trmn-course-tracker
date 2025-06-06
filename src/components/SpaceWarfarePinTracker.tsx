@@ -495,8 +495,8 @@ const calculatePinProgress = (
 
 export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ courseData, userProgress }) => {
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
-    OSWP: true,
-    ESWP: true
+    OSWP: false,
+    ESWP: false
   })
 
   // Debug: Log the data being received
