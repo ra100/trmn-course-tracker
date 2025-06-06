@@ -1,0 +1,217 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# GitHub Copilot Commit Message Template Configuration
+# This file configures how GitHub Copilot generates commit messages
+
+# Primary template with gitmoji (optional)
+template: '{{gitmoji}} {{reason}}'
+
+# Rules based on Chris Beams' seven rules for great Git commit messages
+# https://cbea.ms/git-commit/
+commit_rules:
+  - rule: 'Separate subject from body with a blank line'
+    description: 'This creates clear separation between summary and explanation'
+
+  - rule: 'Limit the subject line to 50 characters'
+    description: 'Keep it concise and readable in logs'
+
+  - rule: 'Capitalize the first word in the subject'
+    description: 'Start with a capital letter for consistency'
+
+  - rule: 'Do not end the subject line with a period'
+    description: 'Periods are unnecessary in titles and waste space'
+
+  - rule: 'Use the imperative mood in the subject line'
+    description: "Write as if giving a command (e.g., 'Add', not 'Added')"
+
+  - rule: 'Wrap the body at 72 characters'
+    description: 'For better readability in git log and tools'
+
+  - rule: 'Use the body to explain what and why vs. how'
+    description: 'Code shows how; commit message should explain why'
+
+# Define the available gitmojis used in the project (based on https://gitmoji.dev/)
+gitmoji:
+  # Most commonly used gitmojis in this project
+  - emoji: '♻️'
+    description: 'Refactor code'
+    context: 'When improving code structure without changing functionality'
+  - emoji: '✨'
+    description: 'Introduce new features'
+    context: 'When adding new functionality to the codebase'
+  - emoji: '🐛'
+    description: 'Fix a bug'
+    context: 'When fixing an issue or bug'
+  - emoji: '📝'
+    description: 'Add or update documentation'
+    context: 'When adding or updating documentation'
+  - emoji: '🚀'
+    description: 'Deploy stuff'
+    context: 'When deploying new features or fixes to production'
+  - emoji: '🏷️'
+    description: 'Add or update types'
+    context: 'When adding or updating TypeScript type definitions'
+  - emoji: '🔒'
+    description: 'Fix security issues'
+    context: 'When working on security features or fixing vulnerabilities'
+  - emoji: '🧱'
+    description: 'Infrastructure related changes'
+    context: 'When making changes to infrastructure code or setup'
+  - emoji: '🚚'
+    description: 'Move or rename resources'
+    context: 'When moving or renaming files and resources'
+  - emoji: '👷'
+    description: 'Add or update CI build system'
+    context: 'When working on CI/CD pipeline configurations'
+  - emoji: '🔊'
+    description: 'Add or update logs'
+    context: 'When improving logging or observability'
+  - emoji: '🔧'
+    description: 'Add or update configuration files'
+    context: 'When changing configuration settings'
+  - emoji: '⬆️'
+    description: 'Upgrade dependencies'
+    context: 'When upgrading project dependencies'
+  - emoji: '⬇️'
+    description: 'Downgrade dependencies'
+    context: 'When downgrading dependencies to a previous version'
+  - emoji: '🎨'
+    description: 'Improve structure / format of the code'
+    context: 'When improving code formatting or structure'
+  - emoji: '✅'
+    description: 'Add, update, or pass tests'
+    context: 'When working on test code'
+  - emoji: '📦'
+    description: 'Add or update compiled files or packages'
+    context: 'When changing build outputs or packaging'
+
+  # Additional gitmojis from the official set that may be useful
+  - emoji: '🔥'
+    description: 'Remove code or files'
+    context: 'When removing code or files entirely'
+  - emoji: '🚑'
+    description: 'Critical hotfix'
+    context: 'When deploying a critical patch or hotfix'
+  - emoji: '💄'
+    description: 'Add or update UI and style files'
+    context: 'When working on appearance, UI, or styling'
+  - emoji: '🎉'
+    description: 'Begin a project'
+    context: 'When making initial commit or starting a major feature'
+  - emoji: '🔐'
+    description: 'Add or update secrets'
+    context: 'When working with secrets or credentials'
+  - emoji: '🔖'
+    description: 'Release / Version tags'
+    context: 'When creating a release or version tag'
+  - emoji: '🚨'
+    description: 'Fix compiler / linter warnings'
+    context: 'When addressing warnings or errors from tools'
+  - emoji: '🚧'
+    description: 'Work in progress'
+    context: 'When committing incomplete work (try to avoid)'
+  - emoji: '💚'
+    description: 'Fix CI build'
+    context: 'When fixing the CI build process'
+  - emoji: '📌'
+    description: 'Pin dependencies to specific versions'
+    context: 'When locking dependencies to specific versions'
+  - emoji: '👌'
+    description: 'Improve code based on code review'
+    context: 'When implementing feedback from a code review'
+  - emoji: '♿️'
+    description: 'Improve accessibility'
+    context: 'When enhancing application accessibility'
+  - emoji: '💡'
+    description: 'Add or update comments in source code'
+    context: 'When adding explanatory comments to code'
+  - emoji: '🔍'
+    description: 'Improve SEO'
+    context: 'When enhancing search engine optimization'
+  - emoji: '🏗️'
+    description: 'Make architectural changes'
+    context: 'When changing the architecture design'
+  - emoji: '🤡'
+    description: 'Mock things'
+    context: 'When adding mock data or services'
+  - emoji: '🥅'
+    description: 'Catch errors'
+    context: 'When adding error handling or improving robustness'
+  - emoji: '💫'
+    description: 'Add or update animations and transitions'
+    context: 'When working on visual animations or transitions'
+  - emoji: '🗃️'
+    description: 'Perform database related changes'
+    context: 'When working with database schemas or migrations'
+
+# Guidelines for commit messages (based on https://cbea.ms/git-commit/)
+guidelines:
+  # Core guidelines
+  - 'Separate subject from body with a blank line'
+  - 'Limit the subject line to 50 characters'
+  - 'Capitalize the subject line (first word)'
+  - 'Do not end the subject line with a period'
+  - 'Use the imperative mood in the subject line (e.g., "Add" not "Added")'
+  - 'Wrap the body at 72 characters'
+  - 'Use the body to explain what and why vs. how'
+
+  # Project-specific guidelines
+  - 'Optionally start with an appropriate gitmoji that represents the change'
+  - 'Focus on explaining WHAT and WHY the change is needed, not HOW'
+  - 'Make the message useful for future developers reading the commit history'
+  - 'For complex changes, add detailed explanation in the commit body'
+
+# Formatting rules
+format_rules:
+  # Primary format with gitmoji
+  - 'Primary pattern: {{gitmoji}} {{reason}}'
+
+  # Common rules
+  - 'Subject should follow the "If applied, this commit will <subject>" test'
+  - 'Subject should be capitalized and use imperative mood'
+  - 'No trailing period at the end of the subject line'
+  - 'Wrap commit body at 72 characters'
+  - 'Use a blank line between subject and body'
+  - 'Use present tense for the action part of the reason'
+
+# Example commit messages for reference
+examples:
+  # Refactoring examples
+  - '♻️ Refactor translations import to use CMS REST API'
+  - '♻️ Rewrite inMemoryCache to use Map instead of object'
+  - '♻️ Avoid loading redis cache config on build'
+  - '♻️ Use CognitoKeysClient in CMS for keys fetch'
+  - '♻️ Improve pre-commit script to check for staged changes before running checks'
+
+  # Type-related changes
+  - '🏷️ Add missing types to fetch'
+
+  # Security changes
+  - '🔒 Add CMS sharepoint translation update rights to M2M token'
+
+  # Infrastructure changes
+  - '🧱 Update m2m client scopes'
+
+  # Moving resources
+  - '🚚 Move CognitoKeysClient to a new file for better organization'
+  - '🚚 Move cognitoM2M to common'
+
+  # CI/CD changes
+  - '👷 Add CORS response headers policy resources'
+  - '👷 Add CORS headers policy to backend CF distributions'
+  - '👷 Enhance CloudFront import logic to check Terraform initialization'
+  - '👷 Add skip-plan option to deploy workflows for combined plan and apply'
+
+  # Logging changes
+  - '🔊 Add more verbose logging to TF provision'
+
+  # Configuration changes
+  - '🔧 Add tf upgrade to provision script'
+  - '🔧 Add readonly lockfile option to terraform init command'
+  - '🔧 Add config for test environment'
+
+  # Dependency updates
+  - '⬆️ Update terraform providers'
