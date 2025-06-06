@@ -232,6 +232,125 @@ describe('CourseParser', () => {
     })
   })
 
+  describe('department extraction from parsed data', () => {
+    it('should extract unique departments from course sections and subsections', () => {
+      const markdown = `
+## Tactical
+
+### Fire Control School
+
+| Course Name               | Course Number | Prerequisites |
+| ------------------------- | ------------- | ------------- |
+| Fire Control Qualification| SIA-SRN-08C   |               |
+
+### Electronic Warfare School
+
+| Course Name               | Course Number | Prerequisites |
+| ------------------------- | ------------- | ------------- |
+| EW Qualification          | SIA-SRN-09C   |               |
+
+## Engineering
+
+### Power Systems School
+
+| Course Name               | Course Number | Prerequisites |
+| ------------------------- | ------------- | ------------- |
+| Power Systems Qualification| SIA-SRN-14C  |               |
+
+## Communications
+
+| Course Name               | Course Number | Prerequisites |
+| ------------------------- | ------------- | ------------- |
+| Comms Qualification       | SIA-SRN-11C   |               |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      // Access the private method through reflection for testing
+      const departments = (parser as any).getUniqueDepartments()
+
+      expect(departments).toContain('Tactical')
+      expect(departments).toContain('Engineering')
+      expect(departments).toContain('Communications')
+      expect(departments).toContain('Fire Control School')
+      expect(departments).toContain('Electronic Warfare School')
+      expect(departments).toContain('Power Systems School')
+      expect(departments).toHaveLength(6)
+
+      // Should be sorted
+      expect(departments).toEqual(departments.slice().sort())
+    })
+
+    it('should extract departments from requirement text using parsed data', () => {
+      const markdown = `
+## Tactical
+
+### Fire Control School
+
+| Course Name               | Course Number | Prerequisites |
+| ------------------------- | ------------- | ------------- |
+| Fire Control Qualification| SIA-SRN-08C   |               |
+
+## Engineering
+
+| Course Name               | Course Number | Prerequisites |
+| ------------------------- | ------------- | ------------- |
+| Engineering Qualification | SIA-SRN-14C   |               |
+
+## Communications
+
+| Course Name               | Course Number | Prerequisites |
+| ------------------------- | ------------- | ------------- |
+| Comms Qualification       | SIA-SRN-11C   |               |
+`
+
+      const parser = new CourseParser(markdown)
+      parser.parse() // Parse to populate courses
+
+      // Test extractDepartments method with various texts
+      const tacAndEngText = "At least 1 'D' level from Tactical and Engineering departments"
+      const departments1 = (parser as any).extractDepartments(tacAndEngText)
+      expect(departments1).toContain('Tactical')
+      expect(departments1).toContain('Engineering')
+      expect(departments1).toHaveLength(2)
+
+      const commsText = 'Communications qualification required'
+      const departments2 = (parser as any).extractDepartments(commsText)
+      expect(departments2).toContain('Communications')
+      expect(departments2).toHaveLength(1)
+
+      const noMatchText = 'Some random text with no department names'
+      const departments3 = (parser as any).extractDepartments(noMatchText)
+      expect(departments3).toHaveLength(0)
+    })
+
+    it('should handle case-insensitive department matching', () => {
+      const markdown = `
+## Tactical
+
+| Course Name               | Course Number | Prerequisites |
+| ------------------------- | ------------- | ------------- |
+| Tactical Course           | SIA-SRN-08C   |               |
+`
+
+      const parser = new CourseParser(markdown)
+      parser.parse()
+
+      const lowerCaseText = 'tactical department requirements'
+      const upperCaseText = 'TACTICAL department requirements'
+      const mixedCaseText = 'TaCtIcAl department requirements'
+
+      const departments1 = (parser as any).extractDepartments(lowerCaseText)
+      const departments2 = (parser as any).extractDepartments(upperCaseText)
+      const departments3 = (parser as any).extractDepartments(mixedCaseText)
+
+      expect(departments1).toContain('Tactical')
+      expect(departments2).toContain('Tactical')
+      expect(departments3).toContain('Tactical')
+    })
+  })
+
   describe('Space Warfare Pin parsing', () => {
     it('should parse Space Warfare Pin special rules correctly', () => {
       const markdown = `

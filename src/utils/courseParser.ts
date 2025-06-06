@@ -430,17 +430,9 @@ export class CourseParser {
 
   private extractDepartments(text: string): string[] {
     const departments: string[] = []
-    const departmentKeywords = [
-      'Astrogation',
-      'Flight Operations',
-      'Tactical',
-      'Engineering',
-      'Communications',
-      'Command',
-      'Administration',
-      'Logistics',
-      'Medical'
-    ]
+
+    // Get unique department names from parsed course sections and subsections
+    const departmentKeywords = this.getUniqueDepartments()
 
     departmentKeywords.forEach((dept) => {
       if (text.toLowerCase().includes(dept.toLowerCase())) {
@@ -449,6 +441,25 @@ export class CourseParser {
     })
 
     return departments
+  }
+
+  private getUniqueDepartments(): string[] {
+    const departments = new Set<string>()
+
+    // Extract department names from course sections and subsections
+    this.courses.forEach((course) => {
+      // Add section name as potential department
+      if (course.section) {
+        departments.add(course.section)
+      }
+
+      // Add subsection name as potential department (common for specialized areas)
+      if (course.subsection) {
+        departments.add(course.subsection)
+      }
+    })
+
+    return Array.from(departments).sort()
   }
 
   private extractCourseLevel(courseCode: string): CourseLevel | undefined {
