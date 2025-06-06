@@ -53,3 +53,7 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Vite output
+.vite
+dist

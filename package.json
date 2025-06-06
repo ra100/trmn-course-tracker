@@ -11,10 +11,9 @@
     "react-flow-renderer": "^10.3.17",
     "react-icons": "^4.11.0",
     "react-modal": "^3.16.1",
-    "react-scripts": "5.0.1",
     "styled-components": "^6.1.0",
     "typescript": "^5.8.3",
-    "uuid": "^9.0.0"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
@@ -25,21 +24,20 @@
     "@types/react-dom": "^18.2.0",
     "@types/react-modal": "^3.16.0",
     "@types/styled-components": "^5.1.26",
-    "@types/uuid": "^9.0.0",
-    "@vitest/ui": "^3.2.1",
+    "@vitejs/plugin-react": "^4.5.1",
+    "@vitest/ui": "^3.2.2",
     "gh-pages": "^6.3.0",
     "jsdom": "^26.1.0",
-    "vitest": "^3.2.1"
+    "vite": "^6.3.5",
+    "vitest": "^3.2.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "eject": "react-scripts eject"
+    "test:run": "vitest run"
   },
   "eslintConfig": {
     "extends": [
