@@ -158,6 +158,7 @@ interface PinRequirement {
   departments?: string[]
   minimum?: number
   satisfied?: number
+  description?: string
 }
 
 interface PinProgress {
@@ -169,13 +170,20 @@ interface PinProgress {
 }
 
 export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ courseData, userProgress }) => {
+  // Helper function to extract level from course code
+  const extractLevelFromCourseCode = (courseCode: string): string | undefined => {
+    const match = courseCode.match(/([ACDW])$/)
+    return match ? match[1] : undefined
+  }
+
   // Helper function to find courses by department and level
   const findCoursesByDepartmentAndLevel = (departments: string[], level: string): string[] => {
     const matchingCourses: string[] = []
 
     courseData.courses.forEach((course) => {
-      // Check if course level matches
-      if (course.level === level) {
+      // Check if course level matches (extract from course code)
+      const courseLevel = course.level || extractLevelFromCourseCode(course.code)
+      if (courseLevel === level) {
         // Check if course belongs to any of the specified departments
         // We can determine department by course section/subsection or by course code patterns
         const belongsToDepartment = departments.some((dept) => {
@@ -185,9 +193,14 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
 
           // Also check for specific course code patterns that indicate department
           let codeMatch = false
-          if (dept === 'Astrogation' && course.code.includes('SRN-05')) codeMatch = true
-          if (dept === 'Flight Operations' && course.code.includes('SRN-05')) codeMatch = true
-          if (
+          // Special handling for SRN-05 codes to avoid double counting
+          if (dept === 'Flight Operations' && course.code.includes('SRN-05')) {
+            // Flight Operations takes priority for SRN-05 codes
+            codeMatch = course.subsection.toLowerCase().includes('flight operations')
+          } else if (dept === 'Astrogation' && course.code.includes('SRN-05')) {
+            // Astrogation only matches if NOT a Flight Operations course
+            codeMatch = !course.subsection.toLowerCase().includes('flight operations')
+          } else if (
             dept === 'Tactical' &&
             (course.code.includes('SRN-08') ||
               course.code.includes('SRN-09') ||
@@ -264,7 +277,8 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
           minimum: req.minimum,
           level: req.level,
           completed: false,
-          satisfied: 0
+          satisfied: 0,
+          description: req.description
         })
       }
     })
@@ -382,7 +396,8 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
           minimum: req.minimum,
           level: req.level,
           completed: false,
-          satisfied: 0
+          satisfied: 0,
+          description: req.description
         })
       }
     })
@@ -399,13 +414,15 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
             const course = courseData.courseMap.get(courseCode)
             if (!course) return false
 
-            // Use same logic as above to determine department
-            const sectionMatch = course.section.toLowerCase().includes(dept.toLowerCase())
-            const subsectionMatch = course.subsection.toLowerCase().includes(dept.toLowerCase())
+            // Special priority matching to avoid double-counting courses
+            // Priority: Flight Operations > Other code matches > Section > Subsection
 
-            let codeMatch = false
-            if (dept === 'Astrogation' && course.code.includes('SRN-05')) codeMatch = true
-            if (dept === 'Flight Operations' && course.code.includes('SRN-05')) codeMatch = true
+            // 1. First check for Flight Operations with SRN-05 codes
+            if (dept === 'Flight Operations' && course.code.includes('SRN-05')) {
+              return course.subsection.toLowerCase().includes('flight operations')
+            }
+
+            // 2. Then check other department code patterns (excluding Astrogation SRN-05)
             if (
               dept === 'Tactical' &&
               (course.code.includes('SRN-08') ||
@@ -415,8 +432,10 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
                 course.code.includes('SRN-28') ||
                 course.code.includes('SRN-29') ||
                 course.code.includes('SRN-32'))
-            )
-              codeMatch = true
+            ) {
+              return true
+            }
+
             if (
               dept === 'Engineering' &&
               (course.code.includes('SRN-14') ||
@@ -425,15 +444,36 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
                 course.code.includes('SRN-17') ||
                 course.code.includes('SRN-18') ||
                 course.code.includes('SRN-19'))
-            )
-              codeMatch = true
+            ) {
+              return true
+            }
+
             if (
               dept === 'Communications' &&
               (course.code.includes('SRN-11') || course.code.includes('SRN-12') || course.code.includes('SRN-13'))
-            )
-              codeMatch = true
+            ) {
+              return true
+            }
 
-            return sectionMatch || subsectionMatch || codeMatch
+            // 3. Check section match (but not for Astrogation SRN-05 courses)
+            if (course.section.toLowerCase().includes(dept.toLowerCase())) {
+              // Don't match Astrogation for SRN-05 courses that are Flight Operations
+              if (
+                dept === 'Astrogation' &&
+                course.code.includes('SRN-05') &&
+                course.subsection.toLowerCase().includes('flight operations')
+              ) {
+                return false
+              }
+              return true
+            }
+
+            // 4. Check subsection match only if not already matched by section
+            if (course.subsection.toLowerCase().includes(dept.toLowerCase())) {
+              return true
+            }
+
+            return false
           })
         })
 
@@ -476,11 +516,16 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
         </RequirementItem>
       )
     } else if (req.type === 'department_choice') {
+      // Format the text to match test expectations
+      const displayText = req.name.startsWith('Department Choice')
+        ? req.name
+        : `Department Choice - ${req.description || req.name}`
+
       return (
         <RequirementItem key={req.id} $completed={req.completed}>
           <StatusIcon $completed={req.completed}>{req.completed ? '✓' : `${req.satisfied}/${req.minimum}`}</StatusIcon>
           <RequirementText $completed={req.completed}>
-            {req.name} - Progress: {req.satisfied}/{req.minimum} departments
+            {displayText} - Progress: {req.satisfied}/{req.minimum} departments
           </RequirementText>
         </RequirementItem>
       )
@@ -492,11 +537,12 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
     <PinSection key={progress.type}>
       <PinTitle>
         <PinIcon>{progress.type === 'OSWP' ? 'O' : 'E'}</PinIcon>
-        {progress.name}
+        {progress.name} asdfasdf
         <PinBadge $earned={progress.earned}>{progress.earned ? 'EARNED' : 'IN PROGRESS'}</PinBadge>
       </PinTitle>
 
       <RequirementGroup>
+        asdfasdf
         <RequirementTitle>Requirements:</RequirementTitle>
         <RequirementList>{progress.requirements.map(renderRequirement)}</RequirementList>
       </RequirementGroup>

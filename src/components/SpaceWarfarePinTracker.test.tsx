@@ -119,6 +119,30 @@ const mockCourses = [
     subsectionId: 'engineering',
     completed: false,
     available: true
+  },
+  {
+    id: '10',
+    name: 'Tactical Advanced Specialist',
+    code: 'SIA-SRN-08C',
+    prerequisites: [],
+    section: 'Tactical',
+    subsection: 'Fire Control School',
+    sectionId: 'tactical',
+    subsectionId: 'firecontrol',
+    completed: false,
+    available: true
+  },
+  {
+    id: '11',
+    name: 'Communications Advanced Specialist',
+    code: 'SIA-SRN-12C',
+    prerequisites: [],
+    section: 'Communications',
+    subsection: 'Electronics School',
+    sectionId: 'comms',
+    subsectionId: 'electronics',
+    completed: false,
+    available: true
   }
 ]
 
@@ -199,7 +223,9 @@ const mockCourseData: ParsedCourseData = {
     ['SIA-SRN-12D', mockCourses[5]],
     ['SIA-SRN-05C', mockCourses[6]],
     ['SIA-SRN-05D', mockCourses[7]],
-    ['SIA-SRN-14D', mockCourses[8]]
+    ['SIA-SRN-14D', mockCourses[8]],
+    ['SIA-SRN-08C', mockCourses[9]],
+    ['SIA-SRN-12C', mockCourses[10]]
   ]),
   categoryMap: new Map(),
   dependencyGraph: new Map()
