@@ -43,6 +43,8 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
       let category = ''
       if (panelId === 'RMN') {
         category = 'RMN'
+      } else if (panelId === 'RMNSpeciality') {
+        category = 'RMN Speciality'
       } else if (panelId === 'RMACSSpecialty') {
         category = 'RMACS Specialty'
       } else if (panelId === 'MannheimUniversity') {
