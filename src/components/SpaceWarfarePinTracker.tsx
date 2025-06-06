@@ -43,10 +43,10 @@ const TrackerContent = styled.div`
 `
 
 const PinSection = styled.div`
-  margin-bottom: 2rem;
-  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
   border: 1px solid ${(props) => props.theme.colors.border};
-  border-radius: 8px;
+  border-radius: 6px;
   background: ${(props) => props.theme.colors.background};
   overflow: visible;
 
@@ -84,9 +84,9 @@ const PinBadge = styled.div<{ $earned: boolean }>`
 `
 
 const RequirementGroup = styled.div<{ $expanded: boolean }>`
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   background: ${(props) => props.theme.colors.surface};
-  border-radius: 6px;
+  border-radius: 4px;
   overflow: visible;
   max-height: ${(props) => (props.$expanded ? 'none' : '0')};
   opacity: ${(props) => (props.$expanded ? '1' : '0')};
@@ -102,8 +102,9 @@ const RequirementGroup = styled.div<{ $expanded: boolean }>`
 
 const RequirementTitle = styled.h4`
   color: ${(props) => props.theme.colors.text};
-  margin: 0 0 0.5rem 0;
-  font-size: 1rem;
+  margin: 0 0 0.25rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
 `
 
 const RequirementList = styled.ul`
@@ -115,17 +116,17 @@ const RequirementList = styled.ul`
 const RequirementItem = styled.li<{ $completed: boolean }>`
   display: flex;
   align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-  border-radius: 6px;
-  background: ${(props) => (props.$completed ? `${props.theme.colors.success}15` : `${props.theme.colors.background}`)};
+  gap: 0.5rem;
+  padding: 0.5rem;
+  margin-bottom: 0.25rem;
+  border-radius: 4px;
+  background: ${(props) => (props.$completed ? `${props.theme.colors.success}10` : `${props.theme.colors.background}`)};
   border: 1px solid ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.border)};
   transition: all 0.2s ease;
+  font-size: 0.9rem;
 
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: ${(props) => (props.$completed ? `${props.theme.colors.success}20` : `${props.theme.colors.border}20`)};
   }
 
   &:last-child {
@@ -134,29 +135,40 @@ const RequirementItem = styled.li<{ $completed: boolean }>`
 `
 
 const StatusIcon = styled.div<{ $completed: boolean }>`
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
-  min-height: 24px;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
   border-radius: 50%;
   background: ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.secondary)};
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: bold;
   flex-shrink: 0;
-  border: 2px solid ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.border)};
+  border: 1px solid ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.border)};
 `
 
 const RequirementText = styled.span<{ $completed: boolean }>`
   color: ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.text)};
   font-weight: ${(props) => (props.$completed ? '600' : 'normal')};
-  line-height: 1.4;
+  line-height: 1.3;
   flex: 1;
   min-width: 0;
   word-wrap: break-word;
+`
+
+const DepartmentList = styled.div`
+  font-size: 0.8rem;
+  color: ${(props) => props.theme.colors.textSecondary};
+  margin-top: 0.25rem;
+  font-style: italic;
+`
+
+const FlexContainer = styled.div`
+  flex: 1;
 `
 
 const PinHeader = styled.div`
@@ -630,9 +642,14 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
       return (
         <RequirementItem key={req.id} $completed={req.completed}>
           <StatusIcon $completed={req.completed}>{req.completed ? '✓' : `${req.satisfied}/${req.minimum}`}</StatusIcon>
-          <RequirementText $completed={req.completed}>
-            {displayText} - Progress: {req.satisfied}/{req.minimum} departments
-          </RequirementText>
+          <FlexContainer>
+            <RequirementText $completed={req.completed}>
+              {displayText} - Progress: {req.satisfied}/{req.minimum} departments
+            </RequirementText>
+            {req.departments && req.departments.length > 0 && (
+              <DepartmentList>Available departments: {req.departments.join(', ')}</DepartmentList>
+            )}
+          </FlexContainer>
         </RequirementItem>
       )
     }
