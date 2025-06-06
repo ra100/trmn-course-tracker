@@ -10,97 +10,197 @@ const renderWithTheme = (component: React.ReactElement) => {
   return render(<ThemeProvider theme={lightTheme}>{component}</ThemeProvider>)
 }
 
+// Mock courses
+const mockCourses = [
+  {
+    id: '1',
+    name: 'Master-at-Arms Advanced Specialist',
+    code: 'SIA-SRN-31C',
+    prerequisites: [],
+    section: 'Command',
+    subsection: 'Master at Arms School',
+    sectionId: 'command',
+    subsectionId: 'maa',
+    completed: false,
+    available: true
+  },
+  {
+    id: '2',
+    name: 'Personnelman Advanced Specialist',
+    code: 'SIA-SRN-01C',
+    prerequisites: [],
+    section: 'Administration',
+    subsection: 'Personnelman School',
+    sectionId: 'admin',
+    subsectionId: 'personnel',
+    completed: false,
+    available: true
+  },
+  {
+    id: '3',
+    name: 'Personnelman Specialist',
+    code: 'SIA-SRN-01A',
+    prerequisites: [],
+    section: 'Administration',
+    subsection: 'Personnelman School',
+    sectionId: 'admin',
+    subsectionId: 'personnel',
+    completed: false,
+    available: true
+  },
+  {
+    id: '4',
+    name: 'Yeoman Specialist',
+    code: 'SIA-SRN-04A',
+    prerequisites: [],
+    section: 'Administration',
+    subsection: 'Yeoman School',
+    sectionId: 'admin',
+    subsectionId: 'yeoman',
+    completed: false,
+    available: true
+  },
+  {
+    id: '5',
+    name: 'Fire Control Qualification',
+    code: 'SIA-SRN-08D',
+    prerequisites: [],
+    section: 'Tactical',
+    subsection: 'Fire Control School',
+    sectionId: 'tactical',
+    subsectionId: 'firecontrol',
+    completed: false,
+    available: true
+  },
+  {
+    id: '6',
+    name: 'Electronics Qualification',
+    code: 'SIA-SRN-12D',
+    prerequisites: [],
+    section: 'Communications',
+    subsection: 'Electronics School',
+    sectionId: 'comms',
+    subsectionId: 'electronics',
+    completed: false,
+    available: true
+  },
+  {
+    id: '7',
+    name: 'Flight Operations Advanced Specialist',
+    code: 'SIA-SRN-05C',
+    prerequisites: [],
+    section: 'Astrogation',
+    subsection: 'Flight Operations Group',
+    sectionId: 'astro',
+    subsectionId: 'flight',
+    completed: false,
+    available: true
+  },
+  {
+    id: '8',
+    name: 'Astrogation Qualification',
+    code: 'SIA-SRN-05D',
+    prerequisites: [],
+    section: 'Astrogation',
+    subsection: 'Flight Operations Group',
+    sectionId: 'astro',
+    subsectionId: 'flight',
+    completed: false,
+    available: true
+  },
+  {
+    id: '9',
+    name: 'Engineering Qualification',
+    code: 'SIA-SRN-14D',
+    prerequisites: [],
+    section: 'Engineering',
+    subsection: 'Engineering School',
+    sectionId: 'engineering',
+    subsectionId: 'engineering',
+    completed: false,
+    available: true
+  }
+]
+
 // Mock course data
 const mockCourseData: ParsedCourseData = {
-  courses: [
+  courses: mockCourses,
+  categories: [],
+  specialRules: [
     {
-      id: '1',
-      name: 'Master-at-Arms Advanced Specialist',
-      code: 'SIA-SRN-31C',
-      prerequisites: [],
-      section: 'Command',
-      subsection: 'Master at Arms School',
-      sectionId: 'command',
-      subsectionId: 'maa',
-      completed: false,
-      available: true
+      id: 'rmn-oswp',
+      type: 'OSWP',
+      name: 'RMN OSWP',
+      description: 'Officer Space Warfare Pin requirements',
+      requirements: [
+        {
+          type: 'course',
+          code: 'SIA-SRN-31C',
+          required: true,
+          level: 'C'
+        },
+        {
+          type: 'course',
+          code: 'SIA-SRN-01C',
+          required: true,
+          level: 'C'
+        },
+        {
+          type: 'department_choice',
+          minimum: 4,
+          totalOptions: 5,
+          level: 'D',
+          departments: ['Astrogation', 'Flight Operations', 'Tactical', 'Engineering', 'Communications'],
+          description: "At least 1 'D' level from 4 of 5 departments",
+          required: true
+        }
+      ],
+      branch: 'RMN',
+      rank: 'Officer'
     },
     {
-      id: '2',
-      name: 'Personnelman Advanced Specialist',
-      code: 'SIA-SRN-01C',
-      prerequisites: [],
-      section: 'Administration',
-      subsection: 'Personnelman School',
-      sectionId: 'admin',
-      subsectionId: 'personnel',
-      completed: false,
-      available: true
-    },
-    {
-      id: '3',
-      name: 'Personnelman Specialist',
-      code: 'SIA-SRN-01A',
-      prerequisites: [],
-      section: 'Administration',
-      subsection: 'Personnelman School',
-      sectionId: 'admin',
-      subsectionId: 'personnel',
-      completed: false,
-      available: true
-    },
-    {
-      id: '4',
-      name: 'Yeoman Specialist',
-      code: 'SIA-SRN-04A',
-      prerequisites: [],
-      section: 'Administration',
-      subsection: 'Yeoman School',
-      sectionId: 'admin',
-      subsectionId: 'yeoman',
-      completed: false,
-      available: true
-    },
-    {
-      id: '5',
-      name: 'Fire Control Qualification',
-      code: 'SIA-SRN-08D',
-      prerequisites: [],
-      section: 'Tactical',
-      subsection: 'Fire Control School',
-      sectionId: 'tactical',
-      subsectionId: 'firecontrol',
-      completed: false,
-      available: true
-    },
-    {
-      id: '6',
-      name: 'Electronics Qualification',
-      code: 'SIA-SRN-12D',
-      prerequisites: [],
-      section: 'Communications',
-      subsection: 'Electronics School',
-      sectionId: 'comms',
-      subsectionId: 'electronics',
-      completed: false,
-      available: true
-    },
-    {
-      id: '7',
-      name: 'Flight Operations Advanced Specialist',
-      code: 'SIA-SRN-05C',
-      prerequisites: [],
-      section: 'Astrogation',
-      subsection: 'Flight Operations Group',
-      sectionId: 'astro',
-      subsectionId: 'flight',
-      completed: false,
-      available: true
+      id: 'rmn-eswp',
+      type: 'ESWP',
+      name: 'RMN ESWP',
+      description: 'Enlisted Space Warfare Pin requirements',
+      requirements: [
+        {
+          type: 'course',
+          code: 'SIA-SRN-01A',
+          required: true,
+          level: 'A'
+        },
+        {
+          type: 'course',
+          code: 'SIA-SRN-04A',
+          required: true,
+          level: 'A'
+        },
+        {
+          type: 'department_choice',
+          minimum: 3,
+          totalOptions: 5,
+          level: 'C',
+          departments: ['Astrogation', 'Flight Operations', 'Tactical', 'Engineering', 'Communications'],
+          description: "At least 1 'C' level from 3 of 5 departments",
+          required: true
+        }
+      ],
+      branch: 'RMN',
+      rank: 'Enlisted'
     }
   ],
-  categories: [],
-  specialRules: [],
-  courseMap: new Map(),
+  courseMap: new Map([
+    ['SIA-SRN-31C', mockCourses[0]],
+    ['SIA-SRN-01C', mockCourses[1]],
+    ['SIA-SRN-01A', mockCourses[2]],
+    ['SIA-SRN-04A', mockCourses[3]],
+    ['SIA-SRN-08D', mockCourses[4]],
+    ['SIA-SRN-12D', mockCourses[5]],
+    ['SIA-SRN-05C', mockCourses[6]],
+    ['SIA-SRN-05D', mockCourses[7]],
+    ['SIA-SRN-14D', mockCourses[8]]
+  ]),
   categoryMap: new Map(),
   dependencyGraph: new Map()
 }

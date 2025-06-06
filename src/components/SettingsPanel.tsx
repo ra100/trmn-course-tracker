@@ -193,6 +193,16 @@ const ErrorList = styled.ul`
   padding: 0;
 `
 
+const ImportStats = styled.div`
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+`
+
+const ClearButton = styled(ImportButton)`
+  background: #95a5a6;
+  margin-top: 0.5rem;
+`
+
 interface SettingsPanelProps {
   settings: UserSettings
   onSettingsChange: (settings: UserSettings) => void
@@ -358,11 +368,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
             {isImporting ? 'Importing...' : 'Import Courses'}
           </ImportButton>
 
-          {importHtml && (
-            <ImportButton onClick={handleClearImport} style={{ background: '#95a5a6', marginTop: '0.5rem' }}>
-              Clear
-            </ImportButton>
-          )}
+          {importHtml && <ClearButton onClick={handleClearImport}>Clear</ClearButton>}
 
           {importResult && (
             <ImportResults type={importResult.errors.length > 0 ? 'error' : 'success'}>
@@ -379,14 +385,14 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
                 <>
                   <strong>Success!</strong> Found {importResult.courses.length} completed courses in Medusa.
                   {importResult.importStats && (
-                    <div style={{ marginTop: '0.5rem', fontSize: '0.75rem' }}>
+                    <ImportStats>
                       • {importResult.importStats.trackable} courses are trackable in TRMN system
                       <br />• {importResult.importStats.trackable - importResult.importStats.alreadyCompleted} new
                       courses added
                       <br />• {importResult.importStats.alreadyCompleted} courses were already completed
                       <br />• {importResult.importStats.imported - importResult.importStats.trackable} courses from
                       Medusa are not tracked by this app
-                    </div>
+                    </ImportStats>
                   )}
                 </>
               )}

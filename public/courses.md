@@ -20,6 +20,16 @@
 | Master Chief Petty Officer               | SIA-RMN-0005  | SIA-RMN-0004 GPU-ALC-0009              |
 | Senior Master Chief Petty Officer        | SIA-RMN-0006  | SIA-RMN-0005 GPU-ALC-0010              |
 
+## Warrant Officer Training Center
+
+The SINC Warrant Officer Training Center provides training to those who seek the Monarch’s Warrant. Warrant Officers are chosen from the ranks of experienced non-commissioned officers (with at least six months at E-6 or higher) who want to excel in an area of specialty. Warrant officer courses expand on the basics learned in the Enlisted Training Center and continue to cover management and leadership functions required of those who would hold a warrant in the TRMN.
+
+| Course Name                  | Course Number | Prerequisites |
+| ---------------------------- | ------------- | ------------- |
+| Basic Warrant Officer        | SIA-RMN-0011  | SIA-RMN-0004  |
+| Chief Warrant Officer        | SIA-RMN-0012  | SIA-RMN-0011  |
+| Master Chief Warrant Officer | SIA-RMN-0013  | SIA-RMN-0012  |
+
 ## Officer Training Center
 
 The SINC Officer course sequence introduces students to higher levels of responsibility associated with assuming a commission in Her Majesty’s Navy and serving as an officer in the RMN.

@@ -151,6 +151,11 @@ const InfoValue = styled.div`
   color: #2c3e50;
 `
 
+const DescriptionText = styled.div`
+  color: #2c3e50;
+  line-height: 1.5;
+`
+
 interface CourseDetailsProps {
   course: Course | null
   userProgress: UserProgress
@@ -309,7 +314,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
       {course.description && (
         <Section>
           <SectionTitle>Description</SectionTitle>
-          <div style={{ color: '#2c3e50', lineHeight: 1.5 }}>{course.description}</div>
+          <DescriptionText>{course.description}</DescriptionText>
         </Section>
       )}
     </DetailsContainer>
