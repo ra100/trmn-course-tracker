@@ -11,6 +11,8 @@ export interface Course {
   available: boolean
   description?: string
   level?: CourseLevel
+  departments?: string[]
+  primaryDepartment?: string
 }
 
 export interface Prerequisite {

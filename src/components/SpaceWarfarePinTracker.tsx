@@ -262,210 +262,222 @@ const extractLevelFromCourseCode = (courseCode: string): string | undefined => {
   return match ? match[1] : undefined
 }
 
-// Helper function to find courses by department and level
+// Helper function to extract unique departments from course data with normalization
+const extractDepartmentsFromCourses = (courseData: ParsedCourseData): string[] => {
+  const departments = new Set<string>()
+
+  courseData.courses.forEach((course) => {
+    // Extract primary department names from sections
+    if (course.section) {
+      departments.add(course.section)
+    }
+
+    // Extract normalized department names from subsections
+    if (course.subsection) {
+      // Normalize common department patterns
+      const normalizedDept = normalizeDepartmentName(course.subsection)
+      if (normalizedDept) {
+        departments.add(normalizedDept)
+      }
+    }
+
+    // Use explicit department assignments if available
+    if (course.departments) {
+      course.departments.forEach((dept) => departments.add(dept))
+    }
+    if (course.primaryDepartment) {
+      departments.add(course.primaryDepartment)
+    }
+  })
+
+  return Array.from(departments).sort()
+}
+
+// Helper function to normalize department names for better matching
+const normalizeDepartmentName = (name: string): string | null => {
+  const nameMapping: { [pattern: string]: string } = {
+    'flight operations': 'Flight Operations',
+    tactical: 'Tactical',
+    astrogation: 'Astrogation',
+    engineering: 'Engineering',
+    communications: 'Communications',
+    'fire control': 'Tactical',
+    'electronic warfare': 'Tactical',
+    'power systems': 'Engineering',
+    weapons: 'Tactical'
+  }
+
+  const nameLower = name.toLowerCase()
+  for (const [pattern, standardName] of Object.entries(nameMapping)) {
+    if (nameLower.includes(pattern)) {
+      return standardName
+    }
+  }
+
+  return null
+}
+
+// Helper function to check if a course belongs to a department using parsed data
+const courseMatchesDepartment = (course: any, department: string, allDepartments: string[]): boolean => {
+  const deptLower = department.toLowerCase()
+
+  // 1. Check explicit department assignments first (most reliable)
+  if (course.primaryDepartment && course.primaryDepartment.toLowerCase() === deptLower) {
+    return true
+  }
+  if (course.departments && course.departments.some((d: string) => d.toLowerCase() === deptLower)) {
+    return true
+  }
+
+  // 2. Check normalized subsection names
+  if (course.subsection) {
+    const normalizedDept = normalizeDepartmentName(course.subsection)
+    if (normalizedDept && normalizedDept.toLowerCase() === deptLower) {
+      return true
+    }
+  }
+
+  // 3. Check direct section/subsection matches as fallback
+  const sectionLower = course.section.toLowerCase()
+  const subsectionLower = course.subsection.toLowerCase()
+
+  // Direct subsection match
+  if (subsectionLower.includes(deptLower)) {
+    return true
+  }
+
+  // Direct section match (if no more specific subsection match)
+  if (sectionLower.includes(deptLower)) {
+    const hasMoreSpecificSubsectionMatch = allDepartments.some(
+      (dept) => dept.toLowerCase() !== deptLower && subsectionLower.includes(dept.toLowerCase())
+    )
+    return !hasMoreSpecificSubsectionMatch
+  }
+
+  return false
+}
+
+// Helper function to find courses by department and level using only parsed data
 const findCoursesByDepartmentAndLevel = (
   courseData: ParsedCourseData,
   departments: string[],
   level: string
 ): string[] => {
-  const matchingCourses: string[] = []
+  const allDepartments = extractDepartmentsFromCourses(courseData)
 
-  courseData.courses.forEach((course) => {
-    // Check if course level matches (extract from course code)
-    const courseLevel = course.level || extractLevelFromCourseCode(course.code)
-    if (courseLevel === level) {
+  return courseData.courses
+    .filter((course) => {
+      // Check if course level matches
+      const courseLevel = course.level || extractLevelFromCourseCode(course.code)
+      if (courseLevel !== level) return false
+
       // Check if course belongs to any of the specified departments
-      // We can determine department by course section/subsection or by course code patterns
-      const belongsToDepartment = departments.some((dept) => {
-        // Check section/subsection names
-        const sectionMatch = course.section.toLowerCase().includes(dept.toLowerCase())
-        const subsectionMatch = course.subsection.toLowerCase().includes(dept.toLowerCase())
+      return departments.some((dept) => courseMatchesDepartment(course, dept, allDepartments))
+    })
+    .map((course) => course.code)
+}
 
-        // Also check for specific course code patterns that indicate department
-        let codeMatch = false
-        // Special handling for SRN-05 codes to avoid double counting
-        if (dept === 'Flight Operations' && course.code.includes('SRN-05')) {
-          // Flight Operations takes priority for SRN-05 codes
-          codeMatch = course.subsection.toLowerCase().includes('flight operations')
-        } else if (dept === 'Astrogation' && course.code.includes('SRN-05')) {
-          // Astrogation only matches if NOT a Flight Operations course
-          codeMatch = !course.subsection.toLowerCase().includes('flight operations')
-        } else if (
-          dept === 'Tactical' &&
-          (course.code.includes('SRN-08') ||
-            course.code.includes('SRN-09') ||
-            course.code.includes('SRN-10') ||
-            course.code.includes('SRN-27') ||
-            course.code.includes('SRN-28') ||
-            course.code.includes('SRN-29') ||
-            course.code.includes('SRN-32'))
-        )
-          codeMatch = true
-        if (
-          dept === 'Engineering' &&
-          (course.code.includes('SRN-14') ||
-            course.code.includes('SRN-15') ||
-            course.code.includes('SRN-16') ||
-            course.code.includes('SRN-17') ||
-            course.code.includes('SRN-18') ||
-            course.code.includes('SRN-19'))
-        )
-          codeMatch = true
-        if (
-          dept === 'Communications' &&
-          (course.code.includes('SRN-11') || course.code.includes('SRN-12') || course.code.includes('SRN-13'))
-        )
-          codeMatch = true
+// Helper function to calculate department choice progress
+const calculateDepartmentProgress = (
+  courseData: ParsedCourseData,
+  userProgress: UserProgress,
+  requirement: PinRequirement
+): { satisfied: number; completed: boolean } => {
+  if (!requirement.departments || !requirement.level) {
+    return { satisfied: 0, completed: false }
+  }
 
-        return sectionMatch || subsectionMatch || codeMatch
+  const allDepartments = extractDepartmentsFromCourses(courseData)
+  const departmentCourses = findCoursesByDepartmentAndLevel(courseData, requirement.departments, requirement.level)
+  const departmentGroups: { [dept: string]: string[] } = {}
+
+  // Group courses by department using only parsed data
+  requirement.departments.forEach((dept: string) => {
+    departmentGroups[dept] = departmentCourses.filter((courseCode) => {
+      const course = courseData.courseMap.get(courseCode)
+      return course ? courseMatchesDepartment(course, dept, allDepartments) : false
+    })
+  })
+
+  // Count satisfied departments
+  let satisfiedDepartments = 0
+  Object.entries(departmentGroups).forEach(([dept, courses]) => {
+    const hasAnyCourse = courses.some((course) => userProgress.completedCourses.has(course))
+    if (hasAnyCourse) {
+      satisfiedDepartments++
+    }
+  })
+
+  return {
+    satisfied: satisfiedDepartments,
+    completed: satisfiedDepartments >= (requirement.minimum || 0)
+  }
+}
+
+// Generic function to calculate pin progress for any pin type
+const calculatePinProgress = (
+  courseData: ParsedCourseData,
+  userProgress: UserProgress,
+  pinType: 'OSWP' | 'ESWP'
+): PinProgress => {
+  const pinNames = {
+    OSWP: 'Officer Space Warfare Pin (OSWP)',
+    ESWP: 'Enlisted Space Warfare Pin (ESWP)'
+  }
+
+  // Find pin rule from parsed special rules
+  const pinRule = courseData.specialRules.find((rule) => rule.type === pinType && rule.branch === 'RMN')
+
+  if (!pinRule) {
+    console.log(`No ${pinType} rule found in specialRules`)
+    return {
+      name: pinNames[pinType],
+      type: pinType,
+      earned: false,
+      requirements: [
+        {
+          id: 'fallback-info',
+          name: `No ${pinType} requirements found in course data. Please check if the course data includes Space Warfare Pin rules.`,
+          type: 'course' as const,
+          completed: false
+        }
+      ],
+      overallProgress: 0
+    }
+  }
+
+  const requirements: PinRequirement[] = []
+
+  // Convert parsed requirements to our format
+  pinRule.requirements.forEach((req, index) => {
+    if (req.type === 'course' && req.code) {
+      const courseName = courseData.courseMap.get(req.code)?.name || `Course ${req.code}`
+      requirements.push({
+        id: `course-${index}`,
+        name: courseName,
+        courseCode: req.code,
+        type: 'course',
+        completed: userProgress.completedCourses.has(req.code)
       })
-
-      if (belongsToDepartment) {
-        matchingCourses.push(course.code)
+    } else if (req.type === 'department_choice') {
+      const baseRequirement: PinRequirement = {
+        id: `dept-choice-${index}`,
+        name: req.description || `Department Choice (${req.minimum} of ${req.totalOptions} departments)`,
+        type: 'department_choice',
+        departments: req.departments,
+        minimum: req.minimum,
+        level: req.level,
+        completed: false,
+        satisfied: 0,
+        description: req.description
       }
-    }
-  })
 
-  return matchingCourses
-}
+      // Calculate progress for this department choice requirement
+      const progress = calculateDepartmentProgress(courseData, userProgress, baseRequirement)
+      baseRequirement.satisfied = progress.satisfied
+      baseRequirement.completed = progress.completed
 
-// RMN ESWP Requirements from parsed data
-const calculateESWPProgress = (courseData: ParsedCourseData, userProgress: UserProgress): PinProgress => {
-  // Find ESWP rule from parsed special rules
-  const eswpRule = courseData.specialRules.find((rule) => rule.type === 'ESWP' && rule.branch === 'RMN')
-
-  if (!eswpRule) {
-    console.log('No ESWP rule found in specialRules')
-    // Fallback to hardcoded if not found in parsed data
-    return {
-      name: 'Enlisted Space Warfare Pin (ESWP)',
-      type: 'ESWP',
-      earned: false,
-      requirements: [
-        {
-          id: 'fallback-info',
-          name: 'No ESWP requirements found in course data. Please check if the course data includes Space Warfare Pin rules.',
-          type: 'course' as const,
-          completed: false
-        }
-      ],
-      overallProgress: 0
-    }
-  }
-
-  const requirements: PinRequirement[] = []
-
-  // Convert parsed requirements to our format
-  eswpRule.requirements.forEach((req, index) => {
-    if (req.type === 'course' && req.code) {
-      const courseName = courseData.courseMap.get(req.code)?.name || `Course ${req.code}`
-      requirements.push({
-        id: `course-${index}`,
-        name: courseName,
-        courseCode: req.code,
-        type: 'course',
-        completed: userProgress.completedCourses.has(req.code)
-      })
-    } else if (req.type === 'department_choice') {
-      requirements.push({
-        id: `dept-choice-${index}`,
-        name: req.description || `Department Choice (${req.minimum} of ${req.totalOptions} departments)`,
-        type: 'department_choice',
-        departments: req.departments,
-        minimum: req.minimum,
-        level: req.level,
-        completed: false,
-        satisfied: 0,
-        description: req.description
-      })
-    }
-  })
-
-  // Calculate department choice progress
-  requirements.forEach((req) => {
-    if (req.type === 'department_choice' && req.departments && req.level) {
-      const departmentCourses = findCoursesByDepartmentAndLevel(courseData, req.departments, req.level)
-      const departmentGroups: { [dept: string]: string[] } = {}
-
-      // Group courses by department
-      req.departments.forEach((dept) => {
-        departmentGroups[dept] = departmentCourses.filter((courseCode) => {
-          const course = courseData.courseMap.get(courseCode)
-          if (!course) return false
-
-          // Special priority matching to avoid double-counting courses
-          // Priority: Flight Operations > Other code matches > Section > Subsection
-
-          // 1. First check for Flight Operations with SRN-05 codes
-          if (dept === 'Flight Operations' && course.code.includes('SRN-05')) {
-            return course.subsection.toLowerCase().includes('flight operations')
-          }
-
-          // 2. Then check other department code patterns (excluding Astrogation SRN-05)
-          if (
-            dept === 'Tactical' &&
-            (course.code.includes('SRN-08') ||
-              course.code.includes('SRN-09') ||
-              course.code.includes('SRN-10') ||
-              course.code.includes('SRN-27') ||
-              course.code.includes('SRN-28') ||
-              course.code.includes('SRN-29') ||
-              course.code.includes('SRN-32'))
-          ) {
-            return true
-          }
-
-          if (
-            dept === 'Engineering' &&
-            (course.code.includes('SRN-14') ||
-              course.code.includes('SRN-15') ||
-              course.code.includes('SRN-16') ||
-              course.code.includes('SRN-17') ||
-              course.code.includes('SRN-18') ||
-              course.code.includes('SRN-19'))
-          ) {
-            return true
-          }
-
-          if (
-            dept === 'Communications' &&
-            (course.code.includes('SRN-11') || course.code.includes('SRN-12') || course.code.includes('SRN-13'))
-          ) {
-            return true
-          }
-
-          // 3. Check section match (but not for Astrogation SRN-05 courses)
-          if (course.section.toLowerCase().includes(dept.toLowerCase())) {
-            // Don't match Astrogation for SRN-05 courses that are Flight Operations
-            if (
-              dept === 'Astrogation' &&
-              course.code.includes('SRN-05') &&
-              course.subsection.toLowerCase().includes('flight operations')
-            ) {
-              return false
-            }
-            return true
-          }
-
-          // 4. Check subsection match only if not already matched by section
-          if (course.subsection.toLowerCase().includes(dept.toLowerCase())) {
-            return true
-          }
-
-          return false
-        })
-      })
-
-      let satisfiedDepartments = 0
-      Object.entries(departmentGroups).forEach(([dept, courses]) => {
-        const hasAnyCourse = courses.some((course) => userProgress.completedCourses.has(course))
-        if (hasAnyCourse) {
-          satisfiedDepartments++
-        }
-      })
-
-      req.satisfied = satisfiedDepartments
-      req.completed = satisfiedDepartments >= (req.minimum || 0)
+      requirements.push(baseRequirement)
     }
   })
 
@@ -473,135 +485,8 @@ const calculateESWPProgress = (courseData: ParsedCourseData, userProgress: UserP
   const overallProgress = requirements.length > 0 ? (completedRequirements / requirements.length) * 100 : 0
 
   return {
-    name: 'Enlisted Space Warfare Pin (ESWP)',
-    type: 'ESWP',
-    earned: requirements.length > 0 && requirements.every((r) => r.completed),
-    requirements,
-    overallProgress
-  }
-}
-
-// RMN OSWP Requirements from parsed data
-const calculateOSWPProgress = (courseData: ParsedCourseData, userProgress: UserProgress): PinProgress => {
-  // Find OSWP rule from parsed special rules
-  const oswpRule = courseData.specialRules.find((rule) => rule.type === 'OSWP' && rule.branch === 'RMN')
-
-  if (!oswpRule) {
-    console.log('No OSWP rule found in specialRules')
-    // Fallback to hardcoded if not found in parsed data
-    return {
-      name: 'Officer Space Warfare Pin (OSWP)',
-      type: 'OSWP',
-      earned: false,
-      requirements: [
-        {
-          id: 'fallback-info',
-          name: 'No OSWP requirements found in course data. Please check if the course data includes Space Warfare Pin rules.',
-          type: 'course' as const,
-          completed: false
-        }
-      ],
-      overallProgress: 0
-    }
-  }
-
-  const requirements: PinRequirement[] = []
-
-  // Convert parsed requirements to our format
-  oswpRule.requirements.forEach((req, index) => {
-    if (req.type === 'course' && req.code) {
-      const courseName = courseData.courseMap.get(req.code)?.name || `Course ${req.code}`
-      requirements.push({
-        id: `course-${index}`,
-        name: courseName,
-        courseCode: req.code,
-        type: 'course',
-        completed: userProgress.completedCourses.has(req.code)
-      })
-    } else if (req.type === 'department_choice') {
-      requirements.push({
-        id: `dept-choice-${index}`,
-        name: req.description || `Department Choice (${req.minimum} of ${req.totalOptions} departments)`,
-        type: 'department_choice',
-        departments: req.departments,
-        minimum: req.minimum,
-        level: req.level,
-        completed: false,
-        satisfied: 0,
-        description: req.description
-      })
-    }
-  })
-
-  // Calculate department choice progress
-  requirements.forEach((req) => {
-    if (req.type === 'department_choice' && req.departments && req.level) {
-      const departmentCourses = findCoursesByDepartmentAndLevel(courseData, req.departments, req.level)
-      const departmentGroups: { [dept: string]: string[] } = {}
-
-      // Group courses by department
-      req.departments.forEach((dept) => {
-        departmentGroups[dept] = departmentCourses.filter((courseCode) => {
-          const course = courseData.courseMap.get(courseCode)
-          if (!course) return false
-
-          // Use same logic as above to determine department
-          const sectionMatch = course.section.toLowerCase().includes(dept.toLowerCase())
-          const subsectionMatch = course.subsection.toLowerCase().includes(dept.toLowerCase())
-
-          let codeMatch = false
-          if (dept === 'Astrogation' && course.code.includes('SRN-05')) codeMatch = true
-          if (dept === 'Flight Operations' && course.code.includes('SRN-05')) codeMatch = true
-          if (
-            dept === 'Tactical' &&
-            (course.code.includes('SRN-08') ||
-              course.code.includes('SRN-09') ||
-              course.code.includes('SRN-10') ||
-              course.code.includes('SRN-27') ||
-              course.code.includes('SRN-28') ||
-              course.code.includes('SRN-29') ||
-              course.code.includes('SRN-32'))
-          )
-            codeMatch = true
-          if (
-            dept === 'Engineering' &&
-            (course.code.includes('SRN-14') ||
-              course.code.includes('SRN-15') ||
-              course.code.includes('SRN-16') ||
-              course.code.includes('SRN-17') ||
-              course.code.includes('SRN-18') ||
-              course.code.includes('SRN-19'))
-          )
-            codeMatch = true
-          if (
-            dept === 'Communications' &&
-            (course.code.includes('SRN-11') || course.code.includes('SRN-12') || course.code.includes('SRN-13'))
-          )
-            codeMatch = true
-
-          return sectionMatch || subsectionMatch || codeMatch
-        })
-      })
-
-      let satisfiedDepartments = 0
-      Object.entries(departmentGroups).forEach(([dept, courses]) => {
-        const hasAnyCourse = courses.some((course) => userProgress.completedCourses.has(course))
-        if (hasAnyCourse) {
-          satisfiedDepartments++
-        }
-      })
-
-      req.satisfied = satisfiedDepartments
-      req.completed = satisfiedDepartments >= (req.minimum || 0)
-    }
-  })
-
-  const completedRequirements = requirements.filter((r) => r.completed).length
-  const overallProgress = requirements.length > 0 ? (completedRequirements / requirements.length) * 100 : 0
-
-  return {
-    name: 'Officer Space Warfare Pin (OSWP)',
-    type: 'OSWP',
+    name: pinNames[pinType],
+    type: pinType,
     earned: requirements.length > 0 && requirements.every((r) => r.completed),
     requirements,
     overallProgress
@@ -625,8 +510,8 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
     }))
   }
 
-  const oswpProgress = calculateOSWPProgress(courseData, userProgress)
-  const eswpProgress = calculateESWPProgress(courseData, userProgress)
+  const oswpProgress = calculatePinProgress(courseData, userProgress, 'OSWP')
+  const eswpProgress = calculatePinProgress(courseData, userProgress, 'ESWP')
 
   const renderRequirement = (req: PinRequirement) => {
     if (req.type === 'course') {
