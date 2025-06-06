@@ -114,7 +114,7 @@ function App() {
       setError(null)
 
       // In a real app, this would be an API call
-      const response = await fetch('/Courses.md')
+      const response = await fetch('./courses.md')
       if (!response.ok) {
         throw new Error('Failed to load course data')
       }
