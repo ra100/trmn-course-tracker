@@ -3,8 +3,8 @@
 | Course Name               | Course Number | Prerequisites                |
 | ------------------------- | ------------- | ---------------------------- |
 | Intro to Management       | GPU-ALC-0009  | SIA-RMN-0004                 |
-| Intro to Leadership       | GPU-ALC-0010  | SIA-RMN-0005 or GPU-ALC-09   |
-| Advanced Management       | GPU-ALC-0113  | SIA-RMN-0103 or GPU-ALC-10   |
+| Intro to Leadership       | GPU-ALC-0010  | SIA-RMN-0005 or GPU-ALC-0009 |
+| Advanced Management       | GPU-ALC-0113  | SIA-RMN-0103 or GPU-ALC-0010 |
 | Advanced Leadership       | GPU-ALC-0115  | SIA-RMN-0105 or GPU-ALC-0113 |
 | Organizational Management | GPU-ALC-1111  | SIA-RMN-1001 or GPU-ALC-0115 |
 | Organizational Leadership | GPU-ALC-1112  | SIA-RMN-1002 or GPU-ALC-1111 |
