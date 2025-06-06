@@ -1,6 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { UserSettings } from '../types'
+import {
+  parseMedusaHTML,
+  validateMedusaHTML,
+  extractCompletedCourseCodes,
+  MedusaParseResult
+} from '../utils/medusaParser'
 
 const PanelContainer = styled.div`
   padding: 1.5rem;
@@ -116,12 +122,87 @@ const ResetButton = styled.button`
   }
 `
 
+const ImportButton = styled.button`
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  width: 100%;
+
+  &:hover {
+    background: #2980b9;
+  }
+
+  &:disabled {
+    background: #7f8c8d;
+    cursor: not-allowed;
+  }
+`
+
+const TextArea = styled.textarea`
+  width: 100%;
+  min-height: 120px;
+  padding: 0.5rem;
+  border: 1px solid #525862;
+  border-radius: 4px;
+  background-color: #34495e;
+  color: #ecf0f1;
+  font-size: 0.8rem;
+  font-family: monospace;
+  resize: vertical;
+  margin-top: 0.5rem;
+
+  &:focus {
+    outline: none;
+    border-color: #3498db;
+  }
+
+  &::placeholder {
+    color: #95a5a6;
+  }
+`
+
+const ImportSection = styled.div`
+  margin-bottom: 1.5rem;
+`
+
+const ImportSteps = styled.ol`
+  font-size: 0.75rem;
+  color: #95a5a6;
+  margin: 0.5rem 0;
+  padding-left: 1.2rem;
+  line-height: 1.4;
+`
+
+const ImportResults = styled.div<{ type: 'success' | 'error' }>`
+  background: ${(props) => (props.type === 'success' ? '#27ae60' : '#e74c3c')};
+  color: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+`
+
+const ErrorList = styled.ul`
+  margin: 0.5rem 0 0 1rem;
+  padding: 0;
+`
+
 interface SettingsPanelProps {
   settings: UserSettings
   onSettingsChange: (settings: UserSettings) => void
+  onImportMedusaCourses?: (courseCodes: string[]) => { imported: number; trackable: number; alreadyCompleted: number }
 }
 
-export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettingsChange }) => {
+export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettingsChange, onImportMedusaCourses }) => {
+  const [importHtml, setImportHtml] = useState('')
+  const [importResult, setImportResult] = useState<MedusaParseResult | null>(null)
+  const [isImporting, setIsImporting] = useState(false)
+
   const handleToggle = (key: keyof UserSettings, value: boolean) => {
     onSettingsChange({
       ...settings,
@@ -137,6 +218,58 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
       showUnavailable: true,
       autoSave: true
     })
+  }
+
+  const handleImportMedusa = async () => {
+    if (!importHtml.trim()) {
+      setImportResult({
+        courses: [],
+        parseDate: new Date(),
+        errors: ['Please paste the HTML content from your medusa.trmn.org user page.']
+      })
+      return
+    }
+
+    setIsImporting(true)
+
+    try {
+      // Validate HTML first
+      const validation = validateMedusaHTML(importHtml)
+      if (!validation.valid) {
+        setImportResult({
+          courses: [],
+          parseDate: new Date(),
+          errors: [validation.reason || 'Invalid HTML format']
+        })
+        return
+      }
+
+      // Parse the HTML
+      const result = parseMedusaHTML(importHtml)
+      setImportResult(result)
+
+      // If parsing was successful and we have courses, import them
+      if (result.courses.length > 0 && result.errors.length === 0 && onImportMedusaCourses) {
+        const courseCodes = extractCompletedCourseCodes(result.courses)
+        const importStats = onImportMedusaCourses(courseCodes)
+
+        // Update result with import statistics
+        result.importStats = importStats
+      }
+    } catch (error) {
+      setImportResult({
+        courses: [],
+        parseDate: new Date(),
+        errors: [`Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`]
+      })
+    } finally {
+      setIsImporting(false)
+    }
+  }
+
+  const handleClearImport = () => {
+    setImportHtml('')
+    setImportResult(null)
   }
 
   return (
@@ -185,6 +318,65 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
           </ToggleItem>
         </ToggleGroup>
       </SettingSection>
+
+      {onImportMedusaCourses && (
+        <ImportSection>
+          <SettingLabel>Import from Medusa</SettingLabel>
+          <SettingDescription>Import your completed courses from medusa.trmn.org</SettingDescription>
+          <ImportSteps>
+            <li>Log in to medusa.trmn.org</li>
+            <li>Go to your user page (/user)</li>
+            <li>Click the "Academic Record" tab</li>
+            <li>Right-click → "View Page Source" or press Ctrl+U</li>
+            <li>Copy all the HTML and paste it below</li>
+          </ImportSteps>
+
+          <TextArea
+            value={importHtml}
+            onChange={(e) => setImportHtml(e.target.value)}
+            placeholder="Paste the complete HTML source from your medusa.trmn.org user page here..."
+          />
+
+          <ImportButton onClick={handleImportMedusa} disabled={isImporting || !importHtml.trim()}>
+            {isImporting ? 'Importing...' : 'Import Courses'}
+          </ImportButton>
+
+          {importHtml && (
+            <ImportButton onClick={handleClearImport} style={{ background: '#95a5a6', marginTop: '0.5rem' }}>
+              Clear
+            </ImportButton>
+          )}
+
+          {importResult && (
+            <ImportResults type={importResult.errors.length > 0 ? 'error' : 'success'}>
+              {importResult.errors.length > 0 ? (
+                <>
+                  <strong>Import Failed:</strong>
+                  <ErrorList>
+                    {importResult.errors.map((error, index) => (
+                      <li key={index}>{error}</li>
+                    ))}
+                  </ErrorList>
+                </>
+              ) : (
+                <>
+                  <strong>Success!</strong> Found {importResult.courses.length} completed courses in Medusa.
+                  {importResult.importStats && (
+                    <div style={{ marginTop: '0.5rem', fontSize: '0.75rem' }}>
+                      • {importResult.importStats.trackable} courses are trackable in TRMN system
+                      <br />• {importResult.importStats.trackable - importResult.importStats.alreadyCompleted} new
+                      courses added
+                      <br />• {importResult.importStats.alreadyCompleted} courses were already completed
+                      <br />• {importResult.importStats.imported - importResult.importStats.trackable} courses from
+                      Medusa are not tracked by this app
+                    </div>
+                  )}
+                </>
+              )}
+            </ImportResults>
+          )}
+        </ImportSection>
+      )}
 
       <ResetButton onClick={handleReset}>Reset to Defaults</ResetButton>
     </PanelContainer>

@@ -216,6 +216,50 @@ function App() {
     saveUserProgress(finalProgress)
   }
 
+  const handleImportMedusaCourses = (
+    courseCodes: string[]
+  ): { imported: number; trackable: number; alreadyCompleted: number } => {
+    if (!courseData || !eligibilityEngine) return { imported: 0, trackable: 0, alreadyCompleted: 0 }
+
+    // Get all trackable course codes from our course data
+    const trackableCourses = new Set(courseData.courses.map((course) => course.code))
+
+    // Filter imported courses to only include trackable ones
+    const trackableImportedCourses = courseCodes.filter((code) => trackableCourses.has(code))
+
+    // Check which courses are already completed
+    const existingCourses = userProgress.completedCourses
+    const alreadyCompleted = trackableImportedCourses.filter((code) => existingCourses.has(code))
+    const newCourses = trackableImportedCourses.filter((code) => !existingCourses.has(code))
+
+    // Add only new trackable courses to completed courses
+    const newCompleted = new Set([...Array.from(existingCourses), ...newCourses])
+
+    const newProgress: UserProgress = {
+      ...userProgress,
+      completedCourses: newCompleted,
+      lastUpdated: new Date()
+    }
+
+    // Update available courses based on new completion status
+    const updatedCourses = eligibilityEngine.updateCourseAvailability(newProgress)
+    const newAvailable = new Set(updatedCourses.filter((course) => course.available).map((course) => course.code))
+
+    const finalProgress = {
+      ...newProgress,
+      availableCourses: newAvailable
+    }
+
+    setUserProgress(finalProgress)
+    saveUserProgress(finalProgress)
+
+    return {
+      imported: courseCodes.length,
+      trackable: trackableImportedCourses.length,
+      alreadyCompleted: alreadyCompleted.length
+    }
+  }
+
   const handleCourseSelect = (course: Course) => {
     setSelectedCourse(course)
   }
@@ -267,7 +311,11 @@ function App() {
       <Sidebar>
         <ProgressPanel userProgress={userProgress} courseData={courseData} eligibilityEngine={eligibilityEngine} />
         <FilterPanel filters={filters} courseData={courseData} onFilterChange={handleFilterChange} />
-        <SettingsPanel settings={settings} onSettingsChange={handleSettingsChange} />
+        <SettingsPanel
+          settings={settings}
+          onSettingsChange={handleSettingsChange}
+          onImportMedusaCourses={handleImportMedusaCourses}
+        />
       </Sidebar>
 
       <MainContent>
