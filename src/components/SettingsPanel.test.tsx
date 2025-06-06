@@ -37,7 +37,7 @@ describe('SettingsPanel', () => {
 
   describe('Course Visibility toggles', () => {
     it('displays toggle labels and descriptions', () => {
-      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       expect(screen.getByText('Show Completed Courses')).toBeInTheDocument()
       expect(screen.getByText("Display courses you've already completed")).toBeInTheDocument()
@@ -46,7 +46,7 @@ describe('SettingsPanel', () => {
     })
 
     it('has correct number of checkboxes', () => {
-      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
       expect(checkboxes).toHaveLength(4) // showCompleted, showUnavailable, darkMode, autoSave
@@ -54,7 +54,7 @@ describe('SettingsPanel', () => {
 
     it('toggles showCompleted when checkbox changes', async () => {
       const user = userEvent.setup()
-      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
       const showCompletedCheckbox = checkboxes[0] // First checkbox should be showCompleted
@@ -71,7 +71,7 @@ describe('SettingsPanel', () => {
 
     it('toggles showUnavailable when checkbox changes', async () => {
       const user = userEvent.setup()
-      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
       const showUnavailableCheckbox = checkboxes[1] // Second checkbox should be showUnavailable
@@ -88,7 +88,7 @@ describe('SettingsPanel', () => {
 
     it('toggles autoSave when checkbox changes', async () => {
       const user = userEvent.setup()
-      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
       const autoSaveCheckbox = checkboxes[3] // Fourth checkbox should be autoSave (after dark mode)
@@ -112,7 +112,7 @@ describe('SettingsPanel', () => {
         autoSave: false
       }
 
-      render(<SettingsPanel settings={settingsWithFalseValues} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={settingsWithFalseValues} onSettingsChange={mockOnSettingsChange} />)
 
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
 
@@ -125,14 +125,14 @@ describe('SettingsPanel', () => {
 
   describe('Application settings', () => {
     it('displays dark mode toggle', () => {
-      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       expect(screen.getByText('Dark Mode')).toBeInTheDocument()
       expect(screen.getByText('Switch between light and dark theme')).toBeInTheDocument()
     })
 
     it('displays auto-save toggle', () => {
-      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       expect(screen.getByText('Auto-save Progress')).toBeInTheDocument()
       expect(screen.getByText('Automatically save your course completion progress')).toBeInTheDocument()
@@ -140,7 +140,7 @@ describe('SettingsPanel', () => {
 
     it('toggles dark mode when clicked', async () => {
       const user = userEvent.setup()
-      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
       const darkModeCheckbox = checkboxes[2] // Third checkbox should be dark mode
@@ -161,7 +161,7 @@ describe('SettingsPanel', () => {
         theme: 'dark'
       }
 
-      render(<SettingsPanel settings={darkSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={darkSettings} onSettingsChange={mockOnSettingsChange} />)
 
       const checkboxes = screen.getAllByRole('checkbox', { hidden: true })
       const darkModeCheckbox = checkboxes[2] // Third checkbox should be dark mode
@@ -181,7 +181,7 @@ describe('SettingsPanel', () => {
         autoSave: false
       }
 
-      render(<SettingsPanel settings={customSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={customSettings} onSettingsChange={mockOnSettingsChange} />)
 
       const resetButton = screen.getByRole('button', { name: 'Reset to Defaults' })
       await user.click(resetButton)
@@ -205,7 +205,7 @@ describe('SettingsPanel', () => {
         autoSave: false
       }
 
-      render(<SettingsPanel settings={customSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={customSettings} onSettingsChange={mockOnSettingsChange} />)
 
       const resetButton = screen.getByRole('button', { name: 'Reset to Defaults' })
       await user.click(resetButton)
@@ -216,7 +216,7 @@ describe('SettingsPanel', () => {
 
   describe('Accessibility', () => {
     it('renders proper semantic structure', () => {
-      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       // Check for heading
       expect(screen.getByRole('heading', { name: 'Display Settings' })).toBeInTheDocument()
@@ -230,7 +230,7 @@ describe('SettingsPanel', () => {
     })
 
     it('has proper button accessibility', () => {
-      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       const resetButton = screen.getByRole('button', { name: 'Reset to Defaults' })
       expect(resetButton).toBeEnabled()
@@ -245,7 +245,7 @@ describe('SettingsPanel', () => {
     })
 
     it('shows import section when onImportMedusaCourses prop is provided', () => {
-      render(
+      renderWithTheme(
         <SettingsPanel
           settings={defaultSettings}
           onSettingsChange={mockOnSettingsChange}
@@ -260,13 +260,13 @@ describe('SettingsPanel', () => {
     })
 
     it('hides import section when onImportMedusaCourses prop is not provided', () => {
-      render(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
+      renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       expect(screen.queryByText('Import from Medusa')).not.toBeInTheDocument()
     })
 
     it('disables import button when no HTML is provided', () => {
-      render(
+      renderWithTheme(
         <SettingsPanel
           settings={defaultSettings}
           onSettingsChange={mockOnSettingsChange}
@@ -280,7 +280,7 @@ describe('SettingsPanel', () => {
 
     it('enables import button when HTML is provided', async () => {
       const user = userEvent.setup()
-      render(
+      renderWithTheme(
         <SettingsPanel
           settings={defaultSettings}
           onSettingsChange={mockOnSettingsChange}
@@ -298,7 +298,7 @@ describe('SettingsPanel', () => {
 
     it('shows clear button when HTML is entered', async () => {
       const user = userEvent.setup()
-      render(
+      renderWithTheme(
         <SettingsPanel
           settings={defaultSettings}
           onSettingsChange={mockOnSettingsChange}
@@ -314,7 +314,7 @@ describe('SettingsPanel', () => {
 
     it('clears textarea when clear button is clicked', async () => {
       const user = userEvent.setup()
-      render(
+      renderWithTheme(
         <SettingsPanel
           settings={defaultSettings}
           onSettingsChange={mockOnSettingsChange}
@@ -332,7 +332,7 @@ describe('SettingsPanel', () => {
     })
 
     it('shows import instructions', () => {
-      render(
+      renderWithTheme(
         <SettingsPanel
           settings={defaultSettings}
           onSettingsChange={mockOnSettingsChange}
@@ -357,7 +357,7 @@ describe('SettingsPanel', () => {
         alreadyCompleted: 2
       })
 
-      render(
+      renderWithTheme(
         <SettingsPanel
           settings={defaultSettings}
           onSettingsChange={mockOnSettingsChange}
