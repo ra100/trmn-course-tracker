@@ -1,5 +1,5 @@
 ---
-description: creating commit message
+description: Rule is helpful for creating a commit message
 globs:
 alwaysApply: false
 ---
