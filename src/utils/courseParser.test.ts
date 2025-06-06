@@ -231,6 +231,247 @@ describe('CourseParser', () => {
       expect(course.code).toBe(expected)
     })
   })
+
+  describe('Space Warfare Pin parsing', () => {
+    it('should parse Space Warfare Pin special rules correctly', () => {
+      const markdown = `
+# Space Warfare Pin
+
+## Officers
+
+| RMN OSWP | RMMC OSWP |
+| -------- | --------- |
+| [Master-at-Arms](https://wiki.trmn.org/index.php/Master-at-Arms) 'C' (SIA-SRN-31C) [Personnelman](https://wiki.trmn.org/index.php/Personnelman) 'C' (SIA-SRN-01C) Plus at least 1 'D' level from four (4) of the five following departments: [Astrogation](https://wiki.trmn.org/index.php?title=Astrogation&action=edit&redlink=1) [Flight Operations](https://wiki.trmn.org/index.php?title=Flight_Operations&action=edit&redlink=1) [Tactical](https://wiki.trmn.org/index.php?title=Tactical&action=edit&redlink=1) [Engineering](https://wiki.trmn.org/index.php?title=Engineering&action=edit&redlink=1) [Communications](https://wiki.trmn.org/index.php?title=Communications&action=edit&redlink=1) | [Rifleman](https://wiki.trmn.org/index.php?title=Rifleman&action=edit&redlink=1) 'D' (SIA-SRMC-07D) [Admin Specialist](https://wiki.trmn.org/index.php?title=Admin_Specialist&action=edit&redlink=1) 'C' (SIA-SRMC-09C) Plus at least 3 'D' levels of Marine specialties |
+
+## Enlisted
+
+| RMN ESWP | RMMC ESWP |
+| -------- | --------- |
+| [Personnelman](https://wiki.trmn.org/index.php/Personnelman) 'A' (SIA-SRN-01A) [Yeoman](https://wiki.trmn.org/index.php/Yeoman) 'A' (SIA-SRN-04A) Plus at least 1 'C' level from three (3) of the following departments: Astrogation Flight Operations Tactical Engineering Communications | [Rifleman](https://wiki.trmn.org/index.php?title=Rifleman&action=edit&redlink=1) 'A' (SIA-SRMC-07A) Plus at least three (3) 'C' levels of Marine specialties |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      // Should have parsed special rules
+      expect(result.specialRules.length).toBeGreaterThan(0)
+
+      // Find OSWP rules
+      const rmn_oswp = result.specialRules.find((rule) => rule.name === 'RMN OSWP')
+      expect(rmn_oswp).toBeDefined()
+      expect(rmn_oswp?.type).toBe('OSWP')
+      expect(rmn_oswp?.branch).toBe('RMN')
+      expect(rmn_oswp?.rank).toBe('Officer')
+
+      // Check OSWP requirements
+      expect(rmn_oswp?.requirements).toBeDefined()
+      const oswpCourseReqs = rmn_oswp?.requirements.filter((req) => req.type === 'course')
+      expect(oswpCourseReqs?.length).toBe(2) // Master-at-Arms and Personnelman
+
+      const oswpDeptReq = rmn_oswp?.requirements.find((req) => req.type === 'department_choice')
+      expect(oswpDeptReq).toBeDefined()
+      expect(oswpDeptReq?.minimum).toBe(4)
+      expect(oswpDeptReq?.totalOptions).toBe(5)
+      expect(oswpDeptReq?.level).toBe('D')
+
+      // Find ESWP rules
+      const rmn_eswp = result.specialRules.find((rule) => rule.name === 'RMN ESWP')
+      expect(rmn_eswp).toBeDefined()
+      expect(rmn_eswp?.type).toBe('ESWP')
+      expect(rmn_eswp?.branch).toBe('RMN')
+      expect(rmn_eswp?.rank).toBe('Enlisted')
+
+      // Check ESWP requirements
+      const eswpCourseReqs = rmn_eswp?.requirements.filter((req) => req.type === 'course')
+      expect(eswpCourseReqs?.length).toBe(2) // Personnelman and Yeoman
+
+      const eswpDeptReq = rmn_eswp?.requirements.find((req) => req.type === 'department_choice')
+      expect(eswpDeptReq).toBeDefined()
+      expect(eswpDeptReq?.minimum).toBe(3)
+      expect(eswpDeptReq?.totalOptions).toBe(5)
+      expect(eswpDeptReq?.level).toBe('C')
+    })
+
+    it('should parse both RMN and RMMC variants', () => {
+      const markdown = `
+# Space Warfare Pin
+
+## Officers
+
+| RMN OSWP | RMMC OSWP |
+| -------- | --------- |
+| [Master-at-Arms](https://wiki.trmn.org/index.php/Master-at-Arms) 'C' (SIA-SRN-31C) Plus requirements | [Rifleman](https://wiki.trmn.org/index.php?title=Rifleman&action=edit&redlink=1) 'D' (SIA-SRMC-07D) Plus requirements |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      const rmnRule = result.specialRules.find((rule) => rule.branch === 'RMN' && rule.type === 'OSWP')
+      const rmmcRule = result.specialRules.find((rule) => rule.branch === 'RMMC' && rule.type === 'OSWP')
+
+      expect(rmnRule).toBeDefined()
+      expect(rmmcRule).toBeDefined()
+      expect(rmnRule?.name).toBe('RMN OSWP')
+      expect(rmmcRule?.name).toBe('RMMC OSWP')
+    })
+
+    it('should extract specific course codes from SWP requirements', () => {
+      const markdown = `
+# Space Warfare Pin
+
+## Officers
+
+| RMN OSWP | RMMC OSWP |
+| -------- | --------- |
+| Master-at-Arms 'C' (SIA-SRN-31C) Personnelman 'C' (SIA-SRN-01C) Plus at least 1 'D' level from four (4) departments | Rifleman 'D' (SIA-SRMC-07D) Admin Specialist 'C' (SIA-SRMC-09C) |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      const rmnOswp = result.specialRules.find((rule) => rule.name === 'RMN OSWP')
+      expect(rmnOswp).toBeDefined()
+
+      const courseRequirements = rmnOswp?.requirements.filter((req) => req.type === 'course')
+      expect(courseRequirements?.length).toBe(2)
+
+      const courseCodes = courseRequirements?.map((req) => req.code)
+      expect(courseCodes).toContain('SIA-SRN-31C')
+      expect(courseCodes).toContain('SIA-SRN-01C')
+
+      const rmmcOswp = result.specialRules.find((rule) => rule.name === 'RMMC OSWP')
+      const rmmcCourses = rmmcOswp?.requirements.filter((req) => req.type === 'course')
+      const rmmcCodes = rmmcCourses?.map((req) => req.code)
+      expect(rmmcCodes).toContain('SIA-SRMC-07D')
+      expect(rmmcCodes).toContain('SIA-SRMC-09C')
+    })
+
+    it('should correctly identify officer vs enlisted sections', () => {
+      const markdown = `
+# Space Warfare Pin
+
+## Officers
+
+| RMN OSWP | RMMC OSWP |
+| -------- | --------- |
+| Officer requirements with SIA-SRN-31C | Officer RMMC requirements |
+
+## Enlisted
+
+| RMN ESWP | RMMC ESWP |
+| -------- | --------- |
+| Enlisted requirements with SIA-SRN-01A | Enlisted RMMC requirements |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      const officerRules = result.specialRules.filter((rule) => rule.rank === 'Officer')
+      const enlistedRules = result.specialRules.filter((rule) => rule.rank === 'Enlisted')
+
+      expect(officerRules.length).toBe(2) // RMN and RMMC OSWP
+      expect(enlistedRules.length).toBe(2) // RMN and RMMC ESWP
+
+      const rmnOfficer = officerRules.find((rule) => rule.branch === 'RMN')
+      const rmnEnlisted = enlistedRules.find((rule) => rule.branch === 'RMN')
+
+      expect(rmnOfficer?.type).toBe('OSWP')
+      expect(rmnEnlisted?.type).toBe('ESWP')
+    })
+
+    it('should handle department choice requirements correctly', () => {
+      const markdown = `
+# Space Warfare Pin
+
+## Officers
+
+| RMN OSWP | RMMC OSWP |
+| -------- | --------- |
+| Plus at least 1 'D' level from four (4) of the five following departments | RMMC requirements |
+
+## Enlisted
+
+| RMN ESWP | RMMC ESWP |
+| -------- | --------- |
+| Plus at least 1 'C' level from three (3) of the following departments | RMMC requirements |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      const rmnOswp = result.specialRules.find((rule) => rule.name === 'RMN OSWP')
+      const oswpDeptReq = rmnOswp?.requirements.find((req) => req.type === 'department_choice')
+
+      expect(oswpDeptReq).toBeDefined()
+      expect(oswpDeptReq?.minimum).toBe(4)
+      expect(oswpDeptReq?.totalOptions).toBe(5)
+      expect(oswpDeptReq?.level).toBe('D')
+      expect(oswpDeptReq?.departments).toEqual([
+        'Astrogation',
+        'Flight Operations',
+        'Tactical',
+        'Engineering',
+        'Communications'
+      ])
+
+      const rmnEswp = result.specialRules.find((rule) => rule.name === 'RMN ESWP')
+      const eswpDeptReq = rmnEswp?.requirements.find((req) => req.type === 'department_choice')
+
+      expect(eswpDeptReq).toBeDefined()
+      expect(eswpDeptReq?.minimum).toBe(3)
+      expect(eswpDeptReq?.totalOptions).toBe(5)
+      expect(eswpDeptReq?.level).toBe('C')
+    })
+
+    it('should handle realistic Space Warfare Pin markdown structure', () => {
+      const markdown = `
+# Space Warfare Pin
+
+RMN
+
+The Space Warfare Pin comes in two varieties: a gold one, for officers, and a silver one for enlisted personnel.
+
+### Officers
+
+Both RMN and RMMC officers wear the same pin.
+
+| RMN OSWP                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | RMMC OSWP                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Master-at-Arms](https://wiki.trmn.org/index.php/Master-at-Arms) 'C' (SIA-SRN-31C) [Personnelman](https://wiki.trmn.org/index.php/Personnelman) 'C' (SIA-SRN-01C) Plus at least 1 'D' level from four (4) of the five following departments: [Astrogation](https://wiki.trmn.org/index.php?title=Astrogation&action=edit&redlink=1) [Flight Operations](https://wiki.trmn.org/index.php?title=Flight_Operations&action=edit&redlink=1) [Tactical](https://wiki.trmn.org/index.php?title=Tactical&action=edit&redlink=1) [Engineering](https://wiki.trmn.org/index.php?title=Engineering&action=edit&redlink=1) [Communications](https://wiki.trmn.org/index.php?title=Communications&action=edit&redlink=1) (note that for the purposes of the OSWP, Flight Ops is a separate department from Astrogation) | [Rifleman](https://wiki.trmn.org/index.php?title=Rifleman&action=edit&redlink=1) 'D' (SIA-SRMC-07D) [Damage Control Technician](https://wiki.trmn.org/index.php/Damage_Control_Technician) 'C' (SIA-SRN-19C) [Admin Specialist](https://wiki.trmn.org/index.php?title=Admin_Specialist&action=edit&redlink=1) 'C' (SIA-SRMC-09C) [Military Police](https://wiki.trmn.org/index.php?title=Military_Police&action=edit&redlink=1) 'C' (SIA-SRMC-02C) Plus at least 3 'D' levels of the following Marine specialties: [Assault Marine](https://wiki.trmn.org/index.php?title=Assault_Marine&action=edit&redlink=1) [Recon Marine](https://wiki.trmn.org/index.php?title=Recon_Marine&action=edit&redlink=1) [Heavy Weapons](https://wiki.trmn.org/index.php?title=Heavy_Weapons&action=edit&redlink=1) [Missile Crew](https://wiki.trmn.org/index.php?title=Missile_Crew&action=edit&redlink=1) [Laser/Graser Crew](https://wiki.trmn.org/index.php?title=Laser/Graser_Crew&action=edit&redlink=1) [Armorer](https://wiki.trmn.org/index.php/Armorer) |
+
+### Enlisted
+
+| RMN ESWP                                                                                                                                                                                                                                                                                                                                                                                  | RMMC ESWP                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Personnelman](https://wiki.trmn.org/index.php/Personnelman) 'A' (SIA-SRN-01A) [Yeoman](https://wiki.trmn.org/index.php/Yeoman) 'A' (SIA-SRN-04A) Plus at least 1 'C' level from three (3) of the following departments: Astrogation Flight Operations Tactical Engineering Communications (note that for the purposes of the ESWP, Flight Ops is a separate department from Astrogation) | [Rifleman](https://wiki.trmn.org/index.php?title=Rifleman&action=edit&redlink=1) 'A' (SIA-SRMC-07A) [Damage Control Technician](https://wiki.trmn.org/index.php/Damage_Control_Technician) 'A' (SIA-SRN-19A) Plus at least three (3) 'C' levels of the following Marine specialties: [Assault Marine](https://wiki.trmn.org/index.php?title=Assault_Marine&action=edit&redlink=1) [Recon Marine](https://wiki.trmn.org/index.php?title=Recon_Marine&action=edit&redlink=1) [Heavy Weapons](https://wiki.trmn.org/index.php?title=Heavy_Weapons&action=edit&redlink=1) [Missile Crew](https://wiki.trmn.org/index.php?title=Missile_Crew&action=edit&redlink=1) [Laser/Graser Crew](https://wiki.trmn.org/index.php?title=Laser/Graser_Crew&action=edit&redlink=1) [Military Police](https://wiki.trmn.org/index.php?title=Military_Police&action=edit&redlink=1) [Armorer](https://wiki.trmn.org/index.php/Armorer) |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      // Should find all four variants (RMN/RMMC × OSWP/ESWP)
+      expect(result.specialRules.length).toBe(4)
+
+      const rmnOswp = result.specialRules.find((rule) => rule.name === 'RMN OSWP')
+      const rmnEswp = result.specialRules.find((rule) => rule.name === 'RMN ESWP')
+      const rmmcOswp = result.specialRules.find((rule) => rule.name === 'RMMC OSWP')
+      const rmmcEswp = result.specialRules.find((rule) => rule.name === 'RMMC ESWP')
+
+      expect(rmnOswp).toBeDefined()
+      expect(rmnEswp).toBeDefined()
+      expect(rmmcOswp).toBeDefined()
+      expect(rmmcEswp).toBeDefined()
+
+      // Verify course requirements are extracted correctly
+      const rmnOswpCourses = rmnOswp?.requirements.filter((req) => req.type === 'course')
+      expect(rmnOswpCourses?.some((req) => req.code === 'SIA-SRN-31C')).toBe(true)
+      expect(rmnOswpCourses?.some((req) => req.code === 'SIA-SRN-01C')).toBe(true)
+
+      const rmnEswpCourses = rmnEswp?.requirements.filter((req) => req.type === 'course')
+      expect(rmnEswpCourses?.some((req) => req.code === 'SIA-SRN-01A')).toBe(true)
+      expect(rmnEswpCourses?.some((req) => req.code === 'SIA-SRN-04A')).toBe(true)
+    })
+  })
 })
 
 // Test markdown with OR conditions

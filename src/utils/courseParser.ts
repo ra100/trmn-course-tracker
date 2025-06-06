@@ -48,10 +48,20 @@ export class CourseParser {
         const level = (line.match(/^#+/) || [''])[0].length
         const title = line.replace(/^#+\s*/, '')
 
-        if (level === 2) {
+        if (level === 1) {
+          // Check for Space Warfare Pin at level 1
+          if (title.toLowerCase().includes('space warfare pin')) {
+            inSpaceWarfarePinSection = true
+          } else {
+            inSpaceWarfarePinSection = false
+          }
+        } else if (level === 2) {
           currentSection = this.createSection(title)
           currentSubsection = null
-          inSpaceWarfarePinSection = title.toLowerCase().includes('space warfare pin')
+          // Also check for Space Warfare Pin at level 2
+          if (title.toLowerCase().includes('space warfare pin')) {
+            inSpaceWarfarePinSection = true
+          }
         } else if (level === 3) {
           if (currentSection) {
             currentSubsection = this.createSubsection(title, currentSection)
@@ -84,8 +94,10 @@ export class CourseParser {
       }
 
       // Handle Space Warfare Pin special rules
-      if (inSpaceWarfarePinSection && (line.includes('OSWP') || line.includes('ESWP'))) {
-        this.parseSpaceWarfarePinTable(line, lines, i)
+      if (inSpaceWarfarePinSection) {
+        if (line.includes('|') && !line.includes('---')) {
+          this.parseSpaceWarfarePinTable(line, lines, i)
+        }
       }
     }
 
@@ -237,41 +249,50 @@ export class CourseParser {
 
   private parseSpaceWarfarePinTable(line: string, allLines: string[], currentIndex: number): void {
     // Handle the complex Space Warfare Pin table structure
-    if (line.includes('|') && (line.includes('RMN') || line.includes('RMMC'))) {
+    if (line.includes('|') && !line.includes('---') && !line.includes('Course')) {
       const cells = line
         .split('|')
         .map((cell) => cell.trim())
         .filter((cell) => cell.length > 0)
 
+      // Skip header rows but process content rows
       if (cells.length >= 2) {
-        // Determine if this is OSWP or ESWP based on context
-        const isOfficer = this.isOfficerSection(allLines, currentIndex)
-        const type: SpecialRuleType = isOfficer ? 'OSWP' : 'ESWP'
+        // Skip pure header rows (that just contain "RMN OSWP", "RMMC OSWP", etc.)
+        const isHeaderRow =
+          cells[0] === 'RMN OSWP' || cells[0] === 'RMN ESWP' || cells[1] === 'RMMC OSWP' || cells[1] === 'RMMC ESWP'
 
-        // Parse RMN requirements
-        if (cells[0] && cells[0].length > 10) {
-          this.specialRules.push({
-            id: uuidv4(),
-            type: type,
-            name: `RMN ${type}`,
-            description: cells[0],
-            requirements: this.parseComplexRequirements(cells[0]),
-            branch: 'RMN',
-            rank: isOfficer ? 'Officer' : 'Enlisted'
-          })
-        }
+        if (!isHeaderRow && (cells[0].length > 20 || cells[1].length > 20)) {
+          // Determine if this is OSWP or ESWP based on context
+          const isOfficer = this.isOfficerSection(allLines, currentIndex)
+          const type: SpecialRuleType = isOfficer ? 'OSWP' : 'ESWP'
 
-        // Parse RMMC requirements
-        if (cells[1] && cells[1].length > 10) {
-          this.specialRules.push({
-            id: uuidv4(),
-            type: type,
-            name: `RMMC ${type}`,
-            description: cells[1],
-            requirements: this.parseComplexRequirements(cells[1]),
-            branch: 'RMMC',
-            rank: isOfficer ? 'Officer' : 'Enlisted'
-          })
+          // Parse RMN requirements (first column)
+          if (cells[0] && cells[0].length > 20) {
+            const requirements = this.parseSpaceWarfarePinRequirements(cells[0], type)
+            this.specialRules.push({
+              id: uuidv4(),
+              type: type,
+              name: `RMN ${type}`,
+              description: cells[0],
+              requirements: requirements,
+              branch: 'RMN',
+              rank: isOfficer ? 'Officer' : 'Enlisted'
+            })
+          }
+
+          // Parse RMMC requirements (second column)
+          if (cells[1] && cells[1].length > 20) {
+            const requirements = this.parseSpaceWarfarePinRequirements(cells[1], type)
+            this.specialRules.push({
+              id: uuidv4(),
+              type: type,
+              name: `RMMC ${type}`,
+              description: cells[1],
+              requirements: requirements,
+              branch: 'RMMC',
+              rank: isOfficer ? 'Officer' : 'Enlisted'
+            })
+          }
         }
       }
     }
@@ -280,12 +301,71 @@ export class CourseParser {
   private isOfficerSection(lines: string[], currentIndex: number): boolean {
     // Look backwards to find the section header
     for (let i = currentIndex; i >= 0; i--) {
-      const line = lines[i].toLowerCase()
-      if (line.includes('officer')) return true
-      if (line.includes('enlisted')) return false
-      if (line.startsWith('##')) break
+      const line = lines[i].toLowerCase().trim()
+      if (line.includes('officer') || line.startsWith('## officer') || line.startsWith('### officer')) {
+        return true
+      }
+      if (line.includes('enlisted') || line.startsWith('## enlisted') || line.startsWith('### enlisted')) {
+        return false
+      }
+      // Don't break on section headers, keep looking
+      if (line.startsWith('# space warfare pin')) break
     }
-    return false
+
+    return true // Default to officer if unclear
+  }
+
+  private parseSpaceWarfarePinRequirements(requirementText: string, pinType: SpecialRuleType): Requirement[] {
+    const requirements: Requirement[] = []
+
+    // Extract specific course codes first
+    let match
+    const courses = []
+    const regex = new RegExp(COURSE_CODE_REGEX.source, 'g')
+    while ((match = regex.exec(requirementText)) !== null) {
+      courses.push(match[1])
+    }
+
+    // Add course requirements
+    courses.forEach((code) => {
+      requirements.push({
+        type: 'course',
+        code: code,
+        required: true,
+        level: this.extractCourseLevel(code)
+      })
+    })
+
+    // Parse department choice requirements based on pin type
+    if (pinType === 'OSWP') {
+      // OSWP: "at least 1 'D' level from four (4) of the five following departments"
+      if (requirementText.toLowerCase().includes('at least 1') && requirementText.includes('four')) {
+        requirements.push({
+          type: 'department_choice',
+          minimum: 4,
+          totalOptions: 5,
+          level: 'D',
+          departments: ['Astrogation', 'Flight Operations', 'Tactical', 'Engineering', 'Communications'],
+          description: "At least 1 'D' level from 4 of 5 departments",
+          required: true
+        })
+      }
+    } else if (pinType === 'ESWP') {
+      // ESWP: "at least 1 'C' level from three (3) of the following departments"
+      if (requirementText.toLowerCase().includes('at least 1') && requirementText.includes('three')) {
+        requirements.push({
+          type: 'department_choice',
+          minimum: 3,
+          totalOptions: 5,
+          level: 'C',
+          departments: ['Astrogation', 'Flight Operations', 'Tactical', 'Engineering', 'Communications'],
+          description: "At least 1 'C' level from 3 of 5 departments",
+          required: true
+        })
+      }
+    }
+
+    return requirements
   }
 
   private parseComplexRequirements(requirementText: string): Requirement[] {
@@ -396,6 +476,37 @@ export class CourseParser {
 export function parseCourseData(markdownContent: string): ParsedCourseData {
   const parser = new CourseParser(markdownContent)
   const data = parser.parse()
+
+  // Debug logging
+  console.group('🔍 Course Data Parser Debug')
+  console.log('📄 Markdown length:', markdownContent.length)
+  console.log('📚 Total courses parsed:', data.courses.length)
+  console.log('📋 Categories parsed:', data.categories.length)
+  console.log('⚡ Special rules parsed:', data.specialRules.length)
+
+  // Log Space Warfare Pin related courses
+  const swpCourses = data.courses.filter((course) => {
+    const code = course.code
+    return (
+      code === 'SIA-SRN-31C' ||
+      code === 'SIA-SRN-01C' ||
+      code === 'SIA-SRN-01A' ||
+      code === 'SIA-SRN-04A' ||
+      code.match(/^SIA-SRN-(05|06|07|35|08|09|10|27|28|29|32|14|15|16|17|18|19|11|12|13)[CD]$/)
+    )
+  })
+  console.log('🏅 Space Warfare Pin related courses found:', swpCourses.length)
+  console.table(swpCourses.map((c) => ({ code: c.code, name: c.name })))
+
+  // Log special rules
+  if (data.specialRules.length > 0) {
+    console.log('📜 Special Rules:')
+    data.specialRules.forEach((rule) => {
+      console.log(`  - ${rule.name}: ${rule.description}`)
+    })
+  }
+
+  console.groupEnd()
 
   // Create additional maps and dependency graph
   const courseMap = new Map<string, Course>()

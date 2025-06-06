@@ -93,6 +93,11 @@ const AchievementItem = styled.div<{ completed: boolean }>`
   border: 1px solid ${(props) => props.theme.colors.border};
 `
 
+const AchievementDescription = styled.div`
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
+`
+
 const QuickStats = styled.div`
   background: ${(props) => props.theme.colors.surface};
   padding: 1rem;
@@ -336,7 +341,7 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
         {achievements.slice(0, 6).map((achievement, index) => (
           <AchievementItem key={index} completed={achievement.completed}>
             <strong>{achievement.title}</strong>
-            <div style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>{achievement.description}</div>
+            <AchievementDescription>{achievement.description}</AchievementDescription>
           </AchievementItem>
         ))}
       </AchievementsList>
