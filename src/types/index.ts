@@ -157,6 +157,7 @@ export type ConnectionType = 'prerequisite' | 'alternative' | 'complex'
 export interface FilterOptions {
   sections?: string[]
   subsections?: string[]
+  departments?: string[]
   levels?: CourseLevel[]
   status?: NodeStatus[]
   search?: string

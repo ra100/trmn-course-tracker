@@ -3,6 +3,136 @@ import styled from 'styled-components'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings, NodeStatus } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
 
+// Helper function to normalize department names for better matching
+const normalizeDepartmentName = (name: string): string | null => {
+  const nameMapping: { [pattern: string]: string } = {
+    // Primary TRMN Departments
+    medical: 'Medical',
+    astrogation: 'Astrogation',
+    communications: 'Communications',
+    engineering: 'Engineering',
+    tactical: 'Tactical',
+    command: 'Command',
+    administration: 'Administration',
+    logistics: 'Logistics',
+
+    // Specific schools/specialties that map to departments
+    'flight operations': 'Flight Operations', // Special case: separate from Astrogation for SWP
+    'fire control': 'Tactical',
+    'electronic warfare': 'Tactical',
+    tracking: 'Tactical',
+    sensor: 'Tactical',
+    missile: 'Tactical',
+    'beam weapons': 'Tactical',
+    gunner: 'Tactical',
+    weapons: 'Tactical',
+
+    // Engineering subcategories
+    impeller: 'Engineering',
+    power: 'Engineering',
+    gravitics: 'Engineering',
+    environmental: 'Engineering',
+    hydroponics: 'Engineering',
+    'damage control': 'Engineering',
+
+    // Communications subcategories
+    'data systems': 'Communications',
+    electronics: 'Communications',
+
+    // Astrogation subcategories
+    helmsman: 'Astrogation',
+    plotting: 'Astrogation',
+    quartermaster: 'Astrogation',
+
+    // Medical subcategories
+    corpsman: 'Medical',
+    'sick berth': 'Medical',
+    surgeon: 'Medical',
+
+    // Command subcategories
+    boatswain: 'Command',
+    'master-at-arms': 'Command',
+    'master at arms': 'Command',
+    operations: 'Command',
+    intelligence: 'Command',
+
+    // Administration subcategories
+    personnelman: 'Administration',
+    yeoman: 'Administration',
+    'navy counselor': 'Administration',
+    legalman: 'Administration',
+    disbursing: 'Administration',
+    postal: 'Administration',
+    "ship's serviceman": 'Administration',
+    steward: 'Administration'
+  }
+
+  const nameLower = name.toLowerCase()
+  for (const [pattern, standardName] of Object.entries(nameMapping)) {
+    if (nameLower.includes(pattern)) {
+      return standardName
+    }
+  }
+
+  return null
+}
+
+// Helper function to map section names to departments when normalization fails
+const mapSectionToDepartment = (sectionName: string): string | null => {
+  if (!sectionName) return null
+
+  const sectionLower = sectionName.toLowerCase()
+
+  // Map common section patterns to departments
+  if (sectionLower.includes('medical')) return 'Medical'
+  if (sectionLower.includes('tactical')) return 'Tactical'
+  if (sectionLower.includes('engineering')) return 'Engineering'
+  if (sectionLower.includes('communication')) return 'Communications'
+  if (sectionLower.includes('astrogation')) return 'Astrogation'
+  if (sectionLower.includes('command')) return 'Command'
+  if (sectionLower.includes('administration')) return 'Administration'
+  if (sectionLower.includes('logistics')) return 'Logistics'
+
+  // SINA TSC sections
+  if (sectionLower.includes('sina tsc medical')) return 'Medical'
+  if (sectionLower.includes('sina tsc tactical')) return 'Tactical'
+  if (sectionLower.includes('sina tsc engineering')) return 'Engineering'
+  if (sectionLower.includes('sina tsc communications')) return 'Communications'
+  if (sectionLower.includes('sina tsc astrogation')) return 'Astrogation'
+  if (sectionLower.includes('sina tsc command')) return 'Command'
+  if (sectionLower.includes('sina tsc administration')) return 'Administration'
+
+  return null
+}
+
+// Helper function to check if a course belongs to a department
+const courseMatchesDepartment = (course: Course, department: string): boolean => {
+  const deptLower = department.toLowerCase()
+
+  // 1. Check explicit department assignments first (most reliable)
+  if (course.primaryDepartment && course.primaryDepartment.toLowerCase() === deptLower) {
+    return true
+  }
+  if (course.departments && course.departments.some((d: string) => d.toLowerCase() === deptLower)) {
+    return true
+  }
+
+  // 2. Check normalized subsection names
+  if (course.subsection) {
+    const normalizedDept = normalizeDepartmentName(course.subsection)
+    if (normalizedDept && normalizedDept.toLowerCase() === deptLower) {
+      return true
+    }
+  }
+
+  // 3. Check direct section/subsection matches as fallback
+  const sectionLower = course.section.toLowerCase()
+  const subsectionLower = course.subsection.toLowerCase()
+
+  // Direct matches
+  return sectionLower.includes(deptLower) || subsectionLower.includes(deptLower)
+}
+
 const TreeContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -204,6 +334,37 @@ const StatLabel = styled.div`
   color: ${(props) => props.theme.colors.textSecondary};
 `
 
+const GroupingToggle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: ${(props) => props.theme.colors.surface};
+  border-bottom: 1px solid ${(props) => props.theme.colors.border};
+`
+
+const GroupingButton = styled.button<{ $active: boolean }>`
+  padding: 0.5rem 1rem;
+  border: 1px solid ${(props) => props.theme.colors.border};
+  border-radius: 4px;
+  background: ${(props) => (props.$active ? props.theme.colors.primary : props.theme.colors.background)};
+  color: ${(props) => (props.$active ? 'white' : props.theme.colors.text)};
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${(props) => (props.$active ? props.theme.colors.primaryHover : props.theme.colors.surface)};
+  }
+`
+
+const GroupingLabel = styled.span`
+  font-size: 0.9rem;
+  color: ${(props) => props.theme.colors.text};
+  font-weight: 500;
+`
+
 interface SkillTreeViewProps {
   courseData: ParsedCourseData
   userProgress: UserProgress
@@ -225,6 +386,7 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([])
+  const [groupingMode, setGroupingMode] = useState<'section' | 'department'>('section')
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -251,6 +413,31 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
       // Section filter
       if (filters.sections && filters.sections.length > 0) {
         if (!filters.sections.includes(course.section)) return false
+      }
+
+      // Department filter
+      if (filters.departments && filters.departments.length > 0) {
+        // Use same logic as department grouping to determine course's department
+        let courseDepartment: string
+        if (course.primaryDepartment) {
+          courseDepartment = course.primaryDepartment
+        } else if (course.departments && course.departments.length > 0) {
+          courseDepartment = course.departments[0]
+        } else {
+          const normalizedFromSubsection = course.subsection ? normalizeDepartmentName(course.subsection) : null
+          if (normalizedFromSubsection) {
+            courseDepartment = normalizedFromSubsection
+          } else {
+            const normalizedFromSection = course.section ? normalizeDepartmentName(course.section) : null
+            if (normalizedFromSection) {
+              courseDepartment = normalizedFromSection
+            } else {
+              courseDepartment = mapSectionToDepartment(course.section) || 'Other'
+            }
+          }
+        }
+
+        if (!filters.departments.includes(courseDepartment)) return false
       }
 
       // Level filter
@@ -308,6 +495,10 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
   }
 
   const renderCoursesByCategory = () => {
+    if (groupingMode === 'department') {
+      return renderCoursesByDepartment()
+    }
+
     const categorizedCourses = new Map<string, Map<string, Course[]>>()
 
     filteredCourses.forEach((course) => {
@@ -357,6 +548,103 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
     ))
   }
 
+  const renderCoursesByDepartment = () => {
+    const departmentCourses = new Map<string, Course[]>()
+
+    // Extract all unique departments from the filtered courses
+    const allDepartments = new Set<string>()
+
+    filteredCourses.forEach((course) => {
+      // Check explicit department assignments first
+      if (course.primaryDepartment) {
+        allDepartments.add(course.primaryDepartment)
+      }
+      if (course.departments) {
+        course.departments.forEach((dept) => allDepartments.add(dept))
+      }
+
+      // Check normalized department from subsection
+      if (course.subsection) {
+        const normalizedDept = normalizeDepartmentName(course.subsection)
+        if (normalizedDept) {
+          allDepartments.add(normalizedDept)
+        }
+      }
+
+      // Fallback to section as department
+      if (course.section) {
+        allDepartments.add(course.section)
+      }
+    })
+
+    // Group courses by department
+    filteredCourses.forEach((course) => {
+      let assignedDepartment: string
+
+      // Prioritized department assignment
+      if (course.primaryDepartment) {
+        assignedDepartment = course.primaryDepartment
+      } else if (course.departments && course.departments.length > 0) {
+        assignedDepartment = course.departments[0] // Use first department if multiple
+      } else {
+        // Try to normalize the subsection name to a department
+        const normalizedFromSubsection = course.subsection ? normalizeDepartmentName(course.subsection) : null
+        if (normalizedFromSubsection) {
+          assignedDepartment = normalizedFromSubsection
+        } else {
+          // Try to normalize the section name to a department
+          const normalizedFromSection = course.section ? normalizeDepartmentName(course.section) : null
+          if (normalizedFromSection) {
+            assignedDepartment = normalizedFromSection
+          } else {
+            // Fallback: map common section patterns to departments
+            assignedDepartment = mapSectionToDepartment(course.section) || 'Other'
+          }
+        }
+      }
+
+      // Add course to its assigned department
+      if (!departmentCourses.has(assignedDepartment)) {
+        departmentCourses.set(assignedDepartment, [])
+      }
+      departmentCourses.get(assignedDepartment)!.push(course)
+    })
+
+    // Sort departments and render
+    const sortedDepartments = Array.from(departmentCourses.keys()).sort()
+
+    return sortedDepartments.map((departmentName) => {
+      const courses = departmentCourses.get(departmentName)!
+      return (
+        <CategorySection key={departmentName}>
+          <CategoryHeader>{departmentName}</CategoryHeader>
+          <SubsectionContainer>
+            <CourseGrid>
+              {courses.map((course) => {
+                const status = getCourseStatus(course)
+                return (
+                  <CourseNode
+                    key={course.id}
+                    status={status}
+                    onClick={() => handleCourseClick(course)}
+                    onDoubleClick={() => handleCourseDoubleClick(course)}
+                    title={`Double-click to ${course.completed ? 'mark incomplete' : 'mark complete'}`}
+                  >
+                    <CourseCode>{course.code}</CourseCode>
+                    <CourseName>{course.name}</CourseName>
+                    {course.level && <CourseLevel>{course.level}</CourseLevel>}
+                    <Prerequisites>{getPrerequisiteText(course)}</Prerequisites>
+                    <StatusIcon status={status} />
+                  </CourseNode>
+                )
+              })}
+            </CourseGrid>
+          </SubsectionContainer>
+        </CategorySection>
+      )
+    })
+  }
+
   const stats = getStats()
 
   return (
@@ -369,6 +657,16 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </SearchContainer>
+
+      <GroupingToggle>
+        <GroupingLabel>Group by:</GroupingLabel>
+        <GroupingButton $active={groupingMode === 'section'} onClick={() => setGroupingMode('section')}>
+          Section
+        </GroupingButton>
+        <GroupingButton $active={groupingMode === 'department'} onClick={() => setGroupingMode('department')}>
+          Department
+        </GroupingButton>
+      </GroupingToggle>
 
       <StatsContainer>
         <StatItem>

@@ -296,15 +296,65 @@ const extractDepartmentsFromCourses = (courseData: ParsedCourseData): string[] =
 // Helper function to normalize department names for better matching
 const normalizeDepartmentName = (name: string): string | null => {
   const nameMapping: { [pattern: string]: string } = {
-    'flight operations': 'Flight Operations',
-    tactical: 'Tactical',
+    // Primary TRMN Departments
+    medical: 'Medical',
     astrogation: 'Astrogation',
-    engineering: 'Engineering',
     communications: 'Communications',
+    engineering: 'Engineering',
+    tactical: 'Tactical',
+    command: 'Command',
+    administration: 'Administration',
+    logistics: 'Logistics',
+
+    // Specific schools/specialties that map to departments
+    'flight operations': 'Flight Operations', // Special case: separate from Astrogation for SWP
     'fire control': 'Tactical',
     'electronic warfare': 'Tactical',
-    'power systems': 'Engineering',
-    weapons: 'Tactical'
+    tracking: 'Tactical',
+    sensor: 'Tactical',
+    missile: 'Tactical',
+    'beam weapons': 'Tactical',
+    gunner: 'Tactical',
+    weapons: 'Tactical',
+
+    // Engineering subcategories
+    impeller: 'Engineering',
+    power: 'Engineering',
+    gravitics: 'Engineering',
+    environmental: 'Engineering',
+    hydroponics: 'Engineering',
+    'damage control': 'Engineering',
+
+    // Communications subcategories
+    'data systems': 'Communications',
+    electronics: 'Communications',
+
+    // Astrogation subcategories
+    helmsman: 'Astrogation',
+    plotting: 'Astrogation',
+    quartermaster: 'Astrogation',
+
+    // Medical subcategories
+    corpsman: 'Medical',
+    'sick berth': 'Medical',
+    surgeon: 'Medical',
+
+    // Command subcategories
+    boatswain: 'Command',
+    'master-at-arms': 'Command',
+    'master at arms': 'Command',
+    operations: 'Command',
+    intelligence: 'Command',
+
+    // Administration subcategories
+    personnelman: 'Administration',
+    yeoman: 'Administration',
+    'navy counselor': 'Administration',
+    legalman: 'Administration',
+    disbursing: 'Administration',
+    postal: 'Administration',
+    "ship's serviceman": 'Administration',
+    steward: 'Administration'
   }
 
   const nameLower = name.toLowerCase()

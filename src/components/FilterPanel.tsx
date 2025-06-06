@@ -2,6 +2,145 @@ import React from 'react'
 import styled from 'styled-components'
 import { FilterOptions, ParsedCourseData, CourseLevel, NodeStatus } from '../types'
 
+// Helper function to map section names to departments when normalization fails
+const mapSectionToDepartment = (sectionName: string): string | null => {
+  if (!sectionName) return null
+
+  const sectionLower = sectionName.toLowerCase()
+
+  // Map common section patterns to departments
+  if (sectionLower.includes('medical')) return 'Medical'
+  if (sectionLower.includes('tactical')) return 'Tactical'
+  if (sectionLower.includes('engineering')) return 'Engineering'
+  if (sectionLower.includes('communication')) return 'Communications'
+  if (sectionLower.includes('astrogation')) return 'Astrogation'
+  if (sectionLower.includes('command')) return 'Command'
+  if (sectionLower.includes('administration')) return 'Administration'
+  if (sectionLower.includes('logistics')) return 'Logistics'
+
+  // SINA TSC sections
+  if (sectionLower.includes('sina tsc medical')) return 'Medical'
+  if (sectionLower.includes('sina tsc tactical')) return 'Tactical'
+  if (sectionLower.includes('sina tsc engineering')) return 'Engineering'
+  if (sectionLower.includes('sina tsc communications')) return 'Communications'
+  if (sectionLower.includes('sina tsc astrogation')) return 'Astrogation'
+  if (sectionLower.includes('sina tsc command')) return 'Command'
+  if (sectionLower.includes('sina tsc administration')) return 'Administration'
+
+  return null
+}
+
+// Helper function to extract unique departments from course data with normalization
+const extractDepartmentsFromCourses = (courseData: ParsedCourseData): string[] => {
+  const departments = new Set<string>()
+
+  courseData.courses.forEach((course) => {
+    let assignedDepartment: string | null = null
+
+    // Prioritized department assignment (same logic as SkillTreeView)
+    if (course.primaryDepartment) {
+      assignedDepartment = course.primaryDepartment
+    } else if (course.departments && course.departments.length > 0) {
+      assignedDepartment = course.departments[0]
+    } else {
+      // Try to normalize the subsection name to a department
+      const normalizedFromSubsection = course.subsection ? normalizeDepartmentName(course.subsection) : null
+      if (normalizedFromSubsection) {
+        assignedDepartment = normalizedFromSubsection
+      } else {
+        // Try to normalize the section name to a department
+        const normalizedFromSection = course.section ? normalizeDepartmentName(course.section) : null
+        if (normalizedFromSection) {
+          assignedDepartment = normalizedFromSection
+        } else {
+          // Fallback: map common section patterns to departments
+          assignedDepartment = mapSectionToDepartment(course.section)
+        }
+      }
+    }
+
+    if (assignedDepartment) {
+      departments.add(assignedDepartment)
+    }
+  })
+
+  return Array.from(departments).sort()
+}
+
+// Helper function to normalize department names for better matching
+const normalizeDepartmentName = (name: string): string | null => {
+  const nameMapping: { [pattern: string]: string } = {
+    // Primary TRMN Departments
+    medical: 'Medical',
+    astrogation: 'Astrogation',
+    communications: 'Communications',
+    engineering: 'Engineering',
+    tactical: 'Tactical',
+    command: 'Command',
+    administration: 'Administration',
+    logistics: 'Logistics',
+
+    // Specific schools/specialties that map to departments
+    'flight operations': 'Flight Operations', // Special case: separate from Astrogation for SWP
+    'fire control': 'Tactical',
+    'electronic warfare': 'Tactical',
+    tracking: 'Tactical',
+    sensor: 'Tactical',
+    missile: 'Tactical',
+    'beam weapons': 'Tactical',
+    gunner: 'Tactical',
+    weapons: 'Tactical',
+
+    // Engineering subcategories
+    impeller: 'Engineering',
+    power: 'Engineering',
+    gravitics: 'Engineering',
+    environmental: 'Engineering',
+    hydroponics: 'Engineering',
+    'damage control': 'Engineering',
+
+    // Communications subcategories
+    'data systems': 'Communications',
+    electronics: 'Communications',
+
+    // Astrogation subcategories
+    helmsman: 'Astrogation',
+    plotting: 'Astrogation',
+    quartermaster: 'Astrogation',
+
+    // Medical subcategories
+    corpsman: 'Medical',
+    'sick berth': 'Medical',
+    surgeon: 'Medical',
+
+    // Command subcategories
+    boatswain: 'Command',
+    'master-at-arms': 'Command',
+    'master at arms': 'Command',
+    operations: 'Command',
+    intelligence: 'Command',
+
+    // Administration subcategories
+    personnelman: 'Administration',
+    yeoman: 'Administration',
+    'navy counselor': 'Administration',
+    legalman: 'Administration',
+    disbursing: 'Administration',
+    postal: 'Administration',
+    "ship's serviceman": 'Administration',
+    steward: 'Administration'
+  }
+
+  const nameLower = name.toLowerCase()
+  for (const [pattern, standardName] of Object.entries(nameMapping)) {
+    if (nameLower.includes(pattern)) {
+      return standardName
+    }
+  }
+
+  return null
+}
+
 const PanelContainer = styled.div`
   padding: 1.5rem;
   border-bottom: 1px solid ${(props) => props.theme.colors.border};
@@ -95,6 +234,7 @@ interface FilterPanelProps {
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, onFilterChange }) => {
   const sections = Array.from(new Set(courseData.courses.map((c) => c.section))).sort()
+  const departments = extractDepartmentsFromCourses(courseData)
   const levels: CourseLevel[] = ['A', 'C', 'D', 'W']
   const statuses: NodeStatus[] = ['completed', 'available', 'locked']
 
@@ -105,6 +245,18 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
     onFilterChange({
       ...filters,
       sections: newSections.length > 0 ? newSections : undefined
+    })
+  }
+
+  const handleDepartmentChange = (department: string, checked: boolean) => {
+    const currentDepartments = filters.departments || []
+    const newDepartments = checked
+      ? [...currentDepartments, department]
+      : currentDepartments.filter((d) => d !== department)
+
+    onFilterChange({
+      ...filters,
+      departments: newDepartments.length > 0 ? newDepartments : undefined
     })
   }
 
@@ -135,6 +287,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
   const getFilterCount = () => {
     let count = 0
     if (filters.sections) count += filters.sections.length
+    if (filters.departments) count += filters.departments.length
     if (filters.levels) count += filters.levels.length
     if (filters.status) count += filters.status.length
     if (filters.search) count += 1
@@ -177,6 +330,21 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
                 onChange={(e) => handleSectionChange(section, e.target.checked)}
               />
               {section}
+            </CheckboxItem>
+          ))}
+        </CheckboxGroup>
+      </FilterSection>
+
+      <FilterSection>
+        <FilterLabel>Departments</FilterLabel>
+        <CheckboxGroup>
+          {departments.map((department) => (
+            <CheckboxItem key={department}>
+              <Checkbox
+                checked={filters.departments?.includes(department) || false}
+                onChange={(e) => handleDepartmentChange(department, e.target.checked)}
+              />
+              {department}
             </CheckboxItem>
           ))}
         </CheckboxGroup>
