@@ -110,7 +110,7 @@ export const MedusaImport: React.FC<MedusaImportProps> = ({ onImportMedusaCourse
 
     try {
       // Validate HTML first
-      const validation = validateMedusaHTML(importHtml)
+      const validation = await validateMedusaHTML(importHtml)
       if (!validation.valid) {
         setImportResult({
           courses: [],

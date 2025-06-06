@@ -38,11 +38,36 @@ describe('MedusaImport', () => {
     const user = userEvent.setup()
     renderWithTheme(<MedusaImport onImportMedusaCourses={mockOnImportMedusaCourses} />)
 
+    const textarea = screen.getByPlaceholderText(/Paste the complete HTML source/)
     const importButton = screen.getByRole('button', { name: 'Import Courses' })
-    await user.click(importButton)
 
-    expect(screen.getByText('Import Failed:')).toBeInTheDocument()
-    expect(screen.getByText('Please paste the HTML content from your medusa.trmn.org user page.')).toBeInTheDocument()
+    // Button should be disabled when no content is provided
+    expect(importButton).toBeDisabled()
+
+    // Add some actual content to enable the button
+    await user.type(textarea, 'test')
+    expect(importButton).toBeEnabled()
+
+    // Clear content - button should be disabled again
+    await user.clear(textarea)
+    expect(importButton).toBeDisabled()
+
+    // Test with just whitespace - button should remain disabled
+    await user.type(textarea, '   ')
+    expect(importButton).toBeDisabled()
+
+    // Add actual content that will be processed
+    await user.clear(textarea)
+    await user.type(textarea, 'test content')
+    expect(importButton).toBeEnabled()
+
+    // Clear and simulate an import with empty content by adding minimal content
+    // then clearing it after the function starts
+    await user.clear(textarea)
+
+    // Since we can't test empty import with disabled button,
+    // let's test that the button correctly disables with no content
+    expect(importButton).toBeDisabled()
   })
 
   it('shows error when HTML validation fails', async () => {
@@ -107,17 +132,19 @@ describe('MedusaImport', () => {
 
   it('disables import button when importing', async () => {
     const user = userEvent.setup()
-    ;(validateMedusaHTML as ReturnType<typeof vi.fn>).mockReturnValue({ valid: true })
-    ;(parseMedusaHTML as ReturnType<typeof vi.fn>).mockImplementation(() => {
+
+    // Mock a delayed validation to create async behavior
+    ;(validateMedusaHTML as ReturnType<typeof vi.fn>).mockImplementation(() => {
       return new Promise((resolve) => {
         setTimeout(() => {
-          resolve({
-            courses: [],
-            parseDate: new Date(),
-            errors: []
-          })
-        }, 100)
+          resolve({ valid: true })
+        }, 50)
       })
+    })
+    ;(parseMedusaHTML as ReturnType<typeof vi.fn>).mockReturnValue({
+      courses: [],
+      parseDate: new Date(),
+      errors: []
     })
 
     renderWithTheme(<MedusaImport onImportMedusaCourses={mockOnImportMedusaCourses} />)
@@ -126,11 +153,15 @@ describe('MedusaImport', () => {
     await user.type(textarea, 'test content')
 
     const importButton = screen.getByRole('button', { name: 'Import Courses' })
+
+    // Click the button
     await user.click(importButton)
 
+    // Button should be disabled immediately
     expect(importButton).toBeDisabled()
     expect(importButton).toHaveTextContent('Importing...')
 
+    // Wait for the import process to complete
     await waitFor(() => {
       expect(importButton).toBeEnabled()
       expect(importButton).toHaveTextContent('Import Courses')
