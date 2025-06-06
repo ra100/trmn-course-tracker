@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { ParsedCourseData, UserProgress } from '../types'
 
@@ -8,8 +8,6 @@ const TrackerContainer = styled.div`
   border: 1px solid ${(props) => props.theme.colors.border};
   box-shadow: ${(props) => props.theme.shadows.medium};
   margin: 1rem;
-  overflow: hidden;
-  min-height: 200px;
 `
 
 const TrackerHeader = styled.div`
@@ -21,27 +19,36 @@ const TrackerHeader = styled.div`
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  border-radius: 8px 8px 0 0;
 `
 
 const PinIcon = styled.div`
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   background: gold;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: #000;
   font-weight: bold;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 `
 
 const TrackerContent = styled.div`
   padding: 1rem;
+  overflow: visible;
 `
 
 const PinSection = styled.div`
   margin-bottom: 2rem;
+  padding: 1.5rem;
+  border: 1px solid ${(props) => props.theme.colors.border};
+  border-radius: 8px;
+  background: ${(props) => props.theme.colors.background};
+  overflow: visible;
 
   &:last-child {
     margin-bottom: 0;
@@ -51,10 +58,20 @@ const PinSection = styled.div`
 const PinTitle = styled.h3`
   color: ${(props) => props.theme.colors.text};
   margin: 0 0 1rem 0;
-  font-size: 1.2rem;
+  font-size: 1rem;
   display: flex;
+  flex-flow: column;
   align-items: center;
   gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.border}40;
+  }
 `
 
 const PinBadge = styled.div<{ $earned: boolean }>`
@@ -66,8 +83,21 @@ const PinBadge = styled.div<{ $earned: boolean }>`
   color: white;
 `
 
-const RequirementGroup = styled.div`
-  margin-bottom: 1rem;
+const RequirementGroup = styled.div<{ $expanded: boolean }>`
+  margin-bottom: 1.5rem;
+  background: ${(props) => props.theme.colors.surface};
+  border-radius: 6px;
+  overflow: visible;
+  max-height: ${(props) => (props.$expanded ? 'none' : '0')};
+  opacity: ${(props) => (props.$expanded ? '1' : '0')};
+  transition: all 0.3s ease;
+
+  ${(props) =>
+    !props.$expanded &&
+    `
+    margin-bottom: 0;
+    pointer-events: none;
+  `}
 `
 
 const RequirementTitle = styled.h4`
@@ -84,18 +114,30 @@ const RequirementList = styled.ul`
 
 const RequirementItem = styled.li<{ $completed: boolean }>`
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  margin-bottom: 0.25rem;
-  border-radius: 4px;
-  background: ${(props) => (props.$completed ? `${props.theme.colors.success}20` : `${props.theme.colors.surface}`)};
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  background: ${(props) => (props.$completed ? `${props.theme.colors.success}15` : `${props.theme.colors.background}`)};
   border: 1px solid ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.border)};
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 `
 
 const StatusIcon = styled.div<{ $completed: boolean }>`
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
   border-radius: 50%;
   background: ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.secondary)};
   color: white;
@@ -104,11 +146,24 @@ const StatusIcon = styled.div<{ $completed: boolean }>`
   justify-content: center;
   font-size: 0.8rem;
   font-weight: bold;
+  flex-shrink: 0;
+  border: 2px solid ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.border)};
 `
 
 const RequirementText = styled.span<{ $completed: boolean }>`
   color: ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.text)};
-  font-weight: ${(props) => (props.$completed ? 'bold' : 'normal')};
+  font-weight: ${(props) => (props.$completed ? '600' : 'normal')};
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+  word-wrap: break-word;
+`
+
+const PinHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 `
 
 const ProgressBar = styled.div`
@@ -117,10 +172,11 @@ const ProgressBar = styled.div`
 
 const ProgressBarContainer = styled.div`
   width: 100%;
-  height: 8px;
+  height: 10px;
   background: ${(props) => props.theme.colors.border};
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 `
 
 const ProgressBarFill = styled.div<{ progress: number }>`
@@ -131,7 +187,9 @@ const ProgressBarFill = styled.div<{ progress: number }>`
     ${(props) => props.theme.colors.primary},
     ${(props) => props.theme.colors.success}
   );
-  transition: width 0.3s ease;
+  border-radius: 8px;
+  transition: width 0.5s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 `
 
 const ProgressText = styled.div`
@@ -141,6 +199,23 @@ const ProgressText = styled.div`
   margin-top: 0.5rem;
   font-size: 0.9rem;
   color: ${(props) => props.theme.colors.textSecondary};
+`
+
+const ExpandIcon = styled.div<{ $expanded: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  width: 20px;
+  min-height: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: ${(props) => props.theme.colors.primary};
+  color: white;
+  font-size: 0.8rem;
+  margin-left: auto;
+  transform: rotate(${(props) => (props.$expanded ? '180deg' : '0deg')});
+  transition: transform 0.3s ease;
 `
 
 interface SpaceWarfarePinTrackerProps {
@@ -170,6 +245,21 @@ interface PinProgress {
 }
 
 export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ courseData, userProgress }) => {
+  const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
+    OSWP: true,
+    ESWP: true
+  })
+
+  // Debug: Log the data being received
+  console.log('SpaceWarfarePinTracker - courseData.specialRules:', courseData.specialRules)
+  console.log('SpaceWarfarePinTracker - userProgress:', userProgress)
+
+  const toggleSection = (sectionType: string) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [sectionType]: !prev[sectionType]
+    }))
+  }
   // Helper function to extract level from course code
   const extractLevelFromCourseCode = (courseCode: string): string | undefined => {
     const match = courseCode.match(/([ACDW])$/)
@@ -245,12 +335,20 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
     const oswpRule = courseData.specialRules.find((rule) => rule.type === 'OSWP' && rule.branch === 'RMN')
 
     if (!oswpRule) {
+      console.log('No OSWP rule found in specialRules')
       // Fallback to hardcoded if not found in parsed data
       return {
         name: 'Officer Space Warfare Pin (OSWP)',
         type: 'OSWP',
         earned: false,
-        requirements: [],
+        requirements: [
+          {
+            id: 'fallback-info',
+            name: 'No OSWP requirements found in course data. Please check if the course data includes Space Warfare Pin rules.',
+            type: 'course' as const,
+            completed: false
+          }
+        ],
         overallProgress: 0
       }
     }
@@ -364,12 +462,20 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
     const eswpRule = courseData.specialRules.find((rule) => rule.type === 'ESWP' && rule.branch === 'RMN')
 
     if (!eswpRule) {
+      console.log('No ESWP rule found in specialRules')
       // Fallback to hardcoded if not found in parsed data
       return {
         name: 'Enlisted Space Warfare Pin (ESWP)',
         type: 'ESWP',
         earned: false,
-        requirements: [],
+        requirements: [
+          {
+            id: 'fallback-info',
+            name: 'No ESWP requirements found in course data. Please check if the course data includes Space Warfare Pin rules.',
+            type: 'course' as const,
+            completed: false
+          }
+        ],
         overallProgress: 0
       }
     }
@@ -533,37 +639,42 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
     return null
   }
 
-  const renderPinSection = (progress: PinProgress) => (
-    <PinSection key={progress.type}>
-      <PinTitle>
-        <PinIcon>{progress.type === 'OSWP' ? 'O' : 'E'}</PinIcon>
-        {progress.name} asdfasdf
-        <PinBadge $earned={progress.earned}>{progress.earned ? 'EARNED' : 'IN PROGRESS'}</PinBadge>
-      </PinTitle>
+  const renderPinSection = (progress: PinProgress) => {
+    const isExpanded = expandedSections[progress.type]
 
-      <RequirementGroup>
-        asdfasdf
-        <RequirementTitle>Requirements:</RequirementTitle>
-        <RequirementList>{progress.requirements.map(renderRequirement)}</RequirementList>
-      </RequirementGroup>
+    return (
+      <PinSection key={progress.type}>
+        <PinTitle onClick={() => toggleSection(progress.type)}>
+          <PinHeader>
+            {progress.name}
+            <ExpandIcon $expanded={isExpanded}>▼</ExpandIcon>
+          </PinHeader>
+          <PinBadge $earned={progress.earned}>{progress.earned ? 'EARNED' : 'IN PROGRESS'}</PinBadge>
+        </PinTitle>
 
-      <ProgressBar>
-        <ProgressBarContainer>
-          <ProgressBarFill progress={progress.overallProgress} />
-        </ProgressBarContainer>
-        <ProgressText>
-          <span>Overall Progress</span>
-          <span>{Math.round(progress.overallProgress)}%</span>
-        </ProgressText>
-      </ProgressBar>
-    </PinSection>
-  )
+        <RequirementGroup $expanded={isExpanded}>
+          <RequirementTitle>Requirements:</RequirementTitle>
+          <RequirementList>{progress.requirements.map(renderRequirement)}</RequirementList>
+        </RequirementGroup>
+
+        <ProgressBar>
+          <ProgressBarContainer>
+            <ProgressBarFill progress={progress.overallProgress} />
+          </ProgressBarContainer>
+          <ProgressText>
+            <span>Overall Progress</span>
+            <span>{Math.round(progress.overallProgress)}%</span>
+          </ProgressText>
+        </ProgressBar>
+      </PinSection>
+    )
+  }
 
   return (
     <TrackerContainer>
       <TrackerHeader>
         <PinIcon>★</PinIcon>
-        RMN Space Warfare Pin Progress
+        Space Warfare Pin
       </TrackerHeader>
       <TrackerContent>
         {renderPinSection(oswpProgress)}

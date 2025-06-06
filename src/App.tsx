@@ -21,7 +21,7 @@ const AppContainer = styled.div`
 `
 
 const Sidebar = styled.div`
-  width: 300px;
+  width: 350px;
   background-color: ${(props) => props.theme.colors.backgroundSecondary};
   color: ${(props) => props.theme.colors.text};
   display: flex;
