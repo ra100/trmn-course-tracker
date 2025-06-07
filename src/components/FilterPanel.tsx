@@ -239,20 +239,9 @@ interface FilterPanelProps {
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, onFilterChange }) => {
   const t = useT()
-  const sections = Array.from(new Set(courseData.courses.map((c) => c.section))).sort()
   const departments = extractDepartmentsFromCourses(courseData)
   const levels: CourseLevel[] = ['A', 'C', 'D', 'W']
   const statuses: NodeStatus[] = ['completed', 'in_progress', 'waiting_grade', 'available', 'locked']
-
-  const handleSectionChange = (section: string, checked: boolean) => {
-    const currentSections = filters.sections || []
-    const newSections = checked ? [...currentSections, section] : currentSections.filter((s) => s !== section)
-
-    onFilterChange({
-      ...filters,
-      sections: newSections.length > 0 ? newSections : undefined
-    })
-  }
 
   const handleDepartmentChange = (department: string, checked: boolean) => {
     const currentDepartments = filters.departments || []
@@ -292,7 +281,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
 
   const getFilterCount = () => {
     let count = 0
-    if (filters.sections) count += filters.sections.length
     if (filters.departments) count += filters.departments.length
     if (filters.levels) count += filters.levels.length
     if (filters.status) count += filters.status.length
@@ -355,21 +343,6 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
                 onChange={(e) => handleDepartmentChange(department, e.target.checked)}
               />
               {department}
-            </CheckboxItem>
-          ))}
-        </CheckboxGroup>
-      </FilterSection>
-
-      <FilterSection>
-        <FilterLabel>{t.filters.sections}</FilterLabel>
-        <CheckboxGroup>
-          {sections.map((section) => (
-            <CheckboxItem key={section}>
-              <Checkbox
-                checked={filters.sections?.includes(section) || false}
-                onChange={(e) => handleSectionChange(section, e.target.checked)}
-              />
-              {section}
             </CheckboxItem>
           ))}
         </CheckboxGroup>

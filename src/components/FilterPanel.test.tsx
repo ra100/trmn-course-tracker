@@ -73,7 +73,6 @@ describe('FilterPanel', () => {
     )
 
     expect(screen.getByText('Filters')).toBeInTheDocument()
-    expect(screen.getByText('Sections')).toBeInTheDocument()
     expect(screen.getByText('Departments')).toBeInTheDocument()
     expect(screen.getByText('Levels')).toBeInTheDocument()
     expect(screen.getByText('Status')).toBeInTheDocument()
@@ -173,8 +172,7 @@ describe('FilterPanel', () => {
 
   it('clears all filters when clear button is clicked', () => {
     const filtersWithStatus: FilterOptions = {
-      status: ['in_progress', 'waiting_grade'],
-      sections: ['Tactical School']
+      status: ['in_progress', 'waiting_grade']
     }
 
     renderWithTheme(
@@ -207,15 +205,6 @@ describe('FilterPanel', () => {
     expect(mockOnFilterChange).toHaveBeenCalledWith({
       status: ['completed']
     })
-  })
-
-  it('displays sections from course data', () => {
-    renderWithTheme(
-      <FilterPanel filters={defaultFilters} courseData={mockCourseData} onFilterChange={mockOnFilterChange} />
-    )
-
-    expect(screen.getByText('Engineering School')).toBeInTheDocument()
-    expect(screen.getByText('Tactical School')).toBeInTheDocument()
   })
 
   it('displays course levels', () => {
