@@ -168,6 +168,10 @@ export const enTranslations: TranslationStrings = {
     courseMaster: {
       title: 'Course Master',
       description: 'Complete all available courses'
+    },
+    spaceWarfarePins: {
+      title: 'Space Warfare Pins',
+      description: 'Earn OSWP or ESWP Space Warfare qualifications'
     }
   },
 

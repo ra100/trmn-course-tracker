@@ -169,6 +169,10 @@ export interface TranslationStrings {
       title: string
       description: string
     }
+    spaceWarfarePins: {
+      title: string
+      description: string
+    }
   }
 
   // Error Messages

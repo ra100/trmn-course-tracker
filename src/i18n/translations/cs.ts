@@ -168,6 +168,10 @@ export const csTranslations: TranslationStrings = {
     courseMaster: {
       title: 'Mistr kurzů',
       description: 'Dokončete všechny dostupné kurzy'
+    },
+    spaceWarfarePins: {
+      title: 'Odznaky vesmírné války',
+      description: 'Získejte OSWP nebo ESWP kvalifikace vesmírné války'
     }
   },
 

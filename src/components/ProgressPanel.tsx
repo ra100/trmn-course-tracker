@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { ParsedCourseData, UserProgress } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
@@ -103,6 +103,157 @@ const AchievementDescription = styled.div`
   margin-top: 0.2rem;
 `
 
+const SpaceWarfareAchievement = styled.div<{ earned: boolean }>`
+  padding: 0.7rem;
+  background: ${(props) => (props.earned ? props.theme.colors.success : props.theme.colors.surface)};
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: ${(props) => (props.earned ? 'white' : props.theme.colors.textSecondary)};
+  border-left: 3px solid ${(props) => (props.earned ? props.theme.colors.success : props.theme.colors.secondary)};
+  border: 1px solid ${(props) => props.theme.colors.border};
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${(props) => (props.earned ? props.theme.colors.success : props.theme.colors.border + '40')};
+  }
+`
+
+const SpaceWarfareHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: between;
+  gap: 0.5rem;
+`
+
+const PinIcon = styled.div`
+  width: 20px;
+  height: 20px;
+  background: gold;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #000;
+  font-weight: bold;
+  flex-shrink: 0;
+`
+
+const ExpandIcon = styled.div<{ $expanded: boolean }>`
+  margin-left: auto;
+  font-size: 0.8rem;
+  transform: rotate(${(props) => (props.$expanded ? '180deg' : '0deg')});
+  transition: transform 0.3s ease;
+`
+
+const SpaceWarfareDetails = styled.div<{ $expanded: boolean }>`
+  max-height: ${(props) => (props.$expanded ? '500px' : '0')};
+  opacity: ${(props) => (props.$expanded ? '1' : '0')};
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-top: ${(props) => (props.$expanded ? '0.5rem' : '0')};
+`
+
+const PinSection = styled.div`
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border: 1px solid ${(props) => props.theme.colors.border};
+  border-radius: 4px;
+  background: ${(props) => props.theme.colors.background};
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
+
+const PinTitle = styled.h4`
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  color: ${(props) => props.theme.colors.text};
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`
+
+const PinBadge = styled.div<{ $earned: boolean }>`
+  padding: 0.2rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  background: ${(props) => (props.$earned ? props.theme.colors.success : props.theme.colors.secondary)};
+  color: white;
+  margin-left: auto;
+`
+
+const RequirementsList = styled.div`
+  font-size: 0.8rem;
+  color: ${(props) => props.theme.colors.textSecondary};
+`
+
+const RequirementItem = styled.div<{ $completed: boolean }>`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.3rem;
+  margin-bottom: 0.2rem;
+  padding: 0.2rem;
+  border-radius: 2px;
+  background: ${(props) => (props.$completed ? `${props.theme.colors.success}10` : 'transparent')};
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
+
+const StatusIcon = styled.div<{ $completed: boolean }>`
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  border-radius: 50%;
+  background: ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.secondary)};
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: bold;
+`
+
+const RequirementText = styled.span<{ $completed: boolean }>`
+  color: ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.textSecondary)};
+  font-weight: ${(props) => (props.$completed ? '500' : 'normal')};
+  line-height: 1.2;
+`
+
+const ProgressBarContainer = styled.div`
+  width: 100%;
+  height: 4px;
+  background: ${(props) => props.theme.colors.border};
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 0.3rem;
+`
+
+const ProgressBarFill = styled.div<{ progress: number }>`
+  width: ${(props) => props.progress}%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    ${(props) => props.theme.colors.primary},
+    ${(props) => props.theme.colors.success}
+  );
+  border-radius: 2px;
+  transition: width 0.5s ease;
+`
+
+const ProgressText = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: ${(props) => props.theme.colors.textSecondary};
+  margin-top: 0.2rem;
+`
+
 const QuickStats = styled.div`
   background: ${(props) => props.theme.colors.surface};
   padding: 1rem;
@@ -137,8 +288,243 @@ interface ProgressPanelProps {
   eligibilityEngine: EligibilityEngine
 }
 
+interface PinRequirement {
+  id: string
+  name: string
+  courseCode?: string
+  type: 'course' | 'department_choice'
+  completed: boolean
+  level?: string
+  departments?: string[]
+  minimum?: number
+  satisfied?: number
+  description?: string
+}
+
+interface PinProgress {
+  name: string
+  type: 'OSWP' | 'ESWP'
+  earned: boolean
+  requirements: PinRequirement[]
+  overallProgress: number
+}
+
 export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, courseData, eligibilityEngine }) => {
   const t = useT()
+  const [spaceWarfareExpanded, setSpaceWarfareExpanded] = useState(false)
+
+  // Space Warfare Pin calculation logic
+  const extractDepartmentsFromCourses = (courseData: ParsedCourseData): Set<string> => {
+    const departments = new Set<string>()
+    courseData.courses.forEach((course) => {
+      if (course.section) {
+        departments.add(course.section.toLowerCase())
+      }
+      if (course.subsection) {
+        departments.add(course.subsection.toLowerCase())
+      }
+    })
+    return departments
+  }
+
+  const normalizeDepartmentName = (name: string): string | null => {
+    const nameMapping: { [pattern: string]: string } = {
+      medical: 'Medical',
+      astrogation: 'Astrogation',
+      communications: 'Communications',
+      engineering: 'Engineering',
+      tactical: 'Tactical',
+      command: 'Command',
+      administration: 'Administration',
+      logistics: 'Logistics',
+      'flight operations': 'Flight Operations',
+      'fire control': 'Tactical',
+      'electronic warfare': 'Tactical',
+      tracking: 'Tactical',
+      sensor: 'Tactical',
+      missile: 'Tactical',
+      'beam weapons': 'Tactical',
+      gunner: 'Tactical',
+      weapons: 'Tactical',
+      impeller: 'Engineering',
+      power: 'Engineering',
+      gravitics: 'Engineering',
+      environmental: 'Engineering',
+      hydroponics: 'Engineering',
+      'damage control': 'Engineering',
+      'data systems': 'Communications',
+      electronics: 'Communications',
+      helmsman: 'Astrogation',
+      plotting: 'Astrogation',
+      quartermaster: 'Astrogation',
+      corpsman: 'Medical',
+      'sick berth': 'Medical',
+      surgeon: 'Medical',
+      boatswain: 'Command',
+      'master-at-arms': 'Command',
+      'master at arms': 'Command',
+      operations: 'Command',
+      intelligence: 'Command',
+      personnelman: 'Administration',
+      yeoman: 'Administration',
+      'navy counselor': 'Administration',
+      legalman: 'Administration',
+      disbursing: 'Administration',
+      postal: 'Administration',
+      "ship's serviceman": 'Administration',
+      steward: 'Administration'
+    }
+
+    const nameLower = name.toLowerCase()
+    for (const [pattern, department] of Object.entries(nameMapping)) {
+      if (nameLower.includes(pattern)) {
+        return department
+      }
+    }
+    return null
+  }
+
+  const courseMatchesDepartment = (course: any, targetDepartment: string, allDepartments: Set<string>): boolean => {
+    const normalizedTarget = normalizeDepartmentName(targetDepartment)
+    if (!normalizedTarget) return false
+
+    const courseSection = normalizeDepartmentName(course.section || '')
+    const courseSubsection = normalizeDepartmentName(course.subsection || '')
+
+    return courseSection === normalizedTarget || courseSubsection === normalizedTarget
+  }
+
+  const findCoursesByDepartmentAndLevel = (
+    courseData: ParsedCourseData,
+    departments: string[],
+    level: string
+  ): string[] => {
+    const allDepartments = extractDepartmentsFromCourses(courseData)
+    return courseData.courses
+      .filter((course) => {
+        const hasCorrectLevel = course.level === level
+        const matchesDepartment = departments.some((dept) => courseMatchesDepartment(course, dept, allDepartments))
+        return hasCorrectLevel && matchesDepartment
+      })
+      .map((course) => course.code)
+  }
+
+  const calculateDepartmentProgress = (
+    courseData: ParsedCourseData,
+    userProgress: UserProgress,
+    requirement: PinRequirement
+  ): { satisfied: number; completed: boolean } => {
+    if (!requirement.departments || !requirement.level) {
+      return { satisfied: 0, completed: false }
+    }
+
+    const allDepartments = extractDepartmentsFromCourses(courseData)
+    const departmentCourses = findCoursesByDepartmentAndLevel(courseData, requirement.departments, requirement.level)
+    const departmentGroups: { [dept: string]: string[] } = {}
+
+    requirement.departments.forEach((dept: string) => {
+      departmentGroups[dept] = departmentCourses.filter((courseCode) => {
+        const course = courseData.courseMap.get(courseCode)
+        return course ? courseMatchesDepartment(course, dept, allDepartments) : false
+      })
+    })
+
+    let satisfiedDepartments = 0
+    Object.entries(departmentGroups).forEach(([dept, courses]) => {
+      const hasAnyCourse = courses.some((course) => userProgress.completedCourses.has(course))
+      if (hasAnyCourse) {
+        satisfiedDepartments++
+      }
+    })
+
+    return {
+      satisfied: satisfiedDepartments,
+      completed: satisfiedDepartments >= (requirement.minimum || 0)
+    }
+  }
+
+  const calculatePinProgress = (
+    courseData: ParsedCourseData,
+    userProgress: UserProgress,
+    pinType: 'OSWP' | 'ESWP',
+    pinNames: { OSWP: string; ESWP: string }
+  ): PinProgress => {
+    const pinRule = courseData.specialRules.find((rule) => rule.type === pinType && rule.branch === 'RMN')
+
+    if (!pinRule) {
+      return {
+        name: pinNames[pinType],
+        type: pinType,
+        earned: false,
+        requirements: [
+          {
+            id: 'fallback-info',
+            name: `No ${pinType} requirements found in course data.`,
+            type: 'course' as const,
+            completed: false
+          }
+        ],
+        overallProgress: 0
+      }
+    }
+
+    const requirements: PinRequirement[] = []
+
+    pinRule.requirements.forEach((req, index) => {
+      if (req.type === 'course' && req.code) {
+        const courseName = courseData.courseMap.get(req.code)?.name || `Course ${req.code}`
+        requirements.push({
+          id: `course-${index}`,
+          name: courseName,
+          courseCode: req.code,
+          type: 'course',
+          completed: userProgress.completedCourses.has(req.code)
+        })
+      } else if (req.type === 'department_choice') {
+        const baseRequirement: PinRequirement = {
+          id: `dept-choice-${index}`,
+          name: req.description || `Department Choice (${req.minimum} of ${req.totalOptions} departments)`,
+          type: 'department_choice',
+          departments: req.departments,
+          minimum: req.minimum,
+          level: req.level,
+          completed: false,
+          satisfied: 0,
+          description: req.description
+        }
+
+        const progress = calculateDepartmentProgress(courseData, userProgress, baseRequirement)
+        baseRequirement.satisfied = progress.satisfied
+        baseRequirement.completed = progress.completed
+
+        requirements.push(baseRequirement)
+      }
+    })
+
+    const completedRequirements = requirements.filter((r) => r.completed).length
+    const overallProgress = requirements.length > 0 ? (completedRequirements / requirements.length) * 100 : 0
+
+    return {
+      name: pinNames[pinType],
+      type: pinType,
+      earned: requirements.length > 0 && requirements.every((r) => r.completed),
+      requirements,
+      overallProgress
+    }
+  }
+
+  const getSpaceWarfarePins = () => {
+    const pinNames = {
+      OSWP: t.spaceWarfare.oswp,
+      ESWP: t.spaceWarfare.eswp
+    }
+
+    const oswpProgress = calculatePinProgress(courseData, userProgress, 'OSWP', pinNames)
+    const eswpProgress = calculatePinProgress(courseData, userProgress, 'ESWP', pinNames)
+
+    return { oswpProgress, eswpProgress }
+  }
+
   const getOverallStats = () => {
     const totalCourses = courseData.courses.length
     const completedCourses = userProgress.completedCourses.size
@@ -279,6 +665,69 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
   const sectionProgress = getSectionProgress()
   const levelProgress = getLevelProgress()
   const achievements = getAchievements()
+  const { oswpProgress, eswpProgress } = getSpaceWarfarePins()
+
+  const toggleSpaceWarfareExpanded = () => {
+    setSpaceWarfareExpanded(!spaceWarfareExpanded)
+  }
+
+  const renderSpaceWarfareRequirement = (req: PinRequirement) => {
+    if (req.type === 'course') {
+      return (
+        <RequirementItem key={req.id} $completed={req.completed}>
+          <StatusIcon $completed={req.completed}>{req.completed ? '✓' : '○'}</StatusIcon>
+          <RequirementText $completed={req.completed}>
+            {req.name} ({req.courseCode})
+          </RequirementText>
+        </RequirementItem>
+      )
+    } else if (req.type === 'department_choice') {
+      const displayText = req.name.startsWith('Department Choice')
+        ? req.name
+        : `Department Choice - ${req.description || req.name}`
+
+      return (
+        <RequirementItem key={req.id} $completed={req.completed}>
+          <StatusIcon $completed={req.completed}>{req.completed ? '✓' : `${req.satisfied}/${req.minimum}`}</StatusIcon>
+          <div style={{ flex: 1 }}>
+            <RequirementText $completed={req.completed}>
+              {displayText} - Progress: {req.satisfied}/{req.minimum} departments
+            </RequirementText>
+            {req.departments && req.departments.length > 0 && (
+              <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '0.1rem' }}>
+                Available: {req.departments.join(', ')}
+              </div>
+            )}
+          </div>
+        </RequirementItem>
+      )
+    }
+    return null
+  }
+
+  const renderPinSection = (progress: PinProgress) => (
+    <PinSection key={progress.type}>
+      <PinTitle>
+        <PinIcon>★</PinIcon>
+        {progress.name}
+        <PinBadge $earned={progress.earned}>
+          {progress.earned ? t.spaceWarfare.eligible : t.spaceWarfare.progress}
+        </PinBadge>
+      </PinTitle>
+      <RequirementsList>{progress.requirements.map(renderSpaceWarfareRequirement)}</RequirementsList>
+      <ProgressBarContainer>
+        <ProgressBarFill progress={progress.overallProgress} />
+      </ProgressBarContainer>
+      <ProgressText>
+        <span>{t.spaceWarfare.progress}</span>
+        <span>{Math.round(progress.overallProgress)}%</span>
+      </ProgressText>
+    </PinSection>
+  )
+
+  // Calculate combined Space Warfare eligibility for the main achievement
+  const combinedSpaceWarfareEarned = oswpProgress.earned || eswpProgress.earned
+  const combinedSpaceWarfareProgress = Math.max(oswpProgress.overallProgress, eswpProgress.overallProgress)
 
   return (
     <PanelContainer>
@@ -362,7 +811,24 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
 
       <PanelTitle>{t.progress.achievements}</PanelTitle>
       <AchievementsList>
-        {achievements.slice(0, 6).map((achievement, index) => (
+        {/* Space Warfare Pin Achievement */}
+        <SpaceWarfareAchievement earned={combinedSpaceWarfareEarned} onClick={toggleSpaceWarfareExpanded}>
+          <SpaceWarfareHeader>
+            <PinIcon>★</PinIcon>
+            <div style={{ flex: 1 }}>
+              <strong>{t.achievements.spaceWarfarePins.title}</strong>
+              <AchievementDescription>{t.achievements.spaceWarfarePins.description}</AchievementDescription>
+            </div>
+            <ExpandIcon $expanded={spaceWarfareExpanded}>▼</ExpandIcon>
+          </SpaceWarfareHeader>
+          <SpaceWarfareDetails $expanded={spaceWarfareExpanded}>
+            {renderPinSection(oswpProgress)}
+            {renderPinSection(eswpProgress)}
+          </SpaceWarfareDetails>
+        </SpaceWarfareAchievement>
+
+        {/* Regular Achievements */}
+        {achievements.slice(0, 5).map((achievement, index) => (
           <AchievementItem key={index} completed={achievement.completed}>
             <strong>{achievement.title}</strong>
             <AchievementDescription>{achievement.description}</AchievementDescription>

@@ -7,7 +7,7 @@ import { CourseDetails } from './components/CourseDetails'
 import { ProgressPanel } from './components/ProgressPanel'
 import { FilterPanel } from './components/FilterPanel'
 import { SettingsPanel } from './components/SettingsPanel'
-import { SpaceWarfarePinTracker } from './components/SpaceWarfarePinTracker'
+
 import { DebugPanel } from './components/DebugPanel'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from './types'
 import { getTheme } from './theme'
@@ -588,7 +588,6 @@ function App() {
             ✕
           </MobileCloseButton>
           <ProgressPanel userProgress={userProgress} courseData={courseData} eligibilityEngine={eligibilityEngine} />
-          <SpaceWarfarePinTracker courseData={courseData} userProgress={userProgress} />
           <DebugPanel courseData={courseData} userProgress={userProgress} />
           <FilterPanel filters={filters} courseData={courseData} onFilterChange={handleFilterChange} />
           <SettingsPanel
