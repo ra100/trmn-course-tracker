@@ -121,6 +121,8 @@ const mockUserProgress: UserProgress = {
   userId: 'test-user',
   completedCourses: new Set(['SIA-SRN-14C']),
   availableCourses: new Set(['SIA-SRN-08C', 'SIA-SRN-14C', 'SIA-SRN-11C']),
+  inProgressCourses: new Set(),
+  waitingGradeCourses: new Set(),
   specialRulesProgress: new Map(),
   lastUpdated: new Date()
 }
@@ -152,7 +154,8 @@ const mockProps = {
   settings: mockSettings,
   eligibilityEngine: mockEligibilityEngine,
   onCourseSelect: vi.fn(),
-  onCourseToggle: vi.fn()
+  onCourseToggle: vi.fn(),
+  onCourseStatusChange: vi.fn()
 }
 
 const renderWithTheme = (component: React.ReactElement) => {

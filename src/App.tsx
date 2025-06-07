@@ -93,6 +93,8 @@ function App() {
     userId: 'default-user',
     completedCourses: new Set<string>(),
     availableCourses: new Set<string>(),
+    inProgressCourses: new Set<string>(),
+    waitingGradeCourses: new Set<string>(),
     specialRulesProgress: new Map(),
     lastUpdated: new Date()
   })
@@ -148,6 +150,8 @@ function App() {
           ...parsed,
           completedCourses: new Set(parsed.completedCourses || []),
           availableCourses: new Set(parsed.availableCourses || []),
+          inProgressCourses: new Set(parsed.inProgressCourses || []),
+          waitingGradeCourses: new Set(parsed.waitingGradeCourses || []),
           specialRulesProgress: new Map(parsed.specialRulesProgress || []),
           lastUpdated: new Date(parsed.lastUpdated || Date.now())
         })
@@ -183,6 +187,8 @@ function App() {
           ...progress,
           completedCourses: Array.from(progress.completedCourses),
           availableCourses: Array.from(progress.availableCourses),
+          inProgressCourses: Array.from(progress.inProgressCourses),
+          waitingGradeCourses: Array.from(progress.waitingGradeCourses),
           specialRulesProgress: Array.from(progress.specialRulesProgress.entries()),
           lastUpdated: progress.lastUpdated.toISOString()
         }
@@ -197,16 +203,72 @@ function App() {
     if (!courseData || !eligibilityEngine) return
 
     const newCompleted = new Set(userProgress.completedCourses)
+    const newInProgress = new Set(userProgress.inProgressCourses)
+    const newWaitingGrade = new Set(userProgress.waitingGradeCourses)
 
     if (newCompleted.has(courseCode)) {
       newCompleted.delete(courseCode)
     } else {
       newCompleted.add(courseCode)
+      // Remove from other statuses when marking as completed
+      newInProgress.delete(courseCode)
+      newWaitingGrade.delete(courseCode)
     }
 
     const newProgress: UserProgress = {
       ...userProgress,
       completedCourses: newCompleted,
+      inProgressCourses: newInProgress,
+      waitingGradeCourses: newWaitingGrade,
+      lastUpdated: new Date()
+    }
+
+    // Update available courses based on new completion status
+    const updatedCourses = eligibilityEngine.updateCourseAvailability(newProgress)
+    const newAvailable = new Set(updatedCourses.filter((course) => course.available).map((course) => course.code))
+
+    const finalProgress = {
+      ...newProgress,
+      availableCourses: newAvailable
+    }
+
+    setUserProgress(finalProgress)
+    saveUserProgress(finalProgress)
+  }
+
+  const setCourseStatus = (courseCode: string, status: 'available' | 'in_progress' | 'waiting_grade' | 'completed') => {
+    if (!courseData || !eligibilityEngine) return
+
+    const newCompleted = new Set(userProgress.completedCourses)
+    const newInProgress = new Set(userProgress.inProgressCourses)
+    const newWaitingGrade = new Set(userProgress.waitingGradeCourses)
+
+    // Remove from all status sets first
+    newCompleted.delete(courseCode)
+    newInProgress.delete(courseCode)
+    newWaitingGrade.delete(courseCode)
+
+    // Add to appropriate set based on new status
+    switch (status) {
+      case 'completed':
+        newCompleted.add(courseCode)
+        break
+      case 'in_progress':
+        newInProgress.add(courseCode)
+        break
+      case 'waiting_grade':
+        newWaitingGrade.add(courseCode)
+        break
+      case 'available':
+        // Do nothing - already removed from all sets
+        break
+    }
+
+    const newProgress: UserProgress = {
+      ...userProgress,
+      completedCourses: newCompleted,
+      inProgressCourses: newInProgress,
+      waitingGradeCourses: newWaitingGrade,
       lastUpdated: new Date()
     }
 
@@ -352,6 +414,7 @@ function App() {
                 eligibilityEngine={eligibilityEngine}
                 onCourseSelect={handleCourseSelect}
                 onCourseToggle={toggleCourseCompletion}
+                onCourseStatusChange={setCourseStatus}
               />
             </SkillTreeContainer>
 
@@ -361,6 +424,7 @@ function App() {
                 userProgress={userProgress}
                 eligibilityEngine={eligibilityEngine}
                 onCourseToggle={toggleCourseCompletion}
+                onCourseStatusChange={setCourseStatus}
               />
             </DetailsPanel>
           </ContentArea>

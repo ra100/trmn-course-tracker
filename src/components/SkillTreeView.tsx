@@ -186,6 +186,10 @@ const CourseNode = styled.div<{ status: NodeStatus }>`
     switch (props.status) {
       case 'completed':
         return `linear-gradient(135deg, ${props.theme.colors.courseCompleted}, #22543d)`
+      case 'waiting_grade':
+        return `linear-gradient(135deg, #d69e2e, #b7791f)`
+      case 'in_progress':
+        return `linear-gradient(135deg, #38b2ac, #2c7a7b)`
       case 'available':
         return `linear-gradient(135deg, ${props.theme.colors.courseAvailable}, #1a365d)`
       case 'locked':
@@ -258,6 +262,10 @@ const StatusIcon = styled.div<{ status: NodeStatus }>`
     switch (props.status) {
       case 'completed':
         return '#fff'
+      case 'waiting_grade':
+        return 'rgba(255,255,255,0.9)'
+      case 'in_progress':
+        return 'rgba(255,255,255,0.9)'
       case 'available':
         return 'rgba(255,255,255,0.3)'
       case 'locked':
@@ -277,6 +285,10 @@ const StatusIcon = styled.div<{ status: NodeStatus }>`
       switch (props.status) {
         case 'completed':
           return '✓'
+        case 'waiting_grade':
+          return '⏳'
+        case 'in_progress':
+          return '📚'
         case 'available':
           return '○'
         case 'locked':
@@ -373,6 +385,10 @@ interface SkillTreeViewProps {
   eligibilityEngine: EligibilityEngine
   onCourseSelect: (course: Course) => void
   onCourseToggle: (courseCode: string) => void
+  onCourseStatusChange: (
+    courseCode: string,
+    status: 'available' | 'in_progress' | 'waiting_grade' | 'completed'
+  ) => void
 }
 
 export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
@@ -382,7 +398,8 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
   settings,
   eligibilityEngine,
   onCourseSelect,
-  onCourseToggle
+  onCourseToggle,
+  onCourseStatusChange
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([])
@@ -461,6 +478,8 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
 
   const getCourseStatus = (course: Course): NodeStatus => {
     if (course.completed) return 'completed'
+    if (userProgress.waitingGradeCourses.has(course.code)) return 'waiting_grade'
+    if (userProgress.inProgressCourses.has(course.code)) return 'in_progress'
     if (course.available) return 'available'
     return 'locked'
   }
@@ -473,6 +492,66 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
     if (course.available || course.completed) {
       onCourseToggle(course.code)
     }
+  }
+
+  const handleCourseRightClick = (e: React.MouseEvent, course: Course) => {
+    e.preventDefault()
+    if (
+      !course.available &&
+      !course.completed &&
+      !userProgress.inProgressCourses.has(course.code) &&
+      !userProgress.waitingGradeCourses.has(course.code)
+    ) {
+      return // Don't show context menu for locked courses
+    }
+
+    const contextMenu = document.createElement('div')
+    contextMenu.style.position = 'fixed'
+    contextMenu.style.left = `${e.clientX}px`
+    contextMenu.style.top = `${e.clientY}px`
+    contextMenu.style.background = 'white'
+    contextMenu.style.border = '1px solid #ccc'
+    contextMenu.style.borderRadius = '4px'
+    contextMenu.style.padding = '8px'
+    contextMenu.style.zIndex = '1000'
+    contextMenu.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)'
+    contextMenu.style.minWidth = '120px'
+
+    const options = [
+      { label: 'Available', value: 'available' as const },
+      { label: 'Working On', value: 'in_progress' as const },
+      { label: 'Waiting Grade', value: 'waiting_grade' as const },
+      { label: 'Completed', value: 'completed' as const }
+    ]
+
+    options.forEach((option) => {
+      const item = document.createElement('div')
+      item.textContent = option.label
+      item.style.padding = '4px 8px'
+      item.style.cursor = 'pointer'
+      item.style.borderRadius = '2px'
+      item.addEventListener('mouseenter', () => {
+        item.style.backgroundColor = '#f0f0f0'
+      })
+      item.addEventListener('mouseleave', () => {
+        item.style.backgroundColor = 'transparent'
+      })
+      item.addEventListener('click', () => {
+        onCourseStatusChange(course.code, option.value)
+        document.body.removeChild(contextMenu)
+      })
+      contextMenu.appendChild(item)
+    })
+
+    const closeContextMenu = () => {
+      if (document.body.contains(contextMenu)) {
+        document.body.removeChild(contextMenu)
+      }
+      document.removeEventListener('click', closeContextMenu)
+    }
+
+    document.addEventListener('click', closeContextMenu)
+    document.body.appendChild(contextMenu)
   }
 
   const getPrerequisiteText = (course: Course): string => {
@@ -531,7 +610,10 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
                     status={status}
                     onClick={() => handleCourseClick(course)}
                     onDoubleClick={() => handleCourseDoubleClick(course)}
-                    title={`Double-click to ${course.completed ? 'mark incomplete' : 'mark complete'}`}
+                    onContextMenu={(e) => handleCourseRightClick(e, course)}
+                    title={`Double-click to ${
+                      course.completed ? 'mark incomplete' : 'mark complete'
+                    } | Right-click for options`}
                   >
                     <CourseCode>{course.code}</CourseCode>
                     <CourseName>{course.name}</CourseName>
@@ -628,7 +710,10 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
                     status={status}
                     onClick={() => handleCourseClick(course)}
                     onDoubleClick={() => handleCourseDoubleClick(course)}
-                    title={`Double-click to ${course.completed ? 'mark incomplete' : 'mark complete'}`}
+                    onContextMenu={(e) => handleCourseRightClick(e, course)}
+                    title={`Double-click to ${
+                      course.completed ? 'mark incomplete' : 'mark complete'
+                    } | Right-click for options`}
                   >
                     <CourseCode>{course.code}</CourseCode>
                     <CourseName>{course.name}</CourseName>

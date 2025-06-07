@@ -75,6 +75,8 @@ export interface UserProgress {
   userId: string
   completedCourses: Set<string>
   availableCourses: Set<string>
+  inProgressCourses: Set<string>
+  waitingGradeCourses: Set<string>
   specialRulesProgress: Map<string, SpecialRuleProgress>
   lastUpdated: Date
 }
@@ -132,7 +134,7 @@ export interface SkillTreeNode {
   status: NodeStatus
 }
 
-export type NodeStatus = 'locked' | 'available' | 'completed' | 'in_progress'
+export type NodeStatus = 'locked' | 'available' | 'completed' | 'in_progress' | 'waiting_grade'
 
 export interface SkillTreeLayout {
   nodes: SkillTreeNode[]

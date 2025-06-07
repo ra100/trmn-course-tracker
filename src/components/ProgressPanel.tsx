@@ -136,12 +136,16 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
   const getOverallStats = () => {
     const totalCourses = courseData.courses.length
     const completedCourses = userProgress.completedCourses.size
+    const inProgressCourses = userProgress.inProgressCourses.size
+    const waitingGradeCourses = userProgress.waitingGradeCourses.size
     const availableCourses = eligibilityEngine.getAvailableCourses(userProgress).length
     const completionPercentage = totalCourses > 0 ? (completedCourses / totalCourses) * 100 : 0
 
     return {
       totalCourses,
       completedCourses,
+      inProgressCourses,
+      waitingGradeCourses,
       availableCourses,
       completionPercentage
     }
@@ -280,6 +284,14 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
           <StatLabel>Completed</StatLabel>
         </StatCard>
         <StatCard>
+          <StatValue>{overallStats.inProgressCourses}</StatValue>
+          <StatLabel>Working On</StatLabel>
+        </StatCard>
+        <StatCard>
+          <StatValue>{overallStats.waitingGradeCourses}</StatValue>
+          <StatLabel>Waiting Grade</StatLabel>
+        </StatCard>
+        <StatCard>
           <StatValue>{overallStats.availableCourses}</StatValue>
           <StatLabel>Available</StatLabel>
         </StatCard>
@@ -296,6 +308,10 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
         <QuickStatRow>
           <QuickStatLabel>Total Courses:</QuickStatLabel>
           <QuickStatValue>{overallStats.totalCourses}</QuickStatValue>
+        </QuickStatRow>
+        <QuickStatRow>
+          <QuickStatLabel>Active Courses:</QuickStatLabel>
+          <QuickStatValue>{overallStats.inProgressCourses + overallStats.waitingGradeCourses}</QuickStatValue>
         </QuickStatRow>
         <QuickStatRow>
           <QuickStatLabel>Last Updated:</QuickStatLabel>

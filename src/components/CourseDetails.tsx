@@ -41,7 +41,7 @@ const CourseSection = styled.div`
   font-size: 0.9rem;
 `
 
-const StatusBadge = styled.div<{ status: 'completed' | 'available' | 'locked' }>`
+const StatusBadge = styled.div<{ status: 'completed' | 'available' | 'locked' | 'in_progress' | 'waiting_grade' }>`
   display: inline-block;
   padding: 0.3rem 0.8rem;
   border-radius: 15px;
@@ -52,6 +52,10 @@ const StatusBadge = styled.div<{ status: 'completed' | 'available' | 'locked' }>
     switch (props.status) {
       case 'completed':
         return '#27ae60'
+      case 'waiting_grade':
+        return '#d69e2e'
+      case 'in_progress':
+        return '#38b2ac'
       case 'available':
         return '#3498db'
       case 'locked':
@@ -161,13 +165,18 @@ interface CourseDetailsProps {
   userProgress: UserProgress
   eligibilityEngine: EligibilityEngine
   onCourseToggle: (courseCode: string) => void
+  onCourseStatusChange?: (
+    courseCode: string,
+    status: 'available' | 'in_progress' | 'waiting_grade' | 'completed'
+  ) => void
 }
 
 export const CourseDetails: React.FC<CourseDetailsProps> = ({
   course,
   userProgress,
   eligibilityEngine,
-  onCourseToggle
+  onCourseToggle,
+  onCourseStatusChange
 }) => {
   if (!course) {
     return (
@@ -177,8 +186,10 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
     )
   }
 
-  const getStatus = (): 'completed' | 'available' | 'locked' => {
+  const getStatus = (): 'completed' | 'available' | 'locked' | 'in_progress' | 'waiting_grade' => {
     if (course.completed) return 'completed'
+    if (userProgress.waitingGradeCourses.has(course.code)) return 'waiting_grade'
+    if (userProgress.inProgressCourses.has(course.code)) return 'in_progress'
     if (course.available) return 'available'
     return 'locked'
   }
@@ -188,6 +199,10 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
     switch (status) {
       case 'completed':
         return 'Completed'
+      case 'waiting_grade':
+        return 'Waiting for Grade'
+      case 'in_progress':
+        return 'Working On'
       case 'available':
         return 'Available'
       case 'locked':
@@ -284,6 +299,26 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
       <ActionButton variant="primary" onClick={handleToggleClick} disabled={status === 'locked'}>
         {course.completed ? 'Mark Incomplete' : 'Mark Complete'}
       </ActionButton>
+
+      {onCourseStatusChange && status !== 'locked' && (
+        <>
+          {status !== 'in_progress' && (
+            <ActionButton variant="secondary" onClick={() => onCourseStatusChange(course.code, 'in_progress')}>
+              Working On
+            </ActionButton>
+          )}
+          {status !== 'waiting_grade' && (
+            <ActionButton variant="secondary" onClick={() => onCourseStatusChange(course.code, 'waiting_grade')}>
+              Waiting Grade
+            </ActionButton>
+          )}
+          {(status === 'in_progress' || status === 'waiting_grade') && (
+            <ActionButton variant="secondary" onClick={() => onCourseStatusChange(course.code, 'available')}>
+              Reset to Available
+            </ActionButton>
+          )}
+        </>
+      )}
 
       {prerequisites.length > 0 && (
         <Section>

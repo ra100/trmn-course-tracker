@@ -1,0 +1,170 @@
+import { describe, it, expect, vi } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { ThemeProvider } from 'styled-components'
+import { CourseDetails } from './CourseDetails'
+import { Course, UserProgress } from '../types'
+import { EligibilityEngine } from '../utils/eligibilityEngine'
+import { getTheme } from '../theme'
+
+const lightTheme = getTheme('light')
+
+const renderWithTheme = (component: React.ReactElement) => {
+  return render(<ThemeProvider theme={lightTheme}>{component}</ThemeProvider>)
+}
+
+const mockCourse: Course = {
+  id: 'test-course',
+  name: 'Test Course',
+  code: 'TC-101',
+  prerequisites: [],
+  section: 'Test Section',
+  subsection: 'Test Subsection',
+  sectionId: 'test-section',
+  subsectionId: 'test-subsection',
+  completed: false,
+  available: true,
+  description: 'A test course for testing purposes'
+}
+
+const mockUserProgress: UserProgress = {
+  userId: 'test-user',
+  completedCourses: new Set(),
+  availableCourses: new Set(['TC-101']),
+  inProgressCourses: new Set(),
+  waitingGradeCourses: new Set(),
+  specialRulesProgress: new Map(),
+  lastUpdated: new Date()
+}
+
+const mockEligibilityEngine = {
+  getCoursesUnlockedBy: vi.fn(() => [])
+} as unknown as EligibilityEngine
+
+describe('CourseDetails', () => {
+  it('renders empty state when no course is selected', () => {
+    renderWithTheme(
+      <CourseDetails
+        course={null}
+        userProgress={mockUserProgress}
+        eligibilityEngine={mockEligibilityEngine}
+        onCourseToggle={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('Select a course to view details')).toBeInTheDocument()
+  })
+
+  it('renders course information correctly', () => {
+    renderWithTheme(
+      <CourseDetails
+        course={mockCourse}
+        userProgress={mockUserProgress}
+        eligibilityEngine={mockEligibilityEngine}
+        onCourseToggle={vi.fn()}
+      />
+    )
+
+    expect(screen.getByText('Test Course')).toBeInTheDocument()
+    expect(screen.getByText('TC-101')).toBeInTheDocument()
+    expect(screen.getByText('Test Section → Test Subsection')).toBeInTheDocument()
+    expect(screen.getAllByText('Available')).toHaveLength(2) // Badge and info grid
+  })
+
+  it('shows "Working On" status correctly', () => {
+    const progressWithInProgress = {
+      ...mockUserProgress,
+      inProgressCourses: new Set(['TC-101'])
+    }
+
+    renderWithTheme(
+      <CourseDetails
+        course={mockCourse}
+        userProgress={progressWithInProgress}
+        eligibilityEngine={mockEligibilityEngine}
+        onCourseToggle={vi.fn()}
+      />
+    )
+
+    expect(screen.getAllByText('Working On')).toHaveLength(2) // Badge and info grid
+  })
+
+  it('shows "Waiting for Grade" status correctly', () => {
+    const progressWithWaitingGrade = {
+      ...mockUserProgress,
+      waitingGradeCourses: new Set(['TC-101'])
+    }
+
+    renderWithTheme(
+      <CourseDetails
+        course={mockCourse}
+        userProgress={progressWithWaitingGrade}
+        eligibilityEngine={mockEligibilityEngine}
+        onCourseToggle={vi.fn()}
+      />
+    )
+
+    expect(screen.getAllByText('Waiting for Grade')).toHaveLength(2) // Badge and info grid
+  })
+
+  it('calls onCourseStatusChange when status buttons are clicked', () => {
+    const mockOnCourseStatusChange = vi.fn()
+
+    renderWithTheme(
+      <CourseDetails
+        course={mockCourse}
+        userProgress={mockUserProgress}
+        eligibilityEngine={mockEligibilityEngine}
+        onCourseToggle={vi.fn()}
+        onCourseStatusChange={mockOnCourseStatusChange}
+      />
+    )
+
+    const workingOnButton = screen.getByText('Working On')
+    fireEvent.click(workingOnButton)
+
+    expect(mockOnCourseStatusChange).toHaveBeenCalledWith('TC-101', 'in_progress')
+
+    const waitingGradeButton = screen.getByText('Waiting Grade')
+    fireEvent.click(waitingGradeButton)
+
+    expect(mockOnCourseStatusChange).toHaveBeenCalledWith('TC-101', 'waiting_grade')
+  })
+
+  it('shows reset button for courses in progress or waiting grade', () => {
+    const progressWithInProgress = {
+      ...mockUserProgress,
+      inProgressCourses: new Set(['TC-101'])
+    }
+
+    const mockOnCourseStatusChange = vi.fn()
+
+    renderWithTheme(
+      <CourseDetails
+        course={mockCourse}
+        userProgress={progressWithInProgress}
+        eligibilityEngine={mockEligibilityEngine}
+        onCourseToggle={vi.fn()}
+        onCourseStatusChange={mockOnCourseStatusChange}
+      />
+    )
+
+    const resetButton = screen.getByText('Reset to Available')
+    fireEvent.click(resetButton)
+
+    expect(mockOnCourseStatusChange).toHaveBeenCalledWith('TC-101', 'available')
+  })
+
+  it('does not show status change buttons when onCourseStatusChange is not provided', () => {
+    renderWithTheme(
+      <CourseDetails
+        course={mockCourse}
+        userProgress={mockUserProgress}
+        eligibilityEngine={mockEligibilityEngine}
+        onCourseToggle={vi.fn()}
+      />
+    )
+
+    expect(screen.queryByText('Working On')).not.toBeInTheDocument()
+    expect(screen.queryByText('Waiting Grade')).not.toBeInTheDocument()
+  })
+})
