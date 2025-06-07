@@ -20,24 +20,24 @@ const EmptyState = styled.div`
 const CourseHeader = styled.div`
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #ecf0f1;
+  border-bottom: 2px solid ${(props) => props.theme.colors.borderLight};
 `
 
 const CourseTitle = styled.h2`
-  color: #2c3e50;
+  color: ${(props) => props.theme.colors.headerText};
   margin: 0 0 0.5rem 0;
   font-size: 1.3rem;
 `
 
 const CourseCode = styled.div`
   font-family: 'Courier New', monospace;
-  color: #7f8c8d;
+  color: ${(props) => props.theme.colors.code};
   font-size: 1rem;
   margin-bottom: 0.5rem;
 `
 
 const CourseSection = styled.div`
-  color: #3498db;
+  color: ${(props) => props.theme.colors.primary};
   font-weight: 500;
   font-size: 0.9rem;
 `
@@ -52,15 +52,15 @@ const StatusBadge = styled.div<{ status: 'completed' | 'available' | 'locked' | 
   background: ${(props) => {
     switch (props.status) {
       case 'completed':
-        return '#27ae60'
+        return props.theme.colors.courseCompleted
       case 'waiting_grade':
-        return '#d69e2e'
+        return props.theme.colors.warning
       case 'in_progress':
-        return '#38b2ac'
+        return props.theme.colors.courseInProgress
       case 'available':
-        return '#3498db'
+        return props.theme.colors.courseAvailable
       case 'locked':
-        return '#95a5a6'
+        return props.theme.colors.courseLocked
     }
   }};
   color: white;
@@ -76,16 +76,17 @@ const ActionButton = styled.button<{ variant: 'primary' | 'secondary' }>`
   margin-right: 0.5rem;
   transition: all 0.3s ease;
 
-  background: ${(props) => (props.variant === 'primary' ? '#3498db' : '#95a5a6')};
+  background: ${(props) => (props.variant === 'primary' ? props.theme.colors.primary : props.theme.colors.secondary)};
   color: white;
 
   &:hover {
-    background: ${(props) => (props.variant === 'primary' ? '#2980b9' : '#7f8c8d')};
+    background: ${(props) =>
+      props.variant === 'primary' ? props.theme.colors.primaryHover : props.theme.colors.textMuted};
     transform: translateY(-1px);
   }
 
   &:disabled {
-    background: #bdc3c7;
+    background: ${(props) => props.theme.colors.textMuted};
     cursor: not-allowed;
     transform: none;
   }
@@ -96,7 +97,7 @@ const Section = styled.div`
 `
 
 const SectionTitle = styled.h3`
-  color: #2c3e50;
+  color: ${(props) => props.theme.colors.headerText};
   margin: 0 0 0.8rem 0;
   font-size: 1rem;
   font-weight: 600;
@@ -112,9 +113,9 @@ const PrerequisiteItem = styled.div<{ satisfied: boolean }>`
   padding: 0.5rem;
   border-radius: 4px;
   font-size: 0.9rem;
-  background: ${(props) => (props.satisfied ? '#d5f4e6' : '#ffeaea')};
-  color: ${(props) => (props.satisfied ? '#27ae60' : '#e74c3c')};
-  border-left: 3px solid ${(props) => (props.satisfied ? '#27ae60' : '#e74c3c')};
+  background: ${(props) => (props.satisfied ? props.theme.colors.success + '20' : props.theme.colors.error + '20')};
+  color: ${(props) => (props.satisfied ? props.theme.colors.success : props.theme.colors.error)};
+  border-left: 3px solid ${(props) => (props.satisfied ? props.theme.colors.success : props.theme.colors.error)};
 `
 
 const UnlockedCoursesList = styled.div`
@@ -125,10 +126,10 @@ const UnlockedCoursesList = styled.div`
 
 const UnlockedCourseItem = styled.div`
   padding: 0.4rem;
-  background: #e8f4fd;
+  background: ${(props) => props.theme.colors.primary + '20'};
   border-radius: 4px;
   font-size: 0.9rem;
-  color: #2980b9;
+  color: ${(props) => props.theme.colors.primary};
 `
 
 const InfoGrid = styled.div`
@@ -139,25 +140,25 @@ const InfoGrid = styled.div`
 `
 
 const InfoItem = styled.div`
-  background: #f8f9fa;
+  background: ${(props) => props.theme.colors.infoBackground};
   padding: 0.8rem;
   border-radius: 4px;
 `
 
 const InfoLabel = styled.div`
   font-size: 0.8rem;
-  color: #7f8c8d;
+  color: ${(props) => props.theme.colors.textMuted};
   font-weight: 500;
   margin-bottom: 0.2rem;
 `
 
 const InfoValue = styled.div`
   font-weight: 600;
-  color: #2c3e50;
+  color: ${(props) => props.theme.colors.headerText};
 `
 
 const DescriptionText = styled.div`
-  color: #2c3e50;
+  color: ${(props) => props.theme.colors.bodyText};
   line-height: 1.5;
 `
 

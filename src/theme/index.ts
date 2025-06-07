@@ -36,6 +36,13 @@ export interface Theme {
     nodeCompleted: string
     nodeLocked: string
     nodeHover: string
+
+    // Additional semantic colors
+    cardBackground: string
+    headerText: string
+    bodyText: string
+    infoBackground: string
+    code: string
   }
   shadows: {
     small: string
@@ -81,7 +88,14 @@ export const lightTheme: Theme = {
     nodeAvailable: '#3182ce',
     nodeCompleted: '#38a169',
     nodeLocked: '#cbd5e0',
-    nodeHover: '#2c5282'
+    nodeHover: '#2c5282',
+
+    // Additional semantic colors
+    cardBackground: '#ffffff',
+    headerText: '#2c3e50',
+    bodyText: '#2c3e50',
+    infoBackground: '#f8f9fa',
+    code: '#7f8c8d'
   },
   shadows: {
     small: '0 1px 3px rgba(0, 0, 0, 0.1)',
@@ -93,46 +107,53 @@ export const lightTheme: Theme = {
 export const darkTheme: Theme = {
   colors: {
     // Main backgrounds
-    background: '#0f1419',
-    backgroundSecondary: '#1a202c',
-    surface: '#2d3748',
-    surfaceSecondary: '#4a5568',
+    background: '#0f0f16',
+    backgroundSecondary: '#1a1b26',
+    surface: '#24263a',
+    surfaceSecondary: '#2a2d42',
 
     // Text colors
     text: '#f7fafc',
-    textSecondary: '#e2e8f0',
-    textMuted: '#a0aec0',
+    textSecondary: '#c3c7d1',
+    textMuted: '#9ca3af',
 
     // Accent colors
-    primary: '#63b3ed',
-    primaryHover: '#4299e1',
-    secondary: '#718096',
-    success: '#68d391',
-    warning: '#fbb040',
-    error: '#fc8181',
+    primary: '#7dd3fc',
+    primaryHover: '#38bdf8',
+    secondary: '#64748b',
+    success: '#4ade80',
+    warning: '#fbbf24',
+    error: '#f87171',
 
     // UI elements
-    border: '#4a5568',
-    borderLight: '#2d3748',
-    shadow: 'rgba(0, 0, 0, 0.5)',
-    overlay: 'rgba(0, 0, 0, 0.8)',
+    border: '#374151',
+    borderLight: '#2a2d42',
+    shadow: 'rgba(0, 0, 0, 0.6)',
+    overlay: 'rgba(0, 0, 0, 0.85)',
 
     // Course status colors
-    courseAvailable: '#4299e1',
-    courseCompleted: '#48bb78',
-    courseLocked: '#718096',
-    courseInProgress: '#ed8936',
+    courseAvailable: '#3b82f6',
+    courseCompleted: '#10b981',
+    courseLocked: '#6b7280',
+    courseInProgress: '#f59e0b',
 
     // Node colors for skill tree
-    nodeAvailable: '#63b3ed',
-    nodeCompleted: '#68d391',
-    nodeLocked: '#718096',
-    nodeHover: '#4299e1'
+    nodeAvailable: '#60a5fa',
+    nodeCompleted: '#34d399',
+    nodeLocked: '#6b7280',
+    nodeHover: '#3b82f6',
+
+    // Additional semantic colors
+    cardBackground: '#24263a',
+    headerText: '#e2e8f0',
+    bodyText: '#d1d5db',
+    infoBackground: '#1f2937',
+    code: '#9ca3af'
   },
   shadows: {
-    small: '0 1px 3px rgba(0, 0, 0, 0.4)',
-    medium: '0 2px 6px rgba(0, 0, 0, 0.4)',
-    large: '0 4px 12px rgba(0, 0, 0, 0.5)'
+    small: '0 1px 3px rgba(0, 0, 0, 0.5)',
+    medium: '0 2px 8px rgba(0, 0, 0, 0.6)',
+    large: '0 4px 16px rgba(0, 0, 0, 0.7)'
   }
 }
 
