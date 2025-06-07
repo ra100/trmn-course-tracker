@@ -17,17 +17,24 @@ const COURSE_CODE_SINGLE_REGEX = /([A-Z]{3}-[A-Z]{2,4}-\d{2,4}[ACDW]?)/
 
 const LEVEL_REGEX = /-(\d{2,4})([ACDW])/
 
+export interface DepartmentMapping {
+  department: string
+  schoolNames: string[]
+}
+
 export class CourseParser {
   private content: string
   private courses: Map<string, Course>
   private categories: Category[]
   private specialRules: SpecialRule[]
+  private departmentMappings: Map<string, string[]>
 
   constructor(markdownContent: string) {
     this.content = markdownContent
     this.courses = new Map()
     this.categories = []
     this.specialRules = []
+    this.departmentMappings = new Map()
   }
 
   public parse(): CourseData {
@@ -36,6 +43,7 @@ export class CourseParser {
     let currentSubsection: Subsection | null = null
     let inTable = false
     let inSpaceWarfarePinSection = false
+    let inDepartmentMappingSection = false
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim()
@@ -52,8 +60,13 @@ export class CourseParser {
           // Check for Space Warfare Pin at level 1
           if (title.toLowerCase().includes('space warfare pin')) {
             inSpaceWarfarePinSection = true
+            inDepartmentMappingSection = false
+          } else if (title.toLowerCase().includes('department mappings')) {
+            inDepartmentMappingSection = true
+            inSpaceWarfarePinSection = false
           } else {
             inSpaceWarfarePinSection = false
+            inDepartmentMappingSection = false
           }
         } else if (level === 2) {
           currentSection = this.createSection(title)
@@ -61,6 +74,7 @@ export class CourseParser {
           // Also check for Space Warfare Pin at level 2
           if (title.toLowerCase().includes('space warfare pin')) {
             inSpaceWarfarePinSection = true
+            inDepartmentMappingSection = false
           }
         } else if (level === 3) {
           if (currentSection) {
@@ -82,6 +96,12 @@ export class CourseParser {
         continue
       }
 
+      // Handle department mapping table headers
+      if (inDepartmentMappingSection && line.includes('Department') && line.includes('School Names')) {
+        inTable = true
+        continue
+      }
+
       // Skip table separator
       if (line.match(/^\|[\s\-:|]+\|$/)) {
         continue
@@ -89,7 +109,11 @@ export class CourseParser {
 
       // Parse table rows
       if (inTable && line.startsWith('|') && line.endsWith('|')) {
-        this.parseTableRow(line, currentSection, currentSubsection)
+        if (inDepartmentMappingSection) {
+          this.parseDepartmentMappingRow(line)
+        } else {
+          this.parseTableRow(line, currentSection, currentSubsection)
+        }
         continue
       }
 
@@ -104,7 +128,8 @@ export class CourseParser {
     return {
       courses: Array.from(this.courses.values()),
       categories: this.categories,
-      specialRules: this.specialRules
+      specialRules: this.specialRules,
+      departmentMappings: this.departmentMappings
     }
   }
 
@@ -127,6 +152,31 @@ export class CourseParser {
 
     parentSection.subsections.push(subsection)
     return subsection
+  }
+
+  private parseDepartmentMappingRow(line: string): void {
+    const cells = line
+      .split('|')
+      .map((cell) => cell.trim())
+      .filter((cell) => cell.length > 0)
+
+    if (cells.length >= 2) {
+      const department = cells[0]
+      const schoolNamesText = cells[1]
+
+      // Skip header rows
+      if (department === 'Department' || schoolNamesText === 'School Names') {
+        return
+      }
+
+      // Parse comma-separated school names
+      const schoolNames = schoolNamesText
+        .split(',')
+        .map((name) => name.trim().toLowerCase())
+        .filter((name) => name.length > 0)
+
+      this.departmentMappings.set(department.toLowerCase(), schoolNames)
+    }
   }
 
   private parseTableRow(line: string, section: Category | null, subsection: Subsection | null): void {
@@ -594,6 +644,7 @@ export function parseCourseData(markdownContent: string): ParsedCourseData {
   console.log('📚 Total courses parsed:', data.courses.length)
   console.log('📋 Categories parsed:', data.categories.length)
   console.log('⚡ Special rules parsed:', data.specialRules.length)
+  console.log('🗂️ Department mappings parsed:', data.departmentMappings?.size || 0)
 
   // Log Space Warfare Pin related courses
   const swpCourses = data.courses.filter((course) => {

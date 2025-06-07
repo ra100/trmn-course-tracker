@@ -118,6 +118,52 @@ const PrerequisiteItem = styled.div<{ satisfied: boolean }>`
   border-left: 3px solid ${(props) => (props.satisfied ? props.theme.colors.success : props.theme.colors.error)};
 `
 
+const DepartmentChoiceItem = styled.div<{ satisfied: boolean }>`
+  padding: 0.8rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  background: ${(props) => (props.satisfied ? props.theme.colors.success + '20' : props.theme.colors.warning + '20')};
+  color: ${(props) => (props.satisfied ? props.theme.colors.success : props.theme.colors.warning)};
+  border-left: 3px solid ${(props) => (props.satisfied ? props.theme.colors.success : props.theme.colors.warning)};
+  position: relative;
+`
+
+const DepartmentChoiceHeader = styled.div`
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+`
+
+const DepartmentChoiceProgress = styled.div<{ satisfied: boolean }>`
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-bottom: 0.3rem;
+`
+
+const DepartmentList = styled.div`
+  font-size: 0.8rem;
+  opacity: 0.9;
+  margin-top: 0.3rem;
+`
+
+const ProgressBar = styled.div<{ percentage: number; satisfied: boolean }>`
+  width: 100%;
+  height: 4px;
+  background: ${(props) => props.theme.colors.border};
+  border-radius: 2px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    display: block;
+    width: ${(props) => props.percentage}%;
+    height: 100%;
+    background: ${(props) => (props.satisfied ? props.theme.colors.success : props.theme.colors.warning)};
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+`
+
 const UnlockedCoursesList = styled.div`
   display: flex;
   flex-direction: column;
@@ -240,6 +286,35 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
             satisfied,
             type: 'alternative_group'
           }
+        } else if (prereq.type === 'department_choice') {
+          // Handle department choice requirements (like Navy Counselor courses)
+          const eligibility = eligibilityEngine.checkCourseEligibility(course.code, userProgress)
+          const deptMissing = eligibility.missingPrerequisites.find((mp) => mp.type === 'department_choice')
+
+          let satisfied = true
+          let progress = prereq.minimum
+          let progressText = ''
+
+          if (deptMissing) {
+            satisfied = false
+            progress = deptMissing.progress || 0
+            progressText = ` (${progress}/${deptMissing.total || prereq.minimum})`
+          } else {
+            // Course is satisfied, use minimum as progress since it's met
+            progress = prereq.minimum
+            progressText = ` (${progress}/${prereq.minimum})`
+          }
+
+          const departmentList = prereq.departments?.join(', ') || 'various departments'
+          const text = `${prereq.minimum} ${prereq.level} level courses from: ${departmentList}${progressText}`
+
+          return {
+            text,
+            satisfied,
+            type: 'department_choice',
+            progress,
+            total: prereq.minimum
+          }
         } else if (prereq.type === 'complex') {
           return {
             text: prereq.description || 'Complex requirement',
@@ -329,11 +404,32 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
         <Section>
           <SectionTitle>{t.courseDetails.prerequisites}</SectionTitle>
           <PrerequisitesList>
-            {prerequisites.map((prereq, index) => (
-              <PrerequisiteItem key={index} satisfied={prereq?.satisfied || false}>
-                {prereq?.text}
-              </PrerequisiteItem>
-            ))}
+            {prerequisites.map((prereq, index) => {
+              if (prereq?.type === 'department_choice') {
+                const progress = prereq.progress || 0
+                const total = prereq.total || 1
+                const percentage = total > 0 ? (progress / total) * 100 : 0
+
+                return (
+                  <DepartmentChoiceItem key={index} satisfied={prereq.satisfied || false}>
+                    <DepartmentChoiceHeader>
+                      {prereq.satisfied ? '✓' : '○'} Department Choice Requirement
+                    </DepartmentChoiceHeader>
+                    <DepartmentChoiceProgress satisfied={prereq.satisfied || false}>
+                      Progress: {progress}/{total} courses completed
+                    </DepartmentChoiceProgress>
+                    <DepartmentList>{prereq.text}</DepartmentList>
+                    <ProgressBar percentage={percentage} satisfied={prereq.satisfied || false} />
+                  </DepartmentChoiceItem>
+                )
+              }
+
+              return (
+                <PrerequisiteItem key={index} satisfied={prereq?.satisfied || false}>
+                  {prereq?.text}
+                </PrerequisiteItem>
+              )
+            })}
           </PrerequisitesList>
         </Section>
       )}

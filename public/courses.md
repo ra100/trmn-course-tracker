@@ -493,3 +493,18 @@ Passing SIA-SRN-34D will be a requirement for those wanting to be recognized as 
 | Surgeon Advanced Specialist | SIA-SRN-34C   | SIA-SRN-34A              |
 | Surgeon Qualification       | SIA-SRN-34D   | SIA-SRN-34C              |
 | Surgeon Warrant Project     | SIA-SRN-34W   | SIA-RMN-0012 SIA-SRN-34C |
+
+# Department Mappings
+
+The following table defines how department names map to specific school/course categories for prerequisite matching:
+
+| Department        | School Names                                                                                              |
+| ----------------- | --------------------------------------------------------------------------------------------------------- |
+| Astrogation       | astrogation, flight operations, coxswain, helmsman, plotting, quartermaster                               |
+| Tactical          | fire control, electronic warfare, tracking, sensor, missile, beam weapons, gunner, weapons                |
+| Command           | boatswain, master-at-arms, operations, intelligence, command                                              |
+| Communications    | data systems, electronics, communications                                                                 |
+| Engineering       | impeller, power, gravitics, environmental, hydroponics, damage control, propulsion, environmental systems |
+| Logistics         | storekeeper, disbursing, serviceman, steward, logistics                                                   |
+| Medical           | medical, corpsman, medic, sick berth, surgeon                                                             |
+| Flight Operations | flight operations, coxswain                                                                               |

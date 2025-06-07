@@ -100,6 +100,7 @@ export interface CourseData {
   courses: Course[]
   categories: Category[]
   specialRules: SpecialRule[]
+  departmentMappings?: Map<string, string[]>
 }
 
 export interface ParsedCourseData extends CourseData {

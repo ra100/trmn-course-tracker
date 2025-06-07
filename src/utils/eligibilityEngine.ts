@@ -245,23 +245,49 @@ export class EligibilityEngine {
   ): number {
     let count = 0
 
+    console.log('🔍 Checking department requirements:', {
+      departments,
+      level,
+      completedCourses: Array.from(userProgress.completedCourses)
+    })
+
+    // Use parsed department mappings from course data, fallback to department name if not found
+    const departmentMappings = this.courseData.departmentMappings
+
     for (const courseCode of Array.from(userProgress.completedCourses)) {
       const course = this.courseData.courseMap.get(courseCode)
       if (!course) continue
 
-      const inTargetDepartment = departments.some(
-        (dept) =>
-          course.section.toLowerCase().includes(dept.toLowerCase()) ||
-          course.subsection.toLowerCase().includes(dept.toLowerCase())
-      )
+      const inTargetDepartment = departments.some((dept) => {
+        const deptLower = dept.toLowerCase()
+        const mappedDepts = departmentMappings?.get(deptLower) || [deptLower]
+
+        return mappedDepts.some(
+          (mappedDept) =>
+            course.section.toLowerCase().includes(mappedDept) ||
+            course.subsection.toLowerCase().includes(mappedDept) ||
+            course.name.toLowerCase().includes(mappedDept)
+        )
+      })
 
       const hasCorrectLevel = !level || course.level === level
+
+      console.log(`📚 Course ${courseCode}:`, {
+        name: course.name,
+        section: course.section,
+        subsection: course.subsection,
+        level: course.level,
+        inTargetDepartment,
+        hasCorrectLevel,
+        willCount: inTargetDepartment && hasCorrectLevel
+      })
 
       if (inTargetDepartment && hasCorrectLevel) {
         count++
       }
     }
 
+    console.log(`✅ Total count: ${count}`)
     return count
   }
 

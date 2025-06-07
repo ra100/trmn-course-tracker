@@ -702,6 +702,27 @@ Both RMN and RMMC officers wear the same pin.
       const parser = new CourseParser(coursesContent)
       const result = parser.parse()
 
+      // Verify department mappings were parsed
+      expect(result.departmentMappings).toBeDefined()
+      expect(result.departmentMappings?.size).toBeGreaterThan(0)
+
+      // Check specific department mappings
+      const tacticalMappings = result.departmentMappings?.get('tactical')
+      expect(tacticalMappings).toBeDefined()
+      expect(tacticalMappings).toContain('fire control')
+      expect(tacticalMappings).toContain('missile')
+      expect(tacticalMappings).toContain('gunner')
+
+      const communicationsMappings = result.departmentMappings?.get('communications')
+      expect(communicationsMappings).toBeDefined()
+      expect(communicationsMappings).toContain('data systems')
+      expect(communicationsMappings).toContain('electronics')
+
+      const engineeringMappings = result.departmentMappings?.get('engineering')
+      expect(engineeringMappings).toBeDefined()
+      expect(engineeringMappings).toContain('impeller')
+      expect(engineeringMappings).toContain('damage control')
+
       // Find Navy Counselor courses
       const navyCounselorSpecialist = result.courses.find((c) => c.code === 'SIA-SRN-02A')
       const navyCounselorAdvanced = result.courses.find((c) => c.code === 'SIA-SRN-02C')
