@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { ParsedCourseData, UserProgress } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
+import { useT } from '../i18n'
 
 const PanelContainer = styled.div`
   padding: 1.5rem;
@@ -133,6 +134,7 @@ interface ProgressPanelProps {
 }
 
 export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, courseData, eligibilityEngine }) => {
+  const t = useT()
   const getOverallStats = () => {
     const totalCourses = courseData.courses.length
     const completedCourses = userProgress.completedCourses.size
@@ -210,32 +212,32 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
 
     // Basic milestones
     achievements.push({
-      title: 'First Course',
-      description: 'Complete your first course',
+      title: t.achievements.firstCourse.title,
+      description: t.achievements.firstCourse.description,
       completed: completed >= 1
     })
 
     achievements.push({
-      title: 'Getting Started',
-      description: 'Complete 5 courses',
+      title: t.achievements.gettingStarted.title,
+      description: t.achievements.gettingStarted.description,
       completed: completed >= 5
     })
 
     achievements.push({
-      title: 'Making Progress',
-      description: 'Complete 10 courses',
+      title: t.achievements.makingProgress.title,
+      description: t.achievements.makingProgress.description,
       completed: completed >= 10
     })
 
     achievements.push({
-      title: 'Dedicated Student',
-      description: 'Complete 25 courses',
+      title: t.achievements.dedicatedStudent.title,
+      description: t.achievements.dedicatedStudent.description,
       completed: completed >= 25
     })
 
     achievements.push({
-      title: 'Expert Level',
-      description: 'Complete 50 courses',
+      title: t.achievements.expertLevel.title,
+      description: t.achievements.expertLevel.description,
       completed: completed >= 50
     })
 
@@ -243,26 +245,26 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
     const percentage = totalCourses > 0 ? (completed / totalCourses) * 100 : 0
 
     achievements.push({
-      title: 'Quarter Complete',
-      description: 'Complete 25% of all courses',
+      title: t.achievements.quarterComplete.title,
+      description: t.achievements.quarterComplete.description,
       completed: percentage >= 25
     })
 
     achievements.push({
-      title: 'Halfway There',
-      description: 'Complete 50% of all courses',
+      title: t.achievements.halfwayThere.title,
+      description: t.achievements.halfwayThere.description,
       completed: percentage >= 50
     })
 
     achievements.push({
-      title: 'Almost Done',
-      description: 'Complete 75% of all courses',
+      title: t.achievements.almostDone.title,
+      description: t.achievements.almostDone.description,
       completed: percentage >= 75
     })
 
     achievements.push({
-      title: 'Course Master',
-      description: 'Complete all available courses',
+      title: t.achievements.courseMaster.title,
+      description: t.achievements.courseMaster.description,
       completed: percentage >= 100
     })
 
@@ -276,50 +278,50 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
 
   return (
     <PanelContainer>
-      <PanelTitle>Progress Overview</PanelTitle>
+      <PanelTitle>{t.progress.title}</PanelTitle>
 
       <StatsGrid>
         <StatCard>
           <StatValue>{overallStats.completedCourses}</StatValue>
-          <StatLabel>Completed</StatLabel>
+          <StatLabel>{t.progress.completed}</StatLabel>
         </StatCard>
         <StatCard>
           <StatValue>{overallStats.inProgressCourses}</StatValue>
-          <StatLabel>Working On</StatLabel>
+          <StatLabel>{t.progress.workingOn}</StatLabel>
         </StatCard>
         <StatCard>
           <StatValue>{overallStats.waitingGradeCourses}</StatValue>
-          <StatLabel>Waiting Grade</StatLabel>
+          <StatLabel>{t.progress.waitingGrade}</StatLabel>
         </StatCard>
         <StatCard>
           <StatValue>{overallStats.availableCourses}</StatValue>
-          <StatLabel>Available</StatLabel>
+          <StatLabel>{t.progress.available}</StatLabel>
         </StatCard>
       </StatsGrid>
 
       <QuickStats>
         <QuickStatRow>
-          <QuickStatLabel>Total Progress:</QuickStatLabel>
+          <QuickStatLabel>{t.progress.totalProgress}</QuickStatLabel>
           <QuickStatValue>{overallStats.completionPercentage.toFixed(1)}%</QuickStatValue>
         </QuickStatRow>
         <ProgressBar>
           <ProgressFill percentage={overallStats.completionPercentage} color="#27ae60" />
         </ProgressBar>
         <QuickStatRow>
-          <QuickStatLabel>Total Courses:</QuickStatLabel>
+          <QuickStatLabel>{t.progress.totalCourses}</QuickStatLabel>
           <QuickStatValue>{overallStats.totalCourses}</QuickStatValue>
         </QuickStatRow>
         <QuickStatRow>
-          <QuickStatLabel>Active Courses:</QuickStatLabel>
+          <QuickStatLabel>{t.progress.activeCourses}</QuickStatLabel>
           <QuickStatValue>{overallStats.inProgressCourses + overallStats.waitingGradeCourses}</QuickStatValue>
         </QuickStatRow>
         <QuickStatRow>
-          <QuickStatLabel>Last Updated:</QuickStatLabel>
+          <QuickStatLabel>{t.progress.lastUpdated}</QuickStatLabel>
           <QuickStatValue>{userProgress.lastUpdated.toLocaleDateString()}</QuickStatValue>
         </QuickStatRow>
       </QuickStats>
 
-      <PanelTitle>Section Progress</PanelTitle>
+      <PanelTitle>{t.progress.sectionProgress}</PanelTitle>
       {sectionProgress.slice(0, 5).map((section) => (
         <SectionProgress key={section.section}>
           <ProgressLabel>
@@ -334,11 +336,13 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
         </SectionProgress>
       ))}
 
-      <PanelTitle>Level Progress</PanelTitle>
+      <PanelTitle>{t.progress.levelProgress}</PanelTitle>
       {levelProgress.map((level) => (
         <SectionProgress key={level.level}>
           <ProgressLabel>
-            <SectionTitle>Level {level.level}</SectionTitle>
+            <SectionTitle>
+              {t.progress.level} {level.level}
+            </SectionTitle>
             <span>
               {level.completed}/{level.total}
             </span>
@@ -352,7 +356,7 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
         </SectionProgress>
       ))}
 
-      <PanelTitle>Achievements</PanelTitle>
+      <PanelTitle>{t.progress.achievements}</PanelTitle>
       <AchievementsList>
         {achievements.slice(0, 6).map((achievement, index) => (
           <AchievementItem key={index} completed={achievement.completed}>

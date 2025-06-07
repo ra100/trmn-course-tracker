@@ -171,6 +171,7 @@ export interface UserSettings {
   showCompleted: boolean
   showUnavailable: boolean
   autoSave: boolean
+  language: 'en' | 'cs'
 }
 
 export interface AppState {

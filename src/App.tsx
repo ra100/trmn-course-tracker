@@ -11,6 +11,7 @@ import { SpaceWarfarePinTracker } from './components/SpaceWarfarePinTracker'
 import { DebugPanel } from './components/DebugPanel'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from './types'
 import { getTheme } from './theme'
+import { useT, useTranslation } from './i18n'
 
 const AppContainer = styled.div`
   display: flex;
@@ -88,6 +89,8 @@ const ErrorMessage = styled.div`
 `
 
 function App() {
+  const t = useT()
+  const { setLanguage } = useTranslation()
   const [courseData, setCourseData] = useState<ParsedCourseData | null>(null)
   const [userProgress, setUserProgress] = useState<UserProgress>({
     userId: 'default-user',
@@ -105,7 +108,8 @@ function App() {
     layout: 'tree',
     showCompleted: true,
     showUnavailable: true,
-    autoSave: true
+    autoSave: true,
+    language: 'en'
   })
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -117,6 +121,11 @@ function App() {
     loadSettings()
   }, [])
 
+  // Sync language settings with i18n context
+  useEffect(() => {
+    setLanguage(settings.language)
+  }, [settings.language, setLanguage])
+
   const loadCourseData = async () => {
     try {
       setLoading(true)
@@ -125,7 +134,7 @@ function App() {
       // In a real app, this would be an API call
       const response = await fetch('./courses.md')
       if (!response.ok) {
-        throw new Error('Failed to load course data')
+        throw new Error(t.errors.failedToLoad)
       }
 
       const markdownContent = await response.text()
@@ -172,6 +181,7 @@ function App() {
           showCompleted: true,
           showUnavailable: true,
           autoSave: true,
+          language: 'en',
           ...parsed
         })
       }
@@ -353,7 +363,7 @@ function App() {
     return (
       <ThemeProvider theme={currentTheme}>
         <LoadingOverlay>
-          <div>Loading TRMN Course Data...</div>
+          <div>{t.loading}</div>
         </LoadingOverlay>
       </ThemeProvider>
     )
@@ -364,9 +374,9 @@ function App() {
       <ThemeProvider theme={currentTheme}>
         <AppContainer>
           <ErrorMessage>
-            <h3>Error Loading Application</h3>
+            <h3>{t.error}</h3>
             <p>{error}</p>
-            <button onClick={loadCourseData}>Retry</button>
+            <button onClick={loadCourseData}>{t.retry}</button>
           </ErrorMessage>
         </AppContainer>
       </ThemeProvider>
@@ -377,7 +387,7 @@ function App() {
     return (
       <ThemeProvider theme={currentTheme}>
         <AppContainer>
-          <ErrorMessage>No course data available. Please check your connection and try again.</ErrorMessage>
+          <ErrorMessage>{t.errors.noDataAvailable}</ErrorMessage>
         </AppContainer>
       </ThemeProvider>
     )
@@ -400,8 +410,8 @@ function App() {
 
         <MainContent>
           <Header>
-            <h1>TRMN Course Tracker</h1>
-            <p>Track your progress through The Royal Manticoran Navy course system</p>
+            <h1>{t.appTitle}</h1>
+            <p>{t.appSubtitle}</p>
           </Header>
 
           <ContentArea>

@@ -5,11 +5,16 @@ import { CourseDetails } from './CourseDetails'
 import { Course, UserProgress } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
 import { getTheme } from '../theme'
+import { I18nProvider } from '../i18n'
 
 const lightTheme = getTheme('light')
 
 const renderWithTheme = (component: React.ReactElement) => {
-  return render(<ThemeProvider theme={lightTheme}>{component}</ThemeProvider>)
+  return render(
+    <ThemeProvider theme={lightTheme}>
+      <I18nProvider>{component}</I18nProvider>
+    </ThemeProvider>
+  )
 }
 
 const mockCourse: Course = {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { ParsedCourseData, UserProgress } from '../types'
+import { useT } from '../i18n'
 
 const TrackerContainer = styled.div`
   background: ${(props) => props.theme.colors.surface};
@@ -468,13 +469,9 @@ const calculateDepartmentProgress = (
 const calculatePinProgress = (
   courseData: ParsedCourseData,
   userProgress: UserProgress,
-  pinType: 'OSWP' | 'ESWP'
+  pinType: 'OSWP' | 'ESWP',
+  pinNames: { OSWP: string; ESWP: string }
 ): PinProgress => {
-  const pinNames = {
-    OSWP: 'Officer Space Warfare Pin (OSWP)',
-    ESWP: 'Enlisted Space Warfare Pin (ESWP)'
-  }
-
   // Find pin rule from parsed special rules
   const pinRule = courseData.specialRules.find((rule) => rule.type === pinType && rule.branch === 'RMN')
 
@@ -544,10 +541,16 @@ const calculatePinProgress = (
 }
 
 export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ courseData, userProgress }) => {
+  const t = useT()
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
     OSWP: false,
     ESWP: false
   })
+
+  const pinNames = {
+    OSWP: t.spaceWarfare.oswp,
+    ESWP: t.spaceWarfare.eswp
+  }
 
   // Debug: Log the data being received
   console.debug('SpaceWarfarePinTracker - courseData.specialRules:', courseData.specialRules)
@@ -560,8 +563,8 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
     }))
   }
 
-  const oswpProgress = calculatePinProgress(courseData, userProgress, 'OSWP')
-  const eswpProgress = calculatePinProgress(courseData, userProgress, 'ESWP')
+  const oswpProgress = calculatePinProgress(courseData, userProgress, 'OSWP', pinNames)
+  const eswpProgress = calculatePinProgress(courseData, userProgress, 'ESWP', pinNames)
 
   const renderRequirement = (req: PinRequirement) => {
     if (req.type === 'course') {
@@ -606,11 +609,13 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
             {progress.name}
             <ExpandIcon $expanded={isExpanded}>▼</ExpandIcon>
           </PinHeader>
-          <PinBadge $earned={progress.earned}>{progress.earned ? 'EARNED' : 'IN PROGRESS'}</PinBadge>
+          <PinBadge $earned={progress.earned}>
+            {progress.earned ? t.spaceWarfare.eligible : t.spaceWarfare.progress}
+          </PinBadge>
         </PinTitle>
 
         <RequirementGroup $expanded={isExpanded}>
-          <RequirementTitle>Requirements:</RequirementTitle>
+          <RequirementTitle>{t.spaceWarfare.requirements}:</RequirementTitle>
           <RequirementList>{progress.requirements.map(renderRequirement)}</RequirementList>
         </RequirementGroup>
 
@@ -619,7 +624,7 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
             <ProgressBarFill progress={progress.overallProgress} />
           </ProgressBarContainer>
           <ProgressText>
-            <span>Overall Progress</span>
+            <span>{t.spaceWarfare.progress}</span>
             <span>{Math.round(progress.overallProgress)}%</span>
           </ProgressText>
         </ProgressBar>
@@ -631,7 +636,7 @@ export const SpaceWarfarePinTracker: React.FC<SpaceWarfarePinTrackerProps> = ({ 
     <TrackerContainer>
       <TrackerHeader>
         <PinIcon>★</PinIcon>
-        Space Warfare Pin
+        {t.spaceWarfare.title}
       </TrackerHeader>
       <TrackerContent>
         {renderPinSection(oswpProgress)}

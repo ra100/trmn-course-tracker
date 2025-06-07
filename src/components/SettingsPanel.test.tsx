@@ -6,6 +6,7 @@ import { ThemeProvider } from 'styled-components'
 import { SettingsPanel } from './SettingsPanel'
 import { UserSettings } from '../types'
 import { lightTheme } from '../theme'
+import { I18nProvider } from '../i18n'
 
 describe('SettingsPanel', () => {
   const defaultSettings: UserSettings = {
@@ -13,11 +14,16 @@ describe('SettingsPanel', () => {
     layout: 'tree',
     showCompleted: true,
     showUnavailable: true,
-    autoSave: true
+    autoSave: true,
+    language: 'en'
   }
 
   const renderWithTheme = (ui: React.ReactElement) => {
-    return render(<ThemeProvider theme={lightTheme}>{ui}</ThemeProvider>)
+    return render(
+      <ThemeProvider theme={lightTheme}>
+        <I18nProvider>{ui}</I18nProvider>
+      </ThemeProvider>
+    )
   }
 
   const mockOnSettingsChange = vi.fn()
@@ -29,9 +35,10 @@ describe('SettingsPanel', () => {
   it('renders the settings panel with all sections', () => {
     renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
-    expect(screen.getByText('Display Settings')).toBeInTheDocument()
-    expect(screen.getByText('Course Visibility')).toBeInTheDocument()
-    expect(screen.getByText('Application')).toBeInTheDocument()
+    expect(screen.getByText('Settings')).toBeInTheDocument()
+    expect(screen.getByText('Status')).toBeInTheDocument()
+    expect(screen.getByText('Language')).toBeInTheDocument()
+    expect(screen.getByText('Theme')).toBeInTheDocument()
     expect(screen.getByText('Reset to Defaults')).toBeInTheDocument()
   })
 
@@ -39,9 +46,9 @@ describe('SettingsPanel', () => {
     it('displays toggle labels and descriptions', () => {
       renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
-      expect(screen.getByText('Show Completed Courses')).toBeInTheDocument()
+      expect(screen.getByText('Show Completed')).toBeInTheDocument()
       expect(screen.getByText("Display courses you've already completed")).toBeInTheDocument()
-      expect(screen.getByText('Show Locked Courses')).toBeInTheDocument()
+      expect(screen.getByText('Show Unavailable')).toBeInTheDocument()
       expect(screen.getByText('Display courses that are locked due to unmet prerequisites')).toBeInTheDocument()
     })
 
@@ -109,7 +116,8 @@ describe('SettingsPanel', () => {
         showCompleted: false,
         showUnavailable: false,
         theme: 'light', // dark mode off
-        autoSave: false
+        autoSave: false,
+        language: 'en'
       }
 
       renderWithTheme(<SettingsPanel settings={settingsWithFalseValues} onSettingsChange={mockOnSettingsChange} />)
@@ -127,14 +135,14 @@ describe('SettingsPanel', () => {
     it('displays dark mode toggle', () => {
       renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
-      expect(screen.getByText('Dark Mode')).toBeInTheDocument()
+      expect(screen.getByText('Dark')).toBeInTheDocument()
       expect(screen.getByText('Switch between light and dark theme')).toBeInTheDocument()
     })
 
     it('displays auto-save toggle', () => {
       renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
-      expect(screen.getByText('Auto-save Progress')).toBeInTheDocument()
+      expect(screen.getByText('Auto Save')).toBeInTheDocument()
       expect(screen.getByText('Automatically save your course completion progress')).toBeInTheDocument()
     })
 
@@ -178,7 +186,8 @@ describe('SettingsPanel', () => {
         layout: 'tree',
         showCompleted: false,
         showUnavailable: false,
-        autoSave: false
+        autoSave: false,
+        language: 'en'
       }
 
       renderWithTheme(<SettingsPanel settings={customSettings} onSettingsChange={mockOnSettingsChange} />)
@@ -191,7 +200,8 @@ describe('SettingsPanel', () => {
         layout: 'tree',
         showCompleted: true,
         showUnavailable: true,
-        autoSave: true
+        autoSave: true,
+        language: 'en'
       })
     })
 
@@ -202,7 +212,8 @@ describe('SettingsPanel', () => {
         layout: 'tree',
         showCompleted: false,
         showUnavailable: false,
-        autoSave: false
+        autoSave: false,
+        language: 'en'
       }
 
       renderWithTheme(<SettingsPanel settings={customSettings} onSettingsChange={mockOnSettingsChange} />)
@@ -219,7 +230,7 @@ describe('SettingsPanel', () => {
       renderWithTheme(<SettingsPanel settings={defaultSettings} onSettingsChange={mockOnSettingsChange} />)
 
       // Check for heading
-      expect(screen.getByRole('heading', { name: 'Display Settings' })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Settings' })).toBeInTheDocument()
 
       // Check for button
       expect(screen.getByRole('button', { name: 'Reset to Defaults' })).toBeInTheDocument()

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings, NodeStatus } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
+import { useT } from '../i18n'
 
 // Helper function to normalize department names for better matching
 const normalizeDepartmentName = (name: string): string | null => {
@@ -401,6 +402,7 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
   onCourseToggle,
   onCourseStatusChange
 }) => {
+  const t = useT()
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredCourses, setFilteredCourses] = useState<Course[]>([])
   const [groupingMode, setGroupingMode] = useState<'section' | 'department'>('section')
@@ -518,10 +520,10 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
     contextMenu.style.minWidth = '120px'
 
     const options = [
-      { label: 'Available', value: 'available' as const },
-      { label: 'Working On', value: 'in_progress' as const },
-      { label: 'Waiting Grade', value: 'waiting_grade' as const },
-      { label: 'Completed', value: 'completed' as const }
+      { label: t.courseStatus.available, value: 'available' as const },
+      { label: t.courseStatus.inProgress, value: 'in_progress' as const },
+      { label: t.courseStatus.waitingGrade, value: 'waiting_grade' as const },
+      { label: t.courseStatus.completed, value: 'completed' as const }
     ]
 
     options.forEach((option) => {
@@ -611,9 +613,11 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
                     onClick={() => handleCourseClick(course)}
                     onDoubleClick={() => handleCourseDoubleClick(course)}
                     onContextMenu={(e) => handleCourseRightClick(e, course)}
-                    title={`Double-click to ${
-                      course.completed ? 'mark incomplete' : 'mark complete'
-                    } | Right-click for options`}
+                    title={`${t.courseActions.doubleClickToToggle} ${
+                      course.completed
+                        ? t.courseActions.markIncomplete.toLowerCase()
+                        : t.courseActions.markComplete.toLowerCase()
+                    } | ${t.courseActions.rightClickForOptions}`}
                   >
                     <CourseCode>{course.code}</CourseCode>
                     <CourseName>{course.name}</CourseName>
@@ -711,9 +715,11 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
                     onClick={() => handleCourseClick(course)}
                     onDoubleClick={() => handleCourseDoubleClick(course)}
                     onContextMenu={(e) => handleCourseRightClick(e, course)}
-                    title={`Double-click to ${
-                      course.completed ? 'mark incomplete' : 'mark complete'
-                    } | Right-click for options`}
+                    title={`${t.courseActions.doubleClickToToggle} ${
+                      course.completed
+                        ? t.courseActions.markIncomplete.toLowerCase()
+                        : t.courseActions.markComplete.toLowerCase()
+                    } | ${t.courseActions.rightClickForOptions}`}
                   >
                     <CourseCode>{course.code}</CourseCode>
                     <CourseName>{course.name}</CourseName>
@@ -737,7 +743,7 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
       <SearchContainer>
         <SearchInput
           type="text"
-          placeholder="Search courses by name, code, or section..."
+          placeholder={t.filters.search}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />

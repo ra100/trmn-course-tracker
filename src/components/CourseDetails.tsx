@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Course, UserProgress } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
+import { useT } from '../i18n'
 
 const DetailsContainer = styled.div`
   padding: 1.5rem;
@@ -178,10 +179,11 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
   onCourseToggle,
   onCourseStatusChange
 }) => {
+  const t = useT()
   if (!course) {
     return (
       <DetailsContainer>
-        <EmptyState>Select a course to view details</EmptyState>
+        <EmptyState>{t.courseDetails.selectCourse}</EmptyState>
       </DetailsContainer>
     )
   }
@@ -198,15 +200,15 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
     const status = getStatus()
     switch (status) {
       case 'completed':
-        return 'Completed'
+        return t.courseStatus.completed
       case 'waiting_grade':
-        return 'Waiting for Grade'
+        return t.courseStatus.waitingGrade
       case 'in_progress':
-        return 'Working On'
+        return t.courseStatus.inProgress
       case 'available':
-        return 'Available'
+        return t.courseStatus.available
       case 'locked':
-        return 'Prerequisites Required'
+        return t.courseStatus.prerequisitesRequired
     }
   }
 
@@ -278,43 +280,45 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
       <InfoGrid>
         {course.level && (
           <InfoItem>
-            <InfoLabel>Level</InfoLabel>
+            <InfoLabel>{t.progress.level}</InfoLabel>
             <InfoValue>{course.level}</InfoValue>
           </InfoItem>
         )}
         <InfoItem>
-          <InfoLabel>Prerequisites</InfoLabel>
-          <InfoValue>{prerequisites.length || 'None'}</InfoValue>
+          <InfoLabel>{t.courseDetails.prerequisites}</InfoLabel>
+          <InfoValue>{prerequisites.length || t.courseDetails.none}</InfoValue>
         </InfoItem>
         <InfoItem>
-          <InfoLabel>Unlocks</InfoLabel>
-          <InfoValue>{unlockedCourses.length} course(s)</InfoValue>
+          <InfoLabel>{t.courseDetails.unlocks}</InfoLabel>
+          <InfoValue>
+            {unlockedCourses.length} {t.courseDetails.courses}
+          </InfoValue>
         </InfoItem>
         <InfoItem>
-          <InfoLabel>Status</InfoLabel>
+          <InfoLabel>{t.courseDetails.status}</InfoLabel>
           <InfoValue>{getStatusText()}</InfoValue>
         </InfoItem>
       </InfoGrid>
 
       <ActionButton variant="primary" onClick={handleToggleClick} disabled={status === 'locked'}>
-        {course.completed ? 'Mark Incomplete' : 'Mark Complete'}
+        {course.completed ? t.courseActions.markIncomplete : t.courseActions.markComplete}
       </ActionButton>
 
       {onCourseStatusChange && status !== 'locked' && (
         <>
           {status !== 'in_progress' && (
             <ActionButton variant="secondary" onClick={() => onCourseStatusChange(course.code, 'in_progress')}>
-              Working On
+              {t.courseActions.workingOn}
             </ActionButton>
           )}
           {status !== 'waiting_grade' && (
             <ActionButton variant="secondary" onClick={() => onCourseStatusChange(course.code, 'waiting_grade')}>
-              Waiting Grade
+              {t.courseActions.waitingGrade}
             </ActionButton>
           )}
           {(status === 'in_progress' || status === 'waiting_grade') && (
             <ActionButton variant="secondary" onClick={() => onCourseStatusChange(course.code, 'available')}>
-              Reset to Available
+              {t.courseActions.resetToAvailable}
             </ActionButton>
           )}
         </>
@@ -322,7 +326,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
 
       {prerequisites.length > 0 && (
         <Section>
-          <SectionTitle>Prerequisites</SectionTitle>
+          <SectionTitle>{t.courseDetails.prerequisites}</SectionTitle>
           <PrerequisitesList>
             {prerequisites.map((prereq, index) => (
               <PrerequisiteItem key={index} satisfied={prereq?.satisfied || false}>
@@ -335,7 +339,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
 
       {unlockedCourses.length > 0 && (
         <Section>
-          <SectionTitle>Unlocks These Courses</SectionTitle>
+          <SectionTitle>{t.courseDetails.unlocksCourses}</SectionTitle>
           <UnlockedCoursesList>
             {unlockedCourses.map((unlockedCourse) => (
               <UnlockedCourseItem key={unlockedCourse.id}>
@@ -348,7 +352,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
 
       {course.description && (
         <Section>
-          <SectionTitle>Description</SectionTitle>
+          <SectionTitle>{t.courseDetails.description}</SectionTitle>
           <DescriptionText>{course.description}</DescriptionText>
         </Section>
       )}

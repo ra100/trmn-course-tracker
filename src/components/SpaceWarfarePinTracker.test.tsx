@@ -5,10 +5,25 @@ import { ThemeProvider } from 'styled-components'
 import { SpaceWarfarePinTracker } from './SpaceWarfarePinTracker'
 import { ParsedCourseData, UserProgress } from '../types'
 import { lightTheme } from '../theme'
+import { I18nProvider } from '../i18n'
 
 const renderWithTheme = (component: React.ReactElement) => {
-  return render(<ThemeProvider theme={lightTheme}>{component}</ThemeProvider>)
+  return render(
+    <ThemeProvider theme={lightTheme}>
+      <I18nProvider>{component}</I18nProvider>
+    </ThemeProvider>
+  )
 }
+
+const createUserProgress = (completedCourses: string[] = []): UserProgress => ({
+  userId: 'test',
+  completedCourses: new Set(completedCourses),
+  availableCourses: new Set(),
+  inProgressCourses: new Set(),
+  waitingGradeCourses: new Set(),
+  specialRulesProgress: new Map(),
+  lastUpdated: new Date()
+})
 
 // Mock courses
 const mockCourses = [
@@ -234,30 +249,18 @@ const mockCourseData: ParsedCourseData = {
 describe('SpaceWarfarePinTracker', () => {
   describe('OSWP (Officer Space Warfare Pin)', () => {
     it('shows OSWP requirements correctly', () => {
-      const userProgress: UserProgress = {
-        userId: 'test',
-        completedCourses: new Set(),
-        availableCourses: new Set(),
-        specialRulesProgress: new Map(),
-        lastUpdated: new Date()
-      }
+      const userProgress = createUserProgress()
 
       renderWithTheme(<SpaceWarfarePinTracker courseData={mockCourseData} userProgress={userProgress} />)
 
-      expect(screen.getByText('Officer Space Warfare Pin (OSWP)')).toBeInTheDocument()
+      expect(screen.getByText('OSWP')).toBeInTheDocument()
       expect(screen.getByText('Master-at-Arms Advanced Specialist (SIA-SRN-31C)')).toBeInTheDocument()
       expect(screen.getByText('Personnelman Advanced Specialist (SIA-SRN-01C)')).toBeInTheDocument()
       expect(screen.getByText(/Department Choice.*1 'D' level from 4 of 5 departments/)).toBeInTheDocument()
     })
 
     it('calculates OSWP progress correctly with some completed courses', () => {
-      const userProgress: UserProgress = {
-        userId: 'test',
-        completedCourses: new Set(['SIA-SRN-31C', 'SIA-SRN-01C']),
-        availableCourses: new Set(),
-        specialRulesProgress: new Map(),
-        lastUpdated: new Date()
-      }
+      const userProgress = createUserProgress(['SIA-SRN-31C', 'SIA-SRN-01C'])
 
       renderWithTheme(<SpaceWarfarePinTracker courseData={mockCourseData} userProgress={userProgress} />)
 
@@ -276,13 +279,15 @@ describe('SpaceWarfarePinTracker', () => {
           'SIA-SRN-14D' // Engineering D
         ]),
         availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
         specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
 
       renderWithTheme(<SpaceWarfarePinTracker courseData={mockCourseData} userProgress={userProgress} />)
 
-      expect(screen.getByText('EARNED')).toBeInTheDocument()
+      expect(screen.getByText('Eligible')).toBeInTheDocument()
       expect(screen.getByText('100%')).toBeInTheDocument()
     })
   })
@@ -293,13 +298,15 @@ describe('SpaceWarfarePinTracker', () => {
         userId: 'test',
         completedCourses: new Set(),
         availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
         specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
 
       renderWithTheme(<SpaceWarfarePinTracker courseData={mockCourseData} userProgress={userProgress} />)
 
-      expect(screen.getByText('Enlisted Space Warfare Pin (ESWP)')).toBeInTheDocument()
+      expect(screen.getByText('ESWP')).toBeInTheDocument()
       expect(screen.getByText('Personnelman Specialist (SIA-SRN-01A)')).toBeInTheDocument()
       expect(screen.getByText('Yeoman Specialist (SIA-SRN-04A)')).toBeInTheDocument()
       expect(screen.getByText(/Department Choice.*1 'C' level from 3 of 5 departments/)).toBeInTheDocument()
@@ -310,6 +317,8 @@ describe('SpaceWarfarePinTracker', () => {
         userId: 'test',
         completedCourses: new Set(['SIA-SRN-01A', 'SIA-SRN-04A']),
         availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
         specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
@@ -331,13 +340,15 @@ describe('SpaceWarfarePinTracker', () => {
           'SIA-SRN-12C' // Communications C
         ]),
         availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
         specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
 
       renderWithTheme(<SpaceWarfarePinTracker courseData={mockCourseData} userProgress={userProgress} />)
 
-      expect(screen.getByText('EARNED')).toBeInTheDocument()
+      expect(screen.getByText('Eligible')).toBeInTheDocument()
       expect(screen.getByText('100%')).toBeInTheDocument()
     })
   })
@@ -353,6 +364,8 @@ describe('SpaceWarfarePinTracker', () => {
           'SIA-SRN-12D' // Communications D (only 2 departments)
         ]),
         availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
         specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
@@ -372,6 +385,8 @@ describe('SpaceWarfarePinTracker', () => {
           'SIA-SRN-05C' // Astrogation C (Flight Ops) - only 1 department
         ]),
         availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
         specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
@@ -389,6 +404,8 @@ describe('SpaceWarfarePinTracker', () => {
         userId: 'test',
         completedCourses: new Set(),
         availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
         specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
@@ -407,6 +424,8 @@ describe('SpaceWarfarePinTracker', () => {
         userId: 'test',
         completedCourses: new Set(),
         availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
         specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
@@ -425,6 +444,8 @@ describe('SpaceWarfarePinTracker', () => {
         userId: 'test',
         completedCourses: new Set(),
         availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
         specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
@@ -443,6 +464,8 @@ describe('SpaceWarfarePinTracker', () => {
         userId: 'test',
         completedCourses: new Set(['SIA-SRN-31C']), // Only one non-department course completed
         availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
         specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }

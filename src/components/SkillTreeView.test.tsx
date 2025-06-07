@@ -6,6 +6,7 @@ import { SkillTreeView } from './SkillTreeView'
 import { lightTheme } from '../theme'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
+import { I18nProvider } from '../i18n'
 
 const mockCourseData: ParsedCourseData = {
   courses: [
@@ -130,11 +131,12 @@ const mockUserProgress: UserProgress = {
 const mockFilters: FilterOptions = {}
 
 const mockSettings: UserSettings = {
-  theme: 'light',
+  autoSave: true,
+  language: 'en',
   layout: 'tree',
   showCompleted: true,
   showUnavailable: true,
-  autoSave: true
+  theme: 'light'
 }
 
 const mockEligibilityEngine = {
@@ -159,7 +161,11 @@ const mockProps = {
 }
 
 const renderWithTheme = (component: React.ReactElement) => {
-  return render(<ThemeProvider theme={lightTheme}>{component}</ThemeProvider>)
+  return render(
+    <ThemeProvider theme={lightTheme}>
+      <I18nProvider>{component}</I18nProvider>
+    </ThemeProvider>
+  )
 }
 
 describe('SkillTreeView', () => {
