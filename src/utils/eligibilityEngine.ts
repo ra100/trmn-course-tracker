@@ -348,4 +348,8 @@ export class EligibilityEngine {
 
     return unlockedCourses
   }
+
+  public getCourseByCode(courseCode: string): Course | undefined {
+    return this.courseData.courseMap.get(courseCode)
+  }
 }

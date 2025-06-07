@@ -179,6 +179,33 @@ const UnlockedCourseItem = styled.div`
   color: ${(props) => props.theme.colors.primary};
 `
 
+const ClickableCourseCode = styled.span`
+  color: ${(props) => props.theme.colors.primary};
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: 600;
+
+  &:hover {
+    color: ${(props) => props.theme.colors.primaryHover};
+    text-decoration: none;
+  }
+`
+
+const ClickableUnlockedCourse = styled.div`
+  padding: 0.4rem;
+  background: ${(props) => props.theme.colors.primary + '20'};
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: ${(props) => props.theme.colors.primary};
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${(props) => props.theme.colors.primary + '30'};
+    transform: translateX(2px);
+  }
+`
+
 const InfoGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -218,6 +245,7 @@ interface CourseDetailsProps {
     courseCode: string,
     status: 'available' | 'in_progress' | 'waiting_grade' | 'completed'
   ) => void
+  onCourseSelect?: (course: Course) => void
 }
 
 export const CourseDetails: React.FC<CourseDetailsProps> = ({
@@ -225,7 +253,8 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
   userProgress,
   eligibilityEngine,
   onCourseToggle,
-  onCourseStatusChange
+  onCourseStatusChange,
+  onCourseSelect
 }) => {
   const t = useT()
   if (!course) {
@@ -268,7 +297,8 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
           return {
             text: `Course: ${prereq.code}`,
             satisfied,
-            type: 'course'
+            type: 'course',
+            courseCode: prereq.code
           }
         } else if (prereq.type === 'alternative_group' && prereq.alternativePrerequisites) {
           // Check if any of the alternatives are satisfied
@@ -285,7 +315,8 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
           return {
             text: `One of: ${alternativeTexts.join(' OR ')}`,
             satisfied,
-            type: 'alternative_group'
+            type: 'alternative_group',
+            courseCodes: alternativeTexts
           }
         } else if (prereq.type === 'department_choice') {
           // Handle department choice requirements (like Navy Counselor courses)
@@ -335,6 +366,15 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
   const handleToggleClick = () => {
     if (course.available || course.completed) {
       onCourseToggle(course.code)
+    }
+  }
+
+  const handleCourseClick = (courseCode: string) => {
+    if (!onCourseSelect || !eligibilityEngine) return
+
+    const targetCourse = eligibilityEngine.getCourseByCode(courseCode)
+    if (targetCourse) {
+      onCourseSelect(targetCourse)
     }
   }
 
@@ -425,6 +465,34 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
                 )
               }
 
+              if (prereq?.type === 'course' && prereq.courseCode && onCourseSelect) {
+                const courseCode = prereq.courseCode
+                return (
+                  <PrerequisiteItem key={index} satisfied={prereq.satisfied || false}>
+                    Course:{' '}
+                    <ClickableCourseCode onClick={() => courseCode && handleCourseClick(courseCode)}>
+                      {courseCode}
+                    </ClickableCourseCode>
+                  </PrerequisiteItem>
+                )
+              }
+
+              if (prereq?.type === 'alternative_group' && prereq.courseCodes && onCourseSelect) {
+                return (
+                  <PrerequisiteItem key={index} satisfied={prereq.satisfied || false}>
+                    One of:{' '}
+                    {prereq.courseCodes.map((courseCode, codeIndex) => (
+                      <React.Fragment key={courseCode}>
+                        {codeIndex > 0 && ' OR '}
+                        <ClickableCourseCode onClick={() => courseCode && handleCourseClick(courseCode)}>
+                          {courseCode}
+                        </ClickableCourseCode>
+                      </React.Fragment>
+                    ))}
+                  </PrerequisiteItem>
+                )
+              }
+
               return (
                 <PrerequisiteItem key={index} satisfied={prereq?.satisfied || false}>
                   {prereq?.text}
@@ -439,11 +507,17 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
         <Section>
           <SectionTitle>{t.courseDetails.unlocksCourses}</SectionTitle>
           <UnlockedCoursesList>
-            {unlockedCourses.map((unlockedCourse) => (
-              <UnlockedCourseItem key={unlockedCourse.id}>
-                <strong>{unlockedCourse.code}</strong> - {unlockedCourse.name}
-              </UnlockedCourseItem>
-            ))}
+            {unlockedCourses.map((unlockedCourse) =>
+              onCourseSelect ? (
+                <ClickableUnlockedCourse key={unlockedCourse.id} onClick={() => handleCourseClick(unlockedCourse.code)}>
+                  <strong>{unlockedCourse.code}</strong> - {unlockedCourse.name}
+                </ClickableUnlockedCourse>
+              ) : (
+                <UnlockedCourseItem key={unlockedCourse.id}>
+                  <strong>{unlockedCourse.code}</strong> - {unlockedCourse.name}
+                </UnlockedCourseItem>
+              )
+            )}
           </UnlockedCoursesList>
         </Section>
       )}

@@ -435,6 +435,7 @@ function App() {
                 eligibilityEngine={eligibilityEngine}
                 onCourseToggle={toggleCourseCompletion}
                 onCourseStatusChange={setCourseStatus}
+                onCourseSelect={handleCourseSelect}
               />
             </DetailsPanel>
           </ContentArea>
