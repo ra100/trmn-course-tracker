@@ -311,12 +311,22 @@ function App() {
     const alreadyCompleted = trackableImportedCourses.filter((code) => existingCourses.has(code))
     const newCourses = trackableImportedCourses.filter((code) => !existingCourses.has(code))
 
-    // Add only new trackable courses to completed courses
+    // Create new status sets - remove imported courses from in-progress and waiting-grade
     const newCompleted = new Set([...Array.from(existingCourses), ...newCourses])
+    const newInProgress = new Set(userProgress.inProgressCourses)
+    const newWaitingGrade = new Set(userProgress.waitingGradeCourses)
+
+    // Remove all imported trackable courses from other status sets (Medusa import overrides manual status)
+    trackableImportedCourses.forEach((courseCode) => {
+      newInProgress.delete(courseCode)
+      newWaitingGrade.delete(courseCode)
+    })
 
     const newProgress: UserProgress = {
       ...userProgress,
       completedCourses: newCompleted,
+      inProgressCourses: newInProgress,
+      waitingGradeCourses: newWaitingGrade,
       lastUpdated: new Date()
     }
 
