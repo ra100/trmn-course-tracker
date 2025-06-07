@@ -1,5 +1,69 @@
 ---
-description:
+description: testing, writing tests, running tests
 globs:
 alwaysApply: false
 ---
+Useful for *.test.tsx? files.
+
+Test runner used is vite, run tests with suffix `--run` to not run then in watch mode.
+
+## Testing Conventions
+
+### Testing Style
+
+- for test case combination of input-output with same logic use `it.each`
+- example:
+  ```ts
+  it.each`
+    input            | expected
+    ${'SIA-RMN-01A'} | ${'A'}
+    ${'SIA-RMN-01C'} | ${'C'}
+  `(({input, expected}) => {
+    //...
+    expect(result).toBe(expected)
+  })
+
+### Test File Placement
+
+- **Tests must be co-located with the code they test**
+- Place test files directly next to the component/utility they test
+- Use the naming convention: `ComponentName.test.tsx` or `utilityName.test.ts`
+- Example structure:
+  ```ts
+  src/components/
+    SpaceWarfarePinTracker.tsx
+    SpaceWarfarePinTracker.test.tsx
+    ProgressPanel.tsx
+    ProgressPanel.test.tsx
+  src/utils/
+    courseParser.ts
+    courseParser.test.ts
+  ```
+
+### Testing Framework
+
+- **Use Vitest** (not Jest) for all testing
+- Import test globals from vitest: `import { describe, it, expect } from 'vitest'`
+- Use React Testing Library for component tests
+- Use styled-components ThemeProvider wrapper for component tests
+
+### Test Structure
+
+- Always wrap components with ThemeProvider for testing
+- Use the `renderWithTheme` helper pattern:
+  ```typescript
+  const renderWithTheme = (component: React.ReactElement) => {
+    return render(
+      <ThemeProvider theme={lightTheme}>
+        {component}
+      </ThemeProvider>
+    )
+  }
+  ```
+
+### Test Categories
+
+- **Component Tests**: Focus on user interactions and rendering
+- **Utility Tests**: Focus on business logic and data transformations
+- **Integration Tests**: Test component interactions with data flow
+

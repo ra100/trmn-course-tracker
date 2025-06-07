@@ -42,52 +42,6 @@ If I ask for adjustments to code I have provided you, do not repeat all of my co
 
 This is a React TypeScript application for tracking progress through The Royal Manticoran Navy (TRMN) course system. It uses Vite as the build tool and Vitest for testing.
 
-## Testing Conventions
-
-### Test File Placement
-
-- **Tests must be co-located with the code they test**
-- Place test files directly next to the component/utility they test
-- Use the naming convention: `ComponentName.test.tsx` or `utilityName.test.ts`
-- Example structure:
-  ```
-  src/components/
-    SpaceWarfarePinTracker.tsx
-    SpaceWarfarePinTracker.test.tsx
-    ProgressPanel.tsx
-    ProgressPanel.test.tsx
-  src/utils/
-    courseParser.ts
-    courseParser.test.ts
-  ```
-
-### Testing Framework
-
-- **Use Vitest** (not Jest) for all testing
-- Import test globals from vitest: `import { describe, it, expect } from 'vitest'`
-- Use React Testing Library for component tests
-- Use styled-components ThemeProvider wrapper for component tests
-
-### Test Structure
-
-- Always wrap components with ThemeProvider for testing
-- Use the `renderWithTheme` helper pattern:
-  ```typescript
-  const renderWithTheme = (component: React.ReactElement) => {
-    return render(
-      <ThemeProvider theme={lightTheme}>
-        {component}
-      </ThemeProvider>
-    )
-  }
-  ```
-
-### Test Categories
-
-- **Component Tests**: Focus on user interactions and rendering
-- **Utility Tests**: Focus on business logic and data transformations
-- **Integration Tests**: Test component interactions with data flow
-
 ## Code Style Conventions
 
 ### TypeScript
