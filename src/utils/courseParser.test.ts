@@ -591,6 +591,160 @@ Both RMN and RMMC officers wear the same pin.
       expect(rmnEswpCourses?.some((req) => req.code === 'SIA-SRN-04A')).toBe(true)
     })
   })
+
+  describe('Navy Counselor complex prerequisites', () => {
+    it('should parse Navy Counselor Specialist complex requirements correctly', () => {
+      const markdown = `
+## Navy Counselor School
+
+| Course Name               | Course Number | Course Prerequisites                                                                                                                                      |
+| ------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Navy Counselor Specialist | SIA-SRN-02A   | SIA-RMN-0001 SIA-SRN-01A 5 A courses from any of the following departments: Astrogation Tactical Command Communications Engineering Logistics, or Medical |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      const navyCounselorSpecialist = result.courses.find((c) => c.code === 'SIA-SRN-02A')
+      expect(navyCounselorSpecialist).toBeDefined()
+      expect(navyCounselorSpecialist?.prerequisites).toHaveLength(3)
+
+      // Should have specific course prerequisites
+      const coursePrereqs = navyCounselorSpecialist?.prerequisites.filter((p) => p.type === 'course')
+      expect(coursePrereqs).toHaveLength(2)
+      expect(coursePrereqs?.[0].code).toBe('SIA-RMN-0001')
+      expect(coursePrereqs?.[1].code).toBe('SIA-SRN-01A')
+
+      // Should have department choice requirement
+      const deptChoiceReq = navyCounselorSpecialist?.prerequisites.find((p) => p.type === 'department_choice')
+      expect(deptChoiceReq).toBeDefined()
+      expect(deptChoiceReq?.minimum).toBe(5)
+      expect(deptChoiceReq?.level).toBe('A')
+      expect(deptChoiceReq?.departments).toContain('Astrogation')
+      expect(deptChoiceReq?.departments).toContain('Tactical')
+      expect(deptChoiceReq?.departments).toContain('Command')
+      expect(deptChoiceReq?.departments).toContain('Communications')
+      expect(deptChoiceReq?.departments).toContain('Engineering')
+      expect(deptChoiceReq?.departments).toContain('Logistics')
+      expect(deptChoiceReq?.departments).toContain('Medical')
+    })
+
+    it('should parse Navy Counselor Advanced Specialist with "departments listed above" correctly', () => {
+      const markdown = `
+## Navy Counselor School
+
+| Course Name                        | Course Number | Course Prerequisites                                                                                        |
+| ---------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
+| Navy Counselor Advanced Specialist | SIA-SRN-02C   | SIA-RMN-0002 SIA-SRN-02A 2 C courses from any of the departments listed above.                             |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      const navyCounselorAdvanced = result.courses.find((c) => c.code === 'SIA-SRN-02C')
+      expect(navyCounselorAdvanced).toBeDefined()
+      expect(navyCounselorAdvanced?.prerequisites).toHaveLength(3)
+
+      // Should have specific course prerequisites
+      const coursePrereqs = navyCounselorAdvanced?.prerequisites.filter((p) => p.type === 'course')
+      expect(coursePrereqs).toHaveLength(2)
+      expect(coursePrereqs?.[0].code).toBe('SIA-RMN-0002')
+      expect(coursePrereqs?.[1].code).toBe('SIA-SRN-02A')
+
+      // Should have department choice requirement referencing "departments listed above"
+      const deptChoiceReq = navyCounselorAdvanced?.prerequisites.find((p) => p.type === 'department_choice')
+      expect(deptChoiceReq).toBeDefined()
+      expect(deptChoiceReq?.minimum).toBe(2)
+      expect(deptChoiceReq?.level).toBe('C')
+      expect(deptChoiceReq?.departments).toContain('Astrogation')
+      expect(deptChoiceReq?.departments).toContain('Medical')
+    })
+
+    it('should parse Navy Counselor Qualification with single D course requirement', () => {
+      const markdown = `
+## Navy Counselor School
+
+| Course Name                | Course Number | Course Prerequisites                                                                |
+| -------------------------- | ------------- | ----------------------------------------------------------------------------------- |
+| Navy Counselor Qualification | SIA-SRN-02D   | SIA-RMN-0101 SIA-SRN-02C 1 D course from any of the departments listed above.      |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      const navyCounselorQual = result.courses.find((c) => c.code === 'SIA-SRN-02D')
+      expect(navyCounselorQual).toBeDefined()
+      expect(navyCounselorQual?.prerequisites).toHaveLength(3)
+
+      // Should have specific course prerequisites
+      const coursePrereqs = navyCounselorQual?.prerequisites.filter((p) => p.type === 'course')
+      expect(coursePrereqs).toHaveLength(2)
+      expect(coursePrereqs?.[0].code).toBe('SIA-RMN-0101')
+      expect(coursePrereqs?.[1].code).toBe('SIA-SRN-02C')
+
+      // Should have department choice requirement for single D course
+      const deptChoiceReq = navyCounselorQual?.prerequisites.find((p) => p.type === 'department_choice')
+      expect(deptChoiceReq).toBeDefined()
+      expect(deptChoiceReq?.minimum).toBe(1)
+      expect(deptChoiceReq?.level).toBe('D')
+      expect(deptChoiceReq?.departments).toContain('Astrogation')
+    })
+  })
+
+  describe('Real Navy Counselor courses from courses.md', () => {
+    it('should parse actual Navy Counselor courses correctly', async () => {
+      // Read the actual courses.md file
+      const fs = await import('fs')
+      const path = await import('path')
+      const coursesPath = path.join(process.cwd(), 'public', 'courses.md')
+      const coursesContent = fs.readFileSync(coursesPath, 'utf-8')
+
+      const parser = new CourseParser(coursesContent)
+      const result = parser.parse()
+
+      // Find Navy Counselor courses
+      const navyCounselorSpecialist = result.courses.find((c) => c.code === 'SIA-SRN-02A')
+      const navyCounselorAdvanced = result.courses.find((c) => c.code === 'SIA-SRN-02C')
+      const navyCounselorQual = result.courses.find((c) => c.code === 'SIA-SRN-02D')
+
+      // Verify Navy Counselor Specialist
+      expect(navyCounselorSpecialist).toBeDefined()
+      expect(navyCounselorSpecialist?.name).toBe('Navy Counselor Specialist')
+      expect(navyCounselorSpecialist?.prerequisites).toHaveLength(3)
+
+      const specialistCoursePrereqs = navyCounselorSpecialist?.prerequisites.filter((p) => p.type === 'course')
+      expect(specialistCoursePrereqs).toHaveLength(2)
+      expect(specialistCoursePrereqs?.[0].code).toBe('SIA-RMN-0001')
+      expect(specialistCoursePrereqs?.[1].code).toBe('SIA-SRN-01A')
+
+      const specialistDeptReq = navyCounselorSpecialist?.prerequisites.find((p) => p.type === 'department_choice')
+      expect(specialistDeptReq).toBeDefined()
+      expect(specialistDeptReq?.minimum).toBe(5)
+      expect(specialistDeptReq?.level).toBe('A')
+      expect(specialistDeptReq?.departments).toContain('Astrogation')
+      expect(specialistDeptReq?.departments).toContain('Medical')
+
+      // Verify Navy Counselor Advanced Specialist
+      expect(navyCounselorAdvanced).toBeDefined()
+      expect(navyCounselorAdvanced?.name).toBe('Navy Counselor Advanced Specialist')
+      expect(navyCounselorAdvanced?.prerequisites).toHaveLength(3)
+
+      const advancedDeptReq = navyCounselorAdvanced?.prerequisites.find((p) => p.type === 'department_choice')
+      expect(advancedDeptReq).toBeDefined()
+      expect(advancedDeptReq?.minimum).toBe(2)
+      expect(advancedDeptReq?.level).toBe('C')
+
+      // Verify Navy Counselor Qualification
+      expect(navyCounselorQual).toBeDefined()
+      expect(navyCounselorQual?.name).toBe('Navy Counselor Qualification')
+      expect(navyCounselorQual?.prerequisites).toHaveLength(3)
+
+      const qualDeptReq = navyCounselorQual?.prerequisites.find((p) => p.type === 'department_choice')
+      expect(qualDeptReq).toBeDefined()
+      expect(qualDeptReq?.minimum).toBe(1)
+      expect(qualDeptReq?.level).toBe('D')
+    })
+  })
 })
 
 // Test markdown with OR conditions
@@ -652,6 +806,8 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       userId: 'test-user',
       completedCourses: new Set<string>(),
       availableCourses: new Set<string>(),
+      inProgressCourses: new Set<string>(),
+      waitingGradeCourses: new Set<string>(),
       specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
@@ -666,6 +822,8 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       userId: 'test-user',
       completedCourses: new Set(['SIA-RMN-0005']),
       availableCourses: new Set<string>(),
+      inProgressCourses: new Set<string>(),
+      waitingGradeCourses: new Set<string>(),
       specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
@@ -680,6 +838,8 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       userId: 'test-user',
       completedCourses: new Set(['SIA-RMN-0001', 'SIA-RMN-0002', 'SIA-RMN-0004', 'GPU-ALC-0009']),
       availableCourses: new Set<string>(),
+      inProgressCourses: new Set<string>(),
+      waitingGradeCourses: new Set<string>(),
       specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
@@ -704,6 +864,8 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       userId: 'test-user',
       completedCourses: new Set(['SIA-RMN-0001', 'SIA-RMN-0002', 'SIA-RMN-0103']),
       availableCourses: new Set<string>(),
+      inProgressCourses: new Set<string>(),
+      waitingGradeCourses: new Set<string>(),
       specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
@@ -728,6 +890,8 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       userId: 'test-user',
       completedCourses: new Set(['SIA-RMN-0001', 'SIA-RMN-0002', 'SIA-RMN-0004', 'GPU-ALC-0009']),
       availableCourses: new Set<string>(),
+      inProgressCourses: new Set<string>(),
+      waitingGradeCourses: new Set<string>(),
       specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }

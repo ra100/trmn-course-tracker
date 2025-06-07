@@ -175,7 +175,14 @@ export class CourseParser {
 
     const prerequisites: Prerequisite[] = []
 
-    // Handle OR conditions first
+    // Check for complex requirements first (like Navy Counselor courses)
+    if (this.hasComplexRequirements(prereqString)) {
+      const complexReqs = this.parseComplexCourseRequirements(prereqString)
+      prerequisites.push(...complexReqs)
+      return prerequisites
+    }
+
+    // Handle OR conditions second
     if (prereqString.toLowerCase().includes(' or ')) {
       const orParts = prereqString.split(/\s+or\s+/i).map((part) => part.trim())
 
@@ -232,15 +239,6 @@ export class CourseParser {
           required: true,
           level: this.extractCourseLevel(code)
         })
-      })
-    }
-
-    // Handle complex requirements
-    if (prereqString.toLowerCase().includes('at least')) {
-      prerequisites.push({
-        type: 'complex',
-        description: prereqString,
-        required: true
       })
     }
 
@@ -481,6 +479,108 @@ export class CourseParser {
       ten: 10
     }
     return numberWords[word.toLowerCase()] || 0
+  }
+
+  private hasComplexRequirements(prereqString: string): boolean {
+    const lowerCase = prereqString.toLowerCase()
+    // Check for patterns like "5 A courses from any of the following departments"
+    // or "2 C courses from any of the departments listed above"
+    return (
+      (lowerCase.includes('courses from any of') || lowerCase.includes('course from any of')) &&
+      (lowerCase.includes('departments') || lowerCase.includes('department')) &&
+      /\d+\s+[acdw]\s+(courses?)/i.test(prereqString)
+    )
+  }
+
+  private parseComplexCourseRequirements(prereqString: string): Prerequisite[] {
+    const prerequisites: Prerequisite[] = []
+
+    // Extract specific course codes first
+    let match
+    const courses = []
+    const regex = new RegExp(COURSE_CODE_REGEX.source, 'g')
+    while ((match = regex.exec(prereqString)) !== null) {
+      courses.push(match[1])
+    }
+
+    // Add course requirements
+    courses.forEach((code) => {
+      prerequisites.push({
+        type: 'course',
+        code: code.trim(),
+        required: true,
+        level: this.extractCourseLevel(code)
+      })
+    })
+
+    // Parse complex requirements like "5 A courses from any of the following departments"
+    const complexMatch = prereqString.match(
+      /(\d+)\s+([ACDW])\s+(courses?)\s+from\s+any\s+of\s+the\s+(?:following\s+)?departments?:?\s*(.+)/i
+    )
+    if (complexMatch) {
+      const [, countStr, level, , departmentsText] = complexMatch
+      const count = parseInt(countStr)
+
+      // Extract departments from the text
+      let departments: string[] = []
+
+      if (departmentsText.toLowerCase().includes('listed above')) {
+        // For "departments listed above", we need to look at previous Navy Counselor courses
+        // Use the same departments as the first Navy Counselor course
+        departments = ['Astrogation', 'Tactical', 'Command', 'Communications', 'Engineering', 'Logistics', 'Medical']
+      } else {
+        // Parse departments from the text
+        departments = this.parseDepartmentList(departmentsText)
+      }
+
+      prerequisites.push({
+        type: 'department_choice',
+        description: prereqString,
+        required: true,
+        minimum: count,
+        level: level as CourseLevel,
+        departments: departments
+      })
+    }
+
+    return prerequisites
+  }
+
+  private parseDepartmentList(departmentsText: string): string[] {
+    const departments: string[] = []
+
+    // Split by common separators and clean up
+    const parts = departmentsText
+      .split(/[,\s]+(?:or|and)?\s*|[,\s]+/i)
+      .map((part) => part.trim())
+      .filter((part) => part.length > 0 && part !== 'or' && part !== 'and')
+
+    // Common department name mappings
+    const departmentMap: { [key: string]: string } = {
+      astrogation: 'Astrogation',
+      tactical: 'Tactical',
+      command: 'Command',
+      communications: 'Communications',
+      engineering: 'Engineering',
+      logistics: 'Logistics',
+      medical: 'Medical',
+      'flight operations': 'Flight Operations'
+    }
+
+    parts.forEach((part) => {
+      const normalized = part.toLowerCase().replace(/[^a-z\s]/g, '')
+      if (departmentMap[normalized]) {
+        departments.push(departmentMap[normalized])
+      } else {
+        // Fallback: capitalize first letter of each word
+        const capitalized = part.replace(/\b\w/g, (l) => l.toUpperCase()).replace(/[^a-zA-Z\s]/g, '')
+        if (capitalized.length > 2) {
+          departments.push(capitalized)
+        }
+      }
+    })
+
+    return Array.from(new Set(departments)) // Remove duplicates
   }
 }
 

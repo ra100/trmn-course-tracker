@@ -50,6 +50,8 @@ export class EligibilityEngine {
         return this.checkCoursePrerequisite(prerequisite, userProgress)
       case 'complex':
         return this.checkComplexPrerequisite(prerequisite, userProgress)
+      case 'department_choice':
+        return this.checkDepartmentChoicePrerequisite(prerequisite, userProgress)
       case 'alternative_group':
         return this.checkAlternativePrerequisite(prerequisite, userProgress)
       default:
@@ -80,6 +82,60 @@ export class EligibilityEngine {
       description: prerequisite.description || 'Complex requirement',
       missing: [],
       satisfied: []
+    }
+  }
+
+  private checkDepartmentChoicePrerequisite(prerequisite: any, userProgress: UserProgress): MissingPrerequisite | null {
+    if (!prerequisite.departments || !prerequisite.minimum || !prerequisite.level) {
+      return {
+        type: 'department_choice',
+        description: prerequisite.description || 'Department choice requirement',
+        missing: [],
+        satisfied: []
+      }
+    }
+
+    const completedInDepartments = this.getCompletedCoursesByDepartment(
+      prerequisite.departments,
+      prerequisite.level,
+      userProgress
+    )
+
+    const satisfied: string[] = []
+    const missing: string[] = []
+
+    // Find completed courses that satisfy this requirement
+    for (const courseCode of Array.from(userProgress.completedCourses)) {
+      const course = this.courseData.courseMap.get(courseCode)
+      if (!course || course.level !== prerequisite.level) continue
+
+      const inTargetDepartment = prerequisite.departments.some(
+        (dept: string) =>
+          course.section.toLowerCase().includes(dept.toLowerCase()) ||
+          course.subsection.toLowerCase().includes(dept.toLowerCase())
+      )
+
+      if (inTargetDepartment) {
+        satisfied.push(courseCode)
+      }
+    }
+
+    if (completedInDepartments >= prerequisite.minimum) {
+      return null // Requirement satisfied
+    }
+
+    // Calculate how many more are needed
+    const needed = prerequisite.minimum - completedInDepartments
+
+    return {
+      type: 'department_choice',
+      description:
+        prerequisite.description ||
+        `Need ${needed} more ${prerequisite.level} level courses from: ${prerequisite.departments.join(', ')}`,
+      missing: [`${needed} more ${prerequisite.level} level courses`],
+      satisfied,
+      progress: completedInDepartments,
+      total: prerequisite.minimum
     }
   }
 
