@@ -94,6 +94,7 @@ const ActionButton = styled.button<{ variant: 'primary' | 'secondary' }>`
 
 const Section = styled.div`
   margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
 `
 
 const SectionTitle = styled.h3`
