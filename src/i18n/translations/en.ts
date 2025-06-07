@@ -74,7 +74,16 @@ export const enTranslations: TranslationStrings = {
     status: 'Status',
     showCompleted: 'Show Completed',
     showUnavailable: 'Show Unavailable',
-    clearFilters: 'Clear Filters'
+    clearFilters: 'Clear Filters',
+    statusLabels: {
+      completed: 'Completed',
+      inProgress: 'Working On',
+      waitingGrade: 'Waiting Grade',
+      available: 'Available',
+      locked: 'Locked'
+    },
+    activeFilters: 'Active Filters',
+    activeFilter: 'Active Filter'
   },
 
   // Settings Panel

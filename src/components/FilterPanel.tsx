@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { FilterOptions, ParsedCourseData, CourseLevel, NodeStatus } from '../types'
+import { useT } from '../i18n'
 
 // Helper function to map section names to departments when normalization fails
 const mapSectionToDepartment = (sectionName: string): string | null => {
@@ -233,10 +234,11 @@ interface FilterPanelProps {
 }
 
 export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, onFilterChange }) => {
+  const t = useT()
   const sections = Array.from(new Set(courseData.courses.map((c) => c.section))).sort()
   const departments = extractDepartmentsFromCourses(courseData)
   const levels: CourseLevel[] = ['A', 'C', 'D', 'W']
-  const statuses: NodeStatus[] = ['completed', 'available', 'locked']
+  const statuses: NodeStatus[] = ['completed', 'in_progress', 'waiting_grade', 'available', 'locked']
 
   const handleSectionChange = (section: string, checked: boolean) => {
     const currentSections = filters.sections || []
@@ -297,11 +299,15 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
   const getStatusLabel = (status: NodeStatus): string => {
     switch (status) {
       case 'completed':
-        return 'Completed'
+        return t.filters.statusLabels.completed
+      case 'in_progress':
+        return t.filters.statusLabels.inProgress
+      case 'waiting_grade':
+        return t.filters.statusLabels.waitingGrade
       case 'available':
-        return 'Available'
+        return t.filters.statusLabels.available
       case 'locked':
-        return 'Locked'
+        return t.filters.statusLabels.locked
       default:
         return status
     }
@@ -311,32 +317,32 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
 
   return (
     <PanelContainer>
-      <PanelTitle>Filters</PanelTitle>
+      <PanelTitle>{t.filters.title}</PanelTitle>
 
       {activeFilterCount > 0 && (
         <FilterCount>
           <CountValue>{activeFilterCount}</CountValue>
-          <CountLabel>Active Filter{activeFilterCount !== 1 ? 's' : ''}</CountLabel>
+          <CountLabel>{activeFilterCount === 1 ? t.filters.activeFilter : t.filters.activeFilters}</CountLabel>
         </FilterCount>
       )}
 
       <FilterSection>
-        <FilterLabel>Sections</FilterLabel>
+        <FilterLabel>{t.filters.status}</FilterLabel>
         <CheckboxGroup>
-          {sections.map((section) => (
-            <CheckboxItem key={section}>
+          {statuses.map((status) => (
+            <CheckboxItem key={status}>
               <Checkbox
-                checked={filters.sections?.includes(section) || false}
-                onChange={(e) => handleSectionChange(section, e.target.checked)}
+                checked={filters.status?.includes(status) || false}
+                onChange={(e) => handleStatusChange(status, e.target.checked)}
               />
-              {section}
+              {getStatusLabel(status)}
             </CheckboxItem>
           ))}
         </CheckboxGroup>
       </FilterSection>
 
       <FilterSection>
-        <FilterLabel>Departments</FilterLabel>
+        <FilterLabel>{t.filters.departments}</FilterLabel>
         <CheckboxGroup>
           {departments.map((department) => (
             <CheckboxItem key={department}>
@@ -351,7 +357,22 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
       </FilterSection>
 
       <FilterSection>
-        <FilterLabel>Course Levels</FilterLabel>
+        <FilterLabel>{t.filters.sections}</FilterLabel>
+        <CheckboxGroup>
+          {sections.map((section) => (
+            <CheckboxItem key={section}>
+              <Checkbox
+                checked={filters.sections?.includes(section) || false}
+                onChange={(e) => handleSectionChange(section, e.target.checked)}
+              />
+              {section}
+            </CheckboxItem>
+          ))}
+        </CheckboxGroup>
+      </FilterSection>
+
+      <FilterSection>
+        <FilterLabel>{t.filters.levels}</FilterLabel>
         <CheckboxGroup>
           {levels.map((level) => (
             <CheckboxItem key={level}>
@@ -365,22 +386,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
         </CheckboxGroup>
       </FilterSection>
 
-      <FilterSection>
-        <FilterLabel>Status</FilterLabel>
-        <CheckboxGroup>
-          {statuses.map((status) => (
-            <CheckboxItem key={status}>
-              <Checkbox
-                checked={filters.status?.includes(status) || false}
-                onChange={(e) => handleStatusChange(status, e.target.checked)}
-              />
-              {getStatusLabel(status)}
-            </CheckboxItem>
-          ))}
-        </CheckboxGroup>
-      </FilterSection>
-
-      {activeFilterCount > 0 && <ClearButton onClick={handleClearFilters}>Clear All Filters</ClearButton>}
+      {activeFilterCount > 0 && <ClearButton onClick={handleClearFilters}>{t.filters.clearFilters}</ClearButton>}
     </PanelContainer>
   )
 }

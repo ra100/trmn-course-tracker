@@ -74,7 +74,16 @@ export const csTranslations: TranslationStrings = {
     status: 'Stav',
     showCompleted: 'Zobrazit dokončené',
     showUnavailable: 'Zobrazit nedostupné',
-    clearFilters: 'Vymazat filtry'
+    clearFilters: 'Vymazat filtry',
+    statusLabels: {
+      completed: 'Dokončené',
+      inProgress: 'Právě studuji',
+      waitingGrade: 'Čekám na hodnocení',
+      available: 'Dostupné',
+      locked: 'Uzamčené'
+    },
+    activeFilters: 'Aktivní filtry',
+    activeFilter: 'Aktivní filtr'
   },
 
   // Settings Panel

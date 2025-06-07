@@ -75,6 +75,15 @@ export interface TranslationStrings {
     showCompleted: string
     showUnavailable: string
     clearFilters: string
+    statusLabels: {
+      completed: string
+      inProgress: string
+      waitingGrade: string
+      available: string
+      locked: string
+    }
+    activeFilters: string
+    activeFilter: string
   }
 
   // Settings Panel
