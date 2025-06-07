@@ -19,9 +19,14 @@ const AppContainer = styled.div`
   background-color: ${(props) => props.theme.colors.background};
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: ${(props) => props.theme.colors.text};
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    height: 100vh;
+  }
 `
 
-const Sidebar = styled.div`
+const Sidebar = styled.div<{ $mobileOpen?: boolean }>`
   width: 350px;
   background-color: ${(props) => props.theme.colors.backgroundSecondary};
   color: ${(props) => props.theme.colors.text};
@@ -29,6 +34,23 @@ const Sidebar = styled.div`
   flex-direction: column;
   overflow-y: auto;
   border-right: 1px solid ${(props) => props.theme.colors.border};
+
+  @media (max-width: 1024px) {
+    width: 300px;
+  }
+
+  @media (max-width: 768px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(${(props) => (props.$mobileOpen ? '0' : '-100%')});
+    transition: transform 0.3s ease;
+    border-right: none;
+    border-bottom: 1px solid ${(props) => props.theme.colors.border};
+  }
 `
 
 const MainContent = styled.div`
@@ -36,6 +58,10 @@ const MainContent = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `
 
 const Header = styled.header`
@@ -44,25 +70,65 @@ const Header = styled.header`
   padding: 1rem;
   box-shadow: ${(props) => props.theme.shadows.medium};
   border-bottom: 1px solid ${(props) => props.theme.colors.border};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    padding: 0.8rem;
+
+    h1 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+
+    p {
+      font-size: 0.9rem;
+      margin: 0;
+    }
+  }
 `
 
-const ContentArea = styled.div`
+const ContentArea = styled.div<{ $mobileLayout?: string }>`
   flex: 1;
   display: flex;
   overflow: hidden;
+
+  @media (max-width: 768px) {
+    flex-direction: ${(props) => (props.$mobileLayout === 'details' ? 'column-reverse' : 'column')};
+  }
 `
 
-const SkillTreeContainer = styled.div`
+const SkillTreeContainer = styled.div<{ $mobileLayout?: string }>`
   flex: 1;
   overflow: hidden;
   background-color: ${(props) => props.theme.colors.surface};
+
+  @media (max-width: 768px) {
+    height: ${(props) => (props.$mobileLayout === 'details' ? '50vh' : '100vh')};
+    display: ${(props) => (props.$mobileLayout === 'details' ? 'block' : 'block')};
+  }
 `
 
-const DetailsPanel = styled.div`
+const DetailsPanel = styled.div<{ $mobileLayout?: string }>`
   width: 350px;
   background-color: ${(props) => props.theme.colors.surface};
   border-left: 1px solid ${(props) => props.theme.colors.border};
   overflow-y: auto;
+
+  @media (max-width: 1024px) {
+    width: 300px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: ${(props) => (props.$mobileLayout === 'details' ? '50vh' : '0')};
+    overflow: ${(props) => (props.$mobileLayout === 'details' ? 'auto' : 'hidden')};
+    border-left: none;
+    border-top: 1px solid ${(props) => props.theme.colors.border};
+    transform: translateY(${(props) => (props.$mobileLayout === 'details' ? '0' : '100%')});
+    transition: all 0.3s ease;
+  }
 `
 
 const LoadingOverlay = styled.div`
@@ -86,6 +152,97 @@ const ErrorMessage = styled.div`
   padding: 1rem;
   margin: 1rem;
   border-radius: 4px;
+`
+
+const MobileMenuButton = styled.button`
+  display: none;
+  background: none;
+  border: none;
+  color: ${(props) => props.theme.colors.text};
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.border};
+  }
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+`
+
+const MobileOverlay = styled.div<{ $visible: boolean }>`
+  display: none;
+
+  @media (max-width: 768px) {
+    display: ${(props) => (props.$visible ? 'block' : 'none')};
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+`
+
+const HeaderContent = styled.div`
+  @media (max-width: 768px) {
+    flex: 1;
+  }
+`
+
+const MobileDetailsToggle = styled.button`
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: ${(props) => props.theme.colors.primary};
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: ${(props) => props.theme.shadows.large};
+  z-index: 100;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: ${(props) => props.theme.colors.primaryHover};
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    display: block;
+  }
+`
+
+const MobileCloseButton = styled.button`
+  display: none;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: ${(props) => props.theme.colors.text};
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  z-index: 1001;
+
+  &:hover {
+    background-color: ${(props) => props.theme.colors.border};
+  }
+
+  @media (max-width: 768px) {
+    display: block;
+  }
 `
 
 function App() {
@@ -114,6 +271,8 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [eligibilityEngine, setEligibilityEngine] = useState<EligibilityEngine | null>(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mobileLayout, setMobileLayout] = useState<'courses' | 'details'>('courses')
 
   useEffect(() => {
     loadCourseData()
@@ -351,6 +510,22 @@ function App() {
 
   const handleCourseSelect = (course: Course) => {
     setSelectedCourse(course)
+    // On mobile, switch to details view when a course is selected
+    if (window.innerWidth <= 768) {
+      setMobileLayout('details')
+    }
+  }
+
+  const handleMobileMenuToggle = () => {
+    setMobileMenuOpen(!mobileMenuOpen)
+  }
+
+  const handleMobileOverlayClick = () => {
+    setMobileMenuOpen(false)
+  }
+
+  const handleMobileDetailsToggle = () => {
+    setMobileLayout(mobileLayout === 'courses' ? 'details' : 'courses')
   }
 
   const handleFilterChange = (newFilters: FilterOptions) => {
@@ -406,7 +581,12 @@ function App() {
   return (
     <ThemeProvider theme={currentTheme}>
       <AppContainer>
-        <Sidebar>
+        <MobileOverlay $visible={mobileMenuOpen} onClick={handleMobileOverlayClick} />
+
+        <Sidebar $mobileOpen={mobileMenuOpen}>
+          <MobileCloseButton onClick={handleMobileOverlayClick} aria-label="Close menu">
+            ✕
+          </MobileCloseButton>
           <ProgressPanel userProgress={userProgress} courseData={courseData} eligibilityEngine={eligibilityEngine} />
           <SpaceWarfarePinTracker courseData={courseData} userProgress={userProgress} />
           <DebugPanel courseData={courseData} userProgress={userProgress} />
@@ -420,12 +600,17 @@ function App() {
 
         <MainContent>
           <Header>
-            <h1>{t.appTitle}</h1>
-            <p>{t.appSubtitle}</p>
+            <MobileMenuButton onClick={handleMobileMenuToggle} aria-label="Toggle menu">
+              ☰
+            </MobileMenuButton>
+            <HeaderContent>
+              <h1>{t.appTitle}</h1>
+              <p>{t.appSubtitle}</p>
+            </HeaderContent>
           </Header>
 
-          <ContentArea>
-            <SkillTreeContainer>
+          <ContentArea $mobileLayout={mobileLayout}>
+            <SkillTreeContainer $mobileLayout={mobileLayout}>
               <SkillTreeView
                 courseData={courseData}
                 userProgress={userProgress}
@@ -438,7 +623,7 @@ function App() {
               />
             </SkillTreeContainer>
 
-            <DetailsPanel>
+            <DetailsPanel $mobileLayout={mobileLayout}>
               <CourseDetails
                 course={selectedCourse}
                 userProgress={userProgress}
@@ -449,6 +634,15 @@ function App() {
               />
             </DetailsPanel>
           </ContentArea>
+
+          {selectedCourse && (
+            <MobileDetailsToggle
+              onClick={handleMobileDetailsToggle}
+              aria-label={mobileLayout === 'courses' ? 'Show course details' : 'Show course list'}
+            >
+              {mobileLayout === 'courses' ? '📋' : '📚'}
+            </MobileDetailsToggle>
+          )}
         </MainContent>
       </AppContainer>
     </ThemeProvider>

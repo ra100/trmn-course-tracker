@@ -8,6 +8,14 @@ const DetailsContainer = styled.div`
   padding: 1.5rem;
   height: 100%;
   overflow-y: auto;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.8rem;
+  }
 `
 
 const EmptyState = styled.div`
@@ -27,6 +35,14 @@ const CourseTitle = styled.h2`
   color: ${(props) => props.theme.colors.headerText};
   margin: 0 0 0.5rem 0;
   font-size: 1.3rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
+  }
 `
 
 const CourseCode = styled.div`
@@ -89,6 +105,27 @@ const ActionButton = styled.button<{ variant: 'primary' | 'secondary' }>`
     background: ${(props) => props.theme.colors.textMuted};
     cursor: not-allowed;
     transform: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.8rem 1rem;
+    margin-right: 0.3rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+
+    &:hover {
+      transform: none;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
   }
 `
 

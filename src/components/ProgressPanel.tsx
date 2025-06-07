@@ -7,6 +7,10 @@ import { useT } from '../i18n'
 const PanelContainer = styled.div`
   padding: 1.5rem;
   border-bottom: 1px solid ${(props) => props.theme.colors.border};
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 `
 
 const PanelTitle = styled.h3`

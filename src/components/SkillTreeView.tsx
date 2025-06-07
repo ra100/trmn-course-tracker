@@ -149,6 +149,16 @@ const CategorySection = styled.div`
   box-shadow: ${(props) => props.theme.shadows.medium};
   overflow: hidden;
   border: 1px solid ${(props) => props.theme.colors.border};
+
+  @media (max-width: 768px) {
+    margin: 1rem;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 480px) {
+    margin: 0.5rem;
+    border-radius: 4px;
+  }
 `
 
 const CategoryHeader = styled.div`
@@ -180,6 +190,17 @@ const CourseGrid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
 `
 
 const CourseNode = styled.div<{ status: NodeStatus }>`
@@ -219,6 +240,24 @@ const CourseNode = styled.div<{ status: NodeStatus }>`
     cursor: not-allowed;
     opacity: 0.6;
   `}
+
+  @media (max-width: 768px) {
+    padding: 1.2rem;
+    margin-bottom: 0.5rem;
+
+    &:hover {
+      transform: none;
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
 `
 
 const CourseCode = styled.div`
@@ -329,6 +368,17 @@ const StatsContainer = styled.div`
   padding: 1rem;
   background: ${(props) => props.theme.colors.surface};
   border-bottom: 1px solid ${(props) => props.theme.colors.border};
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.3rem;
+    padding: 0.5rem;
+  }
 `
 
 const StatItem = styled.div`
@@ -354,6 +404,16 @@ const GroupingToggle = styled.div`
   padding: 1rem 2rem;
   background: ${(props) => props.theme.colors.surface};
   border-bottom: 1px solid ${(props) => props.theme.colors.border};
+
+  @media (max-width: 768px) {
+    padding: 0.8rem 1rem;
+    gap: 0.8rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+    padding: 0.8rem;
+  }
 `
 
 const GroupingButton = styled.button<{ $active: boolean }>`
