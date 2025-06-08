@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [react()],
   define: {
     // Define build-time constants
-    __DEV__: JSON.stringify(process.env.NODE_ENV === 'development')
+    __DEV__: JSON.stringify(process.env.NODE_ENV === 'development'),
+    __GTM_ID__: JSON.stringify(process.env.VITE_GTM_ID || '')
   },
   build: {
     outDir: 'build' // for GitHub Pages compatibility

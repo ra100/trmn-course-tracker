@@ -183,6 +183,25 @@ export const csTranslations: TranslationStrings = {
     connectionError: 'Zkontrolujte připojení a zkuste to znovu'
   },
 
+  // GDPR Consent
+  gdpr: {
+    bannerLabel: 'Banner souhlasu s cookies',
+    bannerText: 'Používáme cookies pro analýzu používání webu.',
+    settings: 'Nastavení',
+    settingsTitle: 'Nastavení Cookies',
+    acceptAll: 'Přijmout vše',
+    rejectAll: 'Odmítnout vše',
+    customizeSettings: 'Přizpůsobit nastavení cookies',
+    rejectNonEssential: 'Odmítnout nezbytné cookies',
+    cancel: 'Zrušit',
+    saveSettings: 'Uložit nastavení',
+    essentialCookies: 'Nezbytné Cookies',
+    essentialDescription: 'Tyto cookies jsou nezbytné pro fungování webu a nelze je zakázat.',
+    analyticsCookies: 'Analytické Cookies',
+    analyticsDescription:
+      'Tyto cookies nám pomáhají pochopit, jak návštěvníci interagují s naším webem shromažďováním a hlášením informací anonymně.'
+  },
+
   // Common UI Elements
   ui: {
     yes: 'Ano',

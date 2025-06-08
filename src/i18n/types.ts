@@ -183,6 +183,24 @@ export interface TranslationStrings {
     connectionError: string
   }
 
+  // GDPR Consent
+  gdpr: {
+    bannerLabel: string
+    bannerText: string
+    settings: string
+    settingsTitle: string
+    acceptAll: string
+    rejectAll: string
+    customizeSettings: string
+    rejectNonEssential: string
+    cancel: string
+    saveSettings: string
+    essentialCookies: string
+    essentialDescription: string
+    analyticsCookies: string
+    analyticsDescription: string
+  }
+
   // Common UI Elements
   ui: {
     yes: string

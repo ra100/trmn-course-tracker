@@ -1,9 +1,12 @@
 // Build-time configuration
 // These values are set during the build process and tree-shaken in production
 
-// Use Vite's build-time constant, with fallback for Node.js environments
+// Use Vite's build-time constants, with fallbacks for Node.js environments
 declare const __DEV__: boolean
+declare const __GTM_ID__: string
+
 const isDevelopmentMode = typeof __DEV__ !== 'undefined' ? __DEV__ : process.env.NODE_ENV === 'development'
+const gtmId = typeof __GTM_ID__ !== 'undefined' ? __GTM_ID__ : process.env.VITE_GTM_ID || ''
 
 export const config = {
   // Debug logging - set to false in production builds
@@ -17,6 +20,12 @@ export const config = {
 
   // Development features
   isDevelopment: isDevelopmentMode,
+
+  // Analytics configuration
+  analytics: {
+    gtmId,
+    enabled: !isDevelopmentMode && !!gtmId
+  },
 
   // API endpoints and other environment-specific configs can go here
   apiBaseUrl: '/api'

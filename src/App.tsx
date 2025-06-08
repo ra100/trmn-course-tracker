@@ -9,11 +9,13 @@ import { CourseDetails } from './components/CourseDetails'
 import { ProgressPanel } from './components/ProgressPanel'
 import { FilterPanel } from './components/FilterPanel'
 import { SettingsPanel } from './components/SettingsPanel'
+import { GDPRConsentBanner } from './components/GDPRConsentBanner'
 
 import { DebugPanel } from './components/DebugPanel'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from './types'
 import { getTheme } from './theme'
 import { useT, useTranslation } from './i18n'
+import { initializeAnalytics, trackPageView, trackCourseCompletion, ConsentSettings } from './utils/analytics'
 
 const AppContainer = styled.div`
   display: flex;
@@ -278,6 +280,16 @@ function App() {
     }
   }, [settings?.language, setLanguage])
 
+  // Initialize analytics on app load
+  useEffect(() => {
+    initializeAnalytics()
+  }, [])
+
+  // Track page views on route changes (for future SPA navigation)
+  useEffect(() => {
+    trackPageView()
+  }, [])
+
   const toggleCourseCompletion = (courseCode: string) => {
     if (!courseData || !eligibilityEngine || !userProgress) return
 
@@ -285,13 +297,20 @@ function App() {
     const newInProgress = new Set(userProgress.inProgressCourses)
     const newWaitingGrade = new Set(userProgress.waitingGradeCourses)
 
-    if (newCompleted.has(courseCode)) {
+    const wasCompleted = newCompleted.has(courseCode)
+    if (wasCompleted) {
       newCompleted.delete(courseCode)
     } else {
       newCompleted.add(courseCode)
       // Remove from other statuses when marking as completed
       newInProgress.delete(courseCode)
       newWaitingGrade.delete(courseCode)
+
+      // Track course completion for analytics
+      const course = courseData.courses.find((c) => c.code === courseCode)
+      if (course) {
+        trackCourseCompletion(courseCode, course.name)
+      }
     }
 
     const newProgress: UserProgress = {
@@ -443,6 +462,11 @@ function App() {
     updateSettings(() => newSettings)
   }
 
+  const handleConsentChange = (consent: Partial<ConsentSettings>) => {
+    // Analytics tracking is handled internally by the analytics utils
+    // This handler is available for future use if needed
+  }
+
   const currentTheme = getTheme(settings?.theme || 'light')
   const isLoading = courseLoading || progressLoading || settingsLoading
 
@@ -545,6 +569,8 @@ function App() {
             </MobileDetailsToggle>
           )}
         </MainContent>
+
+        <GDPRConsentBanner onConsentChange={handleConsentChange} />
       </AppContainer>
     </ThemeProvider>
   )

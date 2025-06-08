@@ -183,6 +183,25 @@ export const enTranslations: TranslationStrings = {
     connectionError: 'Please check your connection and try again'
   },
 
+  // GDPR Consent
+  gdpr: {
+    bannerLabel: 'Cookie consent banner',
+    bannerText: 'We use cookies to analyze site usage.',
+    settings: 'Settings',
+    settingsTitle: 'Cookie Settings',
+    acceptAll: 'Accept All',
+    rejectAll: 'Reject All',
+    customizeSettings: 'Customize cookie settings',
+    rejectNonEssential: 'Reject non-essential cookies',
+    cancel: 'Cancel',
+    saveSettings: 'Save Settings',
+    essentialCookies: 'Essential Cookies',
+    essentialDescription: 'These cookies are necessary for the website to function and cannot be disabled.',
+    analyticsCookies: 'Analytics Cookies',
+    analyticsDescription:
+      'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.'
+  },
+
   // Common UI Elements
   ui: {
     yes: 'Yes',

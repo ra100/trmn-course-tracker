@@ -64,6 +64,8 @@ jobs:
 
       - name: Build application
         run: npm run build
+        env:
+          VITE_GTM_ID: ${{ vars.VITE_GTM_ID }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

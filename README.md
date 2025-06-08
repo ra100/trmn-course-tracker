@@ -11,6 +11,8 @@ A modern skill tree tracker for The Royal Manticoran Navy (TRMN) course system. 
 - ⚙️ **Customizable Settings**: Toggle visibility of completed/locked courses
 - 💾 **Auto-save**: Progress is automatically saved to local storage
 - 📱 **Responsive Design**: Works on desktop and mobile devices
+- 🍪 **GDPR Compliant**: Privacy-first analytics with user consent management
+- 🌍 **Multi-language**: Available in English and Czech
 
 ## Live Demo
 
@@ -38,6 +40,37 @@ npm start
 ```
 
 The application will be available at `http://localhost:3001`.
+
+### Environment Variables
+
+For production builds with analytics, set this environment variable:
+
+```bash
+# Google Tag Manager ID (format: GTM-XXXXXXX)
+VITE_GTM_ID=GTM-XXXXXXX
+```
+
+**Note**: Analytics are automatically disabled in development mode.
+
+### Privacy & Analytics
+
+The application includes GDPR-compliant analytics with the following features:
+
+- **Privacy-first approach**: Analytics are disabled by default
+- **User consent**: GDPR consent banner allows users to control analytics
+- **Essential cookies only**: Only functional and security cookies are enabled by default
+- **Transparent data collection**: Clear information about what data is collected
+- **Consent persistence**: User preferences are remembered across sessions
+- **Multi-language support**: Consent interface available in English and Czech
+
+Analytics help improve the application by understanding:
+
+- Which courses are most popular
+- User navigation patterns
+- Performance metrics
+- Error tracking for bug fixes
+
+All analytics data is collected anonymously and used solely for improving the user experience.
 
 ### Available Scripts
 
