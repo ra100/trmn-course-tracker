@@ -219,5 +219,25 @@ export const enTranslations: TranslationStrings = {
     next: 'Next',
     previous: 'Previous',
     finish: 'Finish'
+  },
+
+  // Accessibility
+  accessibility: {
+    skipToMainContent: 'Skip to main content',
+    skipToSkillTree: 'Skip to skill tree',
+    skipToSidebar: 'Skip to sidebar',
+    skipToCourseDetails: 'Skip to course details',
+    closeModal: 'Close modal',
+    openModal: 'Open modal',
+    menuToggle: 'Toggle menu',
+    searchBox: 'Search courses',
+    filterSection: 'Filter courses',
+    courseNode: 'Course node',
+    courseSelected: 'Course selected',
+    prerequisiteOf: 'Prerequisite of',
+    unlockedBy: 'Unlocked by',
+    levelLabel: 'Level',
+    statusLabel: 'Status',
+    focusTrapActive: 'Focus is trapped within this dialog. Use Tab to navigate between elements, and Escape to close.'
   }
 }

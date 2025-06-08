@@ -219,4 +219,24 @@ export interface TranslationStrings {
     previous: string
     finish: string
   }
+
+  // Accessibility
+  accessibility: {
+    skipToMainContent: string
+    skipToSkillTree: string
+    skipToSidebar: string
+    skipToCourseDetails: string
+    closeModal: string
+    openModal: string
+    menuToggle: string
+    searchBox: string
+    filterSection: string
+    courseNode: string
+    courseSelected: string
+    prerequisiteOf: string
+    unlockedBy: string
+    levelLabel: string
+    statusLabel: string
+    focusTrapActive: string
+  }
 }

@@ -219,5 +219,25 @@ export const csTranslations: TranslationStrings = {
     next: 'Další',
     previous: 'Předchozí',
     finish: 'Dokončit'
+  },
+
+  // Accessibility
+  accessibility: {
+    skipToMainContent: 'Přejít na hlavní obsah',
+    skipToSkillTree: 'Přejít na strom dovedností',
+    skipToSidebar: 'Přejít na boční panel',
+    skipToCourseDetails: 'Přejít na detaily kurzu',
+    closeModal: 'Zavřít dialog',
+    openModal: 'Otevřít dialog',
+    menuToggle: 'Přepnout menu',
+    searchBox: 'Hledat kurzy',
+    filterSection: 'Filtrovat kurzy',
+    courseNode: 'Uzel kurzu',
+    courseSelected: 'Kurz vybrán',
+    prerequisiteOf: 'Předpoklad pro',
+    unlockedBy: 'Odemčeno pomocí',
+    levelLabel: 'Úroveň',
+    statusLabel: 'Stav',
+    focusTrapActive: 'Fokus je uzavřen v tomto dialogu. Použijte Tab pro navigaci mezi prvky a Escape pro zavření.'
   }
 }

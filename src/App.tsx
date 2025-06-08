@@ -12,6 +12,7 @@ import { SettingsPanel } from './components/SettingsPanel'
 import { GDPRConsentBanner } from './components/GDPRConsentBanner'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { DebugPanel } from './components/DebugPanel'
+import { SkipLinks } from './components/SkipLinks'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from './types'
 import { getTheme } from './theme'
 import { useT, useTranslation } from './i18n'
@@ -535,10 +536,11 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider theme={currentTheme}>
+        <SkipLinks />
         <AppContainer>
           <MobileOverlay $visible={mobileMenuOpen} onClick={handleMobileOverlayClick} />
 
-          <Sidebar $mobileOpen={mobileMenuOpen}>
+          <Sidebar $mobileOpen={mobileMenuOpen} id="sidebar">
             <MobileCloseButton onClick={handleMobileOverlayClick} aria-label="Close menu">
               ✕
             </MobileCloseButton>
@@ -552,9 +554,9 @@ function App() {
             />
           </Sidebar>
 
-          <MainContent>
+          <MainContent id="main-content">
             <Header>
-              <MobileMenuButton onClick={handleMobileMenuToggle} aria-label="Toggle menu">
+              <MobileMenuButton onClick={handleMobileMenuToggle} aria-label={t.accessibility.menuToggle}>
                 ☰
               </MobileMenuButton>
               <HeaderContent>
@@ -564,7 +566,7 @@ function App() {
             </Header>
 
             <ContentArea $mobileLayout={mobileLayout}>
-              <SkillTreeContainer $mobileLayout={mobileLayout}>
+              <SkillTreeContainer $mobileLayout={mobileLayout} id="skill-tree">
                 <SkillTreeView
                   courseData={courseData}
                   userProgress={userProgress}
@@ -577,7 +579,7 @@ function App() {
                 />
               </SkillTreeContainer>
 
-              <DetailsPanel $mobileLayout={mobileLayout}>
+              <DetailsPanel $mobileLayout={mobileLayout} id="course-details">
                 <CourseDetails
                   course={selectedCourse}
                   userProgress={userProgress}

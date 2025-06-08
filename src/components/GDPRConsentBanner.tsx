@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { ConsentSettings, updateConsent, getStoredConsent, trackConsentChange } from '../utils/analytics'
 import { useT } from '../i18n'
+import { useFocusTrap } from '../hooks/useFocusTrap'
 
 const BannerWrapper = styled.div<{ $isVisible: boolean }>`
   position: fixed;
@@ -202,6 +203,15 @@ export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentC
     securityStorage: 'granted'
   })
 
+  // Focus trap for settings modal
+  const settingsCloseButtonRef = useRef<HTMLButtonElement>(null)
+  const focusTrapRef = useFocusTrap({
+    isActive: showSettings,
+    restoreOnDeactivate: true,
+    initialFocusRef: settingsCloseButtonRef as React.RefObject<HTMLElement>,
+    onEscape: () => setShowSettings(false)
+  })
+
   useEffect(() => {
     // Check if user has already made a consent decision
     const storedConsent = getStoredConsent()
@@ -299,9 +309,19 @@ export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentC
         </BannerContent>
       </BannerWrapper>
 
-      <SettingsModal $isOpen={showSettings} role="dialog" aria-modal="true" aria-labelledby="consent-settings-title">
+      <SettingsModal
+        $isOpen={showSettings}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="consent-settings-title"
+        aria-describedby="consent-settings-description"
+        ref={focusTrapRef as React.RefObject<HTMLDivElement>}
+      >
         <ModalContent>
           <ModalHeader id="consent-settings-title">{t.gdpr.settingsTitle}</ModalHeader>
+          <p id="consent-settings-description" className="sr-only">
+            {t.accessibility.focusTrapActive}
+          </p>
 
           <ConsentOption>
             <ConsentLabel>
@@ -328,7 +348,7 @@ export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentC
           </ConsentOption>
 
           <ButtonGroup style={{ marginTop: '1.5rem' }}>
-            <Button $variant="outline" onClick={() => setShowSettings(false)}>
+            <Button $variant="outline" onClick={() => setShowSettings(false)} ref={settingsCloseButtonRef}>
               {t.gdpr.cancel}
             </Button>
             <Button $variant="primary" onClick={handleSaveSettings}>
