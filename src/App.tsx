@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
-import { loadCourseData } from './utils/courseDataLoader'
 import { EligibilityEngine } from './utils/eligibilityEngine'
+import { useCourseData } from './hooks/useCourseData'
 import { SkillTreeView } from './components/SkillTreeView'
 import { CourseDetails } from './components/CourseDetails'
 import { ProgressPanel } from './components/ProgressPanel'
@@ -248,7 +248,10 @@ const MobileCloseButton = styled.button`
 function App() {
   const t = useT()
   const { setLanguage } = useTranslation()
-  const [courseData, setCourseData] = useState<ParsedCourseData | null>(null)
+
+  // Use React Query for course data
+  const { data: courseData, isLoading, error: queryError, isError } = useCourseData()
+
   const [userProgress, setUserProgress] = useState<UserProgress>({
     userId: 'default-user',
     completedCourses: new Set<string>(),
@@ -268,14 +271,18 @@ function App() {
     autoSave: true,
     language: 'en'
   })
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [eligibilityEngine, setEligibilityEngine] = useState<EligibilityEngine | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mobileLayout, setMobileLayout] = useState<'courses' | 'details'>('courses')
 
+  // Initialize eligibility engine when course data loads
   useEffect(() => {
-    loadCourseDataAsync()
+    if (courseData) {
+      setEligibilityEngine(new EligibilityEngine(courseData))
+    }
+  }, [courseData])
+
+  useEffect(() => {
     loadUserProgress()
     loadSettings()
   }, [])
@@ -284,24 +291,6 @@ function App() {
   useEffect(() => {
     setLanguage(settings.language)
   }, [settings.language, setLanguage])
-
-  const loadCourseDataAsync = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-
-      // Load pre-built JSON course data
-      const parsedData = await loadCourseData()
-
-      setCourseData(parsedData)
-      setEligibilityEngine(new EligibilityEngine(parsedData))
-    } catch (err) {
-      console.error('Error loading course data:', err)
-      setError(err instanceof Error ? err.message : 'Failed to load course data')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const loadUserProgress = () => {
     try {
@@ -538,7 +527,7 @@ function App() {
 
   const currentTheme = getTheme(settings.theme)
 
-  if (loading) {
+  if (isLoading) {
     return (
       <ThemeProvider theme={currentTheme}>
         <LoadingOverlay>
@@ -548,14 +537,14 @@ function App() {
     )
   }
 
-  if (error) {
+  if (isError) {
     return (
       <ThemeProvider theme={currentTheme}>
         <AppContainer>
           <ErrorMessage>
             <h3>{t.error}</h3>
-            <p>{error}</p>
-            <button onClick={loadCourseDataAsync}>{t.retry}</button>
+            <p>{queryError?.message || 'Failed to load course data'}</p>
+            <button onClick={() => window.location.reload()}>{t.retry}</button>
           </ErrorMessage>
         </AppContainer>
       </ThemeProvider>
