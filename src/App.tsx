@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 import { EligibilityEngine } from './utils/eligibilityEngine'
 import { useCourseData } from './hooks/useCourseData'
+import { useUserProgress, useOptimisticUserProgress } from './hooks/useUserProgress'
+import { useUserSettings, useOptimisticUserSettings } from './hooks/useUserSettings'
 import { SkillTreeView } from './components/SkillTreeView'
 import { CourseDetails } from './components/CourseDetails'
 import { ProgressPanel } from './components/ProgressPanel'
@@ -249,28 +251,15 @@ function App() {
   const t = useT()
   const { setLanguage } = useTranslation()
 
-  // Use React Query for course data
-  const { data: courseData, isLoading, error: queryError, isError } = useCourseData()
+  // Use React Query for all data
+  const { data: courseData, isLoading: courseLoading, error: queryError, isError } = useCourseData()
+  const { data: userProgress, isLoading: progressLoading } = useUserProgress()
+  const { data: settings, isLoading: settingsLoading } = useUserSettings()
+  const { updateOptimistically: updateUserProgress } = useOptimisticUserProgress()
+  const { updateOptimistically: updateSettings } = useOptimisticUserSettings()
 
-  const [userProgress, setUserProgress] = useState<UserProgress>({
-    userId: 'default-user',
-    completedCourses: new Set<string>(),
-    availableCourses: new Set<string>(),
-    inProgressCourses: new Set<string>(),
-    waitingGradeCourses: new Set<string>(),
-    specialRulesProgress: new Map(),
-    lastUpdated: new Date()
-  })
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
   const [filters, setFilters] = useState<FilterOptions>({})
-  const [settings, setSettings] = useState<UserSettings>({
-    theme: 'light',
-    layout: 'tree',
-    showCompleted: true,
-    showUnavailable: true,
-    autoSave: true,
-    language: 'en'
-  })
   const [eligibilityEngine, setEligibilityEngine] = useState<EligibilityEngine | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mobileLayout, setMobileLayout] = useState<'courses' | 'details'>('courses')
@@ -282,77 +271,15 @@ function App() {
     }
   }, [courseData])
 
-  useEffect(() => {
-    loadUserProgress()
-    loadSettings()
-  }, [])
-
   // Sync language settings with i18n context
   useEffect(() => {
-    setLanguage(settings.language)
-  }, [settings.language, setLanguage])
-
-  const loadUserProgress = () => {
-    try {
-      const saved = localStorage.getItem('trmn-user-progress')
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        setUserProgress({
-          ...parsed,
-          completedCourses: new Set(parsed.completedCourses || []),
-          availableCourses: new Set(parsed.availableCourses || []),
-          inProgressCourses: new Set(parsed.inProgressCourses || []),
-          waitingGradeCourses: new Set(parsed.waitingGradeCourses || []),
-          specialRulesProgress: new Map(parsed.specialRulesProgress || []),
-          lastUpdated: new Date(parsed.lastUpdated || Date.now())
-        })
-      }
-    } catch (err) {
-      console.error('Error loading user progress:', err)
+    if (settings?.language) {
+      setLanguage(settings.language)
     }
-  }
-
-  const loadSettings = () => {
-    try {
-      const saved = localStorage.getItem('trmn-user-settings')
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        setSettings({
-          theme: 'light',
-          layout: 'tree',
-          showCompleted: true,
-          showUnavailable: true,
-          autoSave: true,
-          language: 'en',
-          ...parsed
-        })
-      }
-    } catch (err) {
-      console.error('Error loading settings:', err)
-    }
-  }
-
-  const saveUserProgress = (progress: UserProgress) => {
-    try {
-      if (settings.autoSave) {
-        const serializable = {
-          ...progress,
-          completedCourses: Array.from(progress.completedCourses),
-          availableCourses: Array.from(progress.availableCourses),
-          inProgressCourses: Array.from(progress.inProgressCourses),
-          waitingGradeCourses: Array.from(progress.waitingGradeCourses),
-          specialRulesProgress: Array.from(progress.specialRulesProgress.entries()),
-          lastUpdated: progress.lastUpdated.toISOString()
-        }
-        localStorage.setItem('trmn-user-progress', JSON.stringify(serializable))
-      }
-    } catch (err) {
-      console.error('Error saving user progress:', err)
-    }
-  }
+  }, [settings?.language, setLanguage])
 
   const toggleCourseCompletion = (courseCode: string) => {
-    if (!courseData || !eligibilityEngine) return
+    if (!courseData || !eligibilityEngine || !userProgress) return
 
     const newCompleted = new Set(userProgress.completedCourses)
     const newInProgress = new Set(userProgress.inProgressCourses)
@@ -384,12 +311,11 @@ function App() {
       availableCourses: newAvailable
     }
 
-    setUserProgress(finalProgress)
-    saveUserProgress(finalProgress)
+    updateUserProgress(() => finalProgress)
   }
 
   const setCourseStatus = (courseCode: string, status: 'available' | 'in_progress' | 'waiting_grade' | 'completed') => {
-    if (!courseData || !eligibilityEngine) return
+    if (!courseData || !eligibilityEngine || !userProgress) return
 
     const newCompleted = new Set(userProgress.completedCourses)
     const newInProgress = new Set(userProgress.inProgressCourses)
@@ -433,14 +359,13 @@ function App() {
       availableCourses: newAvailable
     }
 
-    setUserProgress(finalProgress)
-    saveUserProgress(finalProgress)
+    updateUserProgress(() => finalProgress)
   }
 
   const handleImportMedusaCourses = (
     courseCodes: string[]
   ): { imported: number; trackable: number; alreadyCompleted: number } => {
-    if (!courseData || !eligibilityEngine) return { imported: 0, trackable: 0, alreadyCompleted: 0 }
+    if (!courseData || !eligibilityEngine || !userProgress) return { imported: 0, trackable: 0, alreadyCompleted: 0 }
 
     // Get all trackable course codes from our course data
     const trackableCourses = new Set(courseData.courses.map((course) => course.code))
@@ -481,8 +406,7 @@ function App() {
       availableCourses: newAvailable
     }
 
-    setUserProgress(finalProgress)
-    saveUserProgress(finalProgress)
+    updateUserProgress(() => finalProgress)
 
     return {
       imported: courseCodes.length,
@@ -516,16 +440,11 @@ function App() {
   }
 
   const handleSettingsChange = (newSettings: UserSettings) => {
-    setSettings(newSettings)
-    // Save settings to localStorage
-    try {
-      localStorage.setItem('trmn-user-settings', JSON.stringify(newSettings))
-    } catch (err) {
-      console.error('Error saving settings:', err)
-    }
+    updateSettings(() => newSettings)
   }
 
-  const currentTheme = getTheme(settings.theme)
+  const currentTheme = getTheme(settings?.theme || 'light')
+  const isLoading = courseLoading || progressLoading || settingsLoading
 
   if (isLoading) {
     return (
@@ -551,11 +470,11 @@ function App() {
     )
   }
 
-  if (!courseData || !eligibilityEngine) {
+  if (!courseData || !eligibilityEngine || !userProgress || !settings) {
     return (
       <ThemeProvider theme={currentTheme}>
         <AppContainer>
-          <ErrorMessage>{t.errors.noDataAvailable}</ErrorMessage>
+          <ErrorMessage>{t.errors?.noDataAvailable || 'No data available'}</ErrorMessage>
         </AppContainer>
       </ThemeProvider>
     )
