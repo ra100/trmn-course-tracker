@@ -328,12 +328,20 @@ const departments = (parser as any).getUniqueDepartments() // ❌ Test should us
 
 **Commits**: `c221ff9`, `288c76e`, `f103c96`, `431749f`
 
-### 🟢 Medium Priority (Next Quarter)
+### 🟢 Medium Priority (Next Quarter) ⚠️ PARTIALLY COMPLETED
 
-1. **Extract custom hooks** for business logic
+1. **Extract custom hooks** for business logic ✅ STARTED
 2. **Implement component library** structure
 3. **Add integration tests** coverage
 4. **Optimize bundle size** and performance
+
+**Progress**:
+
+- ✅ Created `useCourseFiltering` custom hook to extract filtering logic from SkillTreeView
+- ✅ Improved code organization and reusability
+- ⚠️ Additional custom hooks could be extracted (useEligibilityEngine, useUserProgress business logic)
+
+**Commits**: `5c17824` - Course filtering logic extracted to custom hook
 
 ### 🔵 Low Priority (Future Releases)
 
