@@ -89,13 +89,13 @@ const AchievementsList = styled.div`
   gap: 0.5rem;
 `
 
-const AchievementItem = styled.div<{ completed: boolean }>`
+const AchievementItem = styled.div<{ $completed: boolean }>`
   padding: 0.7rem;
-  background: ${(props) => (props.completed ? props.theme.colors.success : props.theme.colors.surface)};
+  background: ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.surface)};
   border-radius: 4px;
   font-size: 0.85rem;
-  color: ${(props) => (props.completed ? 'white' : props.theme.colors.textSecondary)};
-  border-left: 3px solid ${(props) => (props.completed ? props.theme.colors.success : props.theme.colors.secondary)};
+  color: ${(props) => (props.$completed ? 'white' : props.theme.colors.textSecondary)};
+  border-left: 3px solid ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.secondary)};
   border: 1px solid ${(props) => props.theme.colors.border};
 `
 
@@ -104,19 +104,19 @@ const AchievementDescription = styled.div`
   margin-top: 0.2rem;
 `
 
-const SpaceWarfareAchievement = styled.div<{ earned: boolean }>`
+const SpaceWarfareAchievement = styled.div<{ $earned: boolean }>`
   padding: 0.7rem;
-  background: ${(props) => (props.earned ? props.theme.colors.success : props.theme.colors.surface)};
+  background: ${(props) => (props.$earned ? props.theme.colors.success : props.theme.colors.surface)};
   border-radius: 4px;
   font-size: 0.85rem;
-  color: ${(props) => (props.earned ? 'white' : props.theme.colors.textSecondary)};
-  border-left: 3px solid ${(props) => (props.earned ? props.theme.colors.success : props.theme.colors.secondary)};
+  color: ${(props) => (props.$earned ? 'white' : props.theme.colors.textSecondary)};
+  border-left: 3px solid ${(props) => (props.$earned ? props.theme.colors.success : props.theme.colors.secondary)};
   border: 1px solid ${(props) => props.theme.colors.border};
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${(props) => (props.earned ? props.theme.colors.success : props.theme.colors.border + '40')};
+    background: ${(props) => (props.$earned ? props.theme.colors.success : props.theme.colors.border + '40')};
   }
 `
 
@@ -729,7 +729,7 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
       <PanelTitle>{t.progress.achievements}</PanelTitle>
       <AchievementsList>
         {/* Space Warfare Pin Achievement */}
-        <SpaceWarfareAchievement earned={combinedSpaceWarfareEarned} onClick={toggleSpaceWarfareExpanded}>
+        <SpaceWarfareAchievement $earned={combinedSpaceWarfareEarned} onClick={toggleSpaceWarfareExpanded}>
           <SpaceWarfareHeader>
             <PinIcon>★</PinIcon>
             <FlexContainer>
@@ -746,7 +746,7 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
 
         {/* Regular Achievements */}
         {achievements.slice(0, 5).map((achievement, index) => (
-          <AchievementItem key={index} completed={achievement.completed}>
+          <AchievementItem key={index} $completed={achievement.completed}>
             <strong>{achievement.title}</strong>
             <AchievementDescription>{achievement.description}</AchievementDescription>
           </AchievementItem>
