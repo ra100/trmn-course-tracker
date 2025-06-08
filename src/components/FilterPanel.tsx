@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { FilterOptions, ParsedCourseData, CourseLevel, NodeStatus } from '../types'
+import { getAllDepartments } from '../utils/departmentUtils'
 import { useT } from '../i18n'
 
 const PanelContainer = styled.div`
@@ -102,6 +103,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
   const t = useT()
   const levels: CourseLevel[] = ['A', 'C', 'D', 'W']
   const statuses: NodeStatus[] = ['completed', 'in_progress', 'waiting_grade', 'available', 'locked']
+  const departments = getAllDepartments(courseData)
 
   const handleDepartmentChange = (department: string, checked: boolean) => {
     const currentDepartments = filters.departments || []
@@ -203,6 +205,21 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
                 onChange={(e) => handleLevelChange(level, e.target.checked)}
               />
               Level {level}
+            </CheckboxItem>
+          ))}
+        </CheckboxGroup>
+      </FilterSection>
+
+      <FilterSection>
+        <FilterLabel>Departments</FilterLabel>
+        <CheckboxGroup>
+          {departments.map((department) => (
+            <CheckboxItem key={department}>
+              <Checkbox
+                checked={filters.departments?.includes(department) || false}
+                onChange={(e) => handleDepartmentChange(department, e.target.checked)}
+              />
+              {department}
             </CheckboxItem>
           ))}
         </CheckboxGroup>

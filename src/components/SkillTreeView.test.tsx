@@ -115,7 +115,21 @@ const mockCourseData: ParsedCourseData = {
   categories: [],
   categoryMap: new Map(),
   dependencyGraph: new Map(),
-  specialRules: []
+  specialRules: [],
+  departmentMappings: new Map([
+    [
+      'tactical',
+      ['fire control', 'electronic warfare', 'tracking', 'sensor', 'missile', 'beam weapons', 'gunner', 'weapons']
+    ],
+    [
+      'engineering',
+      ['impeller', 'power', 'gravitics', 'environmental', 'hydroponics', 'damage control', 'power systems']
+    ],
+    ['communications', ['data systems', 'electronics', 'communications']],
+    ['astrogation', ['astrogation', 'flight operations', 'coxswain', 'helmsman', 'plotting', 'quartermaster']],
+    ['medical', ['medical', 'corpsman', 'medic', 'sick berth', 'surgeon']],
+    ['command', ['boatswain', 'master-at-arms', 'operations', 'intelligence', 'command']]
+  ])
 }
 
 const mockUserProgress: UserProgress = {

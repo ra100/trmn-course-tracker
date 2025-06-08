@@ -2,137 +2,10 @@ import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings, NodeStatus } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
+import { getCourseMainDepartment } from '../utils/departmentUtils'
 import { useT } from '../i18n'
 
-// Helper function to normalize department names for better matching
-const normalizeDepartmentName = (name: string): string | null => {
-  const nameMapping: { [pattern: string]: string } = {
-    // Primary TRMN Departments
-    medical: 'Medical',
-    astrogation: 'Astrogation',
-    communications: 'Communications',
-    engineering: 'Engineering',
-    tactical: 'Tactical',
-    command: 'Command',
-    administration: 'Administration',
-    logistics: 'Logistics',
-
-    // Specific schools/specialties that map to departments
-    'flight operations': 'Flight Operations', // Special case: separate from Astrogation for SWP
-    'fire control': 'Tactical',
-    'electronic warfare': 'Tactical',
-    tracking: 'Tactical',
-    sensor: 'Tactical',
-    missile: 'Tactical',
-    'beam weapons': 'Tactical',
-    gunner: 'Tactical',
-    weapons: 'Tactical',
-
-    // Engineering subcategories
-    impeller: 'Engineering',
-    power: 'Engineering',
-    gravitics: 'Engineering',
-    environmental: 'Engineering',
-    hydroponics: 'Engineering',
-    'damage control': 'Engineering',
-
-    // Communications subcategories
-    'data systems': 'Communications',
-    electronics: 'Communications',
-
-    // Astrogation subcategories
-    helmsman: 'Astrogation',
-    plotting: 'Astrogation',
-    quartermaster: 'Astrogation',
-
-    // Medical subcategories
-    corpsman: 'Medical',
-    'sick berth': 'Medical',
-    surgeon: 'Medical',
-
-    // Command subcategories
-    boatswain: 'Command',
-    'master-at-arms': 'Command',
-    'master at arms': 'Command',
-    operations: 'Command',
-    intelligence: 'Command',
-
-    // Administration subcategories
-    personnelman: 'Administration',
-    yeoman: 'Administration',
-    'navy counselor': 'Administration',
-    legalman: 'Administration',
-    disbursing: 'Administration',
-    postal: 'Administration',
-    "ship's serviceman": 'Administration',
-    steward: 'Administration'
-  }
-
-  const nameLower = name.toLowerCase()
-  for (const [pattern, standardName] of Object.entries(nameMapping)) {
-    if (nameLower.includes(pattern)) {
-      return standardName
-    }
-  }
-
-  return null
-}
-
-// Helper function to map section names to departments when normalization fails
-const mapSectionToDepartment = (sectionName: string): string | null => {
-  if (!sectionName) return null
-
-  const sectionLower = sectionName.toLowerCase()
-
-  // Map common section patterns to departments
-  if (sectionLower.includes('medical')) return 'Medical'
-  if (sectionLower.includes('tactical')) return 'Tactical'
-  if (sectionLower.includes('engineering')) return 'Engineering'
-  if (sectionLower.includes('communication')) return 'Communications'
-  if (sectionLower.includes('astrogation')) return 'Astrogation'
-  if (sectionLower.includes('command')) return 'Command'
-  if (sectionLower.includes('administration')) return 'Administration'
-  if (sectionLower.includes('logistics')) return 'Logistics'
-
-  // SINA TSC sections
-  if (sectionLower.includes('sina tsc medical')) return 'Medical'
-  if (sectionLower.includes('sina tsc tactical')) return 'Tactical'
-  if (sectionLower.includes('sina tsc engineering')) return 'Engineering'
-  if (sectionLower.includes('sina tsc communications')) return 'Communications'
-  if (sectionLower.includes('sina tsc astrogation')) return 'Astrogation'
-  if (sectionLower.includes('sina tsc command')) return 'Command'
-  if (sectionLower.includes('sina tsc administration')) return 'Administration'
-
-  return null
-}
-
-// Helper function to check if a course belongs to a department
-const courseMatchesDepartment = (course: Course, department: string): boolean => {
-  const deptLower = department.toLowerCase()
-
-  // 1. Check explicit department assignments first (most reliable)
-  if (course.primaryDepartment && course.primaryDepartment.toLowerCase() === deptLower) {
-    return true
-  }
-  if (course.departments && course.departments.some((d: string) => d.toLowerCase() === deptLower)) {
-    return true
-  }
-
-  // 2. Check normalized subsection names
-  if (course.subsection) {
-    const normalizedDept = normalizeDepartmentName(course.subsection)
-    if (normalizedDept && normalizedDept.toLowerCase() === deptLower) {
-      return true
-    }
-  }
-
-  // 3. Check direct section/subsection matches as fallback
-  const sectionLower = course.section.toLowerCase()
-  const subsectionLower = course.subsection.toLowerCase()
-
-  // Direct matches
-  return sectionLower.includes(deptLower) || subsectionLower.includes(deptLower)
-}
+// Note: Department normalization is now handled by departmentUtils using dynamic mappings
 
 const TreeContainer = styled.div`
   width: 100%;
@@ -496,26 +369,8 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
 
       // Department filter
       if (filters.departments && filters.departments.length > 0) {
-        // Use same logic as department grouping to determine course's department
-        let courseDepartment: string
-        if (course.primaryDepartment) {
-          courseDepartment = course.primaryDepartment
-        } else if (course.departments && course.departments.length > 0) {
-          courseDepartment = course.departments[0]
-        } else {
-          const normalizedFromSubsection = course.subsection ? normalizeDepartmentName(course.subsection) : null
-          if (normalizedFromSubsection) {
-            courseDepartment = normalizedFromSubsection
-          } else {
-            const normalizedFromSection = course.section ? normalizeDepartmentName(course.section) : null
-            if (normalizedFromSection) {
-              courseDepartment = normalizedFromSection
-            } else {
-              courseDepartment = mapSectionToDepartment(course.section) || 'Other'
-            }
-          }
-        }
-
+        // Use the dynamic department mapping to determine course's department
+        const courseDepartment = getCourseMainDepartment(course, courseData.departmentMappings || new Map())
         if (!filters.departments.includes(courseDepartment)) return false
       }
 
@@ -697,59 +552,12 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
   const renderCoursesByDepartment = () => {
     const departmentCourses = new Map<string, Course[]>()
 
-    // Extract all unique departments from the filtered courses
-    const allDepartments = new Set<string>()
+    // Note: Department extraction is now handled by the department grouping logic below
 
+    // Group courses by department using dynamic mappings
     filteredCourses.forEach((course) => {
-      // Check explicit department assignments first
-      if (course.primaryDepartment) {
-        allDepartments.add(course.primaryDepartment)
-      }
-      if (course.departments) {
-        course.departments.forEach((dept) => allDepartments.add(dept))
-      }
+      const assignedDepartment = getCourseMainDepartment(course, courseData.departmentMappings || new Map())
 
-      // Check normalized department from subsection
-      if (course.subsection) {
-        const normalizedDept = normalizeDepartmentName(course.subsection)
-        if (normalizedDept) {
-          allDepartments.add(normalizedDept)
-        }
-      }
-
-      // Fallback to section as department
-      if (course.section) {
-        allDepartments.add(course.section)
-      }
-    })
-
-    // Group courses by department
-    filteredCourses.forEach((course) => {
-      let assignedDepartment: string
-
-      // Prioritized department assignment
-      if (course.primaryDepartment) {
-        assignedDepartment = course.primaryDepartment
-      } else if (course.departments && course.departments.length > 0) {
-        assignedDepartment = course.departments[0] // Use first department if multiple
-      } else {
-        // Try to normalize the subsection name to a department
-        const normalizedFromSubsection = course.subsection ? normalizeDepartmentName(course.subsection) : null
-        if (normalizedFromSubsection) {
-          assignedDepartment = normalizedFromSubsection
-        } else {
-          // Try to normalize the section name to a department
-          const normalizedFromSection = course.section ? normalizeDepartmentName(course.section) : null
-          if (normalizedFromSection) {
-            assignedDepartment = normalizedFromSection
-          } else {
-            // Fallback: map common section patterns to departments
-            assignedDepartment = mapSectionToDepartment(course.section) || 'Other'
-          }
-        }
-      }
-
-      // Add course to its assigned department
       if (!departmentCourses.has(assignedDepartment)) {
         departmentCourses.set(assignedDepartment, [])
       }

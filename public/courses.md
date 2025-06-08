@@ -501,6 +501,7 @@ The following table defines how department names map to specific school/course c
 | Department        | School Names                                                                                              |
 | ----------------- | --------------------------------------------------------------------------------------------------------- |
 | Astrogation       | astrogation, flight operations, coxswain, helmsman, plotting, quartermaster                               |
+| Administration    | personnelman, yeoman, navy counselor                                                                      |
 | Tactical          | fire control, electronic warfare, tracking, sensor, missile, beam weapons, gunner, weapons                |
 | Command           | boatswain, master-at-arms, operations, intelligence, command                                              |
 | Communications    | data systems, electronics, communications                                                                 |

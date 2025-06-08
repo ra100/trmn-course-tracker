@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { ParsedCourseData, UserProgress } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
+import { findCoursesByDepartmentAndLevel } from '../utils/departmentUtils'
 import { useT } from '../i18n'
 
 const PanelContainer = styled.div`
@@ -313,101 +314,7 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
   const t = useT()
   const [spaceWarfareExpanded, setSpaceWarfareExpanded] = useState(false)
 
-  // Space Warfare Pin calculation logic
-  const extractDepartmentsFromCourses = (courseData: ParsedCourseData): Set<string> => {
-    const departments = new Set<string>()
-    courseData.courses.forEach((course) => {
-      if (course.section) {
-        departments.add(course.section.toLowerCase())
-      }
-      if (course.subsection) {
-        departments.add(course.subsection.toLowerCase())
-      }
-    })
-    return departments
-  }
-
-  const normalizeDepartmentName = (name: string): string | null => {
-    const nameMapping: { [pattern: string]: string } = {
-      medical: 'Medical',
-      astrogation: 'Astrogation',
-      communications: 'Communications',
-      engineering: 'Engineering',
-      tactical: 'Tactical',
-      command: 'Command',
-      administration: 'Administration',
-      logistics: 'Logistics',
-      'flight operations': 'Flight Operations',
-      'fire control': 'Tactical',
-      'electronic warfare': 'Tactical',
-      tracking: 'Tactical',
-      sensor: 'Tactical',
-      missile: 'Tactical',
-      'beam weapons': 'Tactical',
-      gunner: 'Tactical',
-      weapons: 'Tactical',
-      impeller: 'Engineering',
-      power: 'Engineering',
-      gravitics: 'Engineering',
-      environmental: 'Engineering',
-      hydroponics: 'Engineering',
-      'damage control': 'Engineering',
-      'data systems': 'Communications',
-      electronics: 'Communications',
-      helmsman: 'Astrogation',
-      plotting: 'Astrogation',
-      quartermaster: 'Astrogation',
-      corpsman: 'Medical',
-      'sick berth': 'Medical',
-      surgeon: 'Medical',
-      boatswain: 'Command',
-      'master-at-arms': 'Command',
-      'master at arms': 'Command',
-      operations: 'Command',
-      intelligence: 'Command',
-      personnelman: 'Administration',
-      yeoman: 'Administration',
-      'navy counselor': 'Administration',
-      legalman: 'Administration',
-      disbursing: 'Administration',
-      postal: 'Administration',
-      "ship's serviceman": 'Administration',
-      steward: 'Administration'
-    }
-
-    const nameLower = name.toLowerCase()
-    for (const [pattern, department] of Object.entries(nameMapping)) {
-      if (nameLower.includes(pattern)) {
-        return department
-      }
-    }
-    return null
-  }
-
-  const courseMatchesDepartment = (course: any, targetDepartment: string, allDepartments: Set<string>): boolean => {
-    const normalizedTarget = normalizeDepartmentName(targetDepartment)
-    if (!normalizedTarget) return false
-
-    const courseSection = normalizeDepartmentName(course.section || '')
-    const courseSubsection = normalizeDepartmentName(course.subsection || '')
-
-    return courseSection === normalizedTarget || courseSubsection === normalizedTarget
-  }
-
-  const findCoursesByDepartmentAndLevel = (
-    courseData: ParsedCourseData,
-    departments: string[],
-    level: string
-  ): string[] => {
-    const allDepartments = extractDepartmentsFromCourses(courseData)
-    return courseData.courses
-      .filter((course) => {
-        const hasCorrectLevel = course.level === level
-        const matchesDepartment = departments.some((dept) => courseMatchesDepartment(course, dept, allDepartments))
-        return hasCorrectLevel && matchesDepartment
-      })
-      .map((course) => course.code)
-  }
+  // Space Warfare Pin calculation logic now uses dynamic department mappings
 
   const calculateDepartmentProgress = (
     courseData: ParsedCourseData,
@@ -418,15 +325,17 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
       return { satisfied: 0, completed: false }
     }
 
-    const allDepartments = extractDepartmentsFromCourses(courseData)
     const departmentCourses = findCoursesByDepartmentAndLevel(courseData, requirement.departments, requirement.level)
     const departmentGroups: { [dept: string]: string[] } = {}
 
     requirement.departments.forEach((dept: string) => {
-      departmentGroups[dept] = departmentCourses.filter((courseCode) => {
-        const course = courseData.courseMap.get(courseCode)
-        return course ? courseMatchesDepartment(course, dept, allDepartments) : false
-      })
+      departmentGroups[dept] = departmentCourses
+        .filter(
+          (course) =>
+            course.section.toLowerCase().includes(dept.toLowerCase()) ||
+            course.subsection.toLowerCase().includes(dept.toLowerCase())
+        )
+        .map((course) => course.code)
     })
 
     let satisfiedDepartments = 0
