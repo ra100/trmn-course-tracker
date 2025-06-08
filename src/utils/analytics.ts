@@ -132,7 +132,7 @@ export const trackPageView = (path?: string): void => {
 }
 
 // Track custom event
-export const trackEvent = (eventName: string, parameters?: Record<string, any>): void => {
+export const trackEvent = (eventName: string, parameters?: Record<string, unknown>): void => {
   if (!config.analytics.enabled || !window.gtag) {
     return
   }
@@ -182,7 +182,7 @@ export const trackSearch = (searchTerm: string, resultsCount: number): void => {
 }
 
 // Track settings changes
-export const trackSettingsChange = (settingName: string, oldValue: any, newValue: any): void => {
+export const trackSettingsChange = (settingName: string, oldValue: unknown, newValue: unknown): void => {
   trackEvent('settings_change', {
     setting_name: settingName,
     old_value: String(oldValue),
@@ -233,7 +233,7 @@ export const trackDataExport = (exportType: string, dataSize: number): void => {
 export const trackFeatureEngagement = (
   featureName: string,
   action: string,
-  additionalData?: Record<string, any>
+  additionalData?: Record<string, unknown>
 ): void => {
   trackEvent('feature_engagement', {
     feature_name: featureName,

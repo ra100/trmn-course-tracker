@@ -1,10 +1,10 @@
-import { ParsedCourseData, Course, Category } from '../types'
+import { ParsedCourseData, Course, Category, SpecialRule } from '../types'
 import { isDebugEnabled } from '../config'
 
 interface SerializedCourseData {
   courses: Course[]
   categories: Category[]
-  specialRules: any[]
+  specialRules: SpecialRule[]
   departmentMappings: Record<string, string[]>
   courseMap: Array<[string, Course]>
   categoryMap: Array<[string, Category]>
