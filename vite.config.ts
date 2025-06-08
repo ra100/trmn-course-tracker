@@ -1,9 +1,20 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
   base: './',
-  plugins: [react()],
+  plugins: [
+    react(),
+    // Bundle analyzer - generates stats.html in build directory
+    visualizer({
+      filename: 'build/bundle-analysis.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+      template: 'treemap' // 'treemap', 'sunburst', 'network'
+    })
+  ],
   define: {
     // Define build-time constants
     __DEV__: JSON.stringify(process.env.NODE_ENV === 'development'),

@@ -206,7 +206,7 @@ src/design-system/
 
 - **Total Lines**: ~13,051 (increased from 9,400 due to improvements)
 - **TypeScript Files**: 53 files
-- **Test Coverage**: **212 tests passing** (increased from 143)
+- **Test Coverage**: **240 tests passing** (increased from 212)
 - **ESLint Issues**: **0 errors, 0 warnings** (clean codebase)
 - **Technical Debt Score**: **9/10** (Excellent - up from 7/10)
 - **Maintainability**: **Excellent**
@@ -429,10 +429,13 @@ src/design-system/
 3. **Custom Hook Extraction**: `useCourseFiltering` implemented
 4. **State Management**: React Query optimistic updates
 5. **Code Quality**: Zero ESLint errors/warnings maintained
+6. **GTM Script Fix**: ✅ RESOLVED - Fixed script URL and added duplication check
+7. **Mobile Navigation Hook**: ✅ NEW - Extracted mobile state to `useMobileNavigation`
+8. **Filter State Hook**: ✅ NEW - Extracted filter logic to `useFilterState` with analytics
 
 ### 🔄 **In Progress**:
 
-1. **State Management**: App.tsx simplification (60% complete)
+1. **State Management**: App.tsx simplification (80% complete - mobile & filter hooks done)
 2. **Component Architecture**: Large component splitting (30% complete)
 3. **Performance**: Bundle analysis setup (20% complete)
 
