@@ -195,11 +195,7 @@ describe('useUserSettings', () => {
       })
 
       await act(async () => {
-        result.current.mutate(mockUserSettings)
-      })
-
-      await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true)
+        await result.current.mutateAsync(mockUserSettings)
       })
 
       const cachedData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
@@ -289,6 +285,11 @@ describe('useUserSettings', () => {
 
     it('should revert on localStorage error', async () => {
       queryClient.setQueryData(USER_SETTINGS_QUERY_KEY, defaultUserSettings)
+
+      // Verify data is set correctly before error
+      const initialData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
+      expect(initialData?.theme).toBe('light')
+
       localStorageMock.setItem.mockImplementation(() => {
         throw new Error('Storage error')
       })
@@ -297,17 +298,21 @@ describe('useUserSettings', () => {
         wrapper: createWrapper(queryClient)
       })
 
+      let errorThrown = false
       await act(async () => {
         try {
           await result.current.updateSetting('theme', 'dark')
         } catch (error) {
+          errorThrown = true
           expect(error).toEqual(new Error('Storage error'))
+
+          // Check cache immediately after error handling
+          const dataAfterError = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
+          expect(dataAfterError?.theme).toBe('light')
         }
       })
 
-      // Data should be reverted to original
-      const revertedData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
-      expect(revertedData?.theme).toBe('light')
+      expect(errorThrown).toBe(true)
     })
 
     it('should handle empty cache gracefully', async () => {
@@ -351,13 +356,15 @@ describe('useUserSettings', () => {
         await result.current.updateSetting('language', 'cs')
       })
 
-      const finalData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
-      expect(finalData).toEqual({
-        ...defaultUserSettings,
-        theme: 'dark',
-        layout: 'force',
-        showCompleted: false,
-        language: 'cs'
+      await waitFor(() => {
+        const finalData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
+        expect(finalData).toEqual({
+          ...defaultUserSettings,
+          theme: 'dark',
+          layout: 'force',
+          showCompleted: false,
+          language: 'cs'
+        })
       })
     })
   })
@@ -401,18 +408,22 @@ describe('useUserSettings', () => {
         theme: 'dark' as const
       })
 
+      let errorThrown = false
       await act(async () => {
         try {
           await result.current.updateOptimistically(updater)
         } catch (error) {
+          errorThrown = true
           expect(error).toEqual(new Error('Storage error'))
+
+          // Check cache immediately after error in the catch block
+          const dataAfterError = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
+          expect(dataAfterError).toEqual(defaultUserSettings)
+          expect(dataAfterError?.theme).toBe('light')
         }
       })
 
-      // Data should be reverted to original
-      const revertedData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
-      expect(revertedData).toEqual(defaultUserSettings)
-      expect(revertedData?.theme).toBe('light')
+      expect(errorThrown).toBe(true)
     })
 
     it('should handle empty cache gracefully', async () => {

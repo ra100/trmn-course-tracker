@@ -258,18 +258,11 @@ describe('useUserProgress', () => {
       })
 
       await act(async () => {
-        result.current.mutate(mockUserProgress)
+        await result.current.mutateAsync(mockUserProgress)
       })
 
-      await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true)
-      })
-
-      // Wait for the cache to be updated
-      await waitFor(() => {
-        const cachedData = queryClient.getQueryData<UserProgress>(USER_PROGRESS_QUERY_KEY)
-        expect(cachedData).toEqual(mockUserProgress)
-      })
+      const cachedData = queryClient.getQueryData<UserProgress>(USER_PROGRESS_QUERY_KEY)
+      expect(cachedData).toEqual(mockUserProgress)
     })
 
     it('should handle localStorage save errors', async () => {
@@ -359,17 +352,15 @@ describe('useUserProgress', () => {
         } catch (error) {
           errorThrown = true
           expect(error).toEqual(new Error('Storage error'))
+
+          // Check cache immediately after error in the catch block
+          const dataAfterError = queryClient.getQueryData<UserProgress>(USER_PROGRESS_QUERY_KEY)
+          expect(dataAfterError).toEqual(mockUserProgress)
+          expect(dataAfterError?.completedCourses.has('NEW-COURSE')).toBe(false)
         }
       })
 
       expect(errorThrown).toBe(true)
-
-      // Data should be reverted to original
-      await waitFor(() => {
-        const revertedData = queryClient.getQueryData<UserProgress>(USER_PROGRESS_QUERY_KEY)
-        expect(revertedData).toEqual(mockUserProgress)
-        expect(revertedData?.completedCourses.has('NEW-COURSE')).toBe(false)
-      })
     })
 
     it('should handle empty cache gracefully', async () => {
