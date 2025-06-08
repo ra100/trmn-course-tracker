@@ -337,34 +337,19 @@ describe('useUserSettings', () => {
       })
 
       // Test theme
-      await act(async () => {
-        await result.current.updateSetting('theme', 'dark')
-      })
+      await result.current.updateSetting('theme', 'dark')
+      await result.current.updateSetting('layout', 'force')
+      await result.current.updateSetting('showCompleted', false)
+      await result.current.updateSetting('language', 'cs')
 
-      // Test layout
-      await act(async () => {
-        await result.current.updateSetting('layout', 'force')
-      })
-
-      // Test boolean
-      await act(async () => {
-        await result.current.updateSetting('showCompleted', false)
-      })
-
-      // Test language
-      await act(async () => {
-        await result.current.updateSetting('language', 'cs')
-      })
-
-      await waitFor(() => {
-        const finalData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
-        expect(finalData).toEqual({
-          ...defaultUserSettings,
-          theme: 'dark',
-          layout: 'force',
-          showCompleted: false,
-          language: 'cs'
-        })
+      // Verify final state
+      const finalData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
+      expect(finalData).toEqual({
+        ...defaultUserSettings,
+        theme: 'dark',
+        layout: 'force',
+        showCompleted: false,
+        language: 'cs'
       })
     })
   })
@@ -384,9 +369,7 @@ describe('useUserSettings', () => {
         autoSave: false
       })
 
-      await act(async () => {
-        await result.current.updateOptimistically(updater)
-      })
+      await result.current.updateOptimistically(updater)
 
       const updatedData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
       expect(updatedData?.theme).toBe('dark')

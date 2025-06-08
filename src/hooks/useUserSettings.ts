@@ -42,7 +42,7 @@ const saveUserSettingsToStorage = async (settings: UserSettings): Promise<UserSe
       console.log('⚙️ User settings saved to localStorage')
     }
 
-    return settings
+    return Promise.resolve(settings)
   } catch (err) {
     console.error('Error saving user settings:', err)
     throw err
