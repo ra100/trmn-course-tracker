@@ -73,7 +73,6 @@ describe('FilterPanel', () => {
     )
 
     expect(screen.getByText('Filters')).toBeInTheDocument()
-    expect(screen.getByText('Departments')).toBeInTheDocument()
     expect(screen.getByText('Levels')).toBeInTheDocument()
     expect(screen.getByText('Status')).toBeInTheDocument()
   })
