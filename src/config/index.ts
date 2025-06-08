@@ -24,7 +24,7 @@ export const config = {
   // Analytics configuration
   analytics: {
     gtmId,
-    enabled: !isDevelopmentMode && !!gtmId
+    enabled: !!gtmId // Enable analytics when GTM ID is provided, regardless of environment
   },
 
   // API endpoints and other environment-specific configs can go here

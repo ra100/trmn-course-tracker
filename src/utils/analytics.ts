@@ -27,9 +27,17 @@ const defaultConsentSettings: ConsentSettings = {
 
 // Initialize Google Analytics
 export const initializeAnalytics = (): void => {
+  if (isDebugEnabled()) {
+    console.log('Analytics initialization:', {
+      enabled: config.analytics.enabled,
+      gtmId: config.analytics.gtmId,
+      isDevelopment: config.isDevelopment
+    })
+  }
+
   if (!config.analytics.enabled) {
     if (isDebugEnabled()) {
-      console.log('Analytics: Disabled in current environment')
+      console.log('Analytics: Disabled - no GTM ID provided')
     }
     return
   }
@@ -60,19 +68,42 @@ export const initializeAnalytics = (): void => {
 
 // Load Google Tag Manager
 const loadGTM = (gtmId: string): void => {
+  if (isDebugEnabled()) {
+    console.log(`Analytics: Loading Google Tag Manager (${gtmId})`)
+  }
+
   // GTM script
   const script = document.createElement('script')
   script.async = true
-  script.src = `https://www.googletagmanager.com/gtm.js?id=${gtmId}`
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${gtmId}`
+
+  // Add load event listener for debugging
+  if (isDebugEnabled()) {
+    script.onload = () => {
+      console.log(`Analytics: Google Tag Manager script loaded successfully (${gtmId})`)
+    }
+    script.onerror = (error) => {
+      console.error(`Analytics: Error loading Google Tag Manager script (${gtmId}):`, error)
+    }
+  }
+
   document.head.appendChild(script)
 
   if (isDebugEnabled()) {
-    console.log(`Analytics: Google Tag Manager loaded (${gtmId})`)
+    console.log(`Analytics: Google Tag Manager script added to DOM (${gtmId})`)
   }
 }
 
 // Update consent settings
 export const updateConsent = (consentSettings: Partial<ConsentSettings>): void => {
+  if (isDebugEnabled()) {
+    console.log('Analytics consent update attempted:', {
+      enabled: config.analytics.enabled,
+      gtagExists: !!window.gtag,
+      consentSettings
+    })
+  }
+
   if (!config.analytics.enabled || !window.gtag) {
     if (isDebugEnabled()) {
       console.log('Analytics: Cannot update consent - not initialized')
@@ -114,21 +145,33 @@ export const getStoredConsent = (): Partial<ConsentSettings> | null => {
 
 // Track page view
 export const trackPageView = (path?: string): void => {
-  if (!config.analytics.enabled || !window.gtag) {
-    return
+  const page = path || window.location.pathname + window.location.search
+
+  if (isDebugEnabled()) {
+    console.log('Analytics page view tracking attempt:', {
+      enabled: config.analytics.enabled,
+      gtagExists: !!window.gtag,
+      gtmId: config.analytics.gtmId,
+      page
+    })
   }
 
-  const page = path || window.location.pathname + window.location.search
+  if (!config.analytics.enabled || !window.gtag) {
+    if (isDebugEnabled()) {
+      console.log('Analytics: Cannot track page view - not initialized')
+    }
+    return
+  }
 
   // For GTM, push to dataLayer
   if (config.analytics.gtmId) {
     window.gtag('event', 'page_view', {
       page_path: page
     })
-  }
 
-  if (isDebugEnabled()) {
-    console.log(`Analytics: Page view tracked - ${page}`)
+    if (isDebugEnabled()) {
+      console.log(`Analytics: Page view tracked - ${page}`)
+    }
   }
 }
 
