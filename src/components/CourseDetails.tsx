@@ -430,7 +430,16 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
 
     const targetCourse = eligibilityEngine.getCourseByCode(courseCode)
     if (targetCourse) {
-      onCourseSelect(targetCourse)
+      // Get the course with updated availability and completion status
+      const updatedCourses = eligibilityEngine.updateCourseAvailability(userProgress)
+      const updatedTargetCourse = updatedCourses.find((c) => c.code === courseCode)
+
+      if (updatedTargetCourse) {
+        onCourseSelect(updatedTargetCourse)
+      } else {
+        // Fallback to original course if updated version not found
+        onCourseSelect(targetCourse)
+      }
     }
   }
 

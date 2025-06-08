@@ -341,6 +341,14 @@ function App() {
     }
 
     updateUserProgress(() => finalProgress)
+
+    // Update selectedCourse if it's the course that was toggled
+    if (selectedCourse && selectedCourse.code === courseCode) {
+      const updatedSelectedCourse = updatedCourses.find((c) => c.code === courseCode)
+      if (updatedSelectedCourse) {
+        setSelectedCourse(updatedSelectedCourse)
+      }
+    }
   }
 
   const setCourseStatus = (courseCode: string, status: 'available' | 'in_progress' | 'waiting_grade' | 'completed') => {
@@ -391,6 +399,14 @@ function App() {
     }
 
     updateUserProgress(() => finalProgress)
+
+    // Update selectedCourse if it's the course that was status changed
+    if (selectedCourse && selectedCourse.code === courseCode) {
+      const updatedSelectedCourse = updatedCourses.find((c) => c.code === courseCode)
+      if (updatedSelectedCourse) {
+        setSelectedCourse(updatedSelectedCourse)
+      }
+    }
   }
 
   const handleImportMedusaCourses = (
@@ -440,6 +456,14 @@ function App() {
     }
 
     updateUserProgress(() => finalProgress)
+
+    // Update selectedCourse if it's affected by the import
+    if (selectedCourse && trackableImportedCourses.includes(selectedCourse.code)) {
+      const updatedSelectedCourse = updatedCourses.find((c) => c.code === selectedCourse.code)
+      if (updatedSelectedCourse) {
+        setSelectedCourse(updatedSelectedCourse)
+      }
+    }
 
     return {
       imported: courseCodes.length,
