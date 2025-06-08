@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import styled from 'styled-components'
 import { ParsedCourseData, UserProgress } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
@@ -320,7 +320,7 @@ interface PinProgress {
   overallProgress: number
 }
 
-export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, courseData, eligibilityEngine }) => {
+const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, courseData, eligibilityEngine }) => {
   const t = useT()
   const [spaceWarfareExpanded, setSpaceWarfareExpanded] = useState(false)
 
@@ -580,17 +580,17 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
     return achievements
   }
 
-  const overallStats = getOverallStats()
-  const sectionProgress = getSectionProgress()
-  const levelProgress = getLevelProgress()
-  const achievements = getAchievements()
-  const { oswpProgress, eswpProgress } = getSpaceWarfarePins()
+  const overallStats = useMemo(() => getOverallStats(), [userProgress, courseData, eligibilityEngine])
+  const sectionProgress = useMemo(() => getSectionProgress(), [userProgress, courseData])
+  const levelProgress = useMemo(() => getLevelProgress(), [userProgress, courseData])
+  const achievements = useMemo(() => getAchievements(), [userProgress, courseData])
+  const { oswpProgress, eswpProgress } = useMemo(() => getSpaceWarfarePins(), [userProgress, courseData])
 
-  const toggleSpaceWarfareExpanded = () => {
-    setSpaceWarfareExpanded(!spaceWarfareExpanded)
-  }
+  const toggleSpaceWarfareExpanded = useCallback(() => {
+    setSpaceWarfareExpanded((prev) => !prev)
+  }, [])
 
-  const renderSpaceWarfareRequirement = (req: PinRequirement) => {
+  const renderSpaceWarfareRequirement = useCallback((req: PinRequirement) => {
     if (req.type === 'course') {
       return (
         <RequirementItem key={req.id} $completed={req.completed}>
@@ -620,26 +620,29 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
       )
     }
     return null
-  }
+  }, [])
 
-  const renderPinSection = (progress: PinProgress) => (
-    <PinSection key={progress.type}>
-      <PinTitle>
-        <PinIcon>★</PinIcon>
-        {progress.name}
-        <PinBadge $earned={progress.earned}>
-          {progress.earned ? t.spaceWarfare.eligible : t.spaceWarfare.progress}
-        </PinBadge>
-      </PinTitle>
-      <RequirementsList>{progress.requirements.map(renderSpaceWarfareRequirement)}</RequirementsList>
-      <ProgressBarContainer>
-        <ProgressBarFill progress={progress.overallProgress} />
-      </ProgressBarContainer>
-      <ProgressText>
-        <span>{t.spaceWarfare.progress}</span>
-        <span>{Math.round(progress.overallProgress)}%</span>
-      </ProgressText>
-    </PinSection>
+  const renderPinSection = useCallback(
+    (progress: PinProgress) => (
+      <PinSection key={progress.type}>
+        <PinTitle>
+          <PinIcon>★</PinIcon>
+          {progress.name}
+          <PinBadge $earned={progress.earned}>
+            {progress.earned ? t.spaceWarfare.eligible : t.spaceWarfare.progress}
+          </PinBadge>
+        </PinTitle>
+        <RequirementsList>{progress.requirements.map(renderSpaceWarfareRequirement)}</RequirementsList>
+        <ProgressBarContainer>
+          <ProgressBarFill progress={progress.overallProgress} />
+        </ProgressBarContainer>
+        <ProgressText>
+          <span>{t.spaceWarfare.progress}</span>
+          <span>{Math.round(progress.overallProgress)}%</span>
+        </ProgressText>
+      </PinSection>
+    ),
+    [t, renderSpaceWarfareRequirement]
   )
 
   // Calculate combined Space Warfare eligibility for the main achievement
@@ -755,3 +758,5 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
     </PanelContainer>
   )
 }
+
+export const ProgressPanel = React.memo(ProgressPanelComponent)
