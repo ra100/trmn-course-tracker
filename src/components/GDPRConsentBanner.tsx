@@ -199,8 +199,7 @@ export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentC
   const [showSettings, setShowSettings] = useState(false)
   const [consentSettings, setConsentSettings] = useState<Partial<ConsentSettings>>({
     analytics: 'denied',
-    functionalStorage: 'granted',
-    securityStorage: 'granted'
+    functionalStorage: 'granted'
   })
 
   // Focus trap for settings modal
@@ -231,8 +230,7 @@ export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentC
   const handleAcceptAll = () => {
     const fullConsent: Partial<ConsentSettings> = {
       analytics: 'granted',
-      functionalStorage: 'granted',
-      securityStorage: 'granted'
+      functionalStorage: 'granted'
     }
 
     setConsentSettings(fullConsent)
@@ -248,8 +246,7 @@ export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentC
   const handleRejectNonEssential = () => {
     const essentialOnly: Partial<ConsentSettings> = {
       analytics: 'denied',
-      functionalStorage: 'granted',
-      securityStorage: 'granted'
+      functionalStorage: 'granted'
     }
 
     setConsentSettings(essentialOnly)
@@ -274,7 +271,7 @@ export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentC
   }
 
   const handleConsentToggle = (key: keyof ConsentSettings) => {
-    if (key === 'functionalStorage' || key === 'securityStorage') {
+    if (key === 'functionalStorage') {
       // Essential cookies cannot be disabled
       return
     }

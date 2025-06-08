@@ -15,30 +15,46 @@ export type ConsentStatus = 'granted' | 'denied' | 'unknown'
 export interface ConsentSettings {
   analytics: ConsentStatus
   functionalStorage: ConsentStatus
-  securityStorage: ConsentStatus
 }
 
 // Default consent settings (privacy-first approach)
 const defaultConsentSettings: ConsentSettings = {
   analytics: 'denied',
-  functionalStorage: 'granted',
-  securityStorage: 'granted'
+  functionalStorage: 'granted'
+}
+
+const loadGTM = (gtmId: string): void => {
+  const scriptSrc = `https://www.googletagmanager.com/gtag/js?id=${gtmId}`
+
+  // Check if script is already loaded
+  const existingScript = document.querySelector(`script[src="${scriptSrc}"]`)
+  if (existingScript) {
+    if (isDebugEnabled()) {
+      console.log(`Analytics: GTM script already loaded (${gtmId})`)
+    }
+    return
+  }
+
+  const script = document.createElement('script')
+  script.async = true
+  script.src = scriptSrc
+
+  if (isDebugEnabled()) {
+    console.log(`Analytics: Loading GTM script (${gtmId})`)
+    script.onload = () => {
+      console.log(`Analytics: GTM script loaded successfully (${gtmId})`)
+    }
+    script.onerror = (error) => {
+      console.error(`Analytics: Error loading GTM script (${gtmId}):`, error)
+    }
+  }
+
+  document.head.appendChild(script)
 }
 
 // Initialize Google Analytics
 export const initializeAnalytics = (): void => {
-  if (isDebugEnabled()) {
-    console.log('Analytics initialization:', {
-      enabled: config.analytics.enabled,
-      gtmId: config.analytics.gtmId,
-      isDevelopment: config.isDevelopment
-    })
-  }
-
   if (!config.analytics.enabled) {
-    if (isDebugEnabled()) {
-      console.log('Analytics: Disabled - no GTM ID provided')
-    }
     return
   }
 
@@ -48,80 +64,46 @@ export const initializeAnalytics = (): void => {
     window.dataLayer.push(args)
   }
 
-  // Set default consent mode (privacy-first)
   window.gtag('consent', 'default', {
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    ad_storage: 'denied',
     analytics_storage: defaultConsentSettings.analytics,
-    functionality_storage: defaultConsentSettings.functionalStorage,
-    security_storage: defaultConsentSettings.securityStorage,
     wait_for_update: 500
   })
+  window.gtag('js', new Date())
+  window.gtag('config', config.analytics.gtmId)
 
-  // Load GTM
-  if (config.analytics.gtmId) {
-    loadGTM(config.analytics.gtmId)
-  }
-
-  if (isDebugEnabled()) {
-    console.log('Analytics: Initialized with consent defaults')
-  }
-}
-
-// Load Google Tag Manager
-const loadGTM = (gtmId: string): void => {
-  if (isDebugEnabled()) {
-    console.log(`Analytics: Loading Google Tag Manager (${gtmId})`)
-  }
-
-  // GTM script
-  const script = document.createElement('script')
-  script.async = true
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${gtmId}`
-
-  // Add load event listener for debugging
-  if (isDebugEnabled()) {
-    script.onload = () => {
-      console.log(`Analytics: Google Tag Manager script loaded successfully (${gtmId})`)
-    }
-    script.onerror = (error) => {
-      console.error(`Analytics: Error loading Google Tag Manager script (${gtmId}):`, error)
-    }
-  }
-
-  document.head.appendChild(script)
-
-  if (isDebugEnabled()) {
-    console.log(`Analytics: Google Tag Manager script added to DOM (${gtmId})`)
+  if (getStoredConsent()?.analytics === 'granted') {
+    updateGTMConsent(getStoredConsent() as Partial<ConsentSettings>)
   }
 }
 
 // Update consent settings
 export const updateConsent = (consentSettings: Partial<ConsentSettings>): void => {
-  if (isDebugEnabled()) {
-    console.log('Analytics consent update attempted:', {
-      enabled: config.analytics.enabled,
-      gtagExists: !!window.gtag,
-      consentSettings
-    })
-  }
+  // Store consent preferences in localStorage
+  localStorage.setItem('gdpr-consent', JSON.stringify(consentSettings))
+
+  updateGTMConsent(consentSettings)
+}
+
+export const updateGTMConsent = (consentSettings: Partial<ConsentSettings>): void => {
+  // Store consent preferences in localStorage
+  localStorage.setItem('gdpr-consent', JSON.stringify(consentSettings))
 
   if (!config.analytics.enabled || !window.gtag) {
-    if (isDebugEnabled()) {
-      console.log('Analytics: Cannot update consent - not initialized')
-    }
     return
   }
 
   window.gtag('consent', 'update', {
-    analytics_storage: consentSettings.analytics || defaultConsentSettings.analytics,
-    functionality_storage: consentSettings.functionalStorage || defaultConsentSettings.functionalStorage,
-    security_storage: consentSettings.securityStorage || defaultConsentSettings.securityStorage
+    ad_user_data: 'granted',
+    ad_personalization: 'granted',
+    ad_storage: 'granted',
+    analytics_storage: consentSettings.analytics || defaultConsentSettings.analytics
   })
 
-  // Store consent preferences in localStorage
-  localStorage.setItem('gdpr-consent', JSON.stringify(consentSettings))
-
-  if (isDebugEnabled()) {
-    console.log('Analytics: Consent updated', consentSettings)
+  if (consentSettings.analytics === 'granted' && config.analytics.gtmId) {
+    loadGTM(config.analytics.gtmId)
   }
 
   // Send page view after consent is granted
