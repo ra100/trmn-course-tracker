@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { FilterOptions, ParsedCourseData, CourseLevel, NodeStatus } from '../types'
 import { getAllDepartments } from '../utils/departmentUtils'
 import { useT } from '../i18n'
+import { trackFilterUsage } from '../utils/analytics'
 
 const PanelContainer = styled.div`
   padding: 1.5rem;
@@ -111,6 +112,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
       ? [...currentDepartments, department]
       : currentDepartments.filter((d) => d !== department)
 
+    trackFilterUsage('department', checked ? department : `remove_${department}`)
+
     onFilterChange({
       ...filters,
       departments: newDepartments.length > 0 ? newDepartments : undefined
@@ -120,6 +123,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
   const handleLevelChange = (level: CourseLevel, checked: boolean) => {
     const currentLevels = filters.levels || []
     const newLevels = checked ? [...currentLevels, level] : currentLevels.filter((l) => l !== level)
+
+    trackFilterUsage('level', checked ? level : `remove_${level}`)
 
     onFilterChange({
       ...filters,
@@ -131,6 +136,8 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
     const currentStatuses = filters.status || []
     const newStatuses = checked ? [...currentStatuses, status] : currentStatuses.filter((s) => s !== status)
 
+    trackFilterUsage('status', checked ? status : `remove_${status}`)
+
     onFilterChange({
       ...filters,
       status: newStatuses.length > 0 ? newStatuses : undefined
@@ -138,6 +145,7 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
   }
 
   const handleClearFilters = () => {
+    trackFilterUsage('clear_all', 'filters_cleared')
     onFilterChange({})
   }
 

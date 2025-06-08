@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { Course, UserProgress } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
 import { useT } from '../i18n'
+import { trackCourseDetailsView } from '../utils/analytics'
 
 const DetailsContainer = styled.div`
   padding: 1.5rem;
@@ -294,6 +295,14 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
   onCourseSelect
 }) => {
   const t = useT()
+
+  // Track course details view when course changes
+  useEffect(() => {
+    if (course) {
+      trackCourseDetailsView(course.code, course.name, 'course_details_panel')
+    }
+  }, [course])
+
   if (!course) {
     return (
       <DetailsContainer>

@@ -162,3 +162,121 @@ export const trackCourseProgress = (courseId: string, courseName: string, progre
     event_category: 'education'
   })
 }
+
+// Track filter usage
+export const trackFilterUsage = (filterType: string, filterValue: string | string[]): void => {
+  trackEvent('filter_usage', {
+    filter_type: filterType,
+    filter_value: Array.isArray(filterValue) ? filterValue.join(',') : filterValue,
+    event_category: 'navigation'
+  })
+}
+
+// Track search usage
+export const trackSearch = (searchTerm: string, resultsCount: number): void => {
+  trackEvent('search', {
+    search_term: searchTerm,
+    results_count: resultsCount,
+    event_category: 'navigation'
+  })
+}
+
+// Track settings changes
+export const trackSettingsChange = (settingName: string, oldValue: any, newValue: any): void => {
+  trackEvent('settings_change', {
+    setting_name: settingName,
+    old_value: String(oldValue),
+    new_value: String(newValue),
+    event_category: 'settings'
+  })
+}
+
+// Track view mode changes
+export const trackViewModeChange = (viewMode: string): void => {
+  trackEvent('view_mode_change', {
+    view_mode: viewMode,
+    event_category: 'navigation'
+  })
+}
+
+// Track course details view
+export const trackCourseDetailsView = (courseId: string, courseName: string, source: string = 'unknown'): void => {
+  trackEvent('course_details_view', {
+    course_id: courseId,
+    course_name: courseName,
+    source: source, // e.g., 'search', 'filter', 'tree', 'direct'
+    event_category: 'education'
+  })
+}
+
+// Track file import actions
+export const trackFileImport = (fileType: string, fileSize: number, success: boolean, errorMessage?: string): void => {
+  trackEvent('file_import', {
+    file_type: fileType,
+    file_size: fileSize,
+    success: success,
+    error_message: errorMessage || '',
+    event_category: 'data_import'
+  })
+}
+
+// Track export actions
+export const trackDataExport = (exportType: string, dataSize: number): void => {
+  trackEvent('data_export', {
+    export_type: exportType,
+    data_size: dataSize,
+    event_category: 'data_export'
+  })
+}
+
+// Track feature engagement
+export const trackFeatureEngagement = (
+  featureName: string,
+  action: string,
+  additionalData?: Record<string, any>
+): void => {
+  trackEvent('feature_engagement', {
+    feature_name: featureName,
+    action: action,
+    event_category: 'engagement',
+    ...additionalData
+  })
+}
+
+// Track performance metrics
+export const trackPerformance = (metricName: string, value: number, unit: string = 'ms'): void => {
+  trackEvent('performance_metric', {
+    metric_name: metricName,
+    value: value,
+    unit: unit,
+    event_category: 'performance'
+  })
+}
+
+// Track user session milestones
+export const trackSessionMilestone = (milestone: string, sessionDuration: number): void => {
+  trackEvent('session_milestone', {
+    milestone: milestone, // e.g., 'first_course_viewed', 'first_completion', '10min_session'
+    session_duration: sessionDuration,
+    event_category: 'engagement'
+  })
+}
+
+// Track error events
+export const trackError = (errorType: string, errorMessage: string, component?: string): void => {
+  trackEvent('error_encountered', {
+    error_type: errorType,
+    error_message: errorMessage,
+    component: component || 'unknown',
+    event_category: 'error'
+  })
+}
+
+// Track GDPR consent changes
+export const trackConsentChange = (consentType: string, granted: boolean): void => {
+  trackEvent('gdpr_consent_change', {
+    consent_type: consentType,
+    granted: granted,
+    event_category: 'privacy'
+  })
+}

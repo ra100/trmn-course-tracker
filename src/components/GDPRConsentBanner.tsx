@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { ConsentSettings, updateConsent, getStoredConsent } from '../utils/analytics'
+import { ConsentSettings, updateConsent, getStoredConsent, trackConsentChange } from '../utils/analytics'
 import { useT } from '../i18n'
 
 const BannerWrapper = styled.div<{ $isVisible: boolean }>`
@@ -228,6 +228,10 @@ export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentC
     setConsentSettings(fullConsent)
     updateConsent(fullConsent)
     onConsentChange?.(fullConsent)
+
+    // Track consent changes
+    trackConsentChange('analytics', true)
+
     setIsVisible(false)
   }
 
@@ -241,12 +245,20 @@ export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentC
     setConsentSettings(essentialOnly)
     updateConsent(essentialOnly)
     onConsentChange?.(essentialOnly)
+
+    // Track consent changes
+    trackConsentChange('analytics', false)
+
     setIsVisible(false)
   }
 
   const handleSaveSettings = () => {
     updateConsent(consentSettings)
     onConsentChange?.(consentSettings)
+
+    // Track consent changes
+    trackConsentChange('analytics', consentSettings.analytics === 'granted')
+
     setShowSettings(false)
     setIsVisible(false)
   }

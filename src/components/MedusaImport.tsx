@@ -6,6 +6,7 @@ import {
   extractCompletedCourseCodes,
   MedusaParseResult
 } from '../utils/medusaParser'
+import { trackFileImport } from '../utils/analytics'
 
 const ImportSection = styled.div`
   margin-bottom: 1.5rem;
@@ -131,13 +132,23 @@ export const MedusaImport: React.FC<MedusaImportProps> = ({ onImportMedusaCourse
 
         // Update result with import statistics
         result.importStats = importStats
+
+        // Track successful import
+        trackFileImport('medusa_html', importHtml.length, true)
+      } else {
+        // Track failed import
+        trackFileImport('medusa_html', importHtml.length, false, result.errors.join(', '))
       }
     } catch (error) {
+      const errorMessage = `Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`
       setImportResult({
         courses: [],
         parseDate: new Date(),
-        errors: [`Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`]
+        errors: [errorMessage]
       })
+
+      // Track failed import
+      trackFileImport('medusa_html', importHtml.length, false, errorMessage)
     } finally {
       setIsImporting(false)
     }

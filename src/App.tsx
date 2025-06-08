@@ -15,7 +15,14 @@ import { DebugPanel } from './components/DebugPanel'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from './types'
 import { getTheme } from './theme'
 import { useT, useTranslation } from './i18n'
-import { initializeAnalytics, trackPageView, trackCourseCompletion, ConsentSettings } from './utils/analytics'
+import {
+  initializeAnalytics,
+  trackPageView,
+  trackCourseCompletion,
+  trackSearch,
+  trackViewModeChange,
+  ConsentSettings
+} from './utils/analytics'
 
 const AppContainer = styled.div`
   display: flex;
@@ -455,10 +462,31 @@ function App() {
   }
 
   const handleFilterChange = (newFilters: FilterOptions) => {
+    // Track search usage if search term changed
+    if (newFilters.search !== filters.search && newFilters.search) {
+      // Count filtered courses for search results
+      const filteredCourses =
+        courseData?.courses.filter((course) => {
+          const searchTerm = newFilters.search?.toLowerCase() || ''
+          return (
+            course.name.toLowerCase().includes(searchTerm) ||
+            course.code.toLowerCase().includes(searchTerm) ||
+            course.section.toLowerCase().includes(searchTerm)
+          )
+        }) || []
+
+      trackSearch(newFilters.search, filteredCourses.length)
+    }
+
     setFilters(newFilters)
   }
 
   const handleSettingsChange = (newSettings: UserSettings) => {
+    // Track view mode changes
+    if (newSettings.layout !== settings?.layout) {
+      trackViewModeChange(newSettings.layout)
+    }
+
     updateSettings(() => newSettings)
   }
 

@@ -4,6 +4,7 @@ import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings, No
 import { EligibilityEngine } from '../utils/eligibilityEngine'
 import { getCourseMainDepartment } from '../utils/departmentUtils'
 import { useT } from '../i18n'
+import { trackCourseDetailsView, trackFeatureEngagement } from '../utils/analytics'
 
 // Note: Department normalization is now handled by departmentUtils using dynamic mappings
 
@@ -402,11 +403,17 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
   }
 
   const handleCourseClick = (course: Course) => {
+    trackCourseDetailsView(course.code, course.name, 'skill_tree_click')
     onCourseSelect(course)
   }
 
   const handleCourseDoubleClick = (course: Course) => {
     if (course.available || course.completed) {
+      trackFeatureEngagement('course_toggle', 'double_click', {
+        course_id: course.code,
+        course_name: course.name,
+        current_status: course.completed ? 'completed' : 'available'
+      })
       onCourseToggle(course.code)
     }
   }
@@ -454,6 +461,11 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
         item.style.backgroundColor = 'transparent'
       })
       item.addEventListener('click', () => {
+        trackFeatureEngagement('course_status_change', 'context_menu', {
+          course_id: course.code,
+          course_name: course.name,
+          new_status: option.value
+        })
         onCourseStatusChange(course.code, option.value)
         document.body.removeChild(contextMenu)
       })

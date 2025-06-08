@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { UserSettings } from '../types'
 import { MedusaImport } from './MedusaImport'
 import { useT, useTranslation, Language } from '../i18n'
+import { trackSettingsChange } from '../utils/analytics'
 
 const PanelContainer = styled.div`
   padding: 1.5rem;
@@ -145,6 +146,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
   const t = useT()
   const { setLanguage } = useTranslation()
   const handleToggle = (key: keyof UserSettings, value: boolean) => {
+    trackSettingsChange(key, settings[key], value)
     onSettingsChange({
       ...settings,
       [key]: value
@@ -152,13 +154,16 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
   }
 
   const handleThemeToggle = () => {
+    const newTheme = settings.theme === 'light' ? 'dark' : 'light'
+    trackSettingsChange('theme', settings.theme, newTheme)
     onSettingsChange({
       ...settings,
-      theme: settings.theme === 'light' ? 'dark' : 'light'
+      theme: newTheme
     })
   }
 
   const handleLanguageChange = (language: Language) => {
+    trackSettingsChange('language', settings.language, language)
     const newSettings = {
       ...settings,
       language
@@ -168,6 +173,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
   }
 
   const handleReset = () => {
+    trackSettingsChange('reset_all', 'reset_settings', 'default_values')
     onSettingsChange({
       theme: 'light',
       layout: 'tree',
