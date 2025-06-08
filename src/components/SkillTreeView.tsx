@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import styled from 'styled-components'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings, NodeStatus } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
@@ -326,7 +326,7 @@ interface SkillTreeViewProps {
   ) => void
 }
 
-export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
+const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({
   courseData,
   userProgress,
   filters,
@@ -342,81 +342,101 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
   const [groupingMode, setGroupingMode] = useState<'section' | 'department'>('section')
   const containerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const updated = eligibilityEngine.updateCourseAvailability(userProgress)
-    const filtered = applyFilters(updated)
-    setFilteredCourses(filtered)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [courseData, userProgress, filters, settings, searchTerm, eligibilityEngine])
+  // Memoize expensive computations
+  const updatedCourses = useMemo(() => {
+    return eligibilityEngine.updateCourseAvailability(userProgress)
+  }, [eligibilityEngine, userProgress])
 
-  const applyFilters = (courses: Course[]): Course[] => {
-    return courses.filter((course) => {
-      // Search filter
-      if (searchTerm) {
-        const searchLower = searchTerm.toLowerCase()
-        const matchesSearch =
-          course.name.toLowerCase().includes(searchLower) ||
-          course.code.toLowerCase().includes(searchLower) ||
-          course.section.toLowerCase().includes(searchLower) ||
-          course.subsection.toLowerCase().includes(searchLower)
+  const applyFilters = useCallback(
+    (courses: Course[]): Course[] => {
+      return courses.filter((course) => {
+        // Search filter
+        if (searchTerm) {
+          const searchLower = searchTerm.toLowerCase()
+          const matchesSearch =
+            course.name.toLowerCase().includes(searchLower) ||
+            course.code.toLowerCase().includes(searchLower) ||
+            course.section.toLowerCase().includes(searchLower) ||
+            course.subsection.toLowerCase().includes(searchLower)
 
-        if (!matchesSearch) return false
-      }
+          if (!matchesSearch) return false
+        }
 
-      // Section filter
-      if (filters.sections && filters.sections.length > 0) {
-        if (!filters.sections.includes(course.section)) return false
-      }
+        // Section filter
+        if (filters.sections && filters.sections.length > 0) {
+          if (!filters.sections.includes(course.section)) return false
+        }
 
-      // Department filter
-      if (filters.departments && filters.departments.length > 0) {
-        // Use the dynamic department mapping to determine course's department
-        const courseDepartment = getCourseMainDepartment(course, courseData.departmentMappings || new Map())
-        if (!filters.departments.includes(courseDepartment)) return false
-      }
+        // Department filter
+        if (filters.departments && filters.departments.length > 0) {
+          // Use the dynamic department mapping to determine course's department
+          const courseDepartment = getCourseMainDepartment(course, courseData.departmentMappings || new Map())
+          if (!filters.departments.includes(courseDepartment)) return false
+        }
 
-      // Level filter
-      if (filters.levels && filters.levels.length > 0) {
-        if (!course.level || !filters.levels.includes(course.level)) return false
-      }
+        // Level filter
+        if (filters.levels && filters.levels.length > 0) {
+          if (!course.level || !filters.levels.includes(course.level)) return false
+        }
 
-      // Status filter
-      if (filters.status && filters.status.length > 0) {
-        const courseStatus = getCourseStatus(course)
-        if (!filters.status.includes(courseStatus)) return false
-      }
+        // Status filter
+        if (filters.status && filters.status.length > 0) {
+          const courseStatus = getCourseStatus(course)
+          if (!filters.status.includes(courseStatus)) return false
+        }
 
-      // Settings-based filters
-      if (!settings.showCompleted && course.completed) return false
-      if (!settings.showUnavailable && !course.available && !course.completed) return false
+        // Settings-based filters
+        if (!settings.showCompleted && course.completed) return false
+        if (!settings.showUnavailable && !course.available && !course.completed) return false
 
-      return true
-    })
-  }
-
-  const getCourseStatus = (course: Course): NodeStatus => {
-    if (course.completed) return 'completed'
-    if (userProgress.waitingGradeCourses.has(course.code)) return 'waiting_grade'
-    if (userProgress.inProgressCourses.has(course.code)) return 'in_progress'
-    if (course.available) return 'available'
-    return 'locked'
-  }
-
-  const handleCourseClick = (course: Course) => {
-    trackCourseDetailsView(course.code, course.name, 'skill_tree_click')
-    onCourseSelect(course)
-  }
-
-  const handleCourseDoubleClick = (course: Course) => {
-    if (course.available || course.completed) {
-      trackFeatureEngagement('course_toggle', 'double_click', {
-        course_id: course.code,
-        course_name: course.name,
-        current_status: course.completed ? 'completed' : 'available'
+        return true
       })
-      onCourseToggle(course.code)
-    }
-  }
+    },
+    [searchTerm, filters, settings, courseData.departmentMappings, userProgress]
+  )
+
+  // Apply filters to updated courses
+  const filteredCoursesResult = useMemo(() => {
+    return applyFilters(updatedCourses)
+  }, [applyFilters, updatedCourses])
+
+  // Update state when filtered courses change
+  useEffect(() => {
+    setFilteredCourses(filteredCoursesResult)
+  }, [filteredCoursesResult])
+
+  const getCourseStatus = useCallback(
+    (course: Course): NodeStatus => {
+      if (course.completed) return 'completed'
+      if (userProgress.waitingGradeCourses.has(course.code)) return 'waiting_grade'
+      if (userProgress.inProgressCourses.has(course.code)) return 'in_progress'
+      if (course.available) return 'available'
+      return 'locked'
+    },
+    [userProgress]
+  )
+
+  const handleCourseClick = useCallback(
+    (course: Course) => {
+      trackCourseDetailsView(course.code, course.name, 'skill_tree_click')
+      onCourseSelect(course)
+    },
+    [onCourseSelect]
+  )
+
+  const handleCourseDoubleClick = useCallback(
+    (course: Course) => {
+      if (course.available || course.completed) {
+        trackFeatureEngagement('course_toggle', 'double_click', {
+          course_id: course.code,
+          course_name: course.name,
+          current_status: course.completed ? 'completed' : 'available'
+        })
+        onCourseToggle(course.code)
+      }
+    },
+    [onCourseToggle]
+  )
 
   const handleCourseRightClick = (e: React.MouseEvent, course: Course) => {
     e.preventDefault()
@@ -494,13 +514,37 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
     return `Requires: ${prereqs.join(', ')}...`
   }
 
-  const getStats = () => {
+  const getCourseNodeProps = useCallback(
+    (course: Course, status: NodeStatus) => ({
+      status,
+      onClick: () => handleCourseClick(course),
+      onDoubleClick: () => handleCourseDoubleClick(course),
+      onContextMenu: (e: React.MouseEvent) => handleCourseRightClick(e, course),
+      title: `${t.courseActions.doubleClickToToggle} ${
+        course.completed ? t.courseActions.markIncomplete.toLowerCase() : t.courseActions.markComplete.toLowerCase()
+      } | ${t.courseActions.rightClickForOptions}`,
+      role: 'button' as const,
+      tabIndex: 0,
+      'aria-label': `${course.name} (${course.code}) - Status: ${status}. ${t.courseActions.doubleClickToToggle} ${
+        course.completed ? t.courseActions.markIncomplete.toLowerCase() : t.courseActions.markComplete.toLowerCase()
+      }`,
+      onKeyDown: (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleCourseClick(course)
+        }
+      }
+    }),
+    [handleCourseClick, handleCourseDoubleClick, handleCourseRightClick, t]
+  )
+
+  const stats = useMemo(() => {
     const total = courseData.courses.length
     const completed = userProgress.completedCourses.size
     const available = filteredCourses.filter((c) => c.available).length
 
     return { total, completed, available }
-  }
+  }, [courseData.courses.length, userProgress.completedCourses.size, filteredCourses])
 
   const renderCoursesByCategory = () => {
     if (groupingMode === 'department') {
@@ -534,18 +578,7 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
               {courses.map((course) => {
                 const status = getCourseStatus(course)
                 return (
-                  <CourseNode
-                    key={course.id}
-                    status={status}
-                    onClick={() => handleCourseClick(course)}
-                    onDoubleClick={() => handleCourseDoubleClick(course)}
-                    onContextMenu={(e) => handleCourseRightClick(e, course)}
-                    title={`${t.courseActions.doubleClickToToggle} ${
-                      course.completed
-                        ? t.courseActions.markIncomplete.toLowerCase()
-                        : t.courseActions.markComplete.toLowerCase()
-                    } | ${t.courseActions.rightClickForOptions}`}
-                  >
+                  <CourseNode key={course.id} {...getCourseNodeProps(course, status)}>
                     <CourseCode>{course.code}</CourseCode>
                     <CourseName>{course.name}</CourseName>
                     {course.level && <CourseLevel>{course.level}</CourseLevel>}
@@ -589,18 +622,7 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
               {courses.map((course) => {
                 const status = getCourseStatus(course)
                 return (
-                  <CourseNode
-                    key={course.id}
-                    status={status}
-                    onClick={() => handleCourseClick(course)}
-                    onDoubleClick={() => handleCourseDoubleClick(course)}
-                    onContextMenu={(e) => handleCourseRightClick(e, course)}
-                    title={`${t.courseActions.doubleClickToToggle} ${
-                      course.completed
-                        ? t.courseActions.markIncomplete.toLowerCase()
-                        : t.courseActions.markComplete.toLowerCase()
-                    } | ${t.courseActions.rightClickForOptions}`}
-                  >
+                  <CourseNode key={course.id} {...getCourseNodeProps(course, status)}>
                     <CourseCode>{course.code}</CourseCode>
                     <CourseName>{course.name}</CourseName>
                     {course.level && <CourseLevel>{course.level}</CourseLevel>}
@@ -616,8 +638,6 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
     })
   }
 
-  const stats = getStats()
-
   return (
     <TreeContainer ref={containerRef}>
       <SearchContainer>
@@ -626,15 +646,27 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
           placeholder={t.filters.search}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          aria-label={t.filters.search}
+          role="searchbox"
         />
       </SearchContainer>
 
-      <GroupingToggle>
-        <GroupingLabel>Group by:</GroupingLabel>
-        <GroupingButton $active={groupingMode === 'section'} onClick={() => setGroupingMode('section')}>
+      <GroupingToggle role="group" aria-label="Course grouping options">
+        <GroupingLabel id="grouping-label">Group by:</GroupingLabel>
+        <GroupingButton
+          $active={groupingMode === 'section'}
+          onClick={() => setGroupingMode('section')}
+          aria-pressed={groupingMode === 'section'}
+          aria-describedby="grouping-label"
+        >
           Section
         </GroupingButton>
-        <GroupingButton $active={groupingMode === 'department'} onClick={() => setGroupingMode('department')}>
+        <GroupingButton
+          $active={groupingMode === 'department'}
+          onClick={() => setGroupingMode('department')}
+          aria-pressed={groupingMode === 'department'}
+          aria-describedby="grouping-label"
+        >
           Department
         </GroupingButton>
       </GroupingToggle>
@@ -658,3 +690,5 @@ export const SkillTreeView: React.FC<SkillTreeViewProps> = ({
     </TreeContainer>
   )
 }
+
+export const SkillTreeView = React.memo(SkillTreeViewComponent)

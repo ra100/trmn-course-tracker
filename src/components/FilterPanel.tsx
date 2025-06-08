@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { FilterOptions, ParsedCourseData, CourseLevel, NodeStatus } from '../types'
 import { getAllDepartments } from '../utils/departmentUtils'
@@ -100,11 +100,11 @@ interface FilterPanelProps {
   onFilterChange: (filters: FilterOptions) => void
 }
 
-export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, onFilterChange }) => {
+const FilterPanelComponent: React.FC<FilterPanelProps> = ({ filters, courseData, onFilterChange }) => {
   const t = useT()
   const levels: CourseLevel[] = ['A', 'C', 'D', 'W']
   const statuses: NodeStatus[] = ['completed', 'in_progress', 'waiting_grade', 'available', 'locked']
-  const departments = getAllDepartments(courseData)
+  const departments = useMemo(() => getAllDepartments(courseData), [courseData])
 
   const handleDepartmentChange = (department: string, checked: boolean) => {
     const currentDepartments = filters.departments || []
@@ -189,45 +189,48 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
       )}
 
       <FilterSection>
-        <FilterLabel>{t.filters.status}</FilterLabel>
-        <CheckboxGroup>
+        <FilterLabel id="status-filter-label">{t.filters.status}</FilterLabel>
+        <CheckboxGroup role="group" aria-labelledby="status-filter-label">
           {statuses.map((status) => (
             <CheckboxItem key={status}>
               <Checkbox
                 checked={filters.status?.includes(status) || false}
                 onChange={(e) => handleStatusChange(status, e.target.checked)}
+                aria-describedby={`status-${status}-label`}
               />
-              {getStatusLabel(status)}
+              <span id={`status-${status}-label`}>{getStatusLabel(status)}</span>
             </CheckboxItem>
           ))}
         </CheckboxGroup>
       </FilterSection>
 
       <FilterSection>
-        <FilterLabel>{t.filters.levels}</FilterLabel>
-        <CheckboxGroup>
+        <FilterLabel id="levels-filter-label">{t.filters.levels}</FilterLabel>
+        <CheckboxGroup role="group" aria-labelledby="levels-filter-label">
           {levels.map((level) => (
             <CheckboxItem key={level}>
               <Checkbox
                 checked={filters.levels?.includes(level) || false}
                 onChange={(e) => handleLevelChange(level, e.target.checked)}
+                aria-describedby={`level-${level}-label`}
               />
-              Level {level}
+              <span id={`level-${level}-label`}>Level {level}</span>
             </CheckboxItem>
           ))}
         </CheckboxGroup>
       </FilterSection>
 
       <FilterSection>
-        <FilterLabel>Departments</FilterLabel>
-        <CheckboxGroup>
+        <FilterLabel id="departments-filter-label">Departments</FilterLabel>
+        <CheckboxGroup role="group" aria-labelledby="departments-filter-label">
           {departments.map((department) => (
             <CheckboxItem key={department}>
               <Checkbox
                 checked={filters.departments?.includes(department) || false}
                 onChange={(e) => handleDepartmentChange(department, e.target.checked)}
+                aria-describedby={`department-${department.replace(/\s+/g, '-').toLowerCase()}-label`}
               />
-              {department}
+              <span id={`department-${department.replace(/\s+/g, '-').toLowerCase()}-label`}>{department}</span>
             </CheckboxItem>
           ))}
         </CheckboxGroup>
@@ -237,3 +240,5 @@ export const FilterPanel: React.FC<FilterPanelProps> = ({ filters, courseData, o
     </PanelContainer>
   )
 }
+
+export const FilterPanel = React.memo(FilterPanelComponent)
