@@ -1,5 +1,5 @@
 ---
-description: creating a commit message
+description: git commit message
 globs:
 alwaysApply: false
 ---
