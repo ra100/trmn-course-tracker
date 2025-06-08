@@ -152,7 +152,7 @@ const PrerequisiteItem = styled.div<{ satisfied: boolean }>`
   padding: 0.5rem;
   border-radius: 4px;
   font-size: 0.9rem;
-  background: ${(props) => (props.satisfied ? props.theme.colors.success + '20' : props.theme.colors.error + '20')};
+  background: ${(props) => (props.satisfied ? `${props.theme.colors.success  }20` : `${props.theme.colors.error  }20`)};
   color: ${(props) => (props.satisfied ? props.theme.colors.success : props.theme.colors.error)};
   border-left: 3px solid ${(props) => (props.satisfied ? props.theme.colors.success : props.theme.colors.error)};
 `
@@ -161,7 +161,7 @@ const DepartmentChoiceItem = styled.div<{ satisfied: boolean }>`
   padding: 0.8rem;
   border-radius: 4px;
   font-size: 0.9rem;
-  background: ${(props) => (props.satisfied ? props.theme.colors.success + '20' : props.theme.colors.warning + '20')};
+  background: ${(props) => (props.satisfied ? `${props.theme.colors.success  }20` : `${props.theme.colors.warning  }20`)};
   color: ${(props) => (props.satisfied ? props.theme.colors.success : props.theme.colors.warning)};
   border-left: 3px solid ${(props) => (props.satisfied ? props.theme.colors.success : props.theme.colors.warning)};
   position: relative;
@@ -211,7 +211,7 @@ const UnlockedCoursesList = styled.div`
 
 const UnlockedCourseItem = styled.div`
   padding: 0.4rem;
-  background: ${(props) => props.theme.colors.primary + '20'};
+  background: ${(props) => `${props.theme.colors.primary  }20`};
   border-radius: 4px;
   font-size: 0.9rem;
   color: ${(props) => props.theme.colors.primary};
@@ -231,7 +231,7 @@ const ClickableCourseCode = styled.span`
 
 const ClickableUnlockedCourse = styled.div`
   padding: 0.4rem;
-  background: ${(props) => props.theme.colors.primary + '20'};
+  background: ${(props) => `${props.theme.colors.primary  }20`};
   border-radius: 4px;
   font-size: 0.9rem;
   color: ${(props) => props.theme.colors.primary};
@@ -239,7 +239,7 @@ const ClickableUnlockedCourse = styled.div`
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${(props) => props.theme.colors.primary + '30'};
+    background: ${(props) => `${props.theme.colors.primary  }30`};
     transform: translateX(2px);
   }
 `
@@ -312,10 +312,10 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
   }
 
   const getStatus = (): 'completed' | 'available' | 'locked' | 'in_progress' | 'waiting_grade' => {
-    if (course.completed) return 'completed'
-    if (userProgress.waitingGradeCourses.has(course.code)) return 'waiting_grade'
-    if (userProgress.inProgressCourses.has(course.code)) return 'in_progress'
-    if (course.available) return 'available'
+    if (course.completed) {return 'completed'}
+    if (userProgress.waitingGradeCourses.has(course.code)) {return 'waiting_grade'}
+    if (userProgress.inProgressCourses.has(course.code)) {return 'in_progress'}
+    if (course.available) {return 'available'}
     return 'locked'
   }
 
@@ -416,7 +416,7 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
   }
 
   const handleCourseClick = (courseCode: string) => {
-    if (!onCourseSelect || !eligibilityEngine) return
+    if (!onCourseSelect || !eligibilityEngine) {return}
 
     const targetCourse = eligibilityEngine.getCourseByCode(courseCode)
     if (targetCourse) {

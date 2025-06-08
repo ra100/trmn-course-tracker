@@ -151,10 +151,10 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ filters, courseData,
 
   const getFilterCount = () => {
     let count = 0
-    if (filters.departments) count += filters.departments.length
-    if (filters.levels) count += filters.levels.length
-    if (filters.status) count += filters.status.length
-    if (filters.search) count += 1
+    if (filters.departments) {count += filters.departments.length}
+    if (filters.levels) {count += filters.levels.length}
+    if (filters.status) {count += filters.status.length}
+    if (filters.search) {count += 1}
     return count
   }
 

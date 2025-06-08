@@ -37,7 +37,7 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
 
     tabPanels.forEach((panel) => {
       const panelId = panel.getAttribute('id')
-      if (!panelId) return
+      if (!panelId) {return}
 
       // Determine the category based on panel ID
       let category = ''

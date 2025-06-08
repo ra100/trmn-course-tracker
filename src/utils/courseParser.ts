@@ -48,7 +48,7 @@ export class CourseParser {
       const line = lines[i].trim()
 
       // Skip empty lines
-      if (!line) continue
+      if (!line) {continue}
 
       // Parse headers
       if (line.startsWith('#')) {
@@ -135,7 +135,7 @@ export class CourseParser {
   private createSection(title: string): Category {
     const section: Category = {
       id: uuidv4(),
-      title: title,
+      title,
       subsections: []
     }
     this.categories.push(section)
@@ -145,7 +145,7 @@ export class CourseParser {
   private createSubsection(title: string, parentSection: Category): Subsection {
     const subsection: Subsection = {
       id: uuidv4(),
-      title: title,
+      title,
       parentId: parentSection.id
     }
 
@@ -327,10 +327,10 @@ export class CourseParser {
             const requirements = this.parseSpaceWarfarePinRequirements(cells[0], type)
             this.specialRules.push({
               id: uuidv4(),
-              type: type,
+              type,
               name: `RMN ${type}`,
               description: cells[0],
-              requirements: requirements,
+              requirements,
               branch: 'RMN',
               rank: isOfficer ? 'Officer' : 'Enlisted'
             })
@@ -341,10 +341,10 @@ export class CourseParser {
             const requirements = this.parseSpaceWarfarePinRequirements(cells[1], type)
             this.specialRules.push({
               id: uuidv4(),
-              type: type,
+              type,
               name: `RMMC ${type}`,
               description: cells[1],
-              requirements: requirements,
+              requirements,
               branch: 'RMMC',
               rank: isOfficer ? 'Officer' : 'Enlisted'
             })
@@ -365,7 +365,7 @@ export class CourseParser {
         return false
       }
       // Don't break on section headers, keep looking
-      if (line.startsWith('# space warfare pin')) break
+      if (line.startsWith('# space warfare pin')) {break}
     }
 
     return true // Default to officer if unclear
@@ -386,7 +386,7 @@ export class CourseParser {
     courses.forEach((code) => {
       requirements.push({
         type: 'course',
-        code: code,
+        code,
         required: true,
         level: this.extractCourseLevel(code)
       })
@@ -438,7 +438,7 @@ export class CourseParser {
     courses.forEach((code) => {
       requirements.push({
         type: 'course',
-        code: code,
+        code,
         required: true,
         level: this.extractCourseLevel(code)
       })
@@ -456,9 +456,9 @@ export class CourseParser {
 
         requirements.push({
           type: 'department_choice',
-          minimum: minimum,
+          minimum,
           totalOptions: total,
-          departments: departments,
+          departments,
           description: requirementText,
           required: true
         })
@@ -473,7 +473,7 @@ export class CourseParser {
         if (level) {
           requirements.push({
             type: 'level_requirement',
-            level: level,
+            level,
             description: `${level} level course required`,
             required: true
           })
@@ -519,7 +519,7 @@ export class CourseParser {
   }
 
   private extractCourseLevel(courseCode: string | undefined): CourseLevel | undefined {
-    if (!courseCode) return undefined
+    if (!courseCode) {return undefined}
     const levelMatch = courseCode.match(LEVEL_REGEX)
     return levelMatch?.[2] as CourseLevel
   }
@@ -598,7 +598,7 @@ export class CourseParser {
         required: true,
         minimum: count,
         level: level as CourseLevel,
-        departments: departments
+        departments
       })
     }
 

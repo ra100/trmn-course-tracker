@@ -62,7 +62,7 @@ export class EligibilityEngine {
   }
 
   private checkCoursePrerequisite(prerequisite: Prerequisite, userProgress: UserProgress): MissingPrerequisite | null {
-    if (!prerequisite.code) return null
+    if (!prerequisite.code) {return null}
 
     if (userProgress.completedCourses.has(prerequisite.code)) {
       return null // Requirement satisfied
@@ -112,7 +112,7 @@ export class EligibilityEngine {
     // Find completed courses that satisfy this requirement
     for (const courseCode of Array.from(userProgress.completedCourses)) {
       const course = this.courseData.courseMap.get(courseCode)
-      if (!course || course.level !== prerequisite.level) continue
+      if (!course || course.level !== prerequisite.level) {continue}
 
       const inTargetDepartment = prerequisite.departments.some(
         (dept: string) =>
@@ -236,7 +236,7 @@ export class EligibilityEngine {
   }
 
   private checkLevelRequirement(requirement: Requirement, userProgress: UserProgress): boolean {
-    if (!requirement.level) return false
+    if (!requirement.level) {return false}
 
     // Count completed courses of the specified level
     const completedOfLevel = Array.from(userProgress.completedCourses)
@@ -266,7 +266,7 @@ export class EligibilityEngine {
 
     for (const courseCode of Array.from(userProgress.completedCourses)) {
       const course = this.courseData.courseMap.get(courseCode)
-      if (!course) continue
+      if (!course) {continue}
 
       const inTargetDepartment = departments.some((dept) => {
         const deptLower = dept.toLowerCase()
@@ -315,7 +315,7 @@ export class EligibilityEngine {
 
   public getPrerequisitesForCourse(courseCode: string): Course[] {
     const course = this.courseData.courseMap.get(courseCode)
-    if (!course) return []
+    if (!course) {return []}
 
     const prerequisites: Course[] = []
 

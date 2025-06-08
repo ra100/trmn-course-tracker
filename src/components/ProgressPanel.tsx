@@ -116,7 +116,7 @@ const SpaceWarfareAchievement = styled.div<{ $earned: boolean }>`
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${(props) => (props.$earned ? props.theme.colors.success : props.theme.colors.border + '40')};
+    background: ${(props) => (props.$earned ? props.theme.colors.success : `${props.theme.colors.border  }40`)};
   }
 `
 
@@ -491,7 +491,7 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
     const levelStats = new Map<string, { total: number; completed: number }>()
 
     courseData.courses.forEach((course) => {
-      if (!course.level) return
+      if (!course.level) {return}
 
       const level = course.level
       if (!levelStats.has(level)) {

@@ -200,11 +200,11 @@ export const trackViewModeChange = (viewMode: string): void => {
 }
 
 // Track course details view
-export const trackCourseDetailsView = (courseId: string, courseName: string, source: string = 'unknown'): void => {
+export const trackCourseDetailsView = (courseId: string, courseName: string, source = 'unknown'): void => {
   trackEvent('course_details_view', {
     course_id: courseId,
     course_name: courseName,
-    source: source, // e.g., 'search', 'filter', 'tree', 'direct'
+    source, // e.g., 'search', 'filter', 'tree', 'direct'
     event_category: 'education'
   })
 }
@@ -214,7 +214,7 @@ export const trackFileImport = (fileType: string, fileSize: number, success: boo
   trackEvent('file_import', {
     file_type: fileType,
     file_size: fileSize,
-    success: success,
+    success,
     error_message: errorMessage || '',
     event_category: 'data_import'
   })
@@ -237,18 +237,18 @@ export const trackFeatureEngagement = (
 ): void => {
   trackEvent('feature_engagement', {
     feature_name: featureName,
-    action: action,
+    action,
     event_category: 'engagement',
     ...additionalData
   })
 }
 
 // Track performance metrics
-export const trackPerformance = (metricName: string, value: number, unit: string = 'ms'): void => {
+export const trackPerformance = (metricName: string, value: number, unit = 'ms'): void => {
   trackEvent('performance_metric', {
     metric_name: metricName,
-    value: value,
-    unit: unit,
+    value,
+    unit,
     event_category: 'performance'
   })
 }
@@ -256,7 +256,7 @@ export const trackPerformance = (metricName: string, value: number, unit: string
 // Track user session milestones
 export const trackSessionMilestone = (milestone: string, sessionDuration: number): void => {
   trackEvent('session_milestone', {
-    milestone: milestone, // e.g., 'first_course_viewed', 'first_completion', '10min_session'
+    milestone, // e.g., 'first_course_viewed', 'first_completion', '10min_session'
     session_duration: sessionDuration,
     event_category: 'engagement'
   })
@@ -276,7 +276,7 @@ export const trackError = (errorType: string, errorMessage: string, component?: 
 export const trackConsentChange = (consentType: string, granted: boolean): void => {
   trackEvent('gdpr_consent_change', {
     consent_type: consentType,
-    granted: granted,
+    granted,
     event_category: 'privacy'
   })
 }

@@ -5,7 +5,7 @@ import { Course, ParsedCourseData } from '../types'
  * using the dynamic departmentMappings from course data
  */
 export function normalizeDepartmentName(name: string, departmentMappings: Map<string, string[]>): string | null {
-  if (!name) return null
+  if (!name) {return null}
 
   const nameLower = name.toLowerCase()
 

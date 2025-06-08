@@ -12,7 +12,7 @@ export const useFocusTrap = ({ isActive, restoreOnDeactivate = true, initialFocu
   const previousActiveElementRef = useRef<Element | null>(null)
 
   useEffect(() => {
-    if (!isActive || !containerRef.current) return
+    if (!isActive || !containerRef.current) {return}
 
     // Store the currently focused element to restore later
     previousActiveElementRef.current = document.activeElement
@@ -53,7 +53,7 @@ export const useFocusTrap = ({ isActive, restoreOnDeactivate = true, initialFocu
         return
       }
 
-      if (event.key !== 'Tab') return
+      if (event.key !== 'Tab') {return}
 
       const focusableElements = getFocusableElements()
 
