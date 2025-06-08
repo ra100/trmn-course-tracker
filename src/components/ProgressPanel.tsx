@@ -255,6 +255,16 @@ const ProgressText = styled.div`
   margin-top: 0.2rem;
 `
 
+const FlexContainer = styled.div`
+  flex: 1;
+`
+
+const DepartmentInfo = styled.div`
+  font-size: 0.7rem;
+  opacity: 0.8;
+  margin-top: 0.1rem;
+`
+
 const QuickStats = styled.div`
   background: ${(props) => props.theme.colors.surface};
   padding: 1rem;
@@ -598,16 +608,14 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
       return (
         <RequirementItem key={req.id} $completed={req.completed}>
           <StatusIcon $completed={req.completed}>{req.completed ? '✓' : `${req.satisfied}/${req.minimum}`}</StatusIcon>
-          <div style={{ flex: 1 }}>
+          <FlexContainer>
             <RequirementText $completed={req.completed}>
               {displayText} - Progress: {req.satisfied}/{req.minimum} departments
             </RequirementText>
             {req.departments && req.departments.length > 0 && (
-              <div style={{ fontSize: '0.7rem', opacity: 0.8, marginTop: '0.1rem' }}>
-                Available: {req.departments.join(', ')}
-              </div>
+              <DepartmentInfo>Available: {req.departments.join(', ')}</DepartmentInfo>
             )}
-          </div>
+          </FlexContainer>
         </RequirementItem>
       )
     }
@@ -724,10 +732,10 @@ export const ProgressPanel: React.FC<ProgressPanelProps> = ({ userProgress, cour
         <SpaceWarfareAchievement earned={combinedSpaceWarfareEarned} onClick={toggleSpaceWarfareExpanded}>
           <SpaceWarfareHeader>
             <PinIcon>★</PinIcon>
-            <div style={{ flex: 1 }}>
+            <FlexContainer>
               <strong>{t.achievements.spaceWarfarePins.title}</strong>
               <AchievementDescription>{t.achievements.spaceWarfarePins.description}</AchievementDescription>
-            </div>
+            </FlexContainer>
             <ExpandIcon $expanded={spaceWarfareExpanded}>▼</ExpandIcon>
           </SpaceWarfareHeader>
           <SpaceWarfareDetails $expanded={spaceWarfareExpanded}>
