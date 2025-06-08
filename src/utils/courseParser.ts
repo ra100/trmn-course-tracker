@@ -13,8 +13,6 @@ import {
 } from '../types'
 
 const COURSE_CODE_REGEX = /([A-Z]{3}-[A-Z]{2,4}-\d{2,4}[ACDW]?)/g
-const COURSE_CODE_SINGLE_REGEX = /([A-Z]{3}-[A-Z]{2,4}-\d{2,4}[ACDW]?)/
-
 const LEVEL_REGEX = /-(\d{2,4})([ACDW])/
 
 export interface DepartmentMapping {
@@ -197,8 +195,15 @@ export class CourseParser {
 
       // Extract clean course code from the raw course number field
       // This handles cases like "SIA-SRN-20W Project" -> "SIA-SRN-20W"
-      const courseCodeMatch = rawCourseNumber.match(COURSE_CODE_SINGLE_REGEX)
-      const courseNumber = courseCodeMatch ? courseCodeMatch[1] : rawCourseNumber
+      const courseCodeRegex = /([A-Z]{3}-[A-Z]{2,4}-\d{2,4}[ACDW]?)/
+      const courseCodeMatch = rawCourseNumber.match(courseCodeRegex)
+      const courseNumber = courseCodeMatch ? courseCodeMatch[1] : rawCourseNumber.trim()
+
+      // Skip invalid course codes
+      if (!courseNumber || courseNumber.length === 0) {
+        console.warn(`Skipping invalid course: ${courseName} - ${rawCourseNumber}`)
+        return
+      }
 
       const course: Course = {
         id: uuidv4(),
@@ -510,7 +515,8 @@ export class CourseParser {
     return Array.from(departments).sort()
   }
 
-  private extractCourseLevel(courseCode: string): CourseLevel | undefined {
+  private extractCourseLevel(courseCode: string | undefined): CourseLevel | undefined {
+    if (!courseCode) return undefined
     const levelMatch = courseCode.match(LEVEL_REGEX)
     return levelMatch?.[2] as CourseLevel
   }

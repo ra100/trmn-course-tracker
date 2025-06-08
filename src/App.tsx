@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
-import { parseCourseData } from './utils/courseParser'
+import { loadCourseData } from './utils/courseDataLoader'
 import { EligibilityEngine } from './utils/eligibilityEngine'
 import { SkillTreeView } from './components/SkillTreeView'
 import { CourseDetails } from './components/CourseDetails'
@@ -275,7 +275,7 @@ function App() {
   const [mobileLayout, setMobileLayout] = useState<'courses' | 'details'>('courses')
 
   useEffect(() => {
-    loadCourseData()
+    loadCourseDataAsync()
     loadUserProgress()
     loadSettings()
   }, [])
@@ -285,19 +285,13 @@ function App() {
     setLanguage(settings.language)
   }, [settings.language, setLanguage])
 
-  const loadCourseData = async () => {
+  const loadCourseDataAsync = async () => {
     try {
       setLoading(true)
       setError(null)
 
-      // In a real app, this would be an API call
-      const response = await fetch('./courses.md')
-      if (!response.ok) {
-        throw new Error(t.errors.failedToLoad)
-      }
-
-      const markdownContent = await response.text()
-      const parsedData = parseCourseData(markdownContent)
+      // Load pre-built JSON course data
+      const parsedData = await loadCourseData()
 
       setCourseData(parsedData)
       setEligibilityEngine(new EligibilityEngine(parsedData))
@@ -561,7 +555,7 @@ function App() {
           <ErrorMessage>
             <h3>{t.error}</h3>
             <p>{error}</p>
-            <button onClick={loadCourseData}>{t.retry}</button>
+            <button onClick={loadCourseDataAsync}>{t.retry}</button>
           </ErrorMessage>
         </AppContainer>
       </ThemeProvider>

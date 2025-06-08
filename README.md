@@ -45,7 +45,8 @@ The application will be available at `http://localhost:3001`.
 - `npm test` - Run tests in watch mode
 - `npm run test:run` - Run tests once
 - `npm run test:ui` - Run tests with UI
-- `npm run build` - Build for production
+- `npm run build` - Build for production (includes course data generation)
+- `npm run build:courses` - Generate course data JSON from markdown
 - `npm run deploy` - Deploy to GitHub Pages (manual)
 
 ## Testing
@@ -65,10 +66,11 @@ npm run test:ui
 
 Current test coverage includes:
 
-- Course parser functionality (20 tests)
+- Course parser functionality (33 tests)
+- Course data loader (3 tests)
 - Eligibility engine logic (7 tests)
-- Settings panel component (12 tests)
-- **Total: 39 tests**
+- Component testing (87 tests)
+- **Total: 130 tests**
 
 ## Deployment
 
@@ -128,11 +130,26 @@ npm run deploy
 
 ### Data Flow
 
-1. Course data is loaded from `public/Courses.md`
-2. CourseParser converts markdown to structured data
+1. **Build Time**: Course data is parsed from `public/courses.md` and pre-built into `public/courses.json`
+2. **Runtime**: Pre-parsed JSON data is loaded directly (no markdown parsing)
 3. EligibilityEngine calculates course availability
 4. Components render filtered and sorted courses
 5. User progress is saved to localStorage
+
+### Course Data Build Process
+
+The application uses a build-time optimization for better performance:
+
+- **Source**: `public/courses.md` - Markdown file with course data
+- **Generated**: `public/courses.json` - Pre-parsed JSON (auto-generated)
+- **Build Script**: `scripts/buildCourseData.ts` - Converts markdown to JSON
+
+This approach:
+
+- ✅ Eliminates runtime markdown parsing
+- ✅ Reduces bundle size and startup time
+- ✅ Maintains the same course data structure
+- ✅ Automatically runs during `npm run build`
 
 ## Course Data Format
 
