@@ -33,7 +33,9 @@ const loadUserProgressFromStorage = (): UserProgress => {
       }
     }
   } catch (err) {
-    console.error('Error loading user progress:', err)
+    if (isDebugEnabled()) {
+      console.error('Error loading user progress:', err)
+    }
   }
 
   return getDefaultUserProgress()
@@ -59,7 +61,9 @@ const saveUserProgressToStorage = async (progress: UserProgress): Promise<UserPr
 
     return progress
   } catch (err) {
-    console.error('Error saving user progress:', err)
+    if (isDebugEnabled()) {
+      console.error('Error saving user progress:', err)
+    }
     throw err
   }
 }
@@ -89,7 +93,9 @@ export const useUpdateUserProgress = () => {
       }
     },
     onError: (error) => {
-      console.error('❌ Failed to update user progress:', error)
+      if (isDebugEnabled()) {
+        console.error('❌ Failed to update user progress:', error)
+      }
     }
   })
 }

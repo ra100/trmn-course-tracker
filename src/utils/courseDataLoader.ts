@@ -47,7 +47,9 @@ export async function loadCourseData(): Promise<ParsedCourseData> {
       dependencyGraph
     }
   } catch (error) {
-    console.error('Failed to load course data:', error)
+    if (isDebugEnabled()) {
+      console.error('Failed to load course data:', error)
+    }
     throw error
   }
 }

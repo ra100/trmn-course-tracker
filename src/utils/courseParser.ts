@@ -202,7 +202,9 @@ export class CourseParser {
 
       // Skip invalid course codes
       if (!courseNumber || courseNumber.length === 0) {
-        console.warn(`Skipping invalid course: ${courseName} - ${rawCourseNumber}`)
+        if (isDebugEnabled()) {
+          console.warn(`Skipping invalid course: ${courseName} - ${rawCourseNumber}`)
+        }
         return
       }
 

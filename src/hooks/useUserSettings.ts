@@ -27,7 +27,9 @@ const loadUserSettingsFromStorage = (): UserSettings => {
       }
     }
   } catch (err) {
-    console.error('Error loading user settings:', err)
+    if (isDebugEnabled()) {
+      console.error('Error loading user settings:', err)
+    }
   }
 
   return getDefaultUserSettings()
@@ -44,7 +46,9 @@ const saveUserSettingsToStorage = async (settings: UserSettings): Promise<UserSe
 
     return Promise.resolve(settings)
   } catch (err) {
-    console.error('Error saving user settings:', err)
+    if (isDebugEnabled()) {
+      console.error('Error saving user settings:', err)
+    }
     throw err
   }
 }
@@ -74,7 +78,9 @@ export const useUpdateUserSettings = () => {
       }
     },
     onError: (error) => {
-      console.error('❌ Failed to update user settings:', error)
+      if (isDebugEnabled()) {
+        console.error('❌ Failed to update user settings:', error)
+      }
     }
   })
 }
