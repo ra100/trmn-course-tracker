@@ -1,15 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import React, { useState, useEffect, ReactNode } from 'react'
 import { Language, TranslationStrings } from './types'
 import { enTranslations } from './translations/en'
 import { csTranslations } from './translations/cs'
-
-interface I18nContextType {
-  language: Language
-  setLanguage: (language: Language) => void
-  t: TranslationStrings
-}
-
-const I18nContext = createContext<I18nContextType | undefined>(undefined)
+import { I18nContext, I18nContextType } from './context-types'
 
 const translations: Record<Language, TranslationStrings> = {
   en: enTranslations,
@@ -51,18 +44,4 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({ children }) => {
   }
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
-}
-
-export const useTranslation = (): I18nContextType => {
-  const context = useContext(I18nContext)
-  if (context === undefined) {
-    throw new Error('useTranslation must be used within an I18nProvider')
-  }
-  return context
-}
-
-// Convenience hook for just getting translations
-export const useT = (): TranslationStrings => {
-  const { t } = useTranslation()
-  return t
 }

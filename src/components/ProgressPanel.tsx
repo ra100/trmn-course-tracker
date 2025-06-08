@@ -326,113 +326,119 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
 
   // Space Warfare Pin calculation logic now uses dynamic department mappings
 
-  const calculateDepartmentProgress = (
-    courseData: ParsedCourseData,
-    userProgress: UserProgress,
-    requirement: PinRequirement
-  ): { satisfied: number; completed: boolean } => {
-    if (!requirement.departments || !requirement.level) {
-      return { satisfied: 0, completed: false }
-    }
-
-    const departmentCourses = findCoursesByDepartmentAndLevel(courseData, requirement.departments, requirement.level)
-    const departmentGroups: { [dept: string]: string[] } = {}
-
-    requirement.departments.forEach((dept: string) => {
-      departmentGroups[dept] = departmentCourses
-        .filter(
-          (course) =>
-            course.section.toLowerCase().includes(dept.toLowerCase()) ||
-            course.subsection.toLowerCase().includes(dept.toLowerCase())
-        )
-        .map((course) => course.code)
-    })
-
-    let satisfiedDepartments = 0
-    Object.entries(departmentGroups).forEach(([, courses]) => {
-      const hasAnyCourse = courses.some((course) => userProgress.completedCourses.has(course))
-      if (hasAnyCourse) {
-        satisfiedDepartments++
+  const calculateDepartmentProgress = useCallback(
+    (
+      courseData: ParsedCourseData,
+      userProgress: UserProgress,
+      requirement: PinRequirement
+    ): { satisfied: number; completed: boolean } => {
+      if (!requirement.departments || !requirement.level) {
+        return { satisfied: 0, completed: false }
       }
-    })
 
-    return {
-      satisfied: satisfiedDepartments,
-      completed: satisfiedDepartments >= (requirement.minimum || 0)
-    }
-  }
+      const departmentCourses = findCoursesByDepartmentAndLevel(courseData, requirement.departments, requirement.level)
+      const departmentGroups: { [dept: string]: string[] } = {}
 
-  const calculatePinProgress = (
-    courseData: ParsedCourseData,
-    userProgress: UserProgress,
-    pinType: 'OSWP' | 'ESWP',
-    pinNames: { OSWP: string; ESWP: string }
-  ): PinProgress => {
-    const pinRule = courseData.specialRules.find((rule) => rule.type === pinType && rule.branch === 'RMN')
+      requirement.departments.forEach((dept: string) => {
+        departmentGroups[dept] = departmentCourses
+          .filter(
+            (course) =>
+              course.section.toLowerCase().includes(dept.toLowerCase()) ||
+              course.subsection.toLowerCase().includes(dept.toLowerCase())
+          )
+          .map((course) => course.code)
+      })
 
-    if (!pinRule) {
+      let satisfiedDepartments = 0
+      Object.entries(departmentGroups).forEach(([, courses]) => {
+        const hasAnyCourse = courses.some((course) => userProgress.completedCourses.has(course))
+        if (hasAnyCourse) {
+          satisfiedDepartments++
+        }
+      })
+
+      return {
+        satisfied: satisfiedDepartments,
+        completed: satisfiedDepartments >= (requirement.minimum || 0)
+      }
+    },
+    []
+  )
+
+  const calculatePinProgress = useCallback(
+    (
+      courseData: ParsedCourseData,
+      userProgress: UserProgress,
+      pinType: 'OSWP' | 'ESWP',
+      pinNames: { OSWP: string; ESWP: string }
+    ): PinProgress => {
+      const pinRule = courseData.specialRules.find((rule) => rule.type === pinType && rule.branch === 'RMN')
+
+      if (!pinRule) {
+        return {
+          name: pinNames[pinType],
+          type: pinType,
+          earned: false,
+          requirements: [
+            {
+              id: 'fallback-info',
+              name: `No ${pinType} requirements found in course data.`,
+              type: 'course' as const,
+              completed: false
+            }
+          ],
+          overallProgress: 0
+        }
+      }
+
+      const requirements: PinRequirement[] = []
+
+      pinRule.requirements.forEach((req, index) => {
+        if (req.type === 'course' && req.code) {
+          const courseName = courseData.courseMap.get(req.code)?.name || `Course ${req.code}`
+          requirements.push({
+            id: `course-${index}`,
+            name: courseName,
+            courseCode: req.code,
+            type: 'course',
+            completed: userProgress.completedCourses.has(req.code)
+          })
+        } else if (req.type === 'department_choice') {
+          const baseRequirement: PinRequirement = {
+            id: `dept-choice-${index}`,
+            name: req.description || `Department Choice (${req.minimum} of ${req.totalOptions} departments)`,
+            type: 'department_choice',
+            departments: req.departments,
+            minimum: req.minimum,
+            level: req.level,
+            completed: false,
+            satisfied: 0,
+            description: req.description
+          }
+
+          const progress = calculateDepartmentProgress(courseData, userProgress, baseRequirement)
+          baseRequirement.satisfied = progress.satisfied
+          baseRequirement.completed = progress.completed
+
+          requirements.push(baseRequirement)
+        }
+      })
+
+      const completedRequirements = requirements.filter((r) => r.completed).length
+      const overallProgress = requirements.length > 0 ? (completedRequirements / requirements.length) * 100 : 0
+
       return {
         name: pinNames[pinType],
         type: pinType,
-        earned: false,
-        requirements: [
-          {
-            id: 'fallback-info',
-            name: `No ${pinType} requirements found in course data.`,
-            type: 'course' as const,
-            completed: false
-          }
-        ],
-        overallProgress: 0
+        earned: requirements.length > 0 && requirements.every((r) => r.completed),
+        requirements,
+        overallProgress
       }
-    }
+    },
+    [calculateDepartmentProgress]
+  )
 
-    const requirements: PinRequirement[] = []
-
-    pinRule.requirements.forEach((req, index) => {
-      if (req.type === 'course' && req.code) {
-        const courseName = courseData.courseMap.get(req.code)?.name || `Course ${req.code}`
-        requirements.push({
-          id: `course-${index}`,
-          name: courseName,
-          courseCode: req.code,
-          type: 'course',
-          completed: userProgress.completedCourses.has(req.code)
-        })
-      } else if (req.type === 'department_choice') {
-        const baseRequirement: PinRequirement = {
-          id: `dept-choice-${index}`,
-          name: req.description || `Department Choice (${req.minimum} of ${req.totalOptions} departments)`,
-          type: 'department_choice',
-          departments: req.departments,
-          minimum: req.minimum,
-          level: req.level,
-          completed: false,
-          satisfied: 0,
-          description: req.description
-        }
-
-        const progress = calculateDepartmentProgress(courseData, userProgress, baseRequirement)
-        baseRequirement.satisfied = progress.satisfied
-        baseRequirement.completed = progress.completed
-
-        requirements.push(baseRequirement)
-      }
-    })
-
-    const completedRequirements = requirements.filter((r) => r.completed).length
-    const overallProgress = requirements.length > 0 ? (completedRequirements / requirements.length) * 100 : 0
-
-    return {
-      name: pinNames[pinType],
-      type: pinType,
-      earned: requirements.length > 0 && requirements.every((r) => r.completed),
-      requirements,
-      overallProgress
-    }
-  }
-
-  const getSpaceWarfarePins = () => {
+  const getSpaceWarfarePins = useCallback(() => {
     const pinNames = {
       OSWP: t.spaceWarfare.oswp,
       ESWP: t.spaceWarfare.eswp
@@ -442,9 +448,9 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
     const eswpProgress = calculatePinProgress(courseData, userProgress, 'ESWP', pinNames)
 
     return { oswpProgress, eswpProgress }
-  }
+  }, [courseData, userProgress, calculatePinProgress, t.spaceWarfare.oswp, t.spaceWarfare.eswp])
 
-  const getOverallStats = () => {
+  const getOverallStats = useCallback(() => {
     const totalCourses = courseData.courses.length
     const completedCourses = userProgress.completedCourses.size
     const inProgressCourses = userProgress.inProgressCourses.size
@@ -460,9 +466,9 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
       availableCourses,
       completionPercentage
     }
-  }
+  }, [courseData.courses.length, userProgress, eligibilityEngine])
 
-  const getSectionProgress = () => {
+  const getSectionProgress = useCallback(() => {
     const sectionStats = new Map<string, { total: number; completed: number }>()
 
     courseData.courses.forEach((course) => {
@@ -471,11 +477,13 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
         sectionStats.set(section, { total: 0, completed: 0 })
       }
 
-      const stats = sectionStats.get(section)!
-      stats.total++
+      const stats = sectionStats.get(section)
+      if (stats) {
+        stats.total++
 
-      if (userProgress.completedCourses.has(course.code)) {
-        stats.completed++
+        if (userProgress.completedCourses.has(course.code)) {
+          stats.completed++
+        }
       }
     })
 
@@ -485,9 +493,9 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
       total: stats.total,
       percentage: stats.total > 0 ? (stats.completed / stats.total) * 100 : 0
     }))
-  }
+  }, [courseData.courses, userProgress.completedCourses])
 
-  const getLevelProgress = () => {
+  const getLevelProgress = useCallback(() => {
     const levelStats = new Map<string, { total: number; completed: number }>()
 
     courseData.courses.forEach((course) => {
@@ -500,11 +508,13 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
         levelStats.set(level, { total: 0, completed: 0 })
       }
 
-      const stats = levelStats.get(level)!
-      stats.total++
+      const stats = levelStats.get(level)
+      if (stats) {
+        stats.total++
 
-      if (userProgress.completedCourses.has(course.code)) {
-        stats.completed++
+        if (userProgress.completedCourses.has(course.code)) {
+          stats.completed++
+        }
       }
     })
 
@@ -514,9 +524,9 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
       total: stats.total,
       percentage: stats.total > 0 ? (stats.completed / stats.total) * 100 : 0
     }))
-  }
+  }, [courseData.courses, userProgress.completedCourses])
 
-  const getAchievements = () => {
+  const getAchievements = useCallback(() => {
     const achievements: Array<{ title: string; description: string; completed: boolean }> = []
     const completed = userProgress.completedCourses.size
     const totalCourses = courseData.courses.length
@@ -580,13 +590,13 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
     })
 
     return achievements
-  }
+  }, [userProgress.completedCourses.size, courseData.courses.length, t.achievements])
 
-  const overallStats = useMemo(() => getOverallStats(), [userProgress, courseData, eligibilityEngine])
-  const sectionProgress = useMemo(() => getSectionProgress(), [userProgress, courseData])
-  const levelProgress = useMemo(() => getLevelProgress(), [userProgress, courseData])
-  const achievements = useMemo(() => getAchievements(), [userProgress, courseData])
-  const { oswpProgress, eswpProgress } = useMemo(() => getSpaceWarfarePins(), [userProgress, courseData])
+  const overallStats = useMemo(() => getOverallStats(), [getOverallStats])
+  const sectionProgress = useMemo(() => getSectionProgress(), [getSectionProgress])
+  const levelProgress = useMemo(() => getLevelProgress(), [getLevelProgress])
+  const achievements = useMemo(() => getAchievements(), [getAchievements])
+  const { oswpProgress, eswpProgress } = useMemo(() => getSpaceWarfarePins(), [getSpaceWarfarePins])
 
   const toggleSpaceWarfareExpanded = useCallback(() => {
     setSpaceWarfareExpanded((prev) => !prev)
@@ -649,7 +659,6 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
 
   // Calculate combined Space Warfare eligibility for the main achievement
   const combinedSpaceWarfareEarned = oswpProgress.earned || eswpProgress.earned
-  const combinedSpaceWarfareProgress = Math.max(oswpProgress.overallProgress, eswpProgress.overallProgress)
 
   return (
     <PanelContainer>

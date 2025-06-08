@@ -87,7 +87,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
     // Log error to console in development
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.error('ErrorBoundary caught an error:', error)
+      // eslint-disable-next-line no-console
       console.error('Error info:', errorInfo)
     }
 
@@ -109,8 +111,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <ErrorContainer>
           <ErrorTitle>Oops! Something went wrong</ErrorTitle>
           <ErrorMessage>
-            We're sorry, but something unexpected happened. This has been logged and we'll work to fix it. You can try
-            refreshing the page or clicking the retry button below.
+            We&apos;re sorry, but something unexpected happened. This has been logged and we&apos;ll work to fix it. You
+            can try refreshing the page or clicking the retry button below.
           </ErrorMessage>
           <RetryButton onClick={this.handleRetry}>Try Again</RetryButton>
 

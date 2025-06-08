@@ -453,8 +453,9 @@ describe('useUserSettings', () => {
         wrapper: createWrapper(queryClient)
       })
 
-      const updatedSettings = {
-        ...queryResult.current.data!,
+              expect(queryResult.current.data).toBeDefined()
+        const updatedSettings = {
+          ...(queryResult.current.data as UserSettings),
         theme: 'dark' as const
       }
 

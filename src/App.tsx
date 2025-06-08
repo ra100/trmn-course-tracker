@@ -497,7 +497,7 @@ function App() {
     updateSettings(() => newSettings)
   }
 
-  const handleConsentChange = (consent: Partial<ConsentSettings>) => {
+  const handleConsentChange = (_consent: Partial<ConsentSettings>) => {
     // Analytics tracking is handled internally by the analytics utils
     // This handler is available for future use if needed
   }

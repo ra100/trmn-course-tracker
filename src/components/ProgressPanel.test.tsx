@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { describe, it, expect, vi } from 'vitest'
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
@@ -212,6 +213,7 @@ describe('ProgressPanel', () => {
       )
 
       const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      expect(spaceWarfareAchievement).toBeInTheDocument()
       fireEvent.click(spaceWarfareAchievement!)
 
       expect(screen.getByText('OSWP')).toBeInTheDocument()
@@ -229,6 +231,7 @@ describe('ProgressPanel', () => {
       )
 
       const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      expect(spaceWarfareAchievement).toBeInTheDocument()
       fireEvent.click(spaceWarfareAchievement!)
 
       expect(screen.getByText(/Master-at-Arms Advanced Specialist/)).toBeInTheDocument()
@@ -247,6 +250,7 @@ describe('ProgressPanel', () => {
       )
 
       const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      expect(spaceWarfareAchievement).toBeInTheDocument()
       fireEvent.click(spaceWarfareAchievement!)
 
       // Should show partial progress
@@ -270,6 +274,7 @@ describe('ProgressPanel', () => {
       )
 
       const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      expect(spaceWarfareAchievement).toBeInTheDocument()
       fireEvent.click(spaceWarfareAchievement!)
 
       // Should show completed checkmarks
@@ -294,6 +299,7 @@ describe('ProgressPanel', () => {
       )
 
       const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      expect(spaceWarfareAchievement).toBeInTheDocument()
       fireEvent.click(spaceWarfareAchievement!)
 
       expect(screen.getByText(/No OSWP requirements found/)).toBeInTheDocument()
@@ -311,6 +317,7 @@ describe('ProgressPanel', () => {
       )
 
       const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      expect(spaceWarfareAchievement).toBeInTheDocument()
 
       // Expand
       fireEvent.click(spaceWarfareAchievement!)

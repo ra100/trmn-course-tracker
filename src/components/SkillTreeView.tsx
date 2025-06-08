@@ -379,70 +379,73 @@ const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({
     [onCourseToggle]
   )
 
-  const handleCourseRightClick = (e: React.MouseEvent, course: Course) => {
-    e.preventDefault()
-    if (
-      !course.available &&
-      !course.completed &&
-      !userProgress.inProgressCourses.has(course.code) &&
-      !userProgress.waitingGradeCourses.has(course.code)
-    ) {
-      return // Don't show context menu for locked courses
-    }
-
-    const contextMenu = document.createElement('div')
-    contextMenu.style.position = 'fixed'
-    contextMenu.style.left = `${e.clientX}px`
-    contextMenu.style.top = `${e.clientY}px`
-    contextMenu.style.background = 'white'
-    contextMenu.style.border = '1px solid #ccc'
-    contextMenu.style.borderRadius = '4px'
-    contextMenu.style.padding = '8px'
-    contextMenu.style.zIndex = '1000'
-    contextMenu.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)'
-    contextMenu.style.minWidth = '120px'
-
-    const options = [
-      { label: t.courseStatus.available, value: 'available' as const },
-      { label: t.courseStatus.inProgress, value: 'in_progress' as const },
-      { label: t.courseStatus.waitingGrade, value: 'waiting_grade' as const },
-      { label: t.courseStatus.completed, value: 'completed' as const }
-    ]
-
-    options.forEach((option) => {
-      const item = document.createElement('div')
-      item.textContent = option.label
-      item.style.padding = '4px 8px'
-      item.style.cursor = 'pointer'
-      item.style.borderRadius = '2px'
-      item.addEventListener('mouseenter', () => {
-        item.style.backgroundColor = '#f0f0f0'
-      })
-      item.addEventListener('mouseleave', () => {
-        item.style.backgroundColor = 'transparent'
-      })
-      item.addEventListener('click', () => {
-        trackFeatureEngagement('course_status_change', 'context_menu', {
-          course_id: course.code,
-          course_name: course.name,
-          new_status: option.value
-        })
-        onCourseStatusChange(course.code, option.value)
-        document.body.removeChild(contextMenu)
-      })
-      contextMenu.appendChild(item)
-    })
-
-    const closeContextMenu = () => {
-      if (document.body.contains(contextMenu)) {
-        document.body.removeChild(contextMenu)
+  const handleCourseRightClick = useCallback(
+    (e: React.MouseEvent, course: Course) => {
+      e.preventDefault()
+      if (
+        !course.available &&
+        !course.completed &&
+        !userProgress.inProgressCourses.has(course.code) &&
+        !userProgress.waitingGradeCourses.has(course.code)
+      ) {
+        return // Don't show context menu for locked courses
       }
-      document.removeEventListener('click', closeContextMenu)
-    }
 
-    document.addEventListener('click', closeContextMenu)
-    document.body.appendChild(contextMenu)
-  }
+      const contextMenu = document.createElement('div')
+      contextMenu.style.position = 'fixed'
+      contextMenu.style.left = `${e.clientX}px`
+      contextMenu.style.top = `${e.clientY}px`
+      contextMenu.style.background = 'white'
+      contextMenu.style.border = '1px solid #ccc'
+      contextMenu.style.borderRadius = '4px'
+      contextMenu.style.padding = '8px'
+      contextMenu.style.zIndex = '1000'
+      contextMenu.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)'
+      contextMenu.style.minWidth = '120px'
+
+      const options = [
+        { label: t.courseStatus.available, value: 'available' as const },
+        { label: t.courseStatus.inProgress, value: 'in_progress' as const },
+        { label: t.courseStatus.waitingGrade, value: 'waiting_grade' as const },
+        { label: t.courseStatus.completed, value: 'completed' as const }
+      ]
+
+      options.forEach((option) => {
+        const item = document.createElement('div')
+        item.textContent = option.label
+        item.style.padding = '4px 8px'
+        item.style.cursor = 'pointer'
+        item.style.borderRadius = '2px'
+        item.addEventListener('mouseenter', () => {
+          item.style.backgroundColor = '#f0f0f0'
+        })
+        item.addEventListener('mouseleave', () => {
+          item.style.backgroundColor = 'transparent'
+        })
+        item.addEventListener('click', () => {
+          trackFeatureEngagement('course_status_change', 'context_menu', {
+            course_id: course.code,
+            course_name: course.name,
+            new_status: option.value
+          })
+          onCourseStatusChange(course.code, option.value)
+          document.body.removeChild(contextMenu)
+        })
+        contextMenu.appendChild(item)
+      })
+
+      const closeContextMenu = () => {
+        if (document.body.contains(contextMenu)) {
+          document.body.removeChild(contextMenu)
+        }
+        document.removeEventListener('click', closeContextMenu)
+      }
+
+      document.addEventListener('click', closeContextMenu)
+      document.body.appendChild(contextMenu)
+    },
+    [t.courseStatus, onCourseStatusChange, userProgress.inProgressCourses, userProgress.waitingGradeCourses]
+  )
 
   const getPrerequisiteText = (course: Course): string => {
     const prereqs = course.prerequisites
@@ -460,26 +463,30 @@ const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({
   }
 
   const getCourseNodeProps = useCallback(
-    (course: Course, status: NodeStatus) => ({
-      status,
-      onClick: () => handleCourseClick(course),
-      onDoubleClick: () => handleCourseDoubleClick(course),
-      onContextMenu: (e: React.MouseEvent) => handleCourseRightClick(e, course),
-      title: `${t.courseActions.doubleClickToToggle} ${
-        course.completed ? t.courseActions.markIncomplete.toLowerCase() : t.courseActions.markComplete.toLowerCase()
-      } | ${t.courseActions.rightClickForOptions}`,
-      role: 'button' as const,
-      tabIndex: 0,
-      'aria-label': `${course.name} (${course.code}) - Status: ${status}. ${t.courseActions.doubleClickToToggle} ${
-        course.completed ? t.courseActions.markIncomplete.toLowerCase() : t.courseActions.markComplete.toLowerCase()
-      }`,
-      onKeyDown: (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          handleCourseClick(course)
+    (course: Course, status: NodeStatus) => {
+      const handleRightClick = (e: React.MouseEvent) => handleCourseRightClick(e, course)
+
+      return {
+        status,
+        onClick: () => handleCourseClick(course),
+        onDoubleClick: () => handleCourseDoubleClick(course),
+        onContextMenu: handleRightClick,
+        title: `${t.courseActions.doubleClickToToggle} ${
+          course.completed ? t.courseActions.markIncomplete.toLowerCase() : t.courseActions.markComplete.toLowerCase()
+        } | ${t.courseActions.rightClickForOptions}`,
+        role: 'button' as const,
+        tabIndex: 0,
+        'aria-label': `${course.name} (${course.code}) - Status: ${status}. ${t.courseActions.doubleClickToToggle} ${
+          course.completed ? t.courseActions.markIncomplete.toLowerCase() : t.courseActions.markComplete.toLowerCase()
+        }`,
+        onKeyDown: (e: React.KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleCourseClick(course)
+          }
         }
       }
-    }),
+    },
     [handleCourseClick, handleCourseDoubleClick, handleCourseRightClick, t]
   )
 
@@ -495,14 +502,19 @@ const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({
         categorizedCourses.set(course.section, new Map())
       }
 
-      const sectionMap = categorizedCourses.get(course.section)!
-      const subsection = course.subsection || 'General'
+      const sectionMap = categorizedCourses.get(course.section)
+      if (sectionMap) {
+        const subsection = course.subsection || 'General'
 
-      if (!sectionMap.has(subsection)) {
-        sectionMap.set(subsection, [])
+        if (!sectionMap.has(subsection)) {
+          sectionMap.set(subsection, [])
+        }
+
+        const subsectionCourses = sectionMap.get(subsection)
+        if (subsectionCourses) {
+          subsectionCourses.push(course)
+        }
       }
-
-      sectionMap.get(subsection)!.push(course)
     })
 
     return Array.from(categorizedCourses.entries()).map(([sectionName, subsections]) => (
@@ -543,14 +555,21 @@ const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({
       if (!departmentCourses.has(assignedDepartment)) {
         departmentCourses.set(assignedDepartment, [])
       }
-      departmentCourses.get(assignedDepartment)!.push(course)
+      const deptCourses = departmentCourses.get(assignedDepartment)
+      if (deptCourses) {
+        deptCourses.push(course)
+      }
     })
 
     // Sort departments and render
     const sortedDepartments = Array.from(departmentCourses.keys()).sort()
 
     return sortedDepartments.map((departmentName) => {
-      const courses = departmentCourses.get(departmentName)!
+      const courses = departmentCourses.get(departmentName)
+      if (!courses) {
+        return null
+      }
+
       return (
         <CategorySection key={departmentName}>
           <CategoryHeader>{departmentName}</CategoryHeader>

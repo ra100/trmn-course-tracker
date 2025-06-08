@@ -412,8 +412,9 @@ describe('useUserProgress', () => {
         wrapper: createWrapper(queryClient)
       })
 
+      expect(queryResult.current.data).toBeDefined()
       const updatedProgress = {
-        ...queryResult.current.data!,
+        ...(queryResult.current.data as UserProgress),
         completedCourses: new Set(['COURSE-001', 'COURSE-002']),
         lastUpdated: new Date()
       }

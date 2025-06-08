@@ -4,8 +4,8 @@ import { config, isDebugEnabled } from '../config'
 // Google Analytics gtag function type
 declare global {
   interface Window {
-    gtag: (...args: any[]) => void
-    dataLayer: any[]
+    gtag: (...args: unknown[]) => void
+    dataLayer: unknown[]
   }
 }
 
@@ -36,8 +36,8 @@ export const initializeAnalytics = (): void => {
 
   // Initialize dataLayer
   window.dataLayer = window.dataLayer || []
-  window.gtag = function gtag() {
-    window.dataLayer.push(arguments)
+  window.gtag = function gtag(...args: unknown[]) {
+    window.dataLayer.push(args)
   }
 
   // Set default consent mode (privacy-first)

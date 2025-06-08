@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { CourseParser, parseCourseData } from './courseParser'
-import { UserProgress } from '../types'
+import { UserProgress, Course } from '../types'
 import { EligibilityEngine } from './eligibilityEngine'
 
 describe('CourseParser', () => {
@@ -265,6 +265,7 @@ describe('CourseParser', () => {
 `
 
       const parser = new CourseParser(markdown)
+      parser.parse() // Parse to populate courses
 
       // Access the private method through reflection for testing
       const departments = (parser as any).getUniqueDepartments()
@@ -813,10 +814,15 @@ describe('Alternative Prerequisites (OR conditions)', () => {
     const introToLeadership = courseData.courseMap.get('GPU-ALC-0010')
     expect(introToLeadership).toBeDefined()
 
-    const hasAlternativePrereq = introToLeadership!.prerequisites.some((prereq) => prereq.type === 'alternative_group')
+    expect(introToLeadership).toBeDefined()
+    const hasAlternativePrereq = (introToLeadership as Course).prerequisites.some(
+      (prereq) => prereq.type === 'alternative_group'
+    )
     expect(hasAlternativePrereq).toBe(true)
 
-    const alternativePrereq = introToLeadership!.prerequisites.find((prereq) => prereq.type === 'alternative_group')
+    const alternativePrereq = (introToLeadership as Course).prerequisites.find(
+      (prereq) => prereq.type === 'alternative_group'
+    )
     expect(alternativePrereq?.alternativePrerequisites).toBeDefined()
     expect(alternativePrereq?.alternativePrerequisites?.length).toBe(2)
   })
@@ -920,7 +926,7 @@ describe('Alternative Prerequisites (OR conditions)', () => {
     const alc0010 = updatedCourses.find((course) => course.code === 'GPU-ALC-0010')
 
     expect(alc0010).toBeDefined()
-    expect(alc0010!.available).toBe(true)
-    expect(alc0010!.completed).toBe(false)
+    expect(alc0010?.available).toBe(true)
+    expect(alc0010?.completed).toBe(false)
   })
 })

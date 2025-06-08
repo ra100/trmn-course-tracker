@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { ThemeProvider } from 'styled-components'
-import { I18nProvider, useT } from './context'
+import { I18nProvider } from './context'
 import { lightTheme } from '../theme'
+import { useT } from './hooks'
 
 // Test component that uses translations
 const TestComponent = () => {

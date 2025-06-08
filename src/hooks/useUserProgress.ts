@@ -34,6 +34,7 @@ const loadUserProgressFromStorage = (): UserProgress => {
     }
   } catch (err) {
     if (isDebugEnabled()) {
+      // eslint-disable-next-line no-console
       console.error('Error loading user progress:', err)
     }
   }
@@ -56,12 +57,14 @@ const saveUserProgressToStorage = async (progress: UserProgress): Promise<UserPr
     localStorage.setItem(USER_PROGRESS_STORAGE_KEY, JSON.stringify(serializable))
 
     if (isDebugEnabled()) {
+      // eslint-disable-next-line no-console
       console.log('💾 User progress saved to localStorage')
     }
 
     return progress
   } catch (err) {
     if (isDebugEnabled()) {
+      // eslint-disable-next-line no-console
       console.error('Error saving user progress:', err)
     }
     throw err
@@ -89,11 +92,13 @@ export const useUpdateUserProgress = () => {
       queryClient.setQueryData(USER_PROGRESS_QUERY_KEY, updatedProgress)
 
       if (isDebugEnabled()) {
+        // eslint-disable-next-line no-console
         console.log('✅ User progress updated successfully')
       }
     },
     onError: (error) => {
       if (isDebugEnabled()) {
+        // eslint-disable-next-line no-console
         console.error('❌ Failed to update user progress:', error)
       }
     }

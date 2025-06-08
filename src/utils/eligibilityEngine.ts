@@ -52,7 +52,7 @@ export class EligibilityEngine {
       case 'course':
         return this.checkCoursePrerequisite(prerequisite, userProgress)
       case 'complex':
-        return this.checkComplexPrerequisite(prerequisite, userProgress)
+        return this.checkComplexPrerequisite(prerequisite)
       case 'department_choice':
         return this.checkDepartmentChoicePrerequisite(prerequisite, userProgress)
       case 'alternative_group':

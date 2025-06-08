@@ -1,4 +1,5 @@
-export { I18nProvider, useTranslation, useT } from './context'
+export { I18nProvider } from './context'
+export { useTranslation, useT } from './hooks'
 export type { Language, TranslationStrings } from './types'
 export { enTranslations } from './translations/en'
 export { csTranslations } from './translations/cs'

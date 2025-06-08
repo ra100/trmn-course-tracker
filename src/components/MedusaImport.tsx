@@ -164,8 +164,8 @@ export const MedusaImport: React.FC<MedusaImportProps> = ({ onImportMedusaCourse
       <ImportSteps>
         <li>Log in to medusa.trmn.org</li>
         <li>Go to your user page (/user)</li>
-        <li>Click the "Academic Record" tab</li>
-        <li>Right-click → "View Page Source" or press Ctrl+U</li>
+        <li>Click the &quot;Academic Record&quot; tab</li>
+        <li>Right-click → &quot;View Page Source&quot; or press Ctrl+U</li>
         <li>Copy all the HTML and paste it below</li>
       </ImportSteps>
 
@@ -187,8 +187,8 @@ export const MedusaImport: React.FC<MedusaImportProps> = ({ onImportMedusaCourse
             <>
               <strong>Import Failed:</strong>
               <ErrorList>
-                {importResult.errors.map((error, index) => (
-                  <li key={index}>{error}</li>
+                {importResult.errors.map((error) => (
+                  <li key={`error-${error.replace(/[^a-zA-Z0-9]/g, '').slice(0, 50)}`}>{error}</li>
                 ))}
               </ErrorList>
             </>
