@@ -194,7 +194,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
           <ToggleItem onClick={() => handleToggle('showCompleted', !settings.showCompleted)}>
             <ToggleContent>
               <ToggleLabel>{t.filters.showCompleted}</ToggleLabel>
-              <SettingDescription>Display courses you've already completed</SettingDescription>
+              <SettingDescription>Display courses you&apos;ve already completed</SettingDescription>
             </ToggleContent>
             <HiddenCheckbox
               checked={settings.showCompleted}

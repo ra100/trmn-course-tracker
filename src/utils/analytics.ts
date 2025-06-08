@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { config, isDebugEnabled } from '../config'
 
 // Google Analytics gtag function type

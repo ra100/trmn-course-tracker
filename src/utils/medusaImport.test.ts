@@ -130,27 +130,24 @@ describe('Medusa Import Status Override Logic', () => {
       }
     ]
 
-    it.each(statusOverrideTestCases)(
-      'when $name -> $description',
-      ({ initialStatus, importedCourse, expectedFinalStatus }) => {
-        // Set up initial progress with course in specific status
-        const progressWithStatus: UserProgress = {
-          ...initialProgress,
-          inProgressCourses: initialStatus === 'in_progress' ? new Set([importedCourse]) : new Set(),
-          waitingGradeCourses: initialStatus === 'waiting_grade' ? new Set([importedCourse]) : new Set()
-        }
-
-        // Simulate the import
-        const resultProgress = simulateImport([importedCourse], progressWithStatus, mockCourseData)
-
-        // Verify the course was added to completed
-        expect(resultProgress.completedCourses.has(importedCourse)).toBe(true)
-
-        // Verify the course was removed from other status sets
-        expect(resultProgress.inProgressCourses.has(importedCourse)).toBe(false)
-        expect(resultProgress.waitingGradeCourses.has(importedCourse)).toBe(false)
+    it.each(statusOverrideTestCases)('when $name -> $description', ({ initialStatus, importedCourse }) => {
+      // Set up initial progress with course in specific status
+      const progressWithStatus: UserProgress = {
+        ...initialProgress,
+        inProgressCourses: initialStatus === 'in_progress' ? new Set([importedCourse]) : new Set(),
+        waitingGradeCourses: initialStatus === 'waiting_grade' ? new Set([importedCourse]) : new Set()
       }
-    )
+
+      // Simulate the import
+      const resultProgress = simulateImport([importedCourse], progressWithStatus, mockCourseData)
+
+      // Verify the course was added to completed
+      expect(resultProgress.completedCourses.has(importedCourse)).toBe(true)
+
+      // Verify the course was removed from other status sets
+      expect(resultProgress.inProgressCourses.has(importedCourse)).toBe(false)
+      expect(resultProgress.waitingGradeCourses.has(importedCourse)).toBe(false)
+    })
 
     // Test cases for status preservation scenarios
     const statusPreservationTestCases = [

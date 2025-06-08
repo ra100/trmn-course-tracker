@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useRef, useCallback } from 'react'
 import styled from 'styled-components'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings, NodeStatus } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
-import { getCourseMainDepartment } from '../utils/departmentUtils'
 import { useT } from '../i18n'
 import { trackCourseDetailsView, trackFeatureEngagement } from '../utils/analytics'
+import { useCourseFiltering } from '../hooks/useCourseFiltering'
+import { getCourseMainDepartment } from '../utils/departmentUtils'
 
 // Note: Department normalization is now handled by departmentUtils using dynamic mappings
 
@@ -338,7 +339,6 @@ const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({
 }) => {
   const t = useT()
   const [searchTerm, setSearchTerm] = useState('')
-  const [filteredCourses, setFilteredCourses] = useState<Course[]>([])
   const [groupingMode, setGroupingMode] = useState<'section' | 'department'>('section')
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -347,74 +347,15 @@ const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({
     return eligibilityEngine.updateCourseAvailability(userProgress)
   }, [eligibilityEngine, userProgress])
 
-  const applyFilters = useCallback(
-    (courses: Course[]): Course[] => {
-      return courses.filter((course) => {
-        // Search filter
-        if (searchTerm) {
-          const searchLower = searchTerm.toLowerCase()
-          const matchesSearch =
-            course.name.toLowerCase().includes(searchLower) ||
-            course.code.toLowerCase().includes(searchLower) ||
-            course.section.toLowerCase().includes(searchLower) ||
-            course.subsection.toLowerCase().includes(searchLower)
-
-          if (!matchesSearch) {return false}
-        }
-
-        // Section filter
-        if (filters.sections && filters.sections.length > 0) {
-          if (!filters.sections.includes(course.section)) {return false}
-        }
-
-        // Department filter
-        if (filters.departments && filters.departments.length > 0) {
-          // Use the dynamic department mapping to determine course's department
-          const courseDepartment = getCourseMainDepartment(course, courseData.departmentMappings || new Map())
-          if (!filters.departments.includes(courseDepartment)) {return false}
-        }
-
-        // Level filter
-        if (filters.levels && filters.levels.length > 0) {
-          if (!course.level || !filters.levels.includes(course.level)) {return false}
-        }
-
-        // Status filter
-        if (filters.status && filters.status.length > 0) {
-          const courseStatus = getCourseStatus(course)
-          if (!filters.status.includes(courseStatus)) {return false}
-        }
-
-        // Settings-based filters
-        if (!settings.showCompleted && course.completed) {return false}
-        if (!settings.showUnavailable && !course.available && !course.completed) {return false}
-
-        return true
-      })
-    },
-    [searchTerm, filters, settings, courseData.departmentMappings, userProgress]
-  )
-
-  // Apply filters to updated courses
-  const filteredCoursesResult = useMemo(() => {
-    return applyFilters(updatedCourses)
-  }, [applyFilters, updatedCourses])
-
-  // Update state when filtered courses change
-  useEffect(() => {
-    setFilteredCourses(filteredCoursesResult)
-  }, [filteredCoursesResult])
-
-  const getCourseStatus = useCallback(
-    (course: Course): NodeStatus => {
-      if (course.completed) {return 'completed'}
-      if (userProgress.waitingGradeCourses.has(course.code)) {return 'waiting_grade'}
-      if (userProgress.inProgressCourses.has(course.code)) {return 'in_progress'}
-      if (course.available) {return 'available'}
-      return 'locked'
-    },
-    [userProgress]
-  )
+  // Use custom hook for filtering logic
+  const { filteredCourses, getCourseStatus, stats } = useCourseFiltering({
+    courses: updatedCourses,
+    searchTerm,
+    filters,
+    settings,
+    userProgress,
+    courseData
+  })
 
   const handleCourseClick = useCallback(
     (course: Course) => {
@@ -509,8 +450,12 @@ const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({
       .map((p) => p.code)
       .slice(0, 3)
 
-    if (prereqs.length === 0) {return 'No prerequisites'}
-    if (prereqs.length <= 3) {return `Requires: ${prereqs.join(', ')}`}
+    if (prereqs.length === 0) {
+      return 'No prerequisites'
+    }
+    if (prereqs.length <= 3) {
+      return `Requires: ${prereqs.join(', ')}`
+    }
     return `Requires: ${prereqs.join(', ')}...`
   }
 
@@ -537,14 +482,6 @@ const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({
     }),
     [handleCourseClick, handleCourseDoubleClick, handleCourseRightClick, t]
   )
-
-  const stats = useMemo(() => {
-    const total = courseData.courses.length
-    const completed = userProgress.completedCourses.size
-    const available = filteredCourses.filter((c) => c.available).length
-
-    return { total, completed, available }
-  }, [courseData.courses.length, userProgress.completedCourses.size, filteredCourses])
 
   const renderCoursesByCategory = () => {
     if (groupingMode === 'department') {

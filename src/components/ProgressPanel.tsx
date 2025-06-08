@@ -116,7 +116,7 @@ const SpaceWarfareAchievement = styled.div<{ $earned: boolean }>`
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${(props) => (props.$earned ? props.theme.colors.success : `${props.theme.colors.border  }40`)};
+    background: ${(props) => (props.$earned ? props.theme.colors.success : `${props.theme.colors.border}40`)};
   }
 `
 
@@ -349,7 +349,7 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
     })
 
     let satisfiedDepartments = 0
-    Object.entries(departmentGroups).forEach(([dept, courses]) => {
+    Object.entries(departmentGroups).forEach(([, courses]) => {
       const hasAnyCourse = courses.some((course) => userProgress.completedCourses.has(course))
       if (hasAnyCourse) {
         satisfiedDepartments++
@@ -491,7 +491,9 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
     const levelStats = new Map<string, { total: number; completed: number }>()
 
     courseData.courses.forEach((course) => {
-      if (!course.level) {return}
+      if (!course.level) {
+        return
+      }
 
       const level = course.level
       if (!levelStats.has(level)) {
@@ -748,8 +750,8 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
         </SpaceWarfareAchievement>
 
         {/* Regular Achievements */}
-        {achievements.slice(0, 5).map((achievement, index) => (
-          <AchievementItem key={index} $completed={achievement.completed}>
+        {achievements.slice(0, 5).map((achievement) => (
+          <AchievementItem key={achievement.title} $completed={achievement.completed}>
             <strong>{achievement.title}</strong>
             <AchievementDescription>{achievement.description}</AchievementDescription>
           </AchievementItem>

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {
   Course,
   UserProgress,
@@ -62,7 +63,9 @@ export class EligibilityEngine {
   }
 
   private checkCoursePrerequisite(prerequisite: Prerequisite, userProgress: UserProgress): MissingPrerequisite | null {
-    if (!prerequisite.code) {return null}
+    if (!prerequisite.code) {
+      return null
+    }
 
     if (userProgress.completedCourses.has(prerequisite.code)) {
       return null // Requirement satisfied
@@ -76,7 +79,7 @@ export class EligibilityEngine {
     }
   }
 
-  private checkComplexPrerequisite(prerequisite: Prerequisite, userProgress: UserProgress): MissingPrerequisite | null {
+  private checkComplexPrerequisite(prerequisite: Prerequisite): MissingPrerequisite | null {
     // For now, treat complex prerequisites as informational
     // This would need more sophisticated parsing for the complex rules
     return {
@@ -107,12 +110,13 @@ export class EligibilityEngine {
     )
 
     const satisfied: string[] = []
-    const missing: string[] = []
 
     // Find completed courses that satisfy this requirement
     for (const courseCode of Array.from(userProgress.completedCourses)) {
       const course = this.courseData.courseMap.get(courseCode)
-      if (!course || course.level !== prerequisite.level) {continue}
+      if (!course || course.level !== prerequisite.level) {
+        continue
+      }
 
       const inTargetDepartment = prerequisite.departments.some(
         (dept: string) =>
@@ -236,7 +240,9 @@ export class EligibilityEngine {
   }
 
   private checkLevelRequirement(requirement: Requirement, userProgress: UserProgress): boolean {
-    if (!requirement.level) {return false}
+    if (!requirement.level) {
+      return false
+    }
 
     // Count completed courses of the specified level
     const completedOfLevel = Array.from(userProgress.completedCourses)
@@ -266,7 +272,9 @@ export class EligibilityEngine {
 
     for (const courseCode of Array.from(userProgress.completedCourses)) {
       const course = this.courseData.courseMap.get(courseCode)
-      if (!course) {continue}
+      if (!course) {
+        continue
+      }
 
       const inTargetDepartment = departments.some((dept) => {
         const deptLower = dept.toLowerCase()
@@ -315,7 +323,9 @@ export class EligibilityEngine {
 
   public getPrerequisitesForCourse(courseCode: string): Course[] {
     const course = this.courseData.courseMap.get(courseCode)
-    if (!course) {return []}
+    if (!course) {
+      return []
+    }
 
     const prerequisites: Course[] = []
 

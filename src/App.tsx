@@ -13,7 +13,7 @@ import { GDPRConsentBanner } from './components/GDPRConsentBanner'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { DebugPanel } from './components/DebugPanel'
 import { SkipLinks } from './components/SkipLinks'
-import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from './types'
+import { UserProgress, Course, FilterOptions, UserSettings } from './types'
 import { getTheme } from './theme'
 import { useT, useTranslation } from './i18n'
 import {
@@ -299,7 +299,9 @@ function App() {
   }, [])
 
   const toggleCourseCompletion = (courseCode: string) => {
-    if (!courseData || !eligibilityEngine || !userProgress) {return}
+    if (!courseData || !eligibilityEngine || !userProgress) {
+      return
+    }
 
     const newCompleted = new Set(userProgress.completedCourses)
     const newInProgress = new Set(userProgress.inProgressCourses)
@@ -342,7 +344,9 @@ function App() {
   }
 
   const setCourseStatus = (courseCode: string, status: 'available' | 'in_progress' | 'waiting_grade' | 'completed') => {
-    if (!courseData || !eligibilityEngine || !userProgress) {return}
+    if (!courseData || !eligibilityEngine || !userProgress) {
+      return
+    }
 
     const newCompleted = new Set(userProgress.completedCourses)
     const newInProgress = new Set(userProgress.inProgressCourses)
@@ -392,7 +396,9 @@ function App() {
   const handleImportMedusaCourses = (
     courseCodes: string[]
   ): { imported: number; trackable: number; alreadyCompleted: number } => {
-    if (!courseData || !eligibilityEngine || !userProgress) {return { imported: 0, trackable: 0, alreadyCompleted: 0 }}
+    if (!courseData || !eligibilityEngine || !userProgress) {
+      return { imported: 0, trackable: 0, alreadyCompleted: 0 }
+    }
 
     // Get all trackable course codes from our course data
     const trackableCourses = new Set(courseData.courses.map((course) => course.code))

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { v4 as uuidv4 } from 'uuid'
 import {
   Course,
@@ -48,7 +49,9 @@ export class CourseParser {
       const line = lines[i].trim()
 
       // Skip empty lines
-      if (!line) {continue}
+      if (!line) {
+        continue
+      }
 
       // Parse headers
       if (line.startsWith('#')) {
@@ -365,7 +368,9 @@ export class CourseParser {
         return false
       }
       // Don't break on section headers, keep looking
-      if (line.startsWith('# space warfare pin')) {break}
+      if (line.startsWith('# space warfare pin')) {
+        break
+      }
     }
 
     return true // Default to officer if unclear
@@ -519,7 +524,9 @@ export class CourseParser {
   }
 
   private extractCourseLevel(courseCode: string | undefined): CourseLevel | undefined {
-    if (!courseCode) {return undefined}
+    if (!courseCode) {
+      return undefined
+    }
     const levelMatch = courseCode.match(LEVEL_REGEX)
     return levelMatch?.[2] as CourseLevel
   }

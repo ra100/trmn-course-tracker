@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { UserSettings } from '../types'
 import { isDebugEnabled } from '../config'

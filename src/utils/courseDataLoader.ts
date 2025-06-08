@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ParsedCourseData, Course, Category, SpecialRule } from '../types'
 import { isDebugEnabled } from '../config'
 

@@ -265,7 +265,6 @@ describe('CourseParser', () => {
 `
 
       const parser = new CourseParser(markdown)
-      const result = parser.parse()
 
       // Access the private method through reflection for testing
       const departments = (parser as any).getUniqueDepartments()

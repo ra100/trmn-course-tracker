@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { ThemeProvider } from 'styled-components'
 import { SkillTreeView } from './SkillTreeView'
 import { lightTheme } from '../theme'
-import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from '../types'
+import { ParsedCourseData, UserProgress, FilterOptions, UserSettings } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
 import { I18nProvider } from '../i18n'
 
