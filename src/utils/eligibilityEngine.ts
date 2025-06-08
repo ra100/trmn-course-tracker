@@ -6,7 +6,8 @@ import {
   MissingPrerequisite,
   SpecialRule,
   Requirement,
-  CourseLevel
+  CourseLevel,
+  Prerequisite
 } from '../types'
 
 export class EligibilityEngine {
@@ -44,7 +45,7 @@ export class EligibilityEngine {
     }
   }
 
-  private checkPrerequisite(prerequisite: any, userProgress: UserProgress): MissingPrerequisite | null {
+  private checkPrerequisite(prerequisite: Prerequisite, userProgress: UserProgress): MissingPrerequisite | null {
     switch (prerequisite.type) {
       case 'course':
         return this.checkCoursePrerequisite(prerequisite, userProgress)
@@ -59,7 +60,7 @@ export class EligibilityEngine {
     }
   }
 
-  private checkCoursePrerequisite(prerequisite: any, userProgress: UserProgress): MissingPrerequisite | null {
+  private checkCoursePrerequisite(prerequisite: Prerequisite, userProgress: UserProgress): MissingPrerequisite | null {
     if (!prerequisite.code) return null
 
     if (userProgress.completedCourses.has(prerequisite.code)) {
@@ -74,7 +75,7 @@ export class EligibilityEngine {
     }
   }
 
-  private checkComplexPrerequisite(prerequisite: any, userProgress: UserProgress): MissingPrerequisite | null {
+  private checkComplexPrerequisite(prerequisite: Prerequisite, userProgress: UserProgress): MissingPrerequisite | null {
     // For now, treat complex prerequisites as informational
     // This would need more sophisticated parsing for the complex rules
     return {
@@ -85,7 +86,10 @@ export class EligibilityEngine {
     }
   }
 
-  private checkDepartmentChoicePrerequisite(prerequisite: any, userProgress: UserProgress): MissingPrerequisite | null {
+  private checkDepartmentChoicePrerequisite(
+    prerequisite: Prerequisite,
+    userProgress: UserProgress
+  ): MissingPrerequisite | null {
     if (!prerequisite.departments || !prerequisite.minimum || !prerequisite.level) {
       return {
         type: 'department_choice',
@@ -139,7 +143,10 @@ export class EligibilityEngine {
     }
   }
 
-  private checkAlternativePrerequisite(prerequisite: any, userProgress: UserProgress): MissingPrerequisite | null {
+  private checkAlternativePrerequisite(
+    prerequisite: Prerequisite,
+    userProgress: UserProgress
+  ): MissingPrerequisite | null {
     if (!prerequisite.alternativePrerequisites || prerequisite.alternativePrerequisites.length === 0) {
       return {
         type: 'alternative_group',
