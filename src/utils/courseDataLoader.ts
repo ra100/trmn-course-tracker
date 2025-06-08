@@ -1,4 +1,5 @@
 import { ParsedCourseData, Course, Category } from '../types'
+import { isDebugEnabled } from '../config'
 
 interface SerializedCourseData {
   courses: Course[]
@@ -26,13 +27,15 @@ export async function loadCourseData(): Promise<ParsedCourseData> {
     const dependencyGraph = new Map<string, string[]>(data.dependencyGraph)
     const departmentMappings = new Map<string, string[]>(Object.entries(data.departmentMappings))
 
-    console.group('📄 Course Data Loader')
-    console.log('📚 Total courses loaded:', data.courses.length)
-    console.log('📋 Categories loaded:', data.categories.length)
-    console.log('⚡ Special rules loaded:', data.specialRules.length)
-    console.log('🗂️ Department mappings loaded:', departmentMappings.size)
-    console.log('🕒 Built at:', data.buildTimestamp)
-    console.groupEnd()
+    if (isDebugEnabled()) {
+      console.group('📄 Course Data Loader')
+      console.log('📚 Total courses loaded:', data.courses.length)
+      console.log('📋 Categories loaded:', data.categories.length)
+      console.log('⚡ Special rules loaded:', data.specialRules.length)
+      console.log('🗂️ Department mappings loaded:', departmentMappings.size)
+      console.log('🕒 Built at:', data.buildTimestamp)
+      console.groupEnd()
+    }
 
     return {
       courses: data.courses,
