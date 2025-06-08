@@ -4,6 +4,7 @@ import { EligibilityEngine } from './utils/eligibilityEngine'
 import { useCourseData } from './hooks/useCourseData'
 import { useUserProgress, useOptimisticUserProgress } from './hooks/useUserProgress'
 import { useUserSettings, useOptimisticUserSettings } from './hooks/useUserSettings'
+import { useMobileNavigation } from './hooks/useMobileNavigation'
 import { SkillTreeView } from './components/SkillTreeView'
 import { CourseDetails } from './components/CourseDetails'
 import { ProgressPanel } from './components/ProgressPanel'
@@ -271,8 +272,17 @@ function App() {
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
   const [filters, setFilters] = useState<FilterOptions>({})
   const [eligibilityEngine, setEligibilityEngine] = useState<EligibilityEngine | null>(null)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [mobileLayout, setMobileLayout] = useState<'courses' | 'details'>('courses')
+
+  // Mobile navigation state management
+  const {
+    mobileMenuOpen,
+    mobileLayout,
+    toggleMobileMenu,
+    closeMobileMenu,
+    toggleMobileLayout,
+    setMobileLayoutToDetails,
+    handleMobileOverlayClick
+  } = useMobileNavigation()
 
   // Initialize eligibility engine when course data loads
   useEffect(() => {
@@ -476,20 +486,8 @@ function App() {
     setSelectedCourse(course)
     // On mobile, switch to details view when a course is selected
     if (window.innerWidth <= 768) {
-      setMobileLayout('details')
+      setMobileLayoutToDetails()
     }
-  }
-
-  const handleMobileMenuToggle = () => {
-    setMobileMenuOpen(!mobileMenuOpen)
-  }
-
-  const handleMobileOverlayClick = () => {
-    setMobileMenuOpen(false)
-  }
-
-  const handleMobileDetailsToggle = () => {
-    setMobileLayout(mobileLayout === 'courses' ? 'details' : 'courses')
   }
 
   const handleFilterChange = (newFilters: FilterOptions) => {
@@ -571,7 +569,7 @@ function App() {
           <MobileOverlay $visible={mobileMenuOpen} onClick={handleMobileOverlayClick} />
 
           <Sidebar $mobileOpen={mobileMenuOpen} id="sidebar">
-            <MobileCloseButton onClick={handleMobileOverlayClick} aria-label="Close menu">
+            <MobileCloseButton onClick={closeMobileMenu} aria-label="Close menu">
               ✕
             </MobileCloseButton>
             <ProgressPanel userProgress={userProgress} courseData={courseData} eligibilityEngine={eligibilityEngine} />
@@ -586,7 +584,7 @@ function App() {
 
           <MainContent id="main-content">
             <Header>
-              <MobileMenuButton onClick={handleMobileMenuToggle} aria-label={t.accessibility.menuToggle}>
+              <MobileMenuButton onClick={toggleMobileMenu} aria-label={t.accessibility.menuToggle}>
                 ☰
               </MobileMenuButton>
               <HeaderContent>
@@ -623,7 +621,7 @@ function App() {
 
             {selectedCourse && (
               <MobileDetailsToggle
-                onClick={handleMobileDetailsToggle}
+                onClick={toggleMobileLayout}
                 aria-label={mobileLayout === 'courses' ? 'Show course details' : 'Show course list'}
               >
                 {mobileLayout === 'courses' ? '📋' : '📚'}
