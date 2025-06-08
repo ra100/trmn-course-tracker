@@ -5,6 +5,7 @@ import { useCourseData } from './hooks/useCourseData'
 import { useUserProgress, useOptimisticUserProgress } from './hooks/useUserProgress'
 import { useUserSettings, useOptimisticUserSettings } from './hooks/useUserSettings'
 import { useMobileNavigation } from './hooks/useMobileNavigation'
+import { useFilterState } from './hooks/useFilterState'
 import { SkillTreeView } from './components/SkillTreeView'
 import { CourseDetails } from './components/CourseDetails'
 import { ProgressPanel } from './components/ProgressPanel'
@@ -21,7 +22,6 @@ import {
   initializeAnalytics,
   trackPageView,
   trackCourseCompletion,
-  trackSearch,
   trackViewModeChange,
   ConsentSettings
 } from './utils/analytics'
@@ -270,7 +270,6 @@ function App() {
   const { updateOptimistically: updateSettings } = useOptimisticUserSettings()
 
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
-  const [filters, setFilters] = useState<FilterOptions>({})
   const [eligibilityEngine, setEligibilityEngine] = useState<EligibilityEngine | null>(null)
 
   // Mobile navigation state management
@@ -283,6 +282,9 @@ function App() {
     setMobileLayoutToDetails,
     handleMobileOverlayClick
   } = useMobileNavigation()
+
+  // Filter state management with analytics
+  const { filters, setFilters } = useFilterState(courseData?.courses.length || 0)
 
   // Initialize eligibility engine when course data loads
   useEffect(() => {
@@ -491,22 +493,6 @@ function App() {
   }
 
   const handleFilterChange = (newFilters: FilterOptions) => {
-    // Track search usage if search term changed
-    if (newFilters.search !== filters.search && newFilters.search) {
-      // Count filtered courses for search results
-      const filteredCourses =
-        courseData?.courses.filter((course) => {
-          const searchTerm = newFilters.search?.toLowerCase() || ''
-          return (
-            course.name.toLowerCase().includes(searchTerm) ||
-            course.code.toLowerCase().includes(searchTerm) ||
-            course.section.toLowerCase().includes(searchTerm)
-          )
-        }) || []
-
-      trackSearch(newFilters.search, filteredCourses.length)
-    }
-
     setFilters(newFilters)
   }
 
