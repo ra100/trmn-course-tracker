@@ -1,4 +1,5 @@
 #!/usr/bin/env tsx
+/* eslint-disable no-console */
 
 import { execSync } from 'child_process'
 import { readFileSync, existsSync } from 'fs'
