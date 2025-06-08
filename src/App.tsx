@@ -10,7 +10,7 @@ import { ProgressPanel } from './components/ProgressPanel'
 import { FilterPanel } from './components/FilterPanel'
 import { SettingsPanel } from './components/SettingsPanel'
 import { GDPRConsentBanner } from './components/GDPRConsentBanner'
-
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { DebugPanel } from './components/DebugPanel'
 import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from './types'
 import { getTheme } from './theme'
@@ -533,74 +533,76 @@ function App() {
   }
 
   return (
-    <ThemeProvider theme={currentTheme}>
-      <AppContainer>
-        <MobileOverlay $visible={mobileMenuOpen} onClick={handleMobileOverlayClick} />
+    <ErrorBoundary>
+      <ThemeProvider theme={currentTheme}>
+        <AppContainer>
+          <MobileOverlay $visible={mobileMenuOpen} onClick={handleMobileOverlayClick} />
 
-        <Sidebar $mobileOpen={mobileMenuOpen}>
-          <MobileCloseButton onClick={handleMobileOverlayClick} aria-label="Close menu">
-            ✕
-          </MobileCloseButton>
-          <ProgressPanel userProgress={userProgress} courseData={courseData} eligibilityEngine={eligibilityEngine} />
-          <DebugPanel courseData={courseData} userProgress={userProgress} />
-          <FilterPanel filters={filters} courseData={courseData} onFilterChange={handleFilterChange} />
-          <SettingsPanel
-            settings={settings}
-            onSettingsChange={handleSettingsChange}
-            onImportMedusaCourses={handleImportMedusaCourses}
-          />
-        </Sidebar>
+          <Sidebar $mobileOpen={mobileMenuOpen}>
+            <MobileCloseButton onClick={handleMobileOverlayClick} aria-label="Close menu">
+              ✕
+            </MobileCloseButton>
+            <ProgressPanel userProgress={userProgress} courseData={courseData} eligibilityEngine={eligibilityEngine} />
+            <DebugPanel courseData={courseData} userProgress={userProgress} />
+            <FilterPanel filters={filters} courseData={courseData} onFilterChange={handleFilterChange} />
+            <SettingsPanel
+              settings={settings}
+              onSettingsChange={handleSettingsChange}
+              onImportMedusaCourses={handleImportMedusaCourses}
+            />
+          </Sidebar>
 
-        <MainContent>
-          <Header>
-            <MobileMenuButton onClick={handleMobileMenuToggle} aria-label="Toggle menu">
-              ☰
-            </MobileMenuButton>
-            <HeaderContent>
-              <h1>{t.appTitle}</h1>
-              <p>{t.appSubtitle}</p>
-            </HeaderContent>
-          </Header>
+          <MainContent>
+            <Header>
+              <MobileMenuButton onClick={handleMobileMenuToggle} aria-label="Toggle menu">
+                ☰
+              </MobileMenuButton>
+              <HeaderContent>
+                <h1>{t.appTitle}</h1>
+                <p>{t.appSubtitle}</p>
+              </HeaderContent>
+            </Header>
 
-          <ContentArea $mobileLayout={mobileLayout}>
-            <SkillTreeContainer $mobileLayout={mobileLayout}>
-              <SkillTreeView
-                courseData={courseData}
-                userProgress={userProgress}
-                filters={filters}
-                settings={settings}
-                eligibilityEngine={eligibilityEngine}
-                onCourseSelect={handleCourseSelect}
-                onCourseToggle={toggleCourseCompletion}
-                onCourseStatusChange={setCourseStatus}
-              />
-            </SkillTreeContainer>
+            <ContentArea $mobileLayout={mobileLayout}>
+              <SkillTreeContainer $mobileLayout={mobileLayout}>
+                <SkillTreeView
+                  courseData={courseData}
+                  userProgress={userProgress}
+                  filters={filters}
+                  settings={settings}
+                  eligibilityEngine={eligibilityEngine}
+                  onCourseSelect={handleCourseSelect}
+                  onCourseToggle={toggleCourseCompletion}
+                  onCourseStatusChange={setCourseStatus}
+                />
+              </SkillTreeContainer>
 
-            <DetailsPanel $mobileLayout={mobileLayout}>
-              <CourseDetails
-                course={selectedCourse}
-                userProgress={userProgress}
-                eligibilityEngine={eligibilityEngine}
-                onCourseToggle={toggleCourseCompletion}
-                onCourseStatusChange={setCourseStatus}
-                onCourseSelect={handleCourseSelect}
-              />
-            </DetailsPanel>
-          </ContentArea>
+              <DetailsPanel $mobileLayout={mobileLayout}>
+                <CourseDetails
+                  course={selectedCourse}
+                  userProgress={userProgress}
+                  eligibilityEngine={eligibilityEngine}
+                  onCourseToggle={toggleCourseCompletion}
+                  onCourseStatusChange={setCourseStatus}
+                  onCourseSelect={handleCourseSelect}
+                />
+              </DetailsPanel>
+            </ContentArea>
 
-          {selectedCourse && (
-            <MobileDetailsToggle
-              onClick={handleMobileDetailsToggle}
-              aria-label={mobileLayout === 'courses' ? 'Show course details' : 'Show course list'}
-            >
-              {mobileLayout === 'courses' ? '📋' : '📚'}
-            </MobileDetailsToggle>
-          )}
-        </MainContent>
+            {selectedCourse && (
+              <MobileDetailsToggle
+                onClick={handleMobileDetailsToggle}
+                aria-label={mobileLayout === 'courses' ? 'Show course details' : 'Show course list'}
+              >
+                {mobileLayout === 'courses' ? '📋' : '📚'}
+              </MobileDetailsToggle>
+            )}
+          </MainContent>
 
-        <GDPRConsentBanner onConsentChange={handleConsentChange} />
-      </AppContainer>
-    </ThemeProvider>
+          <GDPRConsentBanner onConsentChange={handleConsentChange} />
+        </AppContainer>
+      </ThemeProvider>
+    </ErrorBoundary>
   )
 }
 
