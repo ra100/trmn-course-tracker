@@ -1,0 +1,6 @@
+---
+description:
+globs: src/**/*.ts
+alwaysApply: false
+---
+- Use CSS-in-JS for all styling needs.
