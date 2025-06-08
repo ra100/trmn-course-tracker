@@ -1,5 +1,5 @@
-/* eslint-disable no-console */
-import { config, isDebugEnabled } from '../config'
+import { config } from '../config'
+import { getLogger } from './logger'
 
 // Google Analytics gtag function type
 declare global {
@@ -29,9 +29,7 @@ const loadGTM = (gtmId: string): void => {
   // Check if script is already loaded
   const existingScript = document.querySelector(`script[src="${scriptSrc}"]`)
   if (existingScript) {
-    if (isDebugEnabled()) {
-      console.log(`Analytics: GTM script already loaded (${gtmId})`)
-    }
+    getLogger().log(`Analytics: GTM script already loaded (${gtmId})`)
     return
   }
 
@@ -39,14 +37,12 @@ const loadGTM = (gtmId: string): void => {
   script.async = true
   script.src = scriptSrc
 
-  if (isDebugEnabled()) {
-    console.log(`Analytics: Loading GTM script (${gtmId})`)
-    script.onload = () => {
-      console.log(`Analytics: GTM script loaded successfully (${gtmId})`)
-    }
-    script.onerror = (error) => {
-      console.error(`Analytics: Error loading GTM script (${gtmId}):`, error)
-    }
+  getLogger().log(`Analytics: Loading GTM script (${gtmId})`)
+  script.onload = () => {
+    getLogger().log(`Analytics: GTM script loaded successfully (${gtmId})`)
+  }
+  script.onerror = (error) => {
+    getLogger().error(`Analytics: Error loading GTM script (${gtmId}):`, error)
   }
 
   document.head.appendChild(script)
@@ -118,9 +114,7 @@ export const getStoredConsent = (): Partial<ConsentSettings> | null => {
     const stored = localStorage.getItem('gdpr-consent')
     return stored ? JSON.parse(stored) : null
   } catch (error) {
-    if (isDebugEnabled()) {
-      console.error('Analytics: Error reading stored consent', error)
-    }
+    getLogger().error('Analytics: Error reading stored consent', error)
     return null
   }
 }
@@ -129,19 +123,15 @@ export const getStoredConsent = (): Partial<ConsentSettings> | null => {
 export const trackPageView = (path?: string): void => {
   const page = path || window.location.pathname + window.location.search
 
-  if (isDebugEnabled()) {
-    console.log('Analytics page view tracking attempt:', {
-      enabled: config.analytics.enabled,
-      gtagExists: !!window.gtag,
-      gtmId: config.analytics.gtmId,
-      page
-    })
-  }
+  getLogger().log('Analytics page view tracking attempt:', {
+    enabled: config.analytics.enabled,
+    gtagExists: !!window.gtag,
+    gtmId: config.analytics.gtmId,
+    page
+  })
 
   if (!config.analytics.enabled || !window.gtag) {
-    if (isDebugEnabled()) {
-      console.log('Analytics: Cannot track page view - not initialized')
-    }
+    getLogger().log('Analytics: Cannot track page view - not initialized')
     return
   }
 
@@ -151,9 +141,7 @@ export const trackPageView = (path?: string): void => {
       page_path: page
     })
 
-    if (isDebugEnabled()) {
-      console.log(`Analytics: Page view tracked - ${page}`)
-    }
+    getLogger().log(`Analytics: Page view tracked - ${page}`)
   }
 }
 
@@ -165,9 +153,7 @@ export const trackEvent = (eventName: string, parameters?: Record<string, unknow
 
   window.gtag('event', eventName, parameters)
 
-  if (isDebugEnabled()) {
-    console.log(`Analytics: Event tracked - ${eventName}`, parameters)
-  }
+  getLogger().log(`Analytics: Event tracked - ${eventName}`, parameters)
 }
 
 // Track course completion

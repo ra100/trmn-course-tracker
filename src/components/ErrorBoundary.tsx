@@ -1,5 +1,6 @@
 import React, { Component, ReactNode } from 'react'
 import styled from 'styled-components'
+import { getLogger } from '../utils/logger'
 
 const ErrorContainer = styled.div`
   padding: 2rem;
@@ -85,16 +86,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       errorInfo
     })
 
-    // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
-      console.error('ErrorBoundary caught an error:', error)
-      // eslint-disable-next-line no-console
-      console.error('Error info:', errorInfo)
-    }
-
-    // In production, you might want to log to an error reporting service
-    // e.g., Sentry, LogRocket, etc.
+    getLogger().error('ErrorBoundary caught an error:', error)
+    getLogger().error('Error info:', errorInfo)
   }
 
   handleRetry = () => {

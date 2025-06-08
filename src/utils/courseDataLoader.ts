@@ -1,6 +1,5 @@
-/* eslint-disable no-console */
 import { ParsedCourseData, Course, Category, SpecialRule } from '../types'
-import { isDebugEnabled } from '../config'
+import { getLogger } from './logger'
 
 interface SerializedCourseData {
   courses: Course[]
@@ -28,15 +27,13 @@ export async function loadCourseData(): Promise<ParsedCourseData> {
     const dependencyGraph = new Map<string, string[]>(data.dependencyGraph)
     const departmentMappings = new Map<string, string[]>(Object.entries(data.departmentMappings))
 
-    if (isDebugEnabled()) {
-      console.group('📄 Course Data Loader')
-      console.log('📚 Total courses loaded:', data.courses.length)
-      console.log('📋 Categories loaded:', data.categories.length)
-      console.log('⚡ Special rules loaded:', data.specialRules.length)
-      console.log('🗂️ Department mappings loaded:', departmentMappings.size)
-      console.log('🕒 Built at:', data.buildTimestamp)
-      console.groupEnd()
-    }
+    getLogger().group('📄 Course Data Loader')
+    getLogger().log('📚 Total courses loaded:', data.courses.length)
+    getLogger().log('📋 Categories loaded:', data.categories.length)
+    getLogger().log('⚡ Special rules loaded:', data.specialRules.length)
+    getLogger().log('🗂️ Department mappings loaded:', departmentMappings.size)
+    getLogger().log('🕒 Built at:', data.buildTimestamp)
+    getLogger().groupEnd()
 
     return {
       courses: data.courses,
@@ -48,9 +45,7 @@ export async function loadCourseData(): Promise<ParsedCourseData> {
       dependencyGraph
     }
   } catch (error) {
-    if (isDebugEnabled()) {
-      console.error('Failed to load course data:', error)
-    }
+    getLogger().error('Failed to load course data:', error)
     throw error
   }
 }

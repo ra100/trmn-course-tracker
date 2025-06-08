@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { v4 as uuidv4 } from 'uuid'
 import {
   Course,
@@ -12,7 +11,7 @@ import {
   CourseLevel,
   SpecialRuleType
 } from '../types'
-import { isDebugEnabled } from '../config'
+import { getLogger } from './logger'
 
 const COURSE_CODE_REGEX = /([A-Z]{3}-[A-Z]{2,4}-\d{2,4}[ACDW]?)/g
 const LEVEL_REGEX = /-(\d{2,4})([ACDW])/
@@ -205,9 +204,8 @@ export class CourseParser {
 
       // Skip invalid course codes
       if (!courseNumber || courseNumber.length === 0) {
-        if (isDebugEnabled()) {
-          console.warn(`Skipping invalid course: ${courseName} - ${rawCourseNumber}`)
-        }
+        getLogger().warn(`Skipping invalid course: ${courseName} - ${rawCourseNumber}`)
+
         return
       }
 
@@ -655,38 +653,37 @@ export function parseCourseData(markdownContent: string): ParsedCourseData {
   const data = parser.parse()
 
   // Debug logging (development only)
-  if (isDebugEnabled()) {
-    console.group('🔍 Course Data Parser Debug')
-    console.log('📄 Markdown length:', markdownContent.length)
-    console.log('📚 Total courses parsed:', data.courses.length)
-    console.log('📋 Categories parsed:', data.categories.length)
-    console.log('⚡ Special rules parsed:', data.specialRules.length)
-    console.log('🗂️ Department mappings parsed:', data.departmentMappings?.size || 0)
 
-    // Log Space Warfare Pin related courses
-    const swpCourses = data.courses.filter((course) => {
-      const code = course.code
-      return (
-        code === 'SIA-SRN-31C' ||
-        code === 'SIA-SRN-01C' ||
-        code === 'SIA-SRN-01A' ||
-        code === 'SIA-SRN-04A' ||
-        code.match(/^SIA-SRN-(05|06|07|35|08|09|10|27|28|29|32|14|15|16|17|18|19|11|12|13)[CD]$/)
-      )
+  getLogger().group('🔍 Course Data Parser Debug')
+  getLogger().log('📄 Markdown length:', markdownContent.length)
+  getLogger().log('📚 Total courses parsed:', data.courses.length)
+  getLogger().log('📋 Categories parsed:', data.categories.length)
+  getLogger().log('⚡ Special rules parsed:', data.specialRules.length)
+  getLogger().log('🗂️ Department mappings parsed:', data.departmentMappings?.size || 0)
+
+  // Log Space Warfare Pin related courses
+  const swpCourses = data.courses.filter((course) => {
+    const code = course.code
+    return (
+      code === 'SIA-SRN-31C' ||
+      code === 'SIA-SRN-01C' ||
+      code === 'SIA-SRN-01A' ||
+      code === 'SIA-SRN-04A' ||
+      code.match(/^SIA-SRN-(05|06|07|35|08|09|10|27|28|29|32|14|15|16|17|18|19|11|12|13)[CD]$/)
+    )
+  })
+  getLogger().log('🏅 Space Warfare Pin related courses found:', swpCourses.length)
+  getLogger().table(swpCourses.map((c) => ({ code: c.code, name: c.name })))
+
+  // Log special rules
+  if (data.specialRules.length > 0) {
+    getLogger().log('📜 Special Rules:')
+    data.specialRules.forEach((rule) => {
+      getLogger().log(`  - ${rule.name}: ${rule.description}`)
     })
-    console.log('🏅 Space Warfare Pin related courses found:', swpCourses.length)
-    console.table(swpCourses.map((c) => ({ code: c.code, name: c.name })))
-
-    // Log special rules
-    if (data.specialRules.length > 0) {
-      console.log('📜 Special Rules:')
-      data.specialRules.forEach((rule) => {
-        console.log(`  - ${rule.name}: ${rule.description}`)
-      })
-    }
-
-    console.groupEnd()
   }
+
+  getLogger().groupEnd()
 
   // Create additional maps and dependency graph
   const courseMap = new Map<string, Course>()

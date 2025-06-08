@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {
   Course,
   UserProgress,
@@ -10,7 +9,7 @@ import {
   CourseLevel,
   Prerequisite
 } from '../types'
-import { isDebugEnabled } from '../config'
+import { getLogger } from './logger'
 
 export class EligibilityEngine {
   private courseData: ParsedCourseData
@@ -259,13 +258,11 @@ export class EligibilityEngine {
   ): number {
     let count = 0
 
-    if (isDebugEnabled()) {
-      console.log('🔍 Checking department requirements:', {
-        departments,
-        level,
-        completedCourses: Array.from(userProgress.completedCourses)
-      })
-    }
+    getLogger().log('🔍 Checking department requirements:', {
+      departments,
+      level,
+      completedCourses: Array.from(userProgress.completedCourses)
+    })
 
     // Use parsed department mappings from course data, fallback to department name if not found
     const departmentMappings = this.courseData.departmentMappings
@@ -290,26 +287,22 @@ export class EligibilityEngine {
 
       const hasCorrectLevel = !level || course.level === level
 
-      if (isDebugEnabled()) {
-        console.log(`📚 Course ${courseCode}:`, {
-          name: course.name,
-          section: course.section,
-          subsection: course.subsection,
-          level: course.level,
-          inTargetDepartment,
-          hasCorrectLevel,
-          willCount: inTargetDepartment && hasCorrectLevel
-        })
-      }
+      getLogger().log(`📚 Course ${courseCode}:`, {
+        name: course.name,
+        section: course.section,
+        subsection: course.subsection,
+        level: course.level,
+        inTargetDepartment,
+        hasCorrectLevel,
+        willCount: inTargetDepartment && hasCorrectLevel
+      })
 
       if (inTargetDepartment && hasCorrectLevel) {
         count++
       }
     }
 
-    if (isDebugEnabled()) {
-      console.log(`✅ Total count: ${count}`)
-    }
+    getLogger().log(`✅ Total count: ${count}`)
     return count
   }
 

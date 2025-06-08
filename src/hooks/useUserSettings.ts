@@ -1,7 +1,6 @@
-/* eslint-disable no-console */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { UserSettings } from '../types'
-import { isDebugEnabled } from '../config'
+import { getLogger } from '../utils/logger'
 
 const USER_SETTINGS_QUERY_KEY = ['userSettings']
 const USER_SETTINGS_STORAGE_KEY = 'trmn-user-settings'
@@ -28,9 +27,7 @@ const loadUserSettingsFromStorage = (): UserSettings => {
       }
     }
   } catch (err) {
-    if (isDebugEnabled()) {
-      console.error('Error loading user settings:', err)
-    }
+    getLogger().error('Error loading user settings:', err)
   }
 
   return getDefaultUserSettings()
@@ -41,15 +38,12 @@ const saveUserSettingsToStorage = async (settings: UserSettings): Promise<UserSe
   try {
     localStorage.setItem(USER_SETTINGS_STORAGE_KEY, JSON.stringify(settings))
 
-    if (isDebugEnabled()) {
-      console.log('⚙️ User settings saved to localStorage')
-    }
+    getLogger().log('⚙️ User settings saved to localStorage')
 
     return Promise.resolve(settings)
   } catch (err) {
-    if (isDebugEnabled()) {
-      console.error('Error saving user settings:', err)
-    }
+    getLogger().error('Error saving user settings:', err)
+
     throw err
   }
 }
@@ -74,14 +68,10 @@ export const useUpdateUserSettings = () => {
       // Update the cache immediately
       queryClient.setQueryData(USER_SETTINGS_QUERY_KEY, updatedSettings)
 
-      if (isDebugEnabled()) {
-        console.log('✅ User settings updated successfully')
-      }
+      getLogger().log('✅ User settings updated successfully')
     },
     onError: (error) => {
-      if (isDebugEnabled()) {
-        console.error('❌ Failed to update user settings:', error)
-      }
+      getLogger().error('❌ Failed to update user settings:', error)
     }
   })
 }
