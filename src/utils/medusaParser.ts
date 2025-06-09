@@ -1,3 +1,7 @@
+// Enhanced course code regex pattern (same as courseParser but without global flag)
+// Supports traditional and new formats: SIA-RMN-0001, LU-XI-CZ01, RMACA-AOPA-E07, etc.
+const MEDUSA_COURSE_CODE_REGEX = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/
+
 export interface MedusaCourse {
   courseCode: string
   courseName: string
@@ -37,22 +41,12 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
 
     tabPanels.forEach((panel) => {
       const panelId = panel.getAttribute('id')
-      if (!panelId) {return}
-
-      // Determine the category based on panel ID
-      let category = ''
-      if (panelId === 'RMN') {
-        category = 'RMN'
-      } else if (panelId === 'RMNSpeciality') {
-        category = 'RMN Speciality'
-      } else if (panelId === 'RMACSSpecialty') {
-        category = 'RMACS Specialty'
-      } else if (panelId === 'MannheimUniversity') {
-        category = 'Mannheim University'
-      } else {
-        // Skip unknown panels
+      if (!panelId) {
         return
       }
+
+      // Determine the category based on panel ID with enhanced mapping
+      const category = getCategoryFromPanelId(panelId)
 
       // Find all course rows in this panel
       const courseRows = panel.querySelectorAll('.row.zebra-odd, .row.zebra-even')
@@ -70,7 +64,7 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
             const gradeText = gradeElement.textContent?.trim() || ''
             const dateText = dateElement.textContent?.trim() || ''
 
-            // Extract course code from course name
+            // Extract course code using enhanced pattern
             const courseCode = extractCourseCode(courseNameText)
 
             if (courseCode && courseNameText && gradeText && dateText) {
@@ -84,8 +78,37 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
             }
           }
         } catch (error) {
-          result.errors.push(`Error parsing course row: ${error instanceof Error ? error.message : 'Unknown error'}`)
+          result.errors.push(
+            `Error parsing course row in ${category}: ${error instanceof Error ? error.message : 'Unknown error'}`
+          )
         }
+      })
+    })
+
+    // Also search for courses in any elements with course-like patterns
+    // This catches courses that might be in unexpected locations
+    const allTextElements = doc.querySelectorAll('*')
+    const foundCoursesByText = new Set<string>()
+
+    allTextElements.forEach((element) => {
+      const text = element.textContent?.trim() || ''
+      const match = text.match(MEDUSA_COURSE_CODE_REGEX)
+      if (match && match[1]) {
+        const courseCode = match[1]
+        if (!result.courses.some((course) => course.courseCode === courseCode)) {
+          foundCoursesByText.add(courseCode)
+        }
+      }
+    })
+
+    // Add any additional courses found by text pattern (with generic category)
+    foundCoursesByText.forEach((courseCode) => {
+      result.courses.push({
+        courseCode,
+        courseName: `Course ${courseCode}`,
+        grade: 'Unknown',
+        completionDate: 'Unknown',
+        category: 'Other/Unknown'
       })
     })
 
@@ -102,31 +125,44 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
 }
 
 /**
- * Extract course code from course name text
- * Examples:
- * - "SIA-RMN-0001 Basic Enlisted Course" -> "SIA-RMN-0001"
- * - "RMACA-AOPA-E01 A Tale of Two ILSs" -> "RMACA-AOPA-E01"
- * - "MU-BEK-01 IS 100 - Introduction to Incident Command System" -> "MU-BEK-01"
+ * Map panel IDs to category names, supporting all known and unknown panels
  */
-function extractCourseCode(courseName: string): string | null {
-  // Match various course code patterns
-  const patterns = [
-    // Standard TRMN format: SIA-RMN-0001, SIA-SRN-20W, etc.
-    /^([A-Z]{2,4}-[A-Z]{2,4}-\d{2,4}[ACDW]?)/,
-    // RMACA format: RMACA-AOPA-E01, RMACA-AOPA-R01, etc.
-    /^(RMACA-[A-Z]{4}-[ER]\d{2})/,
-    // MU format: MU-BEK-01, etc.
-    /^(MU-[A-Z]{3}-\d{2})/
-  ]
-
-  for (const pattern of patterns) {
-    const match = courseName.match(pattern)
-    if (match) {
-      return match[1]
-    }
+function getCategoryFromPanelId(panelId: string): string {
+  const categoryMap: { [key: string]: string } = {
+    RMN: 'RMN',
+    RMNSpeciality: 'RMN Speciality',
+    RMACSSpecialty: 'RMACS Specialty',
+    MannheimUniversity: 'Mannheim University',
+    LysanderUniversity: 'Lysander University',
+    RMACA: 'Royal Manticoran Aerospace Command Academy',
+    GPU: 'Grayson Protector University',
+    SIA: 'Saganami Island Academy'
+    // Add more known mappings as needed
   }
 
-  return null
+  // Return mapped category or create a human-readable category from panelId
+  if (categoryMap[panelId]) {
+    return categoryMap[panelId]
+  }
+
+  // For unknown panels, create a readable category name
+  // Convert camelCase or acronyms to readable format
+  const readable = panelId
+    .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+    .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
+    .trim()
+
+  return readable || 'Unknown Category'
+}
+
+/**
+ * Extract course code from course name text using enhanced patterns
+ * Supports all formats: traditional (SIA-RMN-0001), universities (LU-XI-CZ01),
+ * RMACA (RMACA-AOPA-E07), and any other matching the pattern
+ */
+function extractCourseCode(courseName: string): string | null {
+  const match = courseName.match(MEDUSA_COURSE_CODE_REGEX)
+  return match ? match[1] : null
 }
 
 /**

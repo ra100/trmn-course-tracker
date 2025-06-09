@@ -217,7 +217,8 @@ describe('medusaParser', () => {
       expect(courseCodes).toContain('MU-BEK-01')
       expect(courseCodes).toContain('MU-BEK-02')
 
-      expect(courseCodes).toHaveLength(7)
+      // Should have at least the structured courses, may have more from text search
+      expect(courseCodes.length).toBeGreaterThanOrEqual(7)
     })
 
     it('should filter out invalid courses', () => {
@@ -240,6 +241,7 @@ describe('medusaParser', () => {
 
   describe('course code extraction patterns', () => {
     const testCases = [
+      // Traditional formats
       { input: 'SIA-RMN-0001 Basic Course', expected: 'SIA-RMN-0001' },
       { input: 'SIA-SRN-20W Project', expected: 'SIA-SRN-20W' },
       { input: 'SIA-SRN-101C Advanced Course', expected: 'SIA-SRN-101C' },
@@ -247,6 +249,17 @@ describe('medusaParser', () => {
       { input: 'RMACA-AOPA-R15 Required Course', expected: 'RMACA-AOPA-R15' },
       { input: 'MU-BEK-01 University Course', expected: 'MU-BEK-01' },
       { input: 'MU-BEK-12 Another Course', expected: 'MU-BEK-12' },
+      // New university formats
+      { input: 'LU-XI-CZ01 Cryptozoology Course', expected: 'LU-XI-CZ01' },
+      { input: 'LU-XI-CZ02 Advanced Cryptozoology', expected: 'LU-XI-CZ02' },
+      { input: 'MU-PLSC-01 Political Science I', expected: 'MU-PLSC-01' },
+      { input: 'MU-ECON-02 Economics II', expected: 'MU-ECON-02' },
+      // New RMACA formats
+      { input: 'RMACA-RMAIA-07A Basic Intelligence', expected: 'RMACA-RMAIA-07A' },
+      { input: 'RMACA-RMAIA-07D Advanced Intelligence', expected: 'RMACA-RMAIA-07D' },
+      { input: 'RMACA-AOPA-E07 Emergency Procedures', expected: 'RMACA-AOPA-E07' },
+      { input: 'RMACA-AOPA-R09 Radio Operations', expected: 'RMACA-AOPA-R09' },
+      // Edge cases
       { input: 'Invalid course name', expected: null }
     ]
 
@@ -265,12 +278,325 @@ describe('medusaParser', () => {
         const result = parseMedusaHTML(html)
 
         if (expected) {
-          expect(result.courses).toHaveLength(1)
-          expect(result.courses[0].courseCode).toBe(expected)
+          expect(result.courses.length).toBeGreaterThanOrEqual(1)
+          const course = result.courses.find((c) => c.courseCode === expected)
+          expect(course).toBeDefined()
+          expect(course?.courseCode).toBe(expected)
         } else {
-          expect(result.courses).toHaveLength(0)
+          // For invalid course names, should not find any structured courses
+          // but may still find some via text search if pattern matches elsewhere
+          const structuredCourses = result.courses.filter((c) => c.category === 'RMN')
+          expect(structuredCourses).toHaveLength(0)
         }
       })
+    })
+  })
+
+  describe('enhanced course format support', () => {
+    it('should parse new university course formats (LU, MU)', () => {
+      const htmlWithNewFormats = `
+        <div role="tabpanel" id="LysanderUniversity">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">LU-XI-CZ01 Introduction to Cryptozoology</div>
+            <div class="col-sm-1">95%</div>
+            <div class="col-sm-3">01 Mar 2025</div>
+          </div>
+          <div class="row zebra-even">
+            <div class="col-sm-6">LU-XI-CZ02 Advanced Cryptozoology</div>
+            <div class="col-sm-1">88%</div>
+            <div class="col-sm-3">15 Mar 2025</div>
+          </div>
+        </div>
+        <div role="tabpanel" id="MannheimUniversity">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">MU-PLSC-01 Political Science I</div>
+            <div class="col-sm-1">92%</div>
+            <div class="col-sm-3">20 Feb 2025</div>
+          </div>
+          <div class="row zebra-even">
+            <div class="col-sm-6">MU-ECON-02 Economics II</div>
+            <div class="col-sm-1">87%</div>
+            <div class="col-sm-3">10 Mar 2025</div>
+          </div>
+        </div>
+      `
+
+      const result = parseMedusaHTML(htmlWithNewFormats)
+
+      expect(result.errors).toHaveLength(0)
+      expect(result.courses).toHaveLength(4)
+
+      // Check LU courses
+      const luCourses = result.courses.filter((c) => c.category === 'Lysander University')
+      expect(luCourses).toHaveLength(2)
+      expect(luCourses[0].courseCode).toBe('LU-XI-CZ01')
+      expect(luCourses[1].courseCode).toBe('LU-XI-CZ02')
+
+      // Check MU courses with new format
+      const muCourses = result.courses.filter((c) => c.category === 'Mannheim University')
+      expect(muCourses).toHaveLength(2)
+      expect(muCourses[0].courseCode).toBe('MU-PLSC-01')
+      expect(muCourses[1].courseCode).toBe('MU-ECON-02')
+    })
+
+    it('should parse new RMACA course formats', () => {
+      const htmlWithRMACAFormats = `
+        <div role="tabpanel" id="RMACA">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">RMACA-RMAIA-07A Basic Intelligence</div>
+            <div class="col-sm-1">94%</div>
+            <div class="col-sm-3">05 Feb 2025</div>
+          </div>
+          <div class="row zebra-even">
+            <div class="col-sm-6">RMACA-RMAIA-07D Advanced Intelligence</div>
+            <div class="col-sm-1">91%</div>
+            <div class="col-sm-3">20 Feb 2025</div>
+          </div>
+          <div class="row zebra-odd">
+            <div class="col-sm-6">RMACA-AOPA-E07 Emergency Procedures</div>
+            <div class="col-sm-1">96%</div>
+            <div class="col-sm-3">12 Mar 2025</div>
+          </div>
+          <div class="row zebra-even">
+            <div class="col-sm-6">RMACA-AOPA-R09 Radio Operations</div>
+            <div class="col-sm-1">89%</div>
+            <div class="col-sm-3">25 Mar 2025</div>
+          </div>
+        </div>
+      `
+
+      const result = parseMedusaHTML(htmlWithRMACAFormats)
+
+      expect(result.errors).toHaveLength(0)
+      expect(result.courses).toHaveLength(4)
+
+      const rmacaCourses = result.courses.filter((c) => c.category === 'Royal Manticoran Aerospace Command Academy')
+      expect(rmacaCourses).toHaveLength(4)
+
+      const courseCodes = rmacaCourses.map((c) => c.courseCode)
+      expect(courseCodes).toContain('RMACA-RMAIA-07A')
+      expect(courseCodes).toContain('RMACA-RMAIA-07D')
+      expect(courseCodes).toContain('RMACA-AOPA-E07')
+      expect(courseCodes).toContain('RMACA-AOPA-R09')
+    })
+
+    it('should handle unknown panels gracefully', () => {
+      const htmlWithUnknownPanels = `
+        <div role="tabpanel" id="NewUnknownPanel">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">XYZ-ABC-001 Unknown Course Type</div>
+            <div class="col-sm-1">85%</div>
+            <div class="col-sm-3">01 Apr 2025</div>
+          </div>
+        </div>
+        <div role="tabpanel" id="AnotherNewCategory">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">DEF-GHI-002 Another Unknown Course</div>
+            <div class="col-sm-1">92%</div>
+            <div class="col-sm-3">15 Apr 2025</div>
+          </div>
+        </div>
+        <div role="tabpanel" id="SomeSpecialtyPanel">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">JKL-MNO-003 Specialty Course</div>
+            <div class="col-sm-1">88%</div>
+            <div class="col-sm-3">20 Apr 2025</div>
+          </div>
+        </div>
+      `
+
+      const result = parseMedusaHTML(htmlWithUnknownPanels)
+
+      expect(result.errors).toHaveLength(0)
+      expect(result.courses).toHaveLength(3)
+
+      // Check that categories are generated from panel IDs
+      const categories = result.courses.map((c) => c.category)
+      expect(categories).toContain('New Unknown Panel')
+      expect(categories).toContain('Another New Category')
+      expect(categories).toContain('Some Specialty Panel')
+
+      // Check course codes
+      const courseCodes = result.courses.map((c) => c.courseCode)
+      expect(courseCodes).toContain('XYZ-ABC-001')
+      expect(courseCodes).toContain('DEF-GHI-002')
+      expect(courseCodes).toContain('JKL-MNO-003')
+    })
+
+    it('should find courses in unexpected locations (fallback text search)', () => {
+      const htmlWithCoursesInUnexpectedPlaces = `
+        <div class="some-other-content">
+          <p>Student has completed ABC-DEF-123 and XYZ-QWE-456 courses.</p>
+          <span>Additional course: PQR-STU-789</span>
+        </div>
+        <div role="tabpanel" id="RMN">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">SIA-RMN-0001 Regular Course</div>
+            <div class="col-sm-1">95%</div>
+            <div class="col-sm-3">01 Jan 2025</div>
+          </div>
+        </div>
+      `
+
+      const result = parseMedusaHTML(htmlWithCoursesInUnexpectedPlaces)
+
+      expect(result.courses.length).toBeGreaterThan(1)
+
+      // Should find the regular course
+      const regularCourse = result.courses.find((c) => c.courseCode === 'SIA-RMN-0001')
+      expect(regularCourse).toBeDefined()
+      expect(regularCourse?.category).toBe('RMN')
+
+      // Should also find courses mentioned in text
+      const courseCodes = result.courses.map((c) => c.courseCode)
+      expect(courseCodes).toContain('ABC-DEF-123')
+      expect(courseCodes).toContain('XYZ-QWE-456')
+      expect(courseCodes).toContain('PQR-STU-789')
+
+      // Text-found courses should have generic category
+      const textFoundCourses = result.courses.filter((c) => c.category === 'Other/Unknown')
+      expect(textFoundCourses.length).toBeGreaterThan(0)
+    })
+
+    it('should not duplicate courses found in both structured and text locations', () => {
+      const htmlWithDuplicates = `
+        <div role="tabpanel" id="RMN">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">SIA-RMN-0001 Regular Course</div>
+            <div class="col-sm-1">95%</div>
+            <div class="col-sm-3">01 Jan 2025</div>
+          </div>
+        </div>
+        <div class="some-text">
+          <p>Previously completed: SIA-RMN-0001</p>
+        </div>
+      `
+
+      const result = parseMedusaHTML(htmlWithDuplicates)
+
+      const sia001Courses = result.courses.filter((c) => c.courseCode === 'SIA-RMN-0001')
+      expect(sia001Courses).toHaveLength(1) // Should not duplicate
+      expect(sia001Courses[0].category).toBe('RMN') // Should keep the structured data
+    })
+  })
+
+  describe('category mapping', () => {
+    it('should map known panel IDs correctly', () => {
+      const testPanels = [
+        { panelId: 'RMN', expectedCategory: 'RMN' },
+        { panelId: 'RMNSpeciality', expectedCategory: 'RMN Speciality' },
+        { panelId: 'RMACSSpecialty', expectedCategory: 'RMACS Specialty' },
+        { panelId: 'MannheimUniversity', expectedCategory: 'Mannheim University' },
+        { panelId: 'LysanderUniversity', expectedCategory: 'Lysander University' },
+        { panelId: 'RMACA', expectedCategory: 'Royal Manticoran Aerospace Command Academy' },
+        { panelId: 'GPU', expectedCategory: 'Grayson Protector University' },
+        { panelId: 'SIA', expectedCategory: 'Saganami Island Academy' }
+      ]
+
+      testPanels.forEach(({ panelId, expectedCategory }) => {
+        const html = `
+          <html>
+          <body>
+          <div role="tabpanel" id="${panelId}">
+            <div class="row zebra-odd">
+              <div class="col-sm-6">TEST-001 Test Course</div>
+              <div class="col-sm-1">100%</div>
+              <div class="col-sm-3">01 Jan 2025</div>
+            </div>
+          </div>
+        `
+
+        const result = parseMedusaHTML(html)
+        expect(result.courses).toHaveLength(1)
+        expect(result.courses[0].category).toBe(expectedCategory)
+      })
+    })
+
+    it('should generate readable categories for unknown panels', () => {
+      const testCases = [
+        { panelId: 'SomeNewPanel', expected: 'Some New Panel' },
+        { panelId: 'AcademicDepartment', expected: 'Academic Department' },
+        { panelId: 'XYZ', expected: 'X Y Z' },
+        { panelId: 'NewCategory123', expected: 'New Category123' }
+      ]
+
+      testCases.forEach(({ panelId, expected }) => {
+        const html = `
+          <div role="tabpanel" id="${panelId}">
+            <div class="row zebra-odd">
+              <div class="col-sm-6">TEST-001 Test Course</div>
+              <div class="col-sm-1">100%</div>
+              <div class="col-sm-3">01 Jan 2025</div>
+            </div>
+          </div>
+        `
+
+        const result = parseMedusaHTML(html)
+        expect(result.courses).toHaveLength(1)
+        expect(result.courses[0].category).toBe(expected)
+      })
+    })
+  })
+
+  describe('comprehensive course detection', () => {
+    it('should find all course formats in a complex HTML document', () => {
+      const complexHTML = `
+        <html>
+        <body>
+        <div role="tabpanel" id="RMN">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">SIA-RMN-0001 Traditional Course</div>
+            <div class="col-sm-1">95%</div>
+            <div class="col-sm-3">01 Jan 2025</div>
+          </div>
+        </div>
+        <div role="tabpanel" id="LysanderUniversity">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">LU-XI-CZ01 University Course</div>
+            <div class="col-sm-1">88%</div>
+            <div class="col-sm-3">15 Feb 2025</div>
+          </div>
+        </div>
+        <div role="tabpanel" id="RMACA">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">RMACA-AOPA-E07 Aerospace Course</div>
+            <div class="col-sm-1">92%</div>
+            <div class="col-sm-3">20 Mar 2025</div>
+          </div>
+        </div>
+        <div role="tabpanel" id="UnknownPanel">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">NEW-FMT-001 Future Format</div>
+            <div class="col-sm-1">90%</div>
+            <div class="col-sm-3">10 Apr 2025</div>
+          </div>
+        </div>
+        <div class="random-text">
+          Also mentioned: ABC-XYZ-999 and DEF-QWE-888
+        </div>
+        </body>
+        </html>
+      `
+
+      const result = parseMedusaHTML(complexHTML)
+
+      expect(result.courses.length).toBeGreaterThanOrEqual(6)
+
+      const courseCodes = result.courses.map((c) => c.courseCode)
+      expect(courseCodes).toContain('SIA-RMN-0001')
+      expect(courseCodes).toContain('LU-XI-CZ01')
+      expect(courseCodes).toContain('RMACA-AOPA-E07')
+      expect(courseCodes).toContain('NEW-FMT-001')
+      expect(courseCodes).toContain('ABC-XYZ-999')
+      expect(courseCodes).toContain('DEF-QWE-888')
+
+      // Check categories
+      const categories = result.courses.map((c) => c.category)
+      expect(categories).toContain('RMN')
+      expect(categories).toContain('Lysander University')
+      expect(categories).toContain('Royal Manticoran Aerospace Command Academy')
+      expect(categories).toContain('Unknown Panel')
+      expect(categories).toContain('Other/Unknown')
     })
   })
 })

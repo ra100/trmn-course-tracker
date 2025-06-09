@@ -16,7 +16,7 @@ import { getLogger } from './logger'
 // Updated regex to handle both traditional and new course formats:
 // Traditional: SIA-RMN-0001, GPU-ALC-0010, SIA-SRN-20W
 // New formats: LU-XI-CZ01, MU-PLSC-02, RMACA-AOPA-E07, RMACA-RMAIA-07D
-const COURSE_CODE_REGEX = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/g
+export const COURSE_CODE_REGEX = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/g
 const LEVEL_REGEX = /-(\d{2,4})([ACDW])/
 
 export interface DepartmentMapping {
