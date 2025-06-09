@@ -107,6 +107,15 @@ Intelligence Specialists are involved in collecting and interpreting intelligenc
 | Intelligence Qualification       | SIA-SRN-26D   | SIA-RMN-0101 SIA-SRN-26C |
 | Intelligence Warrant Project     | SIA-SRN-26W   | SIA-RMN-0011 SIA-SRN-26C |
 
+## Legalman Group
+
+| Course Name                  | Course Number | Course Prerequisites |
+| ---------------------------- | ------------- | -------------------- |
+| Legalman Specialist          | SIA-SRN-33A   | SIA-RMN-0001         |
+| Legalman Advanced Specialist | SIA-SRN-33C   | SIA-SRN-33A          |
+| Legalman Qualifying          | SIA-SRN-33D   | SIA-SRN-33C          |
+| Legalman Warrant Officer     | SIA-SRN-33W   | SIA-SRN-33C          |
+
 # SINA TSC Administration
 
 ## Personnelman School
@@ -503,7 +512,7 @@ The following table defines how department names map to specific school/course c
 | Astrogation       | astrogation, flight operations, coxswain, helmsman, plotting, quartermaster                               |
 | Administration    | personnelman, yeoman, navy counselor                                                                      |
 | Tactical          | fire control, electronic warfare, tracking, sensor, missile, beam weapons, gunner, weapons                |
-| Command           | boatswain, master-at-arms, operations, intelligence, command                                              |
+| Command           | boatswain, master-at-arms, operations, intelligence, command, legalman                                    |
 | Communications    | data systems, electronics, communications                                                                 |
 | Engineering       | impeller, power, gravitics, environmental, hydroponics, damage control, propulsion, environmental systems |
 | Logistics         | storekeeper, disbursing, serviceman, steward, logistics                                                   |
