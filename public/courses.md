@@ -1,3 +1,19 @@
+## Department Mappings
+
+The following table defines how department names map to specific school/course categories for prerequisite matching:
+
+| Department        | School Names                                                                                              |
+| ----------------- | --------------------------------------------------------------------------------------------------------- |
+| Astrogation       | astrogation, flight operations, coxswain, helmsman, plotting, quartermaster                               |
+| Administration    | personnelman, yeoman, navy counselor                                                                      |
+| Tactical          | fire control, electronic warfare, tracking, sensor, missile, beam weapons, gunner, weapons                |
+| Command           | boatswain, master-at-arms, operations, intelligence, command, legalman                                    |
+| Communications    | data systems, electronics, communications                                                                 |
+| Engineering       | impeller, power, gravitics, environmental, hydroponics, damage control, propulsion, environmental systems |
+| Logistics         | storekeeper, disbursing, serviceman, steward, logistics                                                   |
+| Medical           | medical, corpsman, medic, sick berth, surgeon                                                             |
+| Flight Operations | flight operations, coxswain                                                                               |
+
 ## GPU Advanced Leadership College
 
 | Course Name               | Course Number | Prerequisites                |
@@ -503,18 +519,366 @@ Passing SIA-SRN-34D will be a requirement for those wanting to be recognized as 
 | Surgeon Qualification       | SIA-SRN-34D   | SIA-SRN-34C              |
 | Surgeon Warrant Project     | SIA-SRN-34W   | SIA-RMN-0012 SIA-SRN-34C |
 
-# Department Mappings
+# RMACA Specialty Training
 
-The following table defines how department names map to specific school/course categories for prerequisite matching:
+## Aviation
 
-| Department        | School Names                                                                                              |
-| ----------------- | --------------------------------------------------------------------------------------------------------- |
-| Astrogation       | astrogation, flight operations, coxswain, helmsman, plotting, quartermaster                               |
-| Administration    | personnelman, yeoman, navy counselor                                                                      |
-| Tactical          | fire control, electronic warfare, tracking, sensor, missile, beam weapons, gunner, weapons                |
-| Command           | boatswain, master-at-arms, operations, intelligence, command, legalman                                    |
-| Communications    | data systems, electronics, communications                                                                 |
-| Engineering       | impeller, power, gravitics, environmental, hydroponics, damage control, propulsion, environmental systems |
-| Logistics         | storekeeper, disbursing, serviceman, steward, logistics                                                   |
-| Medical           | medical, corpsman, medic, sick berth, surgeon                                                             |
-| Flight Operations | flight operations, coxswain                                                                               |
+A three-course series of increasingly difficulty courses focusing on atmospheric flight both real world and canon.
+
+| Course Name            | Course Number   | Course Prerequisites |
+| ---------------------- | --------------- | -------------------- |
+| Basic Aviation         | RMACA-RMACS-02A | SIA-RMN-0003         |
+| Advanced Aviation      | RMACA-RMACS-02C | RMACA-RMACS-02A      |
+| Aviation Qualification | RMACA-RMACS-02D | RMACA-RMACS-02C      |
+
+## Search and Rescue
+
+A three-course series of increasingly difficult courses focusing on real life and canon examples of search and rescue.
+
+| Course Name                     | Course Number   | Course Prerequisites |
+| ------------------------------- | --------------- | -------------------- |
+| Basic Search and Rescue         | RMACA-RMACS-03A | SIA-RMN-0003         |
+| Advanced Search and Rescue      | RMACA-RMACS-03C | RMACA-RMACS-03A      |
+| Search and Rescue Qualification | RMACA-RMACS-03D | RMACA-RMACS-03C      |
+
+## Communications
+
+A three-course series of increasingly difficult courses focusing on communications technology and theory.
+
+| Course Name                  | Course Number   | Course Prerequisites |
+| ---------------------------- | --------------- | -------------------- |
+| Basic Communications         | RMACA-RMACS-04A | SIA-RMN-0003         |
+| Advanced Communications      | RMACA-RMACS-04C | RMACA-RMACS-04A      |
+| Communications Qualification | RMACA-RMACS-04D | RMACA-RMACS-04C      |
+
+## Traffic Control
+
+A three-course series of increasingly difficult courses focusing on traffic control methods and technology.
+
+| Course Name                   | Course Number   | Course Prerequisites |
+| ----------------------------- | --------------- | -------------------- |
+| Basic Traffic Control         | RMACA-RMACS-05A | SIA-RMN-0003         |
+| Advanced Traffic Control      | RMACA-RMACS-05C | RMACA-RMACS-05A      |
+| Traffic Control Qualification | RMACA-RMACS-05D | RMACA-RMACS-05C      |
+
+## Customs
+
+A three-course series of increasingly difficult courses focusing on customs and goods transfer.
+
+| Course Name           | Course Number   | Course Prerequisites |
+| --------------------- | --------------- | -------------------- |
+| Basic Customs         | RMACA-RMACS-06A | SIA-RMN-0003         |
+| Advanced Customs      | RMACA-RMACS-06C | RMACA-RMACS-06A      |
+| Customs Qualification | RMACA-RMACS-06D | RMACA-RMACS-06C      |
+
+## Aerospace Wings Program Courses/Quizzes
+
+Among other requirements, the TRMN Aerospace Wings awards program often requires students to complete online coursework and/or safety quizzes offered through the Aircraft Owners and Pilots Association (AOPA). These courses are free, but require that you create a user account before undertaking them. You will need to submit to the BuTrain instructor a certificate from AOPA (available under your user account) before credit is issued in Medusa for your completion.
+
+For more details on which courses are required for which Aerospace Wings awards, please visit the main awards page at: https://wiki.trmn.org/wiki/index.php/Aerospace_Wings
+
+For the available AOPA online courses, go here: https://www.aopa.org/training-and-safety/online-learning/online-courses
+
+For the available AOPA online quizzes, go here: https://www.aopa.org/training-and-safety/online-learning/safety-quizzes
+
+### Required Courses
+
+The following external courses and quizzes offered through AOPA are required for one or more of the Aerospace Wings Awards. DO NOT start one of these courses until you obtain instructor approval to begin.
+
+| Course Name                             | Course Number  | Course Prerequisites |
+| --------------------------------------- | -------------- | -------------------- |
+| Aircraft Preflight                      | RMACA-AOPA-R01 | SIA-RMN-0003         |
+| ATC Procedures                          | RMACA-AOPA-R02 | SIA-RMN-0003         |
+| ATC Terminology                         | RMACA-AOPA-R03 | SIA-RMN-0003         |
+| BasicMed Course Medical Self Assessment | RMACA-AOPA-R04 | SIA-RMN-0003         |
+| Density Altitude                        | RMACA-AOPA-R05 | SIA-RMN-0003         |
+| Do the Right Thing                      | RMACA-AOPA-R06 | SIA-RMN-0003         |
+| Emergency Procedures                    | RMACA-AOPA-R07 | SIA-RMN-0003         |
+| Essential Aerodynamics                  | RMACA-AOPA-R08 | SIA-RMN-0003         |
+| General Aviation TSA Security Awareness | RMACA-AOPA-R09 | SIA-RMN-0003         |
+| Ice Flight                              | RMACA-AOPA-R10 | SIA-RMN-0003         |
+| IFR Insight A Practical Approach        | RMACA-AOPA-R11 | SIA-RMN-0003         |
+| IFR Insights Cockpit Weather            | RMACA-AOPA-R12 | SIA-RMN-0003         |
+| Into a Black Hole                       | RMACA-AOPA-R13 | SIA-RMN-0003         |
+| Know Before You Go                      | RMACA-AOPA-R14 | SIA-RMN-0003         |
+| Preventive Maintenance                  | RMACA-AOPA-R15 | SIA-RMN-0003         |
+| Public Benefit Flying                   | RMACA-AOPA-R16 | SIA-RMN-0003         |
+| Runway Safety                           | RMACA-AOPA-R17 | SIA-RMN-0003         |
+| Say It Right                            | RMACA-AOPA-R18 | SIA-RMN-0003         |
+| The Almost ILS                          | RMACA-AOPA-R19 | SIA-RMN-0003         |
+| Thunderstorms                           | RMACA-AOPA-R20 | SIA-RMN-0003         |
+| Transitioning to Other Airplanes        | RMACA-AOPA-R21 | SIA-RMN-0003         |
+| Weather or Not Thunderstorm Challenge   | RMACA-AOPA-R22 | SIA-RMN-0003         |
+| Weather Wise VFR into IMC               | RMACA-AOPA-R23 | SIA-RMN-0003         |
+
+### Elective Courses
+
+The following external courses and quizzes offered through AOPA are available as electives for those interested in learning more about piloting and air safety. DO NOT start one of these courses until you obtain instructor approval to begin.
+
+| Course Name                   | Course Number  | Course Prerequisites |
+| ----------------------------- | -------------- | -------------------- |
+| A Tale of Two ILSs            | RMACA-AOPA-E01 | SIA-RMN-0003         |
+| Aircraft Performance          | RMACA-AOPA-E02 | SIA-RMN-0003         |
+| Cold Weather Ops              | RMACA-AOPA-E03 | SIA-RMN-0003         |
+| Collision Avoidance           | RMACA-AOPA-E04 | SIA-RMN-0003         |
+| Engine Operation              | RMACA-AOPA-E05 | SIA-RMN-0003         |
+| Flying Rogue                  | RMACA-AOPA-E06 | SIA-RMN-0003         |
+| Inflight Icing                | RMACA-AOPA-E07 | SIA-RMN-0003         |
+| Mountain Flying               | RMACA-AOPA-E08 | SIA-RMN-0003         |
+| Obstacle Departure Procedures | RMACA-AOPA-E09 | SIA-RMN-0003         |
+| Special Use Airspace          | RMACA-AOPA-E10 | SIA-RMN-0003         |
+
+## Royal Manticoran Astrophysics Investigation Agency
+
+### Astronomy
+
+A three-course series of increasingly difficult courses focusing on astronomical concepts and practices.
+
+| Course Name             | Course Number   | Course Prerequisites |
+| ----------------------- | --------------- | -------------------- |
+| Basic Astronomy         | RMACA-RMAIA-06A | SIA-RMN-0003         |
+| Advanced Astronomy      | RMACA-RMAIA-06C | RMACA-RMAIA-06A      |
+| Astronomy Qualification | RMACA-RMAIA-06D | RMACA-RMAIA-06C      |
+
+### Astrophysics
+
+A three-course series of increasingly difficult courses focusing on astrophysical concepts and their applications.
+
+| Course Name                | Course Number   | Course Prerequisites |
+| -------------------------- | --------------- | -------------------- |
+| Basic Astrophysics         | RMACA-RMAIA-07A | SIA-RMN-0003         |
+| Advanced Astrophysics      | RMACA-RMAIA-07C | RMACA-RMAIA-07A      |
+| Astrophysics Qualification | RMACA-RMAIA-07D | RMACA-RMAIA-07C      |
+
+# SKUS Mannheim University
+
+Mannheim University (MU) is the second oldest school of the Star Kingdom University System. MU is located in the County of New Odenwaldkries and is similar to the military service technical specialties colleges. MU focuses on the liberal arts and science courses that can inform your civilian career but are not required for rank advancement. MU courses come in series of four courses. The first courses are designed to be entry level, whereas the last are Graduate level. MU is continually working to expand it's offerings and has many courses in the development stage.
+
+## Society of Economics and Political Science
+
+### Economics Department
+
+Reginald Houseman put Mannheim's Economics department on the astro map.
+
+| Course Name     | Course Number | Course Prerequisites |
+| --------------- | ------------- | -------------------- |
+| Economics One   | MU-ECON-01    | SIA-RMN-0003         |
+| Economics Two   | MU-ECON-02    | MU-ECON-01           |
+| Economics Three | MU-ECON-03    | MU-ECON-02           |
+| Economics Four  | MU-ECON-04    | MU-ECON-03           |
+
+### Political Science Department
+
+Political Science offers some insights into the philosophy of government.
+
+| Course Name             | Course Number | Course Prerequisites |
+| ----------------------- | ------------- | -------------------- |
+| Political Science One   | MU-PLSC-01    | SIA-RMN-0003         |
+| Political Science Two   | MU-PLSC-02    | MU-PLSC-01           |
+| Political Science Three | MU-PLSC-03    | MU-PLSC-02           |
+| Political Science Four  | MU-PLSC-04    | MU-PLSC-03           |
+
+## Xenology Society
+
+### School of Cryptozoology
+
+Cryptozoology is the study of unknown creatures (cryptids) that may or may not exist or of known animals that are rumored to exist in areas that are not historically part of their recognized range. Until they were discovered by Stephanie Harrington, treecats would have been considered a cryptid.
+
+| Course Name      | Course Number | Course Prerequisites |
+| ---------------- | ------------- | -------------------- |
+| Cryptozoology 01 | LU-XI-CZ01    | SIA-RMN-0003         |
+| Cryptozoology 02 | LU-XI-CZ02    | LU-XI-CZ01           |
+| Cryptozoology 03 | LU-XI-CZ03    | LU-XI-CZ02           |
+| Cryptozoology 04 | LU-XI-CZ04    | LU-XI-CZ03           |
+
+### School of Xenoanthropology
+
+School of Xenoanthropology covers the study of peoples and cultures found on other planets.
+
+| Course Name         | Course Number | Course Prerequisites |
+| ------------------- | ------------- | -------------------- |
+| Xenoanthropology 01 | LU-XI-XA01    | SIA-RMN-0003         |
+| Xenoanthropology 02 | LU-XI-XA02    | LU-XI-XA01           |
+| Xenoanthropology 03 | LU-XI-XA03    | LU-XI-XA02           |
+| Xenoanthropology 04 | LU-XI-XA04    | LU-XI-XA03           |
+
+### School of Xenobiology
+
+Xenobiology is the study of flora and fauna found on other planets.
+
+| Course Name    | Course Number | Course Prerequisites |
+| -------------- | ------------- | -------------------- |
+| Xenobiology 01 | LU-XI-XB01    | SIA-RMN-0003         |
+| Xenobiology 02 | LU-XI-XB02    | LU-XI-XB01           |
+| Xenobiology 03 | LU-XI-XB03    | LU-XI-XB02           |
+| Xenobiology 04 | LU-XI-XB04    | LU-XI-XB03           |
+
+## Society of World Civilizations
+
+### History of North America
+
+Take a whirlwind tour through the History of North America.
+
+| Course Name                    | Course Number | Course Prerequisites |
+| ------------------------------ | ------------- | -------------------- |
+| History of North America One   | MU-HSNAM-01   | SIA-RMN-0003         |
+| History of North America Two   | MU-HSNAM-02   | MU-HSNAM-01          |
+| History of North America Three | MU-HSNAM-03   | MU-HSNAM-02          |
+| History of North America Four  | MU-HSNAM-04   | MU-HSNAM-03          |
+
+### History of Europe
+
+This course explores the history of Old Earth's continent of Europe.
+
+| Course Name             | Course Number | Course Prerequisites |
+| ----------------------- | ------------- | -------------------- |
+| History of Europe One   | MU-HSEUR-01   | SIA-RMN-0003         |
+| History of Europe Two   | MU-HSEUR-02   | MU-HSEUR-01          |
+| History of Europe Three | MU-HSEUR-03   | MU-HSEUR-02          |
+| History of Europe Four  | MU-HSEUR-04   | MU-HSEUR-03          |
+
+### History of Asia
+
+Learn about the largest and most populated part of Old Earth. All in just four courses.
+
+| Course Name           | Course Number | Course Prerequisites |
+| --------------------- | ------------- | -------------------- |
+| History of Asia One   | MU-HSASN-01   | SIA-RMN-0003         |
+| History of Asia Two   | MU-HSASN-02   | MU-HSASN-01          |
+| History of Asia Three | MU-HSASN-03   | MU-HSASN-02          |
+| History of Asia Four  | MU-HSASN-04   | MU-HSASN-03          |
+
+### History of Africa
+
+Learn about the cradle of civilization, and the 54 nations that make up the continent of Africa.
+
+| Course Name             | Course Number | Course Prerequisites |
+| ----------------------- | ------------- | -------------------- |
+| History of Africa One   | MU-HSAFR-01   | SIA-RMN-0003         |
+| History of Africa Two   | MU-HSAFR-02   | MU-HSAFR-01          |
+| History of Africa Three | MU-HSAFR-03   | MU-HSAFR-02          |
+| History of Africa Four  | MU-HSAFR-04   | MU-HSAFR-03          |
+
+### History of South America
+
+These courses review the rich cultures of South America, home of Old Earth's largest rain forest.
+
+| Course Name                    | Course Number | Course Prerequisites |
+| ------------------------------ | ------------- | -------------------- |
+| History of South America One   | MU-HSSAM-01   | SIA-RMN-0003         |
+| History of South America Two   | MU-HSSAM-02   | MU-HSSAM-01          |
+| History of South America Three | MU-HSSAM-03   | MU-HSSAM-02          |
+| History of South America Four  | MU-HSSAM-04   | MU-HSSAM-03          |
+
+### History of Australia, New Zealand, and East Asia
+
+Learn about the Australian aborigines, New Zealand's Maori, and Oceania.
+
+| Course Name                                          | Course Number | Course Prerequisites |
+| ---------------------------------------------------- | ------------- | -------------------- |
+| History of Australia, New Zealand, & East Asia One   | MU-HSAZN-01   | SIA-RMN-0003         |
+| History of Australia, New Zealand, & East Asia Two   | MU-HSAZN-02   | MU-HSAZN-01          |
+| History of Australia, New Zealand, & East Asia Three | MU-HSAZN-03   | MU-HSAZN-02          |
+| History of Australia, New Zealand, & East Asia Four  | MU-HSAZN-04   | MU-HSAZN-03          |
+
+## Historical Society
+
+Mannheim University proudly offers a large and growing History Department. The History of TRMN, World Civilizations, and Great Britain in the Age of Sail, are all within this department.
+
+### History of TRMN
+
+Learn about the foundation of the The Royal Manticoran Navy, The Official Honor Harrington Fan Club, and the canonical Royal Manticoran Navy.
+
+| Course Name           | Course Number | Course Prerequisites |
+| --------------------- | ------------- | -------------------- |
+| History of TRMN One   | MU-HSTRM-01   | SIA-RMN-0003         |
+| History of TRMN Two   | MU-HSTRM-02   | MU-HSTRM-01          |
+| History of TRMN Three | MU-HSTRM-03   | MU-HSTRM-02          |
+| History of TRMN Four  | MU-HSTRM-04   | MU-HSTRM-03          |
+
+### History of 19th Century - Earth
+
+This series of courses explores major historical events of the nineteenth century.
+
+| Course Name                       | Course Number | Course Prerequisites |
+| --------------------------------- | ------------- | -------------------- |
+| History of the 19th Century One   | MU-HS19C-01   | SIA-RMN-0003         |
+| History of the 19th Century Two   | MU-HS19C-02   | MU-HS19C-01          |
+| History of the 19th Century Three | MU-HS19C-03   | MU-HS19C-02          |
+| History of the 19th Century Four  | MU-HS19C-04   | MU-HS19C-03          |
+
+### History of 20th Century - Earth
+
+This series of courses explores major historical events of the twentieth century.
+
+| Course Name                       | Course Number | Course Prerequisites |
+| --------------------------------- | ------------- | -------------------- |
+| History of the 20th Century One   | MU-HS20C-01   | SIA-RMN-0003         |
+| History of the 20th Century Two   | MU-HS20C-02   | MU-HS20C-01          |
+| History of the 20th Century Three | MU-HS20C-03   | MU-HS20C-02          |
+| History of the 20th Century Four  | MU-HS20C-04   | MU-HS20C-03          |
+
+### Great Britain and the Age of Sail
+
+This course series explores the events the Age of Sail and the Birth of the Royal Navy
+
+| Course Name                              | Course Number | Course Prerequisites |
+| ---------------------------------------- | ------------- | -------------------- |
+| Age of Sail - Birth of the Royal Navy 01 | MU-HSBSA-01   | SIA-RMN-0003         |
+| Age of Sail - Birth of the Royal Navy 02 | MU-HSBSA-02   | MU-HSBSA-01          |
+| Age of Sail - Birth of the Royal Navy 03 | MU-HSBSA-03   | MU-HSBSA-02          |
+| Age of Sail - Birth of the Royal Navy 04 | MU-HSBSA-04   | MU-HSBSA-03          |
+
+### History of Slavery
+
+This course series explores historical and modern slavery, and abolitionism with a specific focus on the abolitionists that David Weber references in the book series.
+
+| Course Name                   | Course Number | Course Prerequisites |
+| ----------------------------- | ------------- | -------------------- |
+| General History of Slavery    | MU-HSSLV-01   | SIA-RMN-0003         |
+| General Abolition of Slavery  | MU-HSSLV-02   | MU-HSSLV-01          |
+| British Abolitionist Movement | MU-HSSLV-03   | MU-HSSLV-02          |
+| Modern Slavery                | MU-HSSLV-04   | MU-HSSLV-03          |
+
+## Society of Applied Sciences
+
+### History of Medicine
+
+The origins of modern medical treatments are explored in this series of courses.
+
+| Course Name               | Course Number | Course Prerequisites |
+| ------------------------- | ------------- | -------------------- |
+| History of Medicine One   | MU-HSMED-01   | SIA-RMN-0003         |
+| History of Medicine Two   | MU-HSMED-02   | MU-HSMED-01          |
+| History of Medicine Three | MU-HSMED-03   | MU-HSMED-02          |
+| History of Medicine Four  | MU-HSMED-04   | MU-HSMED-03          |
+
+### School of Criminology
+
+The Landing University School of Criminology is the foremost school of criminology on Manticore. At the School of Criminology you will draw upon psychology, sociology, law, social work, criminology and criminal justice, history, and political science to understand the science behind the prevention of criminal behavior
+
+| Course Name    | Course Number | Course Prerequisites |
+| -------------- | ------------- | -------------------- |
+| Criminology 01 | LU-CRIM-01    | SIA-RMN-0003         |
+| Criminology 02 | LU-CRIM-02    | LU-CRIM-01           |
+| Criminology 03 | LU-CRIM-03    | LU-CRIM-02           |
+| Criminology 04 | LU-CRIM-04    | LU-CRIM-03           |
+
+### School of Basic Emergency Knowledge
+
+This school offers courses from the 'real world' U.S. FEMA (Federal Emergency Management Agency) Independent Training course system. The training is free and available online. Students must first register for a FEMA Student ID Number. You register for a FEMA SID here: https://cdp.dhs.gov/femasid. Students are welcome world-wide.
+
+FEMA courses taken in the past may be submitted for credit so long as the on-line course is no more than one version older than the course that is currently offered. Course that were taken in a live setting, must be no more that 3-years old to be submitted for credit.
+
+The below courses have been approved by BuTrain and may be accessed here: https://training.fema.gov/is/
+
+| Course Name                                                        | Course Number | Course Prerequisites |
+| ------------------------------------------------------------------ | ------------- | -------------------- |
+| IS 100 - Introduction to Incident Command System                   | MU-BEK-01     | SIA-RMN-0003         |
+| IS 200 - Basic Incident Command System for Initial Response        | MU-BEK-02     | SIA-RMN-0003         |
+| IS 700 - National Incident Management System                       | MU-BEK-03     | SIA-RMN-0003         |
+| IS 800 - National Response Framework                               | MU-BEK-04     | SIA-RMN-0003         |
+| IS 230 - Fundamentals of Emergency Management                      | MU-BEK-05     | SIA-RMN-0003         |
+| IS 317 - Introduction to Community Emergency Response Team (CERTs) | MU-BEK-06     | SIA-RMN-0003         |
+| IS 75 - Military Resources in Emergency Management                 | MU-BEK-07     | SIA-RMN-0003         |
+| IS 10 - Animals in Disasters: Awareness and Preparedness           | MU-BEK-08     | SIA-RMN-0003         |

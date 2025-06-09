@@ -13,7 +13,10 @@ import {
 } from '../types'
 import { getLogger } from './logger'
 
-const COURSE_CODE_REGEX = /([A-Z]{3}-[A-Z]{2,4}-\d{2,4}[ACDW]?)/g
+// Updated regex to handle both traditional and new course formats:
+// Traditional: SIA-RMN-0001, GPU-ALC-0010, SIA-SRN-20W
+// New formats: LU-XI-CZ01, MU-PLSC-02, RMACA-AOPA-E07, RMACA-RMAIA-07D
+const COURSE_CODE_REGEX = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/g
 const LEVEL_REGEX = /-(\d{2,4})([ACDW])/
 
 export interface DepartmentMapping {
@@ -198,7 +201,8 @@ export class CourseParser {
 
       // Extract clean course code from the raw course number field
       // This handles cases like "SIA-SRN-20W Project" -> "SIA-SRN-20W"
-      const courseCodeRegex = /([A-Z]{3}-[A-Z]{2,4}-\d{2,4}[ACDW]?)/
+      // Updated to handle new formats: LU-XI-CZ01, MU-PLSC-02, RMACA-AOPA-E07, etc.
+      const courseCodeRegex = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/
       const courseCodeMatch = rawCourseNumber.match(courseCodeRegex)
       const courseNumber = courseCodeMatch ? courseCodeMatch[1] : rawCourseNumber.trim()
 
@@ -236,7 +240,7 @@ export class CourseParser {
 
     // Check for complex requirements first (like Navy Counselor courses)
     if (this.hasComplexRequirements(prereqString)) {
-      const complexReqs = this.parseComplexCourseRequirements(prereqString)
+      const complexReqs = this.parseComplexRequirements(prereqString)
       prerequisites.push(...complexReqs)
       return prerequisites
     }
@@ -521,41 +525,6 @@ export class CourseParser {
     return Array.from(departments).sort()
   }
 
-  private extractCourseLevel(courseCode: string | undefined): CourseLevel | undefined {
-    if (!courseCode) {
-      return undefined
-    }
-    const levelMatch = courseCode.match(LEVEL_REGEX)
-    return levelMatch?.[2] as CourseLevel
-  }
-
-  private parseWordNumber(word: string): number {
-    const numberWords: { [key: string]: number } = {
-      one: 1,
-      two: 2,
-      three: 3,
-      four: 4,
-      five: 5,
-      six: 6,
-      seven: 7,
-      eight: 8,
-      nine: 9,
-      ten: 10
-    }
-    return numberWords[word.toLowerCase()] || 0
-  }
-
-  private hasComplexRequirements(prereqString: string): boolean {
-    const lowerCase = prereqString.toLowerCase()
-    // Check for patterns like "5 A courses from any of the following departments"
-    // or "2 C courses from any of the departments listed above"
-    return (
-      (lowerCase.includes('courses from any of') || lowerCase.includes('course from any of')) &&
-      (lowerCase.includes('departments') || lowerCase.includes('department')) &&
-      /\d+\s+[acdw]\s+(courses?)/i.test(prereqString)
-    )
-  }
-
   private parseComplexCourseRequirements(prereqString: string): Prerequisite[] {
     const prerequisites: Prerequisite[] = []
 
@@ -645,6 +614,66 @@ export class CourseParser {
     })
 
     return Array.from(new Set(departments)) // Remove duplicates
+  }
+
+  private extractCourseLevel(courseCode: string | undefined): CourseLevel | undefined {
+    if (!courseCode) {
+      return undefined
+    }
+
+    // First try the traditional format: -(\d{2,4})([ACDW])
+    const traditionalMatch = courseCode.match(LEVEL_REGEX)
+    if (traditionalMatch) {
+      return traditionalMatch[2] as CourseLevel
+    }
+
+    // Handle new formats like RMACA-AOPA-E07, RMACA-RMAIA-07D
+    // Extract the last part after the final dash
+    const parts = courseCode.split('-')
+    if (parts.length >= 3) {
+      const lastPart = parts[parts.length - 1]
+
+      // Check for letter at the beginning (E07, R09)
+      const prefixMatch = lastPart.match(/^([ACDW])\d+$/)
+      if (prefixMatch) {
+        return prefixMatch[1] as CourseLevel
+      }
+
+      // Check for letter at the end (07D)
+      const suffixMatch = lastPart.match(/^\d+([ACDW])$/)
+      if (suffixMatch) {
+        return suffixMatch[1] as CourseLevel
+      }
+    }
+
+    return undefined
+  }
+
+  private parseWordNumber(word: string): number {
+    const numberWords: { [key: string]: number } = {
+      one: 1,
+      two: 2,
+      three: 3,
+      four: 4,
+      five: 5,
+      six: 6,
+      seven: 7,
+      eight: 8,
+      nine: 9,
+      ten: 10
+    }
+    return numberWords[word.toLowerCase()] || 0
+  }
+
+  private hasComplexRequirements(prereqString: string): boolean {
+    const lowerCase = prereqString.toLowerCase()
+    // Check for patterns like "5 A courses from any of the following departments"
+    // or "2 C courses from any of the departments listed above"
+    return (
+      (lowerCase.includes('courses from any of') || lowerCase.includes('course from any of')) &&
+      (lowerCase.includes('departments') || lowerCase.includes('department')) &&
+      /\d+\s+[acdw]\s+(courses?)/i.test(prereqString)
+    )
   }
 }
 

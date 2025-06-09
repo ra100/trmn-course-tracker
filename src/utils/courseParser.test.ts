@@ -766,6 +766,176 @@ Both RMN and RMMC officers wear the same pin.
       expect(qualDeptReq?.level).toBe('D')
     })
   })
+
+  describe('new course formats (Universities & RMACA)', () => {
+    it('should parse new university course formats correctly', () => {
+      const markdown = `
+## Lysander University
+
+### Xenological Institute
+
+| Course Name                    | Course Number | Prerequisites     |
+| ------------------------------ | ------------- | ----------------- |
+| Intro to Cryptozoology         | LU-XI-CZ01    |                   |
+| Advanced Cryptozoology         | LU-XI-CZ02    | LU-XI-CZ01        |
+
+## Mannheim University
+
+### Political Science
+
+| Course Name                    | Course Number | Prerequisites     |
+| ------------------------------ | ------------- | ----------------- |
+| Political Science I            | MU-PLSC-01    |                   |
+| Political Science II           | MU-PLSC-02    | MU-PLSC-01        |
+
+### Economics
+
+| Course Name                    | Course Number | Prerequisites     |
+| ------------------------------ | ------------- | ----------------- |
+| Economics I                    | MU-ECON-01    |                   |
+| Economics II                   | MU-ECON-02    | MU-ECON-01        |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      expect(result.courses).toHaveLength(6)
+
+      // Test LU courses
+      const luCZ01 = result.courses.find((c) => c.code === 'LU-XI-CZ01')
+      expect(luCZ01).toBeDefined()
+      expect(luCZ01?.name).toBe('Intro to Cryptozoology')
+      expect(luCZ01?.prerequisites).toHaveLength(0)
+
+      const luCZ02 = result.courses.find((c) => c.code === 'LU-XI-CZ02')
+      expect(luCZ02).toBeDefined()
+      expect(luCZ02?.name).toBe('Advanced Cryptozoology')
+      expect(luCZ02?.prerequisites).toHaveLength(1)
+      expect(luCZ02?.prerequisites[0].code).toBe('LU-XI-CZ01')
+
+      // Test MU courses
+      const muPLSC02 = result.courses.find((c) => c.code === 'MU-PLSC-02')
+      expect(muPLSC02).toBeDefined()
+      expect(muPLSC02?.name).toBe('Political Science II')
+      expect(muPLSC02?.prerequisites).toHaveLength(1)
+      expect(muPLSC02?.prerequisites[0].code).toBe('MU-PLSC-01')
+
+      const muECON02 = result.courses.find((c) => c.code === 'MU-ECON-02')
+      expect(muECON02).toBeDefined()
+      expect(muECON02?.name).toBe('Economics II')
+      expect(muECON02?.prerequisites).toHaveLength(1)
+      expect(muECON02?.prerequisites[0].code).toBe('MU-ECON-01')
+    })
+
+    it('should parse RMACA course formats with letter prefixes/suffixes', () => {
+      const markdown = `
+## Royal Manticoran Aerospace Command Academy
+
+### Royal Manticoran Aerospace Intelligence Agency
+
+| Course Name                    | Course Number      | Prerequisites       |
+| ------------------------------ | ------------------ | ------------------- |
+| Basic Intelligence            | RMACA-RMAIA-07A     |                     |
+| Advanced Intelligence        | RMACA-RMAIA-07D     | RMACA-RMAIA-07A     |
+
+### AOPA Courses
+
+| Course Name                    | Course Number      | Prerequisites       |
+| ------------------------------ | ------------------ | ------------------- |
+| Emergency Procedures          | RMACA-AOPA-E07      |                     |
+| Radio Operations              | RMACA-AOPA-R09      | RMACA-AOPA-E07      |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      expect(result.courses).toHaveLength(4)
+
+      // Test RMACA-RMAIA courses
+      const rmaia07A = result.courses.find((c) => c.code === 'RMACA-RMAIA-07A')
+      expect(rmaia07A).toBeDefined()
+      expect(rmaia07A?.name).toBe('Basic Intelligence')
+      expect(rmaia07A?.level).toBe('A')
+      expect(rmaia07A?.prerequisites).toHaveLength(0)
+
+      const rmaia07D = result.courses.find((c) => c.code === 'RMACA-RMAIA-07D')
+      expect(rmaia07D).toBeDefined()
+      expect(rmaia07D?.name).toBe('Advanced Intelligence')
+      expect(rmaia07D?.level).toBe('D')
+      expect(rmaia07D?.prerequisites).toHaveLength(1)
+      expect(rmaia07D?.prerequisites[0].code).toBe('RMACA-RMAIA-07A')
+
+      // Test RMACA-AOPA courses
+      const aopaE07 = result.courses.find((c) => c.code === 'RMACA-AOPA-E07')
+      expect(aopaE07).toBeDefined()
+      expect(aopaE07?.name).toBe('Emergency Procedures')
+      expect(aopaE07?.level).toBe(undefined) // E is not a valid course level (only A, C, D, W are valid)
+      expect(aopaE07?.prerequisites).toHaveLength(0)
+
+      const aopaR09 = result.courses.find((c) => c.code === 'RMACA-AOPA-R09')
+      expect(aopaR09).toBeDefined()
+      expect(aopaR09?.name).toBe('Radio Operations')
+      expect(aopaR09?.level).toBe(undefined) // R is not a valid course level (only A, C, D, W are valid)
+      expect(aopaR09?.prerequisites).toHaveLength(1)
+      expect(aopaR09?.prerequisites[0].code).toBe('RMACA-AOPA-E07')
+    })
+
+    it('should handle mixed format prerequisites correctly', () => {
+      const markdown = `
+## Mixed Format Test
+
+| Course Name                    | Course Number      | Prerequisites                    |
+| ------------------------------ | ------------------ | -------------------------------- |
+| Complex Course                 | MU-TEST-01         | SIA-RMN-0001 LU-XI-CZ01         |
+| Alternative Course             | RMACA-TEST-02      | GPU-ALC-0010 or MU-ECON-02      |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      expect(result.courses).toHaveLength(2)
+
+      // Test course with multiple traditional/new format prerequisites
+      const complexCourse = result.courses.find((c) => c.code === 'MU-TEST-01')
+      expect(complexCourse).toBeDefined()
+      expect(complexCourse?.prerequisites).toHaveLength(2)
+      expect(complexCourse?.prerequisites[0].code).toBe('SIA-RMN-0001')
+      expect(complexCourse?.prerequisites[1].code).toBe('LU-XI-CZ01')
+
+      // Test course with OR condition mixing formats
+      const altCourse = result.courses.find((c) => c.code === 'RMACA-TEST-02')
+      expect(altCourse).toBeDefined()
+      expect(altCourse?.prerequisites).toHaveLength(1)
+      expect(altCourse?.prerequisites[0].type).toBe('alternative_group')
+      expect(altCourse?.prerequisites[0].alternativePrerequisites).toHaveLength(2)
+      expect(altCourse?.prerequisites[0].alternativePrerequisites?.[0].code).toBe('GPU-ALC-0010')
+      expect(altCourse?.prerequisites[0].alternativePrerequisites?.[1].code).toBe('MU-ECON-02')
+    })
+
+    it('should extract course levels correctly for new formats', () => {
+      const markdown = `
+## Level Test
+
+| Course Name                    | Course Number      | Prerequisites |
+| ------------------------------ | ------------------ | ------------- |
+| RMACA D Level                  | RMACA-TEST-07D     |               |
+| AOPA No Level                  | RMACA-AOPA-E07     |               |
+| University No Level            | MU-PLSC-02         |               |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      const rmacaD = result.courses.find((c) => c.code === 'RMACA-TEST-07D')
+      expect(rmacaD?.level).toBe('D')
+
+      const aopaE = result.courses.find((c) => c.code === 'RMACA-AOPA-E07')
+      expect(aopaE?.level).toBe(undefined) // E is not a valid course level (only A, C, D, W are valid)
+
+      const university = result.courses.find((c) => c.code === 'MU-PLSC-02')
+      expect(university?.level).toBe(undefined) // No level designation
+    })
+  })
 })
 
 // Test markdown with OR conditions
