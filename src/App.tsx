@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 import { EligibilityEngine } from './utils/eligibilityEngine'
 import { useCourseData } from './hooks/useCourseData'
-import { useUserProgress, useOptimisticUserProgress } from './hooks/useUserProgress'
+import { useUserProgress } from './hooks/useUserProgress'
 import { useUserSettings, useOptimisticUserSettings } from './hooks/useUserSettings'
 import { useMobileNavigation } from './hooks/useMobileNavigation'
 import { useFilterState } from './hooks/useFilterState'
+import { useCourseManagement } from './hooks/useCourseManagement'
 import { SkillTreeView } from './components/SkillTreeView'
 import { CourseDetails } from './components/CourseDetails'
 import { ProgressPanel } from './components/ProgressPanel'
@@ -15,16 +16,10 @@ import { GDPRConsentBanner } from './components/GDPRConsentBanner'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { DebugPanel } from './components/DebugPanel'
 import { SkipLinks } from './components/SkipLinks'
-import { UserProgress, Course, FilterOptions, UserSettings } from './types'
+import { Course, FilterOptions, UserSettings } from './types'
 import { getTheme } from './theme'
 import { useT, useTranslation } from './i18n'
-import {
-  initializeAnalytics,
-  trackPageView,
-  trackCourseCompletion,
-  trackViewModeChange,
-  ConsentSettings
-} from './utils/analytics'
+import { initializeAnalytics, trackPageView, trackViewModeChange, ConsentSettings } from './utils/analytics'
 
 const AppContainer = styled.div`
   display: flex;
@@ -266,7 +261,6 @@ function App() {
   const { data: courseData, isLoading: courseLoading, error: queryError, isError } = useCourseData()
   const { data: userProgress, isLoading: progressLoading } = useUserProgress()
   const { data: settings, isLoading: settingsLoading } = useUserSettings()
-  const { updateOptimistically: updateUserProgress } = useOptimisticUserProgress()
   const { updateOptimistically: updateSettings } = useOptimisticUserSettings()
 
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null)
@@ -285,6 +279,15 @@ function App() {
 
   // Filter state management with analytics
   const { filters, setFilters } = useFilterState(courseData?.courses.length || 0)
+
+  // Course management operations
+  const { toggleCourseCompletion, setCourseStatus, handleImportMedusaCourses } = useCourseManagement({
+    courseData,
+    eligibilityEngine,
+    userProgress,
+    selectedCourse,
+    setSelectedCourse
+  })
 
   // Initialize eligibility engine when course data loads
   useEffect(() => {
@@ -309,180 +312,6 @@ function App() {
   useEffect(() => {
     trackPageView()
   }, [])
-
-  const toggleCourseCompletion = (courseCode: string) => {
-    if (!courseData || !eligibilityEngine || !userProgress) {
-      return
-    }
-
-    const newCompleted = new Set(userProgress.completedCourses)
-    const newInProgress = new Set(userProgress.inProgressCourses)
-    const newWaitingGrade = new Set(userProgress.waitingGradeCourses)
-
-    const wasCompleted = newCompleted.has(courseCode)
-    if (wasCompleted) {
-      newCompleted.delete(courseCode)
-    } else {
-      newCompleted.add(courseCode)
-      // Remove from other statuses when marking as completed
-      newInProgress.delete(courseCode)
-      newWaitingGrade.delete(courseCode)
-
-      // Track course completion for analytics
-      const course = courseData.courses.find((c) => c.code === courseCode)
-      if (course) {
-        trackCourseCompletion(courseCode, course.name)
-      }
-    }
-
-    const newProgress: UserProgress = {
-      ...userProgress,
-      completedCourses: newCompleted,
-      inProgressCourses: newInProgress,
-      waitingGradeCourses: newWaitingGrade,
-      lastUpdated: new Date()
-    }
-
-    // Update available courses based on new completion status
-    const updatedCourses = eligibilityEngine.updateCourseAvailability(newProgress)
-    const newAvailable = new Set(updatedCourses.filter((course) => course.available).map((course) => course.code))
-
-    const finalProgress = {
-      ...newProgress,
-      availableCourses: newAvailable
-    }
-
-    updateUserProgress(() => finalProgress)
-
-    // Update selectedCourse if it's the course that was toggled
-    if (selectedCourse && selectedCourse.code === courseCode) {
-      const updatedSelectedCourse = updatedCourses.find((c) => c.code === courseCode)
-      if (updatedSelectedCourse) {
-        setSelectedCourse(updatedSelectedCourse)
-      }
-    }
-  }
-
-  const setCourseStatus = (courseCode: string, status: 'available' | 'in_progress' | 'waiting_grade' | 'completed') => {
-    if (!courseData || !eligibilityEngine || !userProgress) {
-      return
-    }
-
-    const newCompleted = new Set(userProgress.completedCourses)
-    const newInProgress = new Set(userProgress.inProgressCourses)
-    const newWaitingGrade = new Set(userProgress.waitingGradeCourses)
-
-    // Remove from all status sets first
-    newCompleted.delete(courseCode)
-    newInProgress.delete(courseCode)
-    newWaitingGrade.delete(courseCode)
-
-    // Add to appropriate set based on new status
-    switch (status) {
-      case 'completed':
-        newCompleted.add(courseCode)
-        break
-      case 'in_progress':
-        newInProgress.add(courseCode)
-        break
-      case 'waiting_grade':
-        newWaitingGrade.add(courseCode)
-        break
-      case 'available':
-        // Do nothing - already removed from all sets
-        break
-    }
-
-    const newProgress: UserProgress = {
-      ...userProgress,
-      completedCourses: newCompleted,
-      inProgressCourses: newInProgress,
-      waitingGradeCourses: newWaitingGrade,
-      lastUpdated: new Date()
-    }
-
-    // Update available courses based on new completion status
-    const updatedCourses = eligibilityEngine.updateCourseAvailability(newProgress)
-    const newAvailable = new Set(updatedCourses.filter((course) => course.available).map((course) => course.code))
-
-    const finalProgress = {
-      ...newProgress,
-      availableCourses: newAvailable
-    }
-
-    updateUserProgress(() => finalProgress)
-
-    // Update selectedCourse if it's the course that was status changed
-    if (selectedCourse && selectedCourse.code === courseCode) {
-      const updatedSelectedCourse = updatedCourses.find((c) => c.code === courseCode)
-      if (updatedSelectedCourse) {
-        setSelectedCourse(updatedSelectedCourse)
-      }
-    }
-  }
-
-  const handleImportMedusaCourses = (
-    courseCodes: string[]
-  ): { imported: number; trackable: number; alreadyCompleted: number } => {
-    if (!courseData || !eligibilityEngine || !userProgress) {
-      return { imported: 0, trackable: 0, alreadyCompleted: 0 }
-    }
-
-    // Get all trackable course codes from our course data
-    const trackableCourses = new Set(courseData.courses.map((course) => course.code))
-
-    // Filter imported courses to only include trackable ones
-    const trackableImportedCourses = courseCodes.filter((code) => trackableCourses.has(code))
-
-    // Check which courses are already completed
-    const existingCourses = userProgress.completedCourses
-    const alreadyCompleted = trackableImportedCourses.filter((code) => existingCourses.has(code))
-    const newCourses = trackableImportedCourses.filter((code) => !existingCourses.has(code))
-
-    // Create new status sets - remove imported courses from in-progress and waiting-grade
-    const newCompleted = new Set([...Array.from(existingCourses), ...newCourses])
-    const newInProgress = new Set(userProgress.inProgressCourses)
-    const newWaitingGrade = new Set(userProgress.waitingGradeCourses)
-
-    // Remove all imported trackable courses from other status sets (Medusa import overrides manual status)
-    trackableImportedCourses.forEach((courseCode) => {
-      newInProgress.delete(courseCode)
-      newWaitingGrade.delete(courseCode)
-    })
-
-    const newProgress: UserProgress = {
-      ...userProgress,
-      completedCourses: newCompleted,
-      inProgressCourses: newInProgress,
-      waitingGradeCourses: newWaitingGrade,
-      lastUpdated: new Date()
-    }
-
-    // Update available courses based on new completion status
-    const updatedCourses = eligibilityEngine.updateCourseAvailability(newProgress)
-    const newAvailable = new Set(updatedCourses.filter((course) => course.available).map((course) => course.code))
-
-    const finalProgress = {
-      ...newProgress,
-      availableCourses: newAvailable
-    }
-
-    updateUserProgress(() => finalProgress)
-
-    // Update selectedCourse if it's affected by the import
-    if (selectedCourse && trackableImportedCourses.includes(selectedCourse.code)) {
-      const updatedSelectedCourse = updatedCourses.find((c) => c.code === selectedCourse.code)
-      if (updatedSelectedCourse) {
-        setSelectedCourse(updatedSelectedCourse)
-      }
-    }
-
-    return {
-      imported: courseCodes.length,
-      trackable: trackableImportedCourses.length,
-      alreadyCompleted: alreadyCompleted.length
-    }
-  }
 
   const handleCourseSelect = (course: Course) => {
     setSelectedCourse(course)
