@@ -211,9 +211,9 @@ describe('FilterPanel', () => {
       <FilterPanel filters={defaultFilters} courseData={mockCourseData} onFilterChange={mockOnFilterChange} />
     )
 
-    expect(screen.getByText('Level A')).toBeInTheDocument()
-    expect(screen.getByText('Level C')).toBeInTheDocument()
-    expect(screen.getByText('Level D')).toBeInTheDocument()
-    expect(screen.getByText('Level W')).toBeInTheDocument()
+    expect(screen.getByText('A')).toBeInTheDocument()
+    expect(screen.getByText('C')).toBeInTheDocument()
+    expect(screen.getByText('D')).toBeInTheDocument()
+    expect(screen.getByText('W')).toBeInTheDocument()
   })
 })

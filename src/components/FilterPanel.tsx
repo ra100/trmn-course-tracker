@@ -1,98 +1,16 @@
-import React, { useMemo } from 'react'
-import styled from 'styled-components'
-import { FilterOptions, ParsedCourseData, CourseLevel, NodeStatus } from '../types'
-import { getAllDepartments } from '../utils/departmentUtils'
+import React from 'react'
+import { FilterOptions, ParsedCourseData } from '../types'
 import { useT } from '../i18n'
-import { trackFilterUsage } from '../utils/analytics'
-
-const PanelContainer = styled.div`
-  padding: 1.5rem;
-  border-bottom: 1px solid ${(props) => props.theme.colors.border};
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
-`
-
-const PanelTitle = styled.h3`
-  color: ${(props) => props.theme.colors.text};
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
-`
-
-const FilterSection = styled.div`
-  margin-bottom: 1.5rem;
-`
-
-const FilterLabel = styled.label`
-  display: block;
-  color: ${(props) => props.theme.colors.textSecondary};
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-`
-
-const CheckboxGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-`
-
-const CheckboxItem = styled.label`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: ${(props) => props.theme.colors.text};
-  font-size: 0.85rem;
-  cursor: pointer;
-  padding: 0.2rem 0;
-
-  &:hover {
-    color: ${(props) => props.theme.colors.primary};
-  }
-`
-
-const Checkbox = styled.input.attrs({ type: 'checkbox' })`
-  accent-color: ${(props) => props.theme.colors.primary};
-  width: 16px;
-  height: 16px;
-`
-
-const ClearButton = styled.button`
-  background: ${(props) => props.theme.colors.error};
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  margin-top: 1rem;
-  width: 100%;
-
-  &:hover {
-    opacity: 0.9;
-  }
-`
-
-const FilterCount = styled.div`
-  background: ${(props) => props.theme.colors.surface};
-  padding: 0.8rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  text-align: center;
-  border: 1px solid ${(props) => props.theme.colors.border};
-`
-
-const CountValue = styled.div`
-  font-size: 1.2rem;
-  color: ${(props) => props.theme.colors.primary};
-  font-weight: bold;
-`
-
-const CountLabel = styled.div`
-  font-size: 0.8rem;
-  color: ${(props) => props.theme.colors.textSecondary};
-`
+import {
+  FilterCountDisplay,
+  StatusFilterSection,
+  LevelFilterSection,
+  DepartmentFilterSection,
+  useFilterHandlers,
+  PanelContainer,
+  PanelTitle,
+  ClearButton
+} from './FilterPanel/index'
 
 interface FilterPanelProps {
   filters: FilterOptions
@@ -100,80 +18,14 @@ interface FilterPanelProps {
   onFilterChange: (filters: FilterOptions) => void
 }
 
+/**
+ * FilterPanel provides comprehensive course filtering options
+ * with status, level, and department filters
+ */
 const FilterPanelComponent: React.FC<FilterPanelProps> = ({ filters, courseData, onFilterChange }) => {
   const t = useT()
-  const levels: CourseLevel[] = ['A', 'C', 'D', 'W']
-  const statuses: NodeStatus[] = ['completed', 'in_progress', 'waiting_grade', 'available', 'locked']
-  const departments = useMemo(() => getAllDepartments(courseData), [courseData])
-
-  const handleDepartmentChange = (department: string, checked: boolean) => {
-    const currentDepartments = filters.departments || []
-    const newDepartments = checked
-      ? [...currentDepartments, department]
-      : currentDepartments.filter((d) => d !== department)
-
-    trackFilterUsage('department', checked ? department : `remove_${department}`)
-
-    onFilterChange({
-      ...filters,
-      departments: newDepartments.length > 0 ? newDepartments : undefined
-    })
-  }
-
-  const handleLevelChange = (level: CourseLevel, checked: boolean) => {
-    const currentLevels = filters.levels || []
-    const newLevels = checked ? [...currentLevels, level] : currentLevels.filter((l) => l !== level)
-
-    trackFilterUsage('level', checked ? level : `remove_${level}`)
-
-    onFilterChange({
-      ...filters,
-      levels: newLevels.length > 0 ? newLevels : undefined
-    })
-  }
-
-  const handleStatusChange = (status: NodeStatus, checked: boolean) => {
-    const currentStatuses = filters.status || []
-    const newStatuses = checked ? [...currentStatuses, status] : currentStatuses.filter((s) => s !== status)
-
-    trackFilterUsage('status', checked ? status : `remove_${status}`)
-
-    onFilterChange({
-      ...filters,
-      status: newStatuses.length > 0 ? newStatuses : undefined
-    })
-  }
-
-  const handleClearFilters = () => {
-    trackFilterUsage('clear_all', 'filters_cleared')
-    onFilterChange({})
-  }
-
-  const getFilterCount = () => {
-    let count = 0
-    if (filters.departments) {count += filters.departments.length}
-    if (filters.levels) {count += filters.levels.length}
-    if (filters.status) {count += filters.status.length}
-    if (filters.search) {count += 1}
-    return count
-  }
-
-  const getStatusLabel = (status: NodeStatus): string => {
-    switch (status) {
-      case 'completed':
-        return t.filters.statusLabels.completed
-      case 'in_progress':
-        return t.filters.statusLabels.inProgress
-      case 'waiting_grade':
-        return t.filters.statusLabels.waitingGrade
-      case 'available':
-        return t.filters.statusLabels.available
-      case 'locked':
-        return t.filters.statusLabels.locked
-      default:
-        return status
-    }
-  }
+  const { handleDepartmentChange, handleLevelChange, handleStatusChange, handleClearFilters, getFilterCount } =
+    useFilterHandlers({ filters, onFilterChange })
 
   const activeFilterCount = getFilterCount()
 
@@ -181,60 +33,13 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ filters, courseData,
     <PanelContainer>
       <PanelTitle>{t.filters.title}</PanelTitle>
 
-      {activeFilterCount > 0 && (
-        <FilterCount>
-          <CountValue>{activeFilterCount}</CountValue>
-          <CountLabel>{activeFilterCount === 1 ? t.filters.activeFilter : t.filters.activeFilters}</CountLabel>
-        </FilterCount>
-      )}
+      <FilterCountDisplay count={activeFilterCount} />
 
-      <FilterSection>
-        <FilterLabel id="status-filter-label">{t.filters.status}</FilterLabel>
-        <CheckboxGroup role="group" aria-labelledby="status-filter-label">
-          {statuses.map((status) => (
-            <CheckboxItem key={status}>
-              <Checkbox
-                checked={filters.status?.includes(status) || false}
-                onChange={(e) => handleStatusChange(status, e.target.checked)}
-                aria-describedby={`status-${status}-label`}
-              />
-              <span id={`status-${status}-label`}>{getStatusLabel(status)}</span>
-            </CheckboxItem>
-          ))}
-        </CheckboxGroup>
-      </FilterSection>
+      <StatusFilterSection filters={filters} onStatusChange={handleStatusChange} />
 
-      <FilterSection>
-        <FilterLabel id="levels-filter-label">{t.filters.levels}</FilterLabel>
-        <CheckboxGroup role="group" aria-labelledby="levels-filter-label">
-          {levels.map((level) => (
-            <CheckboxItem key={level}>
-              <Checkbox
-                checked={filters.levels?.includes(level) || false}
-                onChange={(e) => handleLevelChange(level, e.target.checked)}
-                aria-describedby={`level-${level}-label`}
-              />
-              <span id={`level-${level}-label`}>Level {level}</span>
-            </CheckboxItem>
-          ))}
-        </CheckboxGroup>
-      </FilterSection>
+      <LevelFilterSection filters={filters} onLevelChange={handleLevelChange} />
 
-      <FilterSection>
-        <FilterLabel id="departments-filter-label">Departments</FilterLabel>
-        <CheckboxGroup role="group" aria-labelledby="departments-filter-label">
-          {departments.map((department) => (
-            <CheckboxItem key={department}>
-              <Checkbox
-                checked={filters.departments?.includes(department) || false}
-                onChange={(e) => handleDepartmentChange(department, e.target.checked)}
-                aria-describedby={`department-${department.replace(/\s+/g, '-').toLowerCase()}-label`}
-              />
-              <span id={`department-${department.replace(/\s+/g, '-').toLowerCase()}-label`}>{department}</span>
-            </CheckboxItem>
-          ))}
-        </CheckboxGroup>
-      </FilterSection>
+      <DepartmentFilterSection filters={filters} courseData={courseData} onDepartmentChange={handleDepartmentChange} />
 
       {activeFilterCount > 0 && <ClearButton onClick={handleClearFilters}>{t.filters.clearFilters}</ClearButton>}
     </PanelContainer>
