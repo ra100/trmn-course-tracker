@@ -165,7 +165,10 @@ describe('useUserProgress', () => {
         lastUpdated: expect.any(Date)
       })
 
-      expect(consoleMock.error).toHaveBeenCalledWith('Error loading user progress:', expect.any(Error))
+      expect(consoleMock.error).toHaveBeenCalledWith(
+        'Error loading user progress from localStorage:',
+        expect.any(Error)
+      )
     })
 
     it('should handle missing fields in stored data', async () => {
@@ -278,12 +281,16 @@ describe('useUserProgress', () => {
         result.current.mutate(mockUserProgress)
       })
 
-      await waitFor(() => {
-        expect(result.current.isError).toBe(true)
-      })
+      // Wait longer for retries to exhaust (2 retries with exponential backoff)
+      await waitFor(
+        () => {
+          expect(result.current.isError).toBe(true)
+        },
+        { timeout: 15000 }
+      )
 
       expect(result.current.error).toEqual(new Error('Storage quota exceeded'))
-      expect(consoleMock.error).toHaveBeenCalledWith('Error saving user progress:', expect.any(Error))
+      expect(consoleMock.error).toHaveBeenCalledWith('❌ Fallback localStorage save failed:', expect.any(Error))
     })
 
     it('should log success message in debug mode', async () => {
@@ -304,7 +311,7 @@ describe('useUserProgress', () => {
         expect(result.current.isSuccess).toBe(true)
       })
 
-      expect(consoleMock.log).toHaveBeenCalledWith('💾 User progress saved to localStorage')
+      expect(consoleMock.log).toHaveBeenCalledWith('💾 User progress saved to localStorage (fallback)')
     })
   })
 
@@ -333,7 +340,7 @@ describe('useUserProgress', () => {
     it('should revert changes on localStorage error', async () => {
       queryClient.setQueryData(USER_PROGRESS_QUERY_KEY, mockUserProgress)
       localStorageMock.setItem.mockImplementation(() => {
-        throw new Error('Storage error')
+        throw new Error('Storage quota exceeded')
       })
 
       const { result } = renderHook(() => useOptimisticUserProgress(), {
@@ -351,7 +358,7 @@ describe('useUserProgress', () => {
           await result.current.updateOptimistically(updater)
         } catch (error) {
           errorThrown = true
-          expect(error).toEqual(new Error('Storage error'))
+          expect(error).toEqual(new Error('Storage quota exceeded'))
 
           // Check cache immediately after error in the catch block
           const dataAfterError = queryClient.getQueryData<UserProgress>(USER_PROGRESS_QUERY_KEY)
