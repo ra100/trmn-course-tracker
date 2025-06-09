@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useRef, useCallback } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
 import styled from 'styled-components'
-import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings, NodeStatus } from '../types'
+import { ParsedCourseData, UserProgress, Course, FilterOptions, UserSettings } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
 import { useT } from '../i18n'
-import { trackCourseDetailsView, trackFeatureEngagement } from '../utils/analytics'
+
 import { useCourseFiltering } from '../hooks/useCourseFiltering'
 import { getCourseMainDepartment } from '../utils/departmentUtils'
 import { CourseNode } from './CourseNode'
@@ -220,96 +220,6 @@ const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({
     userProgress,
     courseData
   })
-
-  const handleCourseClick = useCallback(
-    (course: Course) => {
-      trackCourseDetailsView(course.code, course.name, 'skill_tree_click')
-      onCourseSelect(course)
-    },
-    [onCourseSelect]
-  )
-
-  const handleCourseDoubleClick = useCallback(
-    (course: Course) => {
-      if (course.available || course.completed) {
-        trackFeatureEngagement('course_toggle', 'double_click', {
-          course_id: course.code,
-          course_name: course.name,
-          current_status: course.completed ? 'completed' : 'available'
-        })
-        onCourseToggle(course.code)
-      }
-    },
-    [onCourseToggle]
-  )
-
-  const handleCourseRightClick = useCallback(
-    (e: React.MouseEvent, course: Course) => {
-      e.preventDefault()
-      if (
-        !course.available &&
-        !course.completed &&
-        !userProgress.inProgressCourses.has(course.code) &&
-        !userProgress.waitingGradeCourses.has(course.code)
-      ) {
-        return // Don't show context menu for locked courses
-      }
-
-      const contextMenu = document.createElement('div')
-      contextMenu.style.position = 'fixed'
-      contextMenu.style.left = `${e.clientX}px`
-      contextMenu.style.top = `${e.clientY}px`
-      contextMenu.style.background = 'white'
-      contextMenu.style.border = '1px solid #ccc'
-      contextMenu.style.borderRadius = '4px'
-      contextMenu.style.padding = '8px'
-      contextMenu.style.zIndex = '1000'
-      contextMenu.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)'
-      contextMenu.style.minWidth = '120px'
-
-      const options = [
-        { label: t.courseStatus.available, value: 'available' as const },
-        { label: t.courseStatus.inProgress, value: 'in_progress' as const },
-        { label: t.courseStatus.waitingGrade, value: 'waiting_grade' as const },
-        { label: t.courseStatus.completed, value: 'completed' as const }
-      ]
-
-      options.forEach((option) => {
-        const item = document.createElement('div')
-        item.textContent = option.label
-        item.style.padding = '4px 8px'
-        item.style.cursor = 'pointer'
-        item.style.borderRadius = '2px'
-        item.addEventListener('mouseenter', () => {
-          item.style.backgroundColor = '#f0f0f0'
-        })
-        item.addEventListener('mouseleave', () => {
-          item.style.backgroundColor = 'transparent'
-        })
-        item.addEventListener('click', () => {
-          trackFeatureEngagement('course_status_change', 'context_menu', {
-            course_id: course.code,
-            course_name: course.name,
-            new_status: option.value
-          })
-          onCourseStatusChange(course.code, option.value)
-          document.body.removeChild(contextMenu)
-        })
-        contextMenu.appendChild(item)
-      })
-
-      const closeContextMenu = () => {
-        if (document.body.contains(contextMenu)) {
-          document.body.removeChild(contextMenu)
-        }
-        document.removeEventListener('click', closeContextMenu)
-      }
-
-      document.addEventListener('click', closeContextMenu)
-      document.body.appendChild(contextMenu)
-    },
-    [t.courseStatus, onCourseStatusChange, userProgress.inProgressCourses, userProgress.waitingGradeCourses]
-  )
 
   const renderCoursesByCategory = () => {
     if (groupingMode === 'department') {

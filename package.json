@@ -55,9 +55,9 @@
     "prebuild": "tsx scripts/buildCourseData.ts",
     "preview": "vite preview",
     "start": "vite preview",
-    "test:run": "vitest run",
+    "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "test": "vitest",
+    "test": "vitest run",
     "type-check": "tsc --noEmit"
   },
   "browserslist": {
