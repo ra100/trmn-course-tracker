@@ -311,7 +311,7 @@ describe('useUserProgress', () => {
         expect(result.current.isSuccess).toBe(true)
       })
 
-      expect(consoleMock.log).toHaveBeenCalledWith('💾 User progress saved to localStorage (primary)')
+      expect(consoleMock.log).toHaveBeenCalledWith('✅ User progress saved to localStorage (primary)')
     })
   })
 
