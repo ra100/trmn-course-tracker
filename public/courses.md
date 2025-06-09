@@ -450,7 +450,7 @@ Plotting Specialists keep track of the ship’s position, heading, and velocity.
 
 | Course Name                                | Course Number | Course Prerequisites                             |
 | ------------------------------------------ | ------------- | ------------------------------------------------ |
-| Basic Quartermaster of the Watch           | SIA-SRN-35A   | SIA-RMN-0001 SIA-SRC-06A SIA-SRN-07A             |
+| Basic Quartermaster of the Watch           | SIA-SRN-35A   | SIA-RMN-0001 SIA-SRN-06A SIA-SRN-07A             |
 | Intermediate Quartermaster of the Watch    | SIA-SRN-35C   | SIA-RMN-0002 SIA-SRN-35A SIA-SRN-06C SIA-SRN-07C |
 | Advanced Quartermaster of the Watch        | SIA-SRN-35D   | SIA-RMN-0101 SIA-SRN-35C SIA-SRN-06D SIA-SRN-07D |
 | Quartermaster of the Watch Warrant Project | SIA-SRN-35W   | SIA-RMN-0011 SIA-SRN-35C                         |
