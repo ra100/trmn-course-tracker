@@ -290,7 +290,7 @@ describe('useUserProgress', () => {
       )
 
       expect(result.current.error).toEqual(new Error('Storage quota exceeded'))
-      expect(consoleMock.error).toHaveBeenCalledWith('❌ Fallback localStorage save failed:', expect.any(Error))
+      expect(consoleMock.error).toHaveBeenCalledWith('❌ Critical: All storage methods failed!', expect.any(Error))
     })
 
     it('should log success message in debug mode', async () => {
@@ -311,7 +311,7 @@ describe('useUserProgress', () => {
         expect(result.current.isSuccess).toBe(true)
       })
 
-      expect(consoleMock.log).toHaveBeenCalledWith('💾 User progress saved to localStorage (fallback)')
+      expect(consoleMock.log).toHaveBeenCalledWith('💾 User progress saved to localStorage (primary)')
     })
   })
 

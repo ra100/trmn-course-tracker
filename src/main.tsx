@@ -11,10 +11,12 @@ import { isDebugEnabled } from './config'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes (was cacheTime)
+      staleTime: 10 * 60 * 1000, // 10 minutes (increased from 5)
+      gcTime: 30 * 60 * 1000, // 30 minutes
       retry: 2,
-      refetchOnWindowFocus: false
+      refetchOnWindowFocus: false, // Prevent automatic refetching on focus
+      refetchOnMount: false, // Don't refetch if we have cached data
+      refetchOnReconnect: true // Only refetch on network reconnect
     }
   }
 })

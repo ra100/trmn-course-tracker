@@ -30,8 +30,16 @@ interface CourseStateRecord {
 // Check if IndexedDB is available
 const isIndexedDBAvailable = (): boolean => {
   try {
-    return typeof window !== 'undefined' && 'indexedDB' in window && indexedDB !== null
-  } catch {
+    const available = typeof window !== 'undefined' && 'indexedDB' in window && indexedDB !== null
+    getLogger().log(`🔍 IndexedDB availability check: ${available}`)
+    if (available) {
+      getLogger().log('✅ IndexedDB is available and will be used')
+    } else {
+      getLogger().log('❌ IndexedDB not available, falling back to localStorage')
+    }
+    return available
+  } catch (err) {
+    getLogger().error('❌ Error checking IndexedDB availability:', err)
     return false
   }
 }
@@ -360,12 +368,16 @@ class UserProgressDB {
 
   // Legacy method for backward compatibility
   async save(progress: UserProgress): Promise<void> {
+    getLogger().log('📦 Starting IndexedDB save operation...')
+
     // Save metadata
     const metadata: UserMetadata = {
       userId: progress.userId,
       specialRulesProgress: Array.from(progress.specialRulesProgress.entries()),
       lastUpdated: progress.lastUpdated.toISOString()
     }
+
+    getLogger().log('📦 Saving metadata to IndexedDB...')
     await this.saveMetadata(metadata)
 
     // Prepare course updates
@@ -376,11 +388,16 @@ class UserProgressDB {
     progress.inProgressCourses.forEach((courseId) => updates.push({ courseId, status: 'inProgress' }))
     progress.waitingGradeCourses.forEach((courseId) => updates.push({ courseId, status: 'waitingGrade' }))
 
+    getLogger().log(`📦 Preparing to save ${updates.length} course state records...`)
+
     // Clear existing course states and add new ones
+    getLogger().log('🗑️ Clearing existing course states...')
     await this.clear()
+
+    getLogger().log('📦 Bulk updating course states...')
     await this.bulkUpdateCourseStates(updates)
 
-    getLogger().log('💾 User progress saved to IndexedDB (optimized)')
+    getLogger().log('✅ IndexedDB save operation completed successfully')
   }
 
   // Legacy method for backward compatibility
@@ -496,13 +513,20 @@ const migrateFromLocalStorage = async (): Promise<UserProgress | null> => {
       // Save to IndexedDB using optimized structure
       await userProgressDB.save(progress)
 
-      // Remove from localStorage after successful migration
-      localStorage.removeItem(USER_PROGRESS_STORAGE_KEY)
-
-      getLogger().log('✅ Successfully migrated user progress to IndexedDB (optimized)')
+      // Verify the save by trying to load it back
+      const verifyLoad = await userProgressDB.load()
+      if (verifyLoad) {
+        // Only remove from localStorage after verifying IndexedDB works
+        localStorage.removeItem(USER_PROGRESS_STORAGE_KEY)
+        getLogger().log('✅ Successfully migrated user progress to IndexedDB (optimized)')
+        return progress
+      }
+      getLogger().error('❌ Failed to verify IndexedDB migration - keeping localStorage backup')
       return progress
     } catch (err) {
       getLogger().error('❌ Error during migration from localStorage:', err)
+      // Keep localStorage data on error
+      return progress
     }
   }
 
@@ -512,42 +536,57 @@ const migrateFromLocalStorage = async (): Promise<UserProgress | null> => {
 // Load user progress with migration support
 const loadUserProgress = async (): Promise<UserProgress> => {
   try {
+    // First, always check localStorage for immediate fallback
+    const localStorageProgress = loadFromLocalStorage()
+
     // If IndexedDB is available, try to load from it first
     if (isIndexedDBAvailable()) {
       try {
         const existingProgress = await userProgressDB.load()
         if (existingProgress) {
+          getLogger().log('✅ Loaded user progress from IndexedDB')
           return existingProgress
         }
 
         // If no IndexedDB data, try migration from localStorage
-        const migratedProgress = await migrateFromLocalStorage()
-        if (migratedProgress) {
-          return migratedProgress
+        if (localStorageProgress) {
+          const migratedProgress = await migrateFromLocalStorage()
+          if (migratedProgress) {
+            return migratedProgress
+          }
         }
       } catch (indexedDBError) {
         getLogger().error('❌ Error with IndexedDB, falling back to localStorage:', indexedDBError)
+        // If IndexedDB fails but we have localStorage data, use it
+        if (localStorageProgress) {
+          getLogger().log('✅ Using localStorage fallback due to IndexedDB error')
+          return localStorageProgress
+        }
       }
     }
 
     // Fallback to localStorage (for environments without IndexedDB or when IndexedDB fails)
-    const localStorageProgress = loadFromLocalStorage()
     if (localStorageProgress) {
+      getLogger().log('✅ Loaded user progress from localStorage')
       return localStorageProgress
     }
 
     // If no data exists anywhere, return default
     const defaultProgress = getDefaultUserProgress()
+    getLogger().log('📝 Created default user progress')
 
     // Try to save default to IndexedDB first, fallback to localStorage
     if (isIndexedDBAvailable()) {
       try {
         await userProgressDB.save(defaultProgress)
+        getLogger().log('💾 Saved default progress to IndexedDB')
       } catch {
         saveToLocalStorage(defaultProgress)
+        getLogger().log('💾 Saved default progress to localStorage (IndexedDB failed)')
       }
     } else {
       saveToLocalStorage(defaultProgress)
+      getLogger().log('💾 Saved default progress to localStorage')
     }
 
     return defaultProgress
@@ -559,23 +598,32 @@ const loadUserProgress = async (): Promise<UserProgress> => {
 
 // Save user progress to IndexedDB with localStorage fallback
 const saveUserProgress = async (progress: UserProgress): Promise<UserProgress> => {
-  try {
-    // Try IndexedDB first if available
-    if (isIndexedDBAvailable()) {
+  let indexedDBSuccess = false
+
+  // Try IndexedDB first if available
+  if (isIndexedDBAvailable()) {
+    try {
+      getLogger().log('💾 Attempting to save user progress to IndexedDB...')
       await userProgressDB.save(progress)
-      return progress
+      indexedDBSuccess = true
+      getLogger().log('✅ User progress saved to IndexedDB successfully')
+    } catch (err) {
+      getLogger().error('❌ Error saving user progress to IndexedDB:', err)
     }
-  } catch (err) {
-    getLogger().error('❌ Error saving user progress to IndexedDB:', err)
   }
 
-  // Fallback: save to localStorage
+  // Always maintain localStorage as backup (either as primary or secondary storage)
   try {
+    getLogger().log('💾 Saving user progress to localStorage...')
     saveToLocalStorage(progress)
-    getLogger().log('💾 User progress saved to localStorage (fallback)')
+    if (indexedDBSuccess) {
+      getLogger().log('✅ User progress also backed up to localStorage')
+    } else {
+      getLogger().log('✅ User progress saved to localStorage (primary)')
+    }
     return progress
   } catch (fallbackErr) {
-    getLogger().error('❌ Fallback localStorage save failed:', fallbackErr)
+    getLogger().error('❌ Critical: All storage methods failed!', fallbackErr)
     throw fallbackErr
   }
 }
@@ -585,10 +633,13 @@ export const useUserProgress = () => {
   return useQuery<UserProgress, Error>({
     queryKey: USER_PROGRESS_QUERY_KEY,
     queryFn: loadUserProgress,
-    staleTime: 5 * 60 * 1000, // 5 minutes - reasonable for IndexedDB
-    gcTime: 30 * 60 * 1000, // 30 minutes
+    staleTime: 24 * 60 * 60 * 1000, // 24 hours - user progress rarely becomes stale
+    gcTime: 7 * 24 * 60 * 60 * 1000, // 7 days - keep in cache for a long time
     retry: 3, // Retry failed loads
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    refetchOnWindowFocus: false, // Don't refetch on focus to prevent data loss
+    refetchOnMount: false, // Don't refetch on mount if we have cached data
+    refetchOnReconnect: false // Don't refetch on reconnect
   })
 }
 
@@ -621,12 +672,14 @@ export const useOptimisticUserProgress = () => {
       const newData = updater(currentData)
       queryClient.setQueryData(USER_PROGRESS_QUERY_KEY, newData)
 
-      // Save to storage in the background
+      // Save to storage in the background using the same strategy as saveUserProgress
       try {
         await saveUserProgress(newData)
+        getLogger().log('✅ Optimistic update saved successfully')
       } catch (err) {
         // Revert on error
         queryClient.setQueryData(USER_PROGRESS_QUERY_KEY, currentData)
+        getLogger().error('❌ Failed to save optimistic update, reverted:', err)
         throw err
       }
     }
