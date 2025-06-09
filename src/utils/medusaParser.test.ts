@@ -499,7 +499,7 @@ describe('medusaParser', () => {
           <body>
           <div role="tabpanel" id="${panelId}">
             <div class="row zebra-odd">
-              <div class="col-sm-6">TEST-001 Test Course</div>
+              <div class="col-sm-6">TST-ABC-001 Test Course</div>
               <div class="col-sm-1">100%</div>
               <div class="col-sm-3">01 Jan 2025</div>
             </div>
@@ -524,7 +524,7 @@ describe('medusaParser', () => {
         const html = `
           <div role="tabpanel" id="${panelId}">
             <div class="row zebra-odd">
-              <div class="col-sm-6">TEST-001 Test Course</div>
+              <div class="col-sm-6">TST-ABC-001 Test Course</div>
               <div class="col-sm-1">100%</div>
               <div class="col-sm-3">01 Jan 2025</div>
             </div>

@@ -78,6 +78,11 @@ export class CourseParser {
           // Also check for Space Warfare Pin at level 2
           if (title.toLowerCase().includes('space warfare pin')) {
             inSpaceWarfarePinSection = true
+          } else if (title.toLowerCase().includes("department mappings")) {
+            inDepartmentMappingSection = true
+            inSpaceWarfarePinSection = false
+          } else {
+            inDepartmentMappingSection = false
             inDepartmentMappingSection = false
           }
         } else if (level === 3) {
@@ -240,7 +245,7 @@ export class CourseParser {
 
     // Check for complex requirements first (like Navy Counselor courses)
     if (this.hasComplexRequirements(prereqString)) {
-      const complexReqs = this.parseComplexRequirements(prereqString)
+      const complexReqs = this.parseComplexCourseRequirements(prereqString)
       prerequisites.push(...complexReqs)
       return prerequisites
     }

@@ -2,6 +2,9 @@
 // Supports traditional and new formats: SIA-RMN-0001, LU-XI-CZ01, RMACA-AOPA-E07, etc.
 const MEDUSA_COURSE_CODE_REGEX = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/
 
+// Global version for text search (finds all matches)
+const MEDUSA_COURSE_CODE_REGEX_GLOBAL = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/g
+
 export interface MedusaCourse {
   courseCode: string
   courseName: string
@@ -92,11 +95,15 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
 
     allTextElements.forEach((element) => {
       const text = element.textContent?.trim() || ''
-      const match = text.match(MEDUSA_COURSE_CODE_REGEX)
-      if (match && match[1]) {
-        const courseCode = match[1]
-        if (!result.courses.some((course) => course.courseCode === courseCode)) {
-          foundCoursesByText.add(courseCode)
+      // Find all course code matches in the text
+      let match: RegExpExecArray | null
+      const regex = new RegExp(MEDUSA_COURSE_CODE_REGEX_GLOBAL.source, 'g')
+      while ((match = regex.exec(text)) !== null) {
+        if (match && match[1]) {
+          const courseCode = match[1]
+          if (!result.courses.some((course) => course.courseCode === courseCode)) {
+            foundCoursesByText.add(courseCode)
+          }
         }
       }
     })
