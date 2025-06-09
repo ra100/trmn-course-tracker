@@ -8,7 +8,7 @@ import {
   StatusBadge
 } from './CourseDetails.styles'
 
-export const CourseHeader: React.FC<CourseHeaderProps> = ({ course, status, getStatusText }) => {
+export const CourseHeader: React.FC<CourseHeaderProps> = React.memo(({ course, status, getStatusText }) => {
   return (
     <CourseHeaderContainer>
       <CourseTitle>{course.name}</CourseTitle>
@@ -20,4 +20,6 @@ export const CourseHeader: React.FC<CourseHeaderProps> = ({ course, status, getS
       <StatusBadge status={status}>{getStatusText()}</StatusBadge>
     </CourseHeaderContainer>
   )
-}
+})
+
+CourseHeader.displayName = 'CourseHeader'

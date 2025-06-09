@@ -3,7 +3,7 @@ import { CourseDescriptionProps } from './types'
 import { useT } from '../../i18n'
 import { Section, SectionTitle, DescriptionText } from './CourseDetails.styles'
 
-export const CourseDescription: React.FC<CourseDescriptionProps> = ({ course }) => {
+export const CourseDescription: React.FC<CourseDescriptionProps> = React.memo(({ course }) => {
   const t = useT()
 
   if (!course.description) {
@@ -16,4 +16,6 @@ export const CourseDescription: React.FC<CourseDescriptionProps> = ({ course }) 
       <DescriptionText>{course.description}</DescriptionText>
     </Section>
   )
-}
+})
+
+CourseDescription.displayName = 'CourseDescription'
