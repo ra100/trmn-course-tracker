@@ -87,28 +87,6 @@ describe('useCourseData', () => {
     expect(result.current.isError).toBe(false)
   })
 
-  it.skip('should return error when fetch fails', async () => {
-    // Note: This test is skipped because React Query's background behavior
-    // makes it difficult to test in this environment
-    const error = new Error('Failed to load course data')
-    mockLoadCourseData.mockRejectedValue(error)
-
-    const { result } = renderHook(() => useCourseData(), {
-      wrapper: createWrapper()
-    })
-
-    await waitFor(
-      () => {
-        expect(result.current.isError).toBe(true)
-      },
-      { timeout: 3000 }
-    )
-
-    expect(result.current.isLoading).toBe(false)
-    expect(result.current.data).toBeUndefined()
-    expect(result.current.error).toEqual(error)
-  })
-
   it('should cache data between renders', async () => {
     mockLoadCourseData.mockResolvedValue(mockCourseData)
 
