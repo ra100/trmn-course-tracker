@@ -48,31 +48,75 @@ const loadGTM = (gtmId: string): void => {
   document.head.appendChild(script)
 }
 
+// Initialization flag to prevent multiple initializations
+let isAnalyticsInitialized = false
+// Track last page view to prevent duplicates
+let lastTrackedPage: string | null = null
+// Track last consent update to prevent duplicates
+let lastConsentUpdate: string | null = null
+
 // Initialize Google Analytics
 export const initializeAnalytics = (): void => {
-  if (!config.analytics.enabled) {
+  // Prevent multiple initializations
+  if (isAnalyticsInitialized) {
+    getLogger().log('Analytics: Already initialized, skipping...')
     return
   }
 
-  // Initialize dataLayer
-  window.dataLayer = window.dataLayer || []
-  window.gtag = function gtag(...args: unknown[]) {
-    window.dataLayer.push(args)
+  if (!config.analytics.enabled) {
+    getLogger().log('Analytics: Disabled - no GTM ID provided')
+    return
   }
 
+  getLogger().log(`Analytics: Initializing with GTM ID: ${config.analytics.gtmId}`)
+
+  // Debug: Log the exact configuration
+  getLogger().log('Analytics: Configuration details:', {
+    gtmId: config.analytics.gtmId,
+    gtmIdLength: config.analytics.gtmId.length,
+    gtmIdCharCodes: Array.from(config.analytics.gtmId).map((c) => c.charCodeAt(0)),
+    enabled: config.analytics.enabled,
+    isDevelopment: config.isDevelopment
+  })
+
+  // Initialize dataLayer first
+  window.dataLayer = window.dataLayer || []
+  // Use the standard gtag function definition that works
+  window.gtag = function gtag() {
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer.push(arguments)
+  }
+
+  // Set default consent (privacy-first but allows loading the script)
   window.gtag('consent', 'default', {
     ad_user_data: 'denied',
     ad_personalization: 'denied',
     ad_storage: 'denied',
-    analytics_storage: defaultConsentSettings.analytics,
-    wait_for_update: 500
+    analytics_storage: defaultConsentSettings.analytics
   })
-  window.gtag('js', new Date())
-  window.gtag('config', config.analytics.gtmId)
 
-  if (getStoredConsent()?.analytics === 'granted') {
-    updateGTMConsent(getStoredConsent() as Partial<ConsentSettings>)
+  // Always load the GTM script (required for gtag to work)
+  loadGTM(config.analytics.gtmId)
+
+  // Configure gtag with timestamp (this order is important!)
+  window.gtag('js', new Date())
+  window.gtag('config', config.analytics.gtmId, {
+    // Respect the current consent status
+    send_page_view: false // We'll send it manually after checking consent
+  })
+
+  // Mark as initialized
+  isAnalyticsInitialized = true
+
+  // Apply stored consent if available
+  const storedConsent = getStoredConsent()
+  if (storedConsent?.analytics === 'granted') {
+    updateGTMConsent(storedConsent)
+    // Send initial page view if consent is already granted
+    trackPageView()
   }
+
+  getLogger().log('Analytics: Initialization completed')
 }
 
 // Update consent settings
@@ -88,23 +132,31 @@ export const updateGTMConsent = (consentSettings: Partial<ConsentSettings>): voi
   localStorage.setItem('gdpr-consent', JSON.stringify(consentSettings))
 
   if (!config.analytics.enabled || !window.gtag) {
+    getLogger().log('Analytics: Cannot update consent - not initialized')
     return
   }
 
-  window.gtag('consent', 'update', {
-    ad_user_data: 'granted',
-    ad_personalization: 'granted',
-    ad_storage: 'granted',
-    analytics_storage: consentSettings.analytics || defaultConsentSettings.analytics
-  })
-
-  if (consentSettings.analytics === 'granted' && config.analytics.gtmId) {
-    loadGTM(config.analytics.gtmId)
+  // Prevent duplicate consent updates
+  const consentKey = JSON.stringify(consentSettings)
+  if (lastConsentUpdate === consentKey) {
+    getLogger().log('Analytics: Skipping duplicate consent update')
+    return
   }
 
-  // Send page view after consent is granted
+  getLogger().log('Analytics: Updating consent settings', consentSettings)
+
+  window.gtag('consent', 'update', {
+    analytics_storage: consentSettings.analytics || defaultConsentSettings.analytics,
+    wait_for_update: 500
+  })
+
+  // Update last consent
+  lastConsentUpdate = consentKey
+
+  // Reset last tracked page when consent is granted to allow new page view
   if (consentSettings.analytics === 'granted') {
-    trackPageView()
+    getLogger().log('Analytics: Consent granted, resetting page tracking')
+    lastTrackedPage = null
   }
 }
 
@@ -122,16 +174,31 @@ export const getStoredConsent = (): Partial<ConsentSettings> | null => {
 // Track page view
 export const trackPageView = (path?: string): void => {
   const page = path || window.location.pathname + window.location.search
+  const consent = getStoredConsent()
+
+  // Prevent duplicate page views
+  if (lastTrackedPage === page) {
+    getLogger().log(`Analytics: Skipping duplicate page view for ${page}`)
+    return
+  }
 
   getLogger().log('Analytics page view tracking attempt:', {
     enabled: config.analytics.enabled,
     gtagExists: !!window.gtag,
     gtmId: config.analytics.gtmId,
-    page
+    page,
+    consentStatus: consent?.analytics || 'unknown',
+    dataLayerLength: window.dataLayer?.length || 0
   })
 
   if (!config.analytics.enabled || !window.gtag) {
     getLogger().log('Analytics: Cannot track page view - not initialized')
+    return
+  }
+
+  // Check if analytics consent is granted
+  if (consent?.analytics !== 'granted') {
+    getLogger().log('Analytics: Page view not sent - analytics consent not granted')
     return
   }
 
@@ -141,13 +208,24 @@ export const trackPageView = (path?: string): void => {
       page_path: page
     })
 
+    // Update last tracked page
+    lastTrackedPage = page
     getLogger().log(`Analytics: Page view tracked - ${page}`)
   }
 }
 
 // Track custom event
 export const trackEvent = (eventName: string, parameters?: Record<string, unknown>): void => {
+  const consent = getStoredConsent()
+
   if (!config.analytics.enabled || !window.gtag) {
+    getLogger().log(`Analytics: Cannot track event ${eventName} - not initialized`)
+    return
+  }
+
+  // Check if analytics consent is granted
+  if (consent?.analytics !== 'granted') {
+    getLogger().log(`Analytics: Event ${eventName} not sent - analytics consent not granted`)
     return
   }
 
@@ -291,4 +369,56 @@ export const trackConsentChange = (consentType: string, granted: boolean): void 
     granted,
     event_category: 'privacy'
   })
+}
+
+// Debug utility to check analytics status
+export const debugAnalytics = () => {
+  const consent = getStoredConsent()
+  const debugInfo = {
+    // Configuration
+    analyticsEnabled: config.analytics.enabled,
+    gtmId: config.analytics.gtmId,
+
+    // Runtime state
+    gtagExists: !!window.gtag,
+    dataLayerExists: !!window.dataLayer,
+    dataLayerLength: window.dataLayer?.length || 0,
+
+    // Consent status
+    storedConsent: consent,
+    analyticsConsentGranted: consent?.analytics === 'granted',
+
+    // Environment
+    isDevelopment: config.isDevelopment,
+    currentUrl: window.location.href,
+
+    // Last few dataLayer entries
+    recentDataLayerEntries: window.dataLayer?.slice(-5) || []
+  }
+
+  console.log('🔍 Google Analytics Debug Info:', debugInfo)
+
+  // Test tracking
+  if (consent?.analytics === 'granted') {
+    console.log('🧪 Testing event tracking...')
+    trackEvent('debug_test', { timestamp: Date.now() })
+  } else {
+    console.log('❌ Cannot test tracking - analytics consent not granted')
+  }
+
+  return debugInfo
+}
+
+// Make debug function available globally in development
+if (config.isDevelopment && typeof window !== 'undefined') {
+  // @ts-expect-error Adding debug function to window for development use
+  window.debugAnalytics = debugAnalytics
+
+  // @ts-expect-error Adding reset function to window for development use
+  window.resetAnalytics = () => {
+    isAnalyticsInitialized = false
+    lastTrackedPage = null
+    lastConsentUpdate = null
+    console.log('🔄 Analytics state reset')
+  }
 }
