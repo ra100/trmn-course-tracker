@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useEffect, useState } from 'react'
 import type { Course, FilterOptions, UserSettings, UserProgress, ParsedCourseData } from '../types'
 import { getCourseMainDepartment } from '../utils/departmentUtils'
+import { sortCoursesByNumber } from '../utils/courseUtils'
 
 export type NodeStatus = 'available' | 'locked' | 'completed' | 'in_progress' | 'waiting_grade'
 
@@ -114,9 +115,11 @@ export const useCourseFiltering = ({
     [searchTerm, filters, settings, courseData.departmentMappings, getCourseStatus]
   )
 
-  // Apply filters to courses
+  // Apply filters to courses with default sorting
   const filteredCoursesResult = useMemo(() => {
-    return applyFilters(courses)
+    const filtered = applyFilters(courses)
+    // Apply default sorting by course number
+    return sortCoursesByNumber(filtered)
   }, [applyFilters, courses])
 
   // Update state when filtered courses change

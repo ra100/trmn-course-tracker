@@ -23,6 +23,14 @@ export const GroupingControls: React.FC<GroupingControlsProps> = React.memo(
         >
           Department
         </GroupingButton>
+        <GroupingButton
+          $active={groupingMode === 'series'}
+          onClick={() => onGroupingModeChange('series')}
+          aria-pressed={groupingMode === 'series'}
+          aria-describedby="grouping-label"
+        >
+          Series
+        </GroupingButton>
       </GroupingToggle>
     )
   }

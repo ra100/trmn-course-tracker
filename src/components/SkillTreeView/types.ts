@@ -21,8 +21,8 @@ export interface CourseSearchProps {
 }
 
 export interface GroupingControlsProps {
-  groupingMode: 'section' | 'department'
-  onGroupingModeChange: (mode: 'section' | 'department') => void
+  groupingMode: GroupingMode
+  onGroupingModeChange: (mode: GroupingMode) => void
 }
 
 export interface CourseStatsProps {
@@ -61,7 +61,7 @@ export interface CourseSubsectionProps {
 
 export interface CategoryCourseRendererProps {
   filteredCourses: Course[]
-  groupingMode: 'section' | 'department'
+  groupingMode: GroupingMode
   userProgress: UserProgress
   courseData: ParsedCourseData
   getCourseStatus: (course: Course) => 'locked' | 'available' | 'completed' | 'in_progress' | 'waiting_grade'
@@ -73,4 +73,4 @@ export interface CategoryCourseRendererProps {
   ) => void
 }
 
-export type GroupingMode = 'section' | 'department'
+export type GroupingMode = 'section' | 'department' | 'series'

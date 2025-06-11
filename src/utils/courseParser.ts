@@ -24,12 +24,32 @@ export interface DepartmentMapping {
   schoolNames: string[]
 }
 
+enum Section {
+  SpaceWarfarePin = 'Space Warfare Pin',
+  DepartmentMappings = 'Department Mappings',
+  CourseSeriesMappings = 'Course Series Mappings'
+}
+
+const getSection = (title: string): Section | null => {
+  if (title.toLowerCase().includes(Section.SpaceWarfarePin.toLowerCase())) {
+    return Section.SpaceWarfarePin
+  }
+  if (title.toLowerCase().includes(Section.DepartmentMappings.toLowerCase())) {
+    return Section.DepartmentMappings
+  }
+  if (title.toLowerCase().includes(Section.CourseSeriesMappings.toLowerCase())) {
+    return Section.CourseSeriesMappings
+  }
+  return null
+}
+
 export class CourseParser {
   private content: string
   private courses: Map<string, Course>
   private categories: Category[]
   private specialRules: SpecialRule[]
   private departmentMappings: Map<string, string[]>
+  private seriesMappings: Map<string, string>
 
   constructor(markdownContent: string) {
     this.content = markdownContent
@@ -37,6 +57,7 @@ export class CourseParser {
     this.categories = []
     this.specialRules = []
     this.departmentMappings = new Map()
+    this.seriesMappings = new Map()
   }
 
   public parse(): CourseData {
@@ -44,8 +65,7 @@ export class CourseParser {
     let currentSection: Category | null = null
     let currentSubsection: Subsection | null = null
     let inTable = false
-    let inSpaceWarfarePinSection = false
-    let inDepartmentMappingSection = false
+    let currentSpecialSection: Section | null = null
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim()
@@ -62,28 +82,20 @@ export class CourseParser {
 
         if (level === 1) {
           // Check for Space Warfare Pin at level 1
-          if (title.toLowerCase().includes('space warfare pin')) {
-            inSpaceWarfarePinSection = true
-            inDepartmentMappingSection = false
-          } else if (title.toLowerCase().includes('department mappings')) {
-            inDepartmentMappingSection = true
-            inSpaceWarfarePinSection = false
-          } else {
-            inSpaceWarfarePinSection = false
-            inDepartmentMappingSection = false
+          if (getSection(title)) {
+            currentSpecialSection = getSection(title)
           }
         } else if (level === 2) {
           currentSection = this.createSection(title)
           currentSubsection = null
-          // Also check for Space Warfare Pin at level 2
-          if (title.toLowerCase().includes('space warfare pin')) {
-            inSpaceWarfarePinSection = true
-          } else if (title.toLowerCase().includes("department mappings")) {
-            inDepartmentMappingSection = true
-            inSpaceWarfarePinSection = false
+          if (getSection(title)) {
+            currentSpecialSection = getSection(title)
           } else {
-            inDepartmentMappingSection = false
-            inDepartmentMappingSection = false
+            // Only reset special section if we're not in Space Warfare Pin section
+            // Space Warfare Pin is typically a level 1 header and should maintain state
+            if (currentSpecialSection !== Section.SpaceWarfarePin) {
+              currentSpecialSection = null
+            }
           }
         } else if (level === 3) {
           if (currentSection) {
@@ -106,7 +118,11 @@ export class CourseParser {
       }
 
       // Handle department mapping table headers
-      if (inDepartmentMappingSection && line.includes('Department') && line.includes('School Names')) {
+      if (
+        currentSpecialSection === Section.DepartmentMappings &&
+        line.includes('Department') &&
+        line.includes('School Names')
+      ) {
         inTable = true
         continue
       }
@@ -118,8 +134,10 @@ export class CourseParser {
 
       // Parse table rows
       if (inTable && line.startsWith('|') && line.endsWith('|')) {
-        if (inDepartmentMappingSection) {
+        if (currentSpecialSection === Section.DepartmentMappings) {
           this.parseDepartmentMappingRow(line)
+        } else if (currentSpecialSection === Section.CourseSeriesMappings) {
+          this.parseCourseSeriesMappingRow(line)
         } else {
           this.parseTableRow(line, currentSection, currentSubsection)
         }
@@ -127,10 +145,16 @@ export class CourseParser {
       }
 
       // Handle Space Warfare Pin special rules
-      if (inSpaceWarfarePinSection) {
+      if (currentSpecialSection === Section.SpaceWarfarePin) {
         if (line.includes('|') && !line.includes('---')) {
           this.parseSpaceWarfarePinTable(line, lines, i)
         }
+      }
+
+      // Handle course series mapping table headers
+      if (line.includes('Series Prefix') && line.includes('Display Name')) {
+        inTable = true
+        continue
       }
     }
 
@@ -138,8 +162,19 @@ export class CourseParser {
       courses: Array.from(this.courses.values()),
       categories: this.categories,
       specialRules: this.specialRules,
-      departmentMappings: this.departmentMappings
+      departmentMappings: this.departmentMappings,
+      seriesMappings: this.seriesMappings
     }
+  }
+
+  /**
+   * Helper function to parse table row cells from markdown
+   */
+  private parseTableCells(line: string): string[] {
+    return line
+      .split('|')
+      .map((cell) => cell.trim())
+      .filter((cell) => cell.length > 0)
   }
 
   private createSection(title: string): Category {
@@ -164,10 +199,7 @@ export class CourseParser {
   }
 
   private parseDepartmentMappingRow(line: string): void {
-    const cells = line
-      .split('|')
-      .map((cell) => cell.trim())
-      .filter((cell) => cell.length > 0)
+    const cells = this.parseTableCells(line)
 
     if (cells.length >= 2) {
       const department = cells[0]
@@ -188,11 +220,19 @@ export class CourseParser {
     }
   }
 
+  private parseCourseSeriesMappingRow(line: string): void {
+    const cells = this.parseTableCells(line)
+
+    if (cells.length >= 2) {
+      const seriesPrefix = cells[0]
+      const displayName = cells[1]
+
+      this.seriesMappings.set(seriesPrefix, displayName)
+    }
+  }
+
   private parseTableRow(line: string, section: Category | null, subsection: Subsection | null): void {
-    const cells = line
-      .split('|')
-      .map((cell) => cell.trim())
-      .filter((cell) => cell.length > 0)
+    const cells = this.parseTableCells(line)
 
     if (cells.length >= 2) {
       const courseName = cells[0]
@@ -213,8 +253,6 @@ export class CourseParser {
 
       // Skip invalid course codes
       if (!courseNumber || courseNumber.length === 0) {
-        getLogger().warn(`Skipping invalid course: ${courseName} - ${rawCourseNumber}`)
-
         return
       }
 
@@ -745,6 +783,7 @@ export function parseCourseData(markdownContent: string): ParsedCourseData {
     ...data,
     courseMap,
     categoryMap,
-    dependencyGraph
+    dependencyGraph,
+    seriesMappings: data.seriesMappings || new Map()
   }
 }

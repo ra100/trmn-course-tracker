@@ -4,10 +4,10 @@ import {
   CourseSearch,
   GroupingControls,
   CourseStats,
-  CategoryCourseRenderer,
   SkillTreeViewProps,
   GroupingMode,
-  TreeContainer
+  TreeContainer,
+  CategoryCourseRenderer
 } from './SkillTreeView/index'
 
 const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({

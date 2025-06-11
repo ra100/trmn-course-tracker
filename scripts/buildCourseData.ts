@@ -32,6 +32,7 @@ async function buildCourseData() {
       courseMap: Array.from(parsedData.courseMap.entries()),
       categoryMap: Array.from(parsedData.categoryMap.entries()),
       dependencyGraph: Array.from(parsedData.dependencyGraph.entries()),
+      seriesMappings: Array.from(parsedData.seriesMappings.entries()),
       buildTimestamp: new Date().toISOString()
     }
 
@@ -44,6 +45,7 @@ async function buildCourseData() {
     console.log(`📋 Categories: ${parsedData.categories.length}`)
     console.log(`⚡ Special rules: ${parsedData.specialRules.length}`)
     console.log(`🗂️ Department mappings: ${parsedData.departmentMappings?.size || 0}`)
+    console.log(`📺 Series mappings: ${parsedData.seriesMappings?.size || 0}`)
     console.log(`💾 JSON file written to: ${jsonPath}`)
   } catch (error) {
     console.error('❌ Error building course data:', error)

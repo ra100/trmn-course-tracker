@@ -396,14 +396,14 @@ export const debugAnalytics = () => {
     recentDataLayerEntries: window.dataLayer?.slice(-5) || []
   }
 
-  console.log('🔍 Google Analytics Debug Info:', debugInfo)
+  getLogger().log('🔍 Google Analytics Debug Info:', debugInfo)
 
   // Test tracking
   if (consent?.analytics === 'granted') {
-    console.log('🧪 Testing event tracking...')
+    getLogger().log('🧪 Testing event tracking...')
     trackEvent('debug_test', { timestamp: Date.now() })
   } else {
-    console.log('❌ Cannot test tracking - analytics consent not granted')
+    getLogger().log('❌ Cannot test tracking - analytics consent not granted')
   }
 
   return debugInfo
@@ -419,6 +419,6 @@ if (config.isDevelopment && typeof window !== 'undefined') {
     isAnalyticsInitialized = false
     lastTrackedPage = null
     lastConsentUpdate = null
-    console.log('🔄 Analytics state reset')
+    getLogger().log('🔄 Analytics state reset')
   }
 }

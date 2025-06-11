@@ -14,6 +14,21 @@ The following table defines how department names map to specific school/course c
 | Medical           | medical, corpsman, medic, sick berth, surgeon                                                             |
 | Flight Operations | flight operations, coxswain                                                                               |
 
+## Course Series Mappings
+
+The following table defines display names for course series prefixes:
+
+| Series Prefix | Display Name                   |
+| ------------- | ------------------------------ |
+| SIA-RMN       | Naval Officer Courses          |
+| SIA-SRN       | Technical Specialties          |
+| RMACA-RMACS   | Aerospace Command Academy      |
+| RMACA-AOPA    | AOPA External Courses          |
+| RMACA-RMAIA   | Aerospace Investigation Agency |
+| MU            | Mannheim University            |
+| LU            | Xenology Society               |
+| GPU-ALC       | Gryphon Planetary University   |
+
 ## GPU Advanced Leadership College
 
 | Course Name               | Course Number | Prerequisites                |

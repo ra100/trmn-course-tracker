@@ -1100,3 +1100,31 @@ describe('Alternative Prerequisites (OR conditions)', () => {
     expect(alc0010?.completed).toBe(false)
   })
 })
+
+describe('Course Series Mappings', () => {
+  const markdown = `
+## Course Series Mappings
+
+The following table defines display names for course series prefixes:
+
+| Series Prefix | Display Name                   |
+| ------------- | ------------------------------ |
+| SIA-RMN       | Naval Officer Courses          |
+| SIA-SRN       | Technical Specialties          |
+| RMACA-RMACS   | Aerospace Command Academy      |
+| RMACA-AOPA    | AOPA External Courses          |
+| RMACA-RMAIA   | Aerospace Investigation Agency |
+| MU            | Mannheim University            |
+| LU            | Xenology Society               |
+`
+  it('should parse course series mappings correctly', () => {
+    const parser = new CourseParser(markdown)
+    const result = parser.parse()
+    expect(result.seriesMappings).toBeDefined()
+    expect(result.seriesMappings.get('SIA-RMN')).toBe('Naval Officer Courses')
+    expect(result.seriesMappings.get('SIA-SRN')).toBe('Technical Specialties')
+    expect(result.seriesMappings.get('RMACA-RMACS')).toBe('Aerospace Command Academy')
+    expect(result.seriesMappings.get('RMACA-AOPA')).toBe('AOPA External Courses')
+    expect(result.seriesMappings.get('RMACA-RMAIA')).toBe('Aerospace Investigation Agency')
+  })
+})

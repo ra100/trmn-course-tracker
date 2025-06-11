@@ -101,12 +101,14 @@ export interface CourseData {
   categories: Category[]
   specialRules: SpecialRule[]
   departmentMappings?: Map<string, string[]>
+  seriesMappings: Map<string, string>
 }
 
 export interface ParsedCourseData extends CourseData {
   courseMap: Map<string, Course>
   categoryMap: Map<string, Category>
   dependencyGraph: Map<string, string[]>
+  seriesMappings: Map<string, string>
 }
 
 export interface EligibilityResult {
