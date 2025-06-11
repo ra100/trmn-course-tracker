@@ -9,14 +9,33 @@ import type { Course } from '../types'
  * - "MU-ECON-01" -> "MU" (all university courses grouped together)
  * - "SIA-RMN-0101" -> "SIA-RMN"
  */
-export function getCourseSeriesPrefix(courseCode: string, seriesCodes: string[]): string {
-  for (const seriesCode of seriesCodes) {
-    if (courseCode.startsWith(seriesCode)) {
-      return seriesCode
+export function getCourseSeriesPrefix(courseCode: string, seriesCodes?: string[]): string {
+  if (seriesCodes) {
+    for (const seriesCode of seriesCodes) {
+      if (courseCode.startsWith(seriesCode)) {
+        return seriesCode
+      }
     }
   }
 
-  return courseCode.split('-').at(0) || ''
+  // Fallback to original logic when no series codes provided
+  const parts = courseCode.split('-')
+
+  // Special case: group all MU (Mannheim University) courses together
+  if (parts[0] === 'MU') {
+    return 'MU'
+  }
+
+  if (parts.length >= 3) {
+    // For most courses like SIA-SRN-XXX, RMACA-RMACS-XXX, etc.
+    return `${parts[0]}-${parts[1]}`
+  } else if (parts.length === 2) {
+    // For other courses with 2 parts
+    return courseCode.substring(0, courseCode.lastIndexOf('-'))
+  }
+
+  // Fallback to the full course code if pattern doesn't match
+  return courseCode
 }
 
 /**
@@ -63,10 +82,10 @@ export function sortCoursesByNumber(courses: Course[]): Course[] {
 /**
  * Gets a user-friendly name for a course series prefix.
  */
-export function getSeriesDisplayName(seriesPrefix: string, seriesMappings: Map<string, string>): string {
-  return seriesMappings.get(seriesPrefix) || seriesPrefix
+export function getSeriesDisplayName(seriesPrefix: string, seriesMappings: Map<string, string> | undefined): string {
+  return seriesMappings?.get(seriesPrefix) || seriesPrefix
 }
 
-export const getCourseSeriesCodes = (seriesMappings: Map<string, string>): string[] => {
-  return Array.from(seriesMappings.keys())
+export const getCourseSeriesCodes = (seriesMappings: Map<string, string> | undefined): string[] => {
+  return seriesMappings ? Array.from(seriesMappings.keys()) : []
 }

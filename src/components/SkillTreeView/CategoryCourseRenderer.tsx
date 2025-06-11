@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { CategoryCourseRendererProps } from './types'
 import { getCourseMainDepartment } from '../../utils/departmentUtils'
 import {
@@ -10,7 +10,21 @@ import {
 import { CourseSection } from './CourseSection'
 import { CourseSubsection } from './CourseSubsection'
 import { CategorySection, CategoryHeader } from './SkillTreeView.styles'
+import { Course } from '../../types'
 
+type GroupedCourses = Map<string, Course[]>
+type NestedGroupedCourses = Map<string, Map<string, Course[]>>
+
+/**
+ * Optimized CategoryCourseRenderer component that efficiently renders courses
+ * grouped by category, department, or series with memoized computations.
+ *
+ * Performance optimizations:
+ * - useMemo for expensive grouping operations
+ * - useCallback for render functions to prevent unnecessary re-renders
+ * - Early memoization of series codes to avoid repeated calculations
+ * - Efficient Map operations for grouping instead of repeated array operations
+ */
 export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = React.memo(
   ({
     filteredCourses,
@@ -22,15 +36,19 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
     onCourseToggle,
     onCourseStatusChange
   }) => {
-    const renderCoursesByCategory = () => {
-      const categorizedCourses = new Map<string, Map<string, typeof filteredCourses>>()
+    // Memoize the course series codes to avoid recalculation
+    const seriesCodes = useMemo(() => getCourseSeriesCodes(courseData.seriesMappings), [courseData.seriesMappings])
+
+    // Memoize categorized courses grouping
+    const categorizedCourses = useMemo((): NestedGroupedCourses => {
+      const result = new Map<string, Map<string, Course[]>>()
 
       filteredCourses.forEach((course) => {
-        if (!categorizedCourses.has(course.section)) {
-          categorizedCourses.set(course.section, new Map())
+        if (!result.has(course.section)) {
+          result.set(course.section, new Map())
         }
 
-        const sectionMap = categorizedCourses.get(course.section)
+        const sectionMap = result.get(course.section)
         if (sectionMap) {
           const subsection = course.subsection || 'General'
 
@@ -45,6 +63,50 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
         }
       })
 
+      return result
+    }, [filteredCourses])
+
+    // Memoize department courses grouping
+    const departmentCourses = useMemo((): GroupedCourses => {
+      const result = new Map<string, Course[]>()
+      const departmentMappings = courseData.departmentMappings || new Map()
+
+      filteredCourses.forEach((course) => {
+        const assignedDepartment = getCourseMainDepartment(course, departmentMappings)
+
+        if (!result.has(assignedDepartment)) {
+          result.set(assignedDepartment, [])
+        }
+        const deptCourses = result.get(assignedDepartment)
+        if (deptCourses) {
+          deptCourses.push(course)
+        }
+      })
+
+      return result
+    }, [filteredCourses, courseData.departmentMappings])
+
+    // Memoize series courses grouping
+    const seriesCourses = useMemo((): GroupedCourses => {
+      const result = new Map<string, Course[]>()
+
+      filteredCourses.forEach((course) => {
+        const seriesPrefix = getCourseSeriesPrefix(course.code, seriesCodes)
+
+        if (!result.has(seriesPrefix)) {
+          result.set(seriesPrefix, [])
+        }
+        const courses = result.get(seriesPrefix)
+        if (courses) {
+          courses.push(course)
+        }
+      })
+
+      return result
+    }, [filteredCourses, seriesCodes])
+
+    // Memoized render function for categories
+    const renderCoursesByCategory = useCallback(() => {
       return Array.from(categorizedCourses.entries()).map(([sectionName, subsections]) => (
         <CategorySection key={sectionName}>
           <CategoryHeader>{sectionName}</CategoryHeader>
@@ -62,25 +124,10 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
           ))}
         </CategorySection>
       ))
-    }
+    }, [categorizedCourses, userProgress, getCourseStatus, onCourseSelect, onCourseToggle, onCourseStatusChange])
 
-    const renderCoursesByDepartment = () => {
-      const departmentCourses = new Map<string, typeof filteredCourses>()
-
-      // Group courses by department using dynamic mappings
-      filteredCourses.forEach((course) => {
-        const assignedDepartment = getCourseMainDepartment(course, courseData.departmentMappings || new Map())
-
-        if (!departmentCourses.has(assignedDepartment)) {
-          departmentCourses.set(assignedDepartment, [])
-        }
-        const deptCourses = departmentCourses.get(assignedDepartment)
-        if (deptCourses) {
-          deptCourses.push(course)
-        }
-      })
-
-      // Sort departments and render
+    // Memoized render function for departments
+    const renderCoursesByDepartment = useCallback(() => {
       const sortedDepartments = Array.from(departmentCourses.keys()).sort()
 
       return sortedDepartments.map((departmentName) => {
@@ -102,27 +149,10 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
           />
         )
       })
-    }
+    }, [departmentCourses, userProgress, getCourseStatus, onCourseSelect, onCourseToggle, onCourseStatusChange])
 
-    const renderCoursesBySeries = () => {
-      const seriesCourses = new Map<string, typeof filteredCourses>()
-      const seriesCodes = getCourseSeriesCodes(courseData.seriesMappings)
-
-      // Group courses by their series prefix
-      filteredCourses.forEach((course) => {
-        const seriesPrefix = getCourseSeriesPrefix(course.code, seriesCodes)
-
-        if (!seriesCourses.has(seriesPrefix)) {
-          seriesCourses.set(seriesPrefix, [])
-        }
-
-        const courses = seriesCourses.get(seriesPrefix)
-        if (courses) {
-          courses.push(course)
-        }
-      })
-
-      // Sort series alphabetically and render
+    // Memoized render function for series
+    const renderCoursesBySeries = useCallback(() => {
       const sortedSeries = Array.from(seriesCourses.keys()).sort()
 
       return sortedSeries.map((seriesPrefix) => {
@@ -131,7 +161,6 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
           return null
         }
 
-        // Sort courses within each series by number
         const sortedCourses = sortCoursesByNumber(courses)
         const displayName = getSeriesDisplayName(seriesPrefix, courseData.seriesMappings)
 
@@ -148,17 +177,27 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
           />
         )
       })
-    }
+    }, [
+      seriesCourses,
+      courseData.seriesMappings,
+      userProgress,
+      getCourseStatus,
+      onCourseSelect,
+      onCourseToggle,
+      onCourseStatusChange
+    ])
 
-    if (groupingMode === 'department') {
-      return renderCoursesByDepartment()
-    }
-
-    if (groupingMode === 'series') {
-      return renderCoursesBySeries()
-    }
-
-    return renderCoursesByCategory()
+    // Memoize the final render result based on grouping mode
+    return useMemo(() => {
+      switch (groupingMode) {
+        case 'department':
+          return renderCoursesByDepartment()
+        case 'series':
+          return renderCoursesBySeries()
+        default:
+          return renderCoursesByCategory()
+      }
+    }, [groupingMode, renderCoursesByDepartment, renderCoursesBySeries, renderCoursesByCategory])
   }
 )
 
