@@ -51,7 +51,8 @@ const mockCourseData: ParsedCourseData = {
   dependencyGraph: new Map(),
   categories: [],
   specialRules: [],
-  departmentMappings: new Map()
+  departmentMappings: new Map(),
+  seriesMappings: new Map()
 }
 
 // Set up the course map
@@ -211,9 +212,9 @@ describe('FilterPanel', () => {
       <FilterPanel filters={defaultFilters} courseData={mockCourseData} onFilterChange={mockOnFilterChange} />
     )
 
-    expect(screen.getByText('A')).toBeInTheDocument()
-    expect(screen.getByText('C')).toBeInTheDocument()
-    expect(screen.getByText('D')).toBeInTheDocument()
-    expect(screen.getByText('W')).toBeInTheDocument()
+    expect(screen.getByText('A (Basic)')).toBeInTheDocument()
+    expect(screen.getByText('C (Intermediate)')).toBeInTheDocument()
+    expect(screen.getByText('D (Advanced)')).toBeInTheDocument()
+    expect(screen.getByText('W (Specialist)')).toBeInTheDocument()
   })
 })

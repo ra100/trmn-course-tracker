@@ -7,6 +7,7 @@ import {
   getSeriesDisplayName,
   sortCoursesByNumber
 } from '../../utils/courseUtils'
+import { useT } from '../../i18n'
 import { CourseSection } from './CourseSection'
 import { CourseSubsection } from './CourseSubsection'
 import { CategorySection, CategoryHeader } from './SkillTreeView.styles'
@@ -36,6 +37,16 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
     onCourseToggle,
     onCourseStatusChange
   }) => {
+    const t = useT()
+
+    // Helper function to get translated department name
+    const getDepartmentDisplayName = useCallback(
+      (departmentName: string): string => {
+        return t.filters.departmentLabels[departmentName as keyof typeof t.filters.departmentLabels] || departmentName
+      },
+      [t]
+    )
+
     // Memoize the course series codes to avoid recalculation
     const seriesCodes = useMemo(() => getCourseSeriesCodes(courseData.seriesMappings), [courseData.seriesMappings])
 
@@ -139,7 +150,7 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
         return (
           <CourseSection
             key={departmentName}
-            sectionName={departmentName}
+            sectionName={getDepartmentDisplayName(departmentName)}
             courses={courses}
             userProgress={userProgress}
             getCourseStatus={getCourseStatus}
@@ -149,7 +160,15 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
           />
         )
       })
-    }, [departmentCourses, userProgress, getCourseStatus, onCourseSelect, onCourseToggle, onCourseStatusChange])
+    }, [
+      departmentCourses,
+      getDepartmentDisplayName,
+      userProgress,
+      getCourseStatus,
+      onCourseSelect,
+      onCourseToggle,
+      onCourseStatusChange
+    ])
 
     // Memoized render function for series
     const renderCoursesBySeries = useCallback(() => {

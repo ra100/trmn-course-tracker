@@ -21,6 +21,10 @@ export const DepartmentFilterSection: React.FC<DepartmentFilterSectionProps> = (
   const t = useT()
   const departments = useMemo(() => getAllDepartments(courseData), [courseData])
 
+  const getDepartmentLabel = (department: string): string => {
+    return t.filters.departmentLabels[department as keyof typeof t.filters.departmentLabels] || department
+  }
+
   return (
     <FilterSection>
       <FilterLabel id="department-filter-label">{t.filters.departments}</FilterLabel>
@@ -32,7 +36,7 @@ export const DepartmentFilterSection: React.FC<DepartmentFilterSectionProps> = (
               onChange={(e) => onDepartmentChange(department, e.target.checked)}
               aria-describedby={`department-${department}-label`}
             />
-            <span id={`department-${department}-label`}>{department}</span>
+            <span id={`department-${department}-label`}>{getDepartmentLabel(department)}</span>
           </CheckboxItem>
         ))}
       </CheckboxGroup>

@@ -82,6 +82,23 @@ export const enTranslations: TranslationStrings = {
       available: 'Available',
       locked: 'Locked'
     },
+    levelLabels: {
+      A: 'A (Basic)',
+      C: 'C (Intermediate)',
+      D: 'D (Advanced)',
+      W: 'W (Specialist)'
+    },
+    departmentLabels: {
+      Tactical: 'Tactical',
+      Engineering: 'Engineering',
+      Medical: 'Medical',
+      Communications: 'Communications',
+      Intelligence: 'Intelligence',
+      Navigation: 'Navigation',
+      Supply: 'Supply',
+      Operations: 'Operations',
+      Other: 'Other'
+    },
     activeFilters: 'Active Filters',
     activeFilter: 'Active Filter'
   },

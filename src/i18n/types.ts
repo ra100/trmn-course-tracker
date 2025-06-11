@@ -82,6 +82,23 @@ export interface TranslationStrings {
       available: string
       locked: string
     }
+    levelLabels: {
+      A: string
+      C: string
+      D: string
+      W: string
+    }
+    departmentLabels: {
+      Tactical: string
+      Engineering: string
+      Medical: string
+      Communications: string
+      Intelligence: string
+      Navigation: string
+      Supply: string
+      Operations: string
+      Other: string
+    }
     activeFilters: string
     activeFilter: string
   }

@@ -15,6 +15,10 @@ export const LevelFilterSection: React.FC<LevelFilterSectionProps> = ({ filters,
   const t = useT()
   const levels: CourseLevel[] = ['A', 'C', 'D', 'W']
 
+  const getLevelLabel = (level: CourseLevel): string => {
+    return t.filters.levelLabels[level] || level
+  }
+
   return (
     <FilterSection>
       <FilterLabel id="level-filter-label">{t.filters.levels}</FilterLabel>
@@ -26,7 +30,7 @@ export const LevelFilterSection: React.FC<LevelFilterSectionProps> = ({ filters,
               onChange={(e) => onLevelChange(level, e.target.checked)}
               aria-describedby={`level-${level}-label`}
             />
-            <span id={`level-${level}-label`}>{level}</span>
+            <span id={`level-${level}-label`}>{getLevelLabel(level)}</span>
           </CheckboxItem>
         ))}
       </CheckboxGroup>

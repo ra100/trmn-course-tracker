@@ -8,8 +8,11 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = React.memo(({ l
 
   return (
     <SettingSection>
-      <SettingLabel>{t.settings.language}</SettingLabel>
+      <SettingLabel as="label" htmlFor="language-select">
+        {t.settings.language}
+      </SettingLabel>
       <LanguageSelectorElement
+        id="language-select"
         value={language}
         onChange={(e) => onLanguageChange(e.target.value as Language)}
         aria-label={t.settings.language}

@@ -82,6 +82,23 @@ export const csTranslations: TranslationStrings = {
       available: 'Dostupné',
       locked: 'Uzamčené'
     },
+    levelLabels: {
+      A: 'A (Základní)',
+      C: 'C (Pokročilé)',
+      D: 'D (Pokročilé)',
+      W: 'W (Specialista)'
+    },
+    departmentLabels: {
+      Tactical: 'Taktické',
+      Engineering: 'Strojírenství',
+      Medical: 'Zdravotnictví',
+      Communications: 'Komunikace',
+      Intelligence: 'Zpravodajství',
+      Navigation: 'Navigace',
+      Supply: 'Zásobování',
+      Operations: 'Operace',
+      Other: 'Ostatní'
+    },
     activeFilters: 'Aktivní filtry',
     activeFilter: 'Aktivní filtr'
   },
