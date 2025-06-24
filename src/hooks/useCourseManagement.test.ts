@@ -29,7 +29,8 @@ describe('useCourseManagement', () => {
       { id: '3', code: 'ADV-001', name: 'Advanced Course 1', available: false } as Course
     ],
     categories: [],
-    specialRules: []
+    specialRules: [],
+    seriesMappings: new Map()
   }
 
   const mockUserProgress: UserProgress = {
@@ -223,7 +224,9 @@ describe('useCourseManagement', () => {
       expect(importResult).toEqual({
         imported: 3,
         trackable: 2,
-        alreadyCompleted: 1
+        alreadyCompleted: 1,
+        newCourses: ['BASIC-002'],
+        untrackedCourses: ['UNKNOWN-001']
       })
 
       expect(mockUpdateOptimistically).toHaveBeenCalledWith(expect.any(Function))
@@ -250,7 +253,9 @@ describe('useCourseManagement', () => {
       expect(importResult).toEqual({
         imported: 0,
         trackable: 0,
-        alreadyCompleted: 0
+        alreadyCompleted: 0,
+        newCourses: [],
+        untrackedCourses: []
       })
 
       expect(mockUpdateOptimistically).not.toHaveBeenCalled()

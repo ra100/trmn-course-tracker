@@ -98,7 +98,9 @@ describe('MedusaImport', () => {
     mockOnImportMedusaCourses.mockReturnValue({
       imported: 1,
       trackable: 1,
-      alreadyCompleted: 0
+      alreadyCompleted: 0,
+      newCourses: ['TEST-101'],
+      untrackedCourses: []
     })
 
     renderWithTheme(<MedusaImport onImportMedusaCourses={mockOnImportMedusaCourses} />)
@@ -165,6 +167,89 @@ describe('MedusaImport', () => {
     await waitFor(() => {
       expect(importButton).toBeEnabled()
       expect(importButton).toHaveTextContent('Import Courses')
+    })
+  })
+
+  it('shows course IDs with ellipsis when there are more than 5 courses', async () => {
+    const user = userEvent.setup()
+    const mockCourses = [{ code: 'TEST-101', name: 'Test Course' }]
+    ;(validateMedusaHTML as ReturnType<typeof vi.fn>).mockReturnValue({ valid: true })
+    ;(parseMedusaHTML as ReturnType<typeof vi.fn>).mockReturnValue({
+      courses: mockCourses,
+      parseDate: new Date(),
+      errors: []
+    })
+
+    // Mock with more than 5 new courses and untracked courses
+    mockOnImportMedusaCourses.mockReturnValue({
+      imported: 10,
+      trackable: 6,
+      alreadyCompleted: 0,
+      newCourses: ['SIA-RMN-0001', 'SIA-RMN-0002', 'SIA-RMN-0003', 'SIA-RMN-0004', 'SIA-RMN-0005', 'SIA-RMN-0006'],
+      untrackedCourses: ['OLD-001', 'OLD-002', 'OLD-003', 'OLD-004', 'OLD-005', 'OLD-006', 'OLD-007']
+    })
+
+    renderWithTheme(<MedusaImport onImportMedusaCourses={mockOnImportMedusaCourses} />)
+
+    const textarea = screen.getByPlaceholderText(/Paste the complete HTML source/)
+    await user.type(textarea, 'valid html')
+
+    const importButton = screen.getByRole('button', { name: 'Import Courses' })
+    await user.click(importButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Success!')).toBeInTheDocument()
+
+      // Should show first 5 new courses with ellipsis
+      expect(screen.getByText(/6 new courses added/)).toBeInTheDocument()
+      expect(
+        screen.getByText(/SIA-RMN-0001, SIA-RMN-0002, SIA-RMN-0003, SIA-RMN-0004, SIA-RMN-0005\.\.\./)
+      ).toBeInTheDocument()
+
+      // Should show first 5 untracked courses with ellipsis
+      expect(screen.getByText(/7 courses from Medusa are not tracked by this app/)).toBeInTheDocument()
+      expect(screen.getByText(/OLD-001, OLD-002, OLD-003, OLD-004, OLD-005\.\.\./)).toBeInTheDocument()
+    })
+  })
+
+  it('shows all course IDs when there are 5 or fewer courses', async () => {
+    const user = userEvent.setup()
+    const mockCourses = [{ code: 'TEST-101', name: 'Test Course' }]
+    ;(validateMedusaHTML as ReturnType<typeof vi.fn>).mockReturnValue({ valid: true })
+    ;(parseMedusaHTML as ReturnType<typeof vi.fn>).mockReturnValue({
+      courses: mockCourses,
+      parseDate: new Date(),
+      errors: []
+    })
+
+    // Mock with 3 new courses and 2 untracked courses (≤5 each)
+    mockOnImportMedusaCourses.mockReturnValue({
+      imported: 5,
+      trackable: 3,
+      alreadyCompleted: 0,
+      newCourses: ['SIA-RMN-0001', 'SIA-RMN-0002', 'SIA-RMN-0003'],
+      untrackedCourses: ['OLD-001', 'OLD-002']
+    })
+
+    renderWithTheme(<MedusaImport onImportMedusaCourses={mockOnImportMedusaCourses} />)
+
+    const textarea = screen.getByPlaceholderText(/Paste the complete HTML source/)
+    await user.type(textarea, 'valid html')
+
+    const importButton = screen.getByRole('button', { name: 'Import Courses' })
+    await user.click(importButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Success!')).toBeInTheDocument()
+
+      // Should show all 3 new courses without ellipsis
+      expect(screen.getByText(/3 new courses added/)).toBeInTheDocument()
+      expect(screen.getByText(/SIA-RMN-0001, SIA-RMN-0002, SIA-RMN-0003/)).toBeInTheDocument()
+      expect(screen.queryByText(/\.\.\./)).not.toBeInTheDocument()
+
+      // Should show all 2 untracked courses without ellipsis
+      expect(screen.getByText(/2 courses from Medusa are not tracked by this app/)).toBeInTheDocument()
+      expect(screen.getByText(/OLD-001, OLD-002/)).toBeInTheDocument()
     })
   })
 })

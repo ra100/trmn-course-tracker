@@ -5,6 +5,8 @@ export interface MedusaImportProps {
     imported: number
     trackable: number
     alreadyCompleted: number
+    newCourses: string[]
+    untrackedCourses: string[]
   }
 }
 
@@ -35,6 +37,8 @@ export interface ImportStatsDisplayProps {
     trackable: number
     imported: number
     alreadyCompleted: number
+    newCourses: string[]
+    untrackedCourses: string[]
   }
 }
 
@@ -43,6 +47,8 @@ export interface UseMedusaImportProps {
     imported: number
     trackable: number
     alreadyCompleted: number
+    newCourses: string[]
+    untrackedCourses: string[]
   }
 }
 

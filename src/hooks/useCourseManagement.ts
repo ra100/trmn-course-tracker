@@ -19,6 +19,8 @@ interface UseCourseManagementReturn {
     imported: number
     trackable: number
     alreadyCompleted: number
+    newCourses: string[]
+    untrackedCourses: string[]
   }
 }
 
@@ -144,9 +146,17 @@ export const useCourseManagement = ({
   )
 
   const handleImportMedusaCourses = useCallback(
-    (courseCodes: string[]): { imported: number; trackable: number; alreadyCompleted: number } => {
+    (
+      courseCodes: string[]
+    ): {
+      imported: number
+      trackable: number
+      alreadyCompleted: number
+      newCourses: string[]
+      untrackedCourses: string[]
+    } => {
       if (!courseData || !eligibilityEngine || !userProgress) {
-        return { imported: 0, trackable: 0, alreadyCompleted: 0 }
+        return { imported: 0, trackable: 0, alreadyCompleted: 0, newCourses: [], untrackedCourses: [] }
       }
 
       // Get all trackable course codes from our course data
@@ -154,6 +164,9 @@ export const useCourseManagement = ({
 
       // Filter imported courses to only include trackable ones
       const trackableImportedCourses = courseCodes.filter((code) => trackableCourses.has(code))
+
+      // Get untracked courses (courses from Medusa that aren't in our system)
+      const untrackedCourses = courseCodes.filter((code) => !trackableCourses.has(code))
 
       // Check which courses are already completed
       const existingCourses = userProgress.completedCourses
@@ -184,7 +197,9 @@ export const useCourseManagement = ({
       return {
         imported: courseCodes.length,
         trackable: trackableImportedCourses.length,
-        alreadyCompleted: alreadyCompleted.length
+        alreadyCompleted: alreadyCompleted.length,
+        newCourses,
+        untrackedCourses
       }
     },
     [courseData, eligibilityEngine, userProgress, updateCourseAvailabilityAndProgress]
