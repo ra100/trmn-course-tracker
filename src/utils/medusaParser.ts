@@ -5,6 +5,9 @@ const MEDUSA_COURSE_CODE_REGEX = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\
 // Global version for text search (finds all matches)
 const MEDUSA_COURSE_CODE_REGEX_GLOBAL = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/g
 
+// Member ID patterns to exclude (e.g., RMN-6421-20, IAN-1234-56, etc.)
+const MEMBER_ID_REGEX = /^[A-Z]{2,4}-\d{4}-\d{2}$/
+
 export interface MedusaCourse {
   courseCode: string
   courseName: string
@@ -22,6 +25,45 @@ export interface MedusaParseResult {
     trackable: number
     alreadyCompleted: number
   }
+}
+
+/**
+ * Check if a code is a member ID and should be excluded
+ */
+function isMemberID(code: string): boolean {
+  return MEMBER_ID_REGEX.test(code)
+}
+
+/**
+ * Check if an element is in a profile/service record section that should be excluded from course parsing
+ */
+function isInProfileSection(element: Element): boolean {
+  // Check if the element or any parent is in a non-academic section
+  let current: Element | null = element
+  while (current) {
+    // Check for IDs that indicate profile sections (service record, ribbon rack, promotion points, history)
+    const id = current.getAttribute('id')
+    if (id && (id === 'sr' || id === 'user-profile' || id === 'rr' || id === 'pp' || id === 'history')) {
+      return true
+    }
+
+    // Check for classes that indicate profile sections
+    const className = current.className
+    if (className && (className.includes('filePhoto') || className.includes('name-badge'))) {
+      return true
+    }
+
+    // Check if we're in a tab panel that's clearly not academic
+    if (current.getAttribute('role') === 'tabpanel') {
+      const panelId = current.getAttribute('id')
+      if (panelId && (panelId === 'sr' || panelId === 'rr' || panelId === 'pp' || panelId === 'history')) {
+        return true
+      }
+    }
+
+    current = current.parentElement
+  }
+  return false
 }
 
 /**
@@ -48,6 +90,11 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
         return
       }
 
+      // Skip non-academic panels (service record, ribbon rack, promotion points, history)
+      if (panelId === 'sr' || panelId === 'rr' || panelId === 'pp' || panelId === 'history') {
+        return
+      }
+
       // Determine the category based on panel ID with enhanced mapping
       const category = getCategoryFromPanelId(panelId)
 
@@ -69,6 +116,11 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
 
             // Extract course code using enhanced pattern
             const courseCode = extractCourseCode(courseNameText)
+
+            // Skip if it's a member ID
+            if (courseCode && isMemberID(courseCode)) {
+              return
+            }
 
             if (courseCode && courseNameText && gradeText && dateText) {
               result.courses.push({
@@ -94,6 +146,11 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
     const foundCoursesByText = new Set<string>()
 
     allTextElements.forEach((element) => {
+      // Skip if element is in a profile section
+      if (isInProfileSection(element)) {
+        return
+      }
+
       const text = element.textContent?.trim() || ''
       // Find all course code matches in the text
       let match: RegExpExecArray | null
@@ -101,7 +158,8 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
       while ((match = regex.exec(text)) !== null) {
         if (match && match[1]) {
           const courseCode = match[1]
-          if (!result.courses.some((course) => course.courseCode === courseCode)) {
+          // Skip member IDs and already found courses
+          if (!isMemberID(courseCode) && !result.courses.some((course) => course.courseCode === courseCode)) {
             foundCoursesByText.add(courseCode)
           }
         }
@@ -169,7 +227,14 @@ function getCategoryFromPanelId(panelId: string): string {
  */
 function extractCourseCode(courseName: string): string | null {
   const match = courseName.match(MEDUSA_COURSE_CODE_REGEX)
-  return match ? match[1] : null
+  const courseCode = match ? match[1] : null
+
+  // Additional check to exclude member IDs
+  if (courseCode && isMemberID(courseCode)) {
+    return null
+  }
+
+  return courseCode
 }
 
 /**

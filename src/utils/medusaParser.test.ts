@@ -599,4 +599,195 @@ describe('medusaParser', () => {
       expect(categories).toContain('Other/Unknown')
     })
   })
+
+  describe('member ID exclusion', () => {
+    it('should exclude member IDs from course parsing', () => {
+      const htmlWithMemberID = `
+        <div role="tabpanel" id="sr">
+          <div class="filePhoto">
+            <a href="/id/qrcode/test">RMN-6000-10</a>
+          </div>
+        </div>
+        <div role="tabpanel" id="RMN">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">SIA-RMN-0001 Basic Enlisted Course</div>
+            <div class="col-sm-1">90%</div>
+            <div class="col-sm-3">15 Dec 2024</div>
+          </div>
+        </div>
+      `
+
+      const result = parseMedusaHTML(htmlWithMemberID)
+
+      expect(result.errors).toHaveLength(0)
+      expect(result.courses).toHaveLength(1)
+      expect(result.courses[0].courseCode).toBe('SIA-RMN-0001')
+
+      // Verify member ID is not included
+      expect(result.courses.find((c) => c.courseCode === 'RMN-6421-20')).toBeUndefined()
+    })
+
+    it('should exclude various member ID patterns', () => {
+      const htmlWithVariousMemberIDs = `
+        <div role="tabpanel" id="RMN">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">SIA-RMN-0001 Basic Course</div>
+            <div class="col-sm-1">90%</div>
+            <div class="col-sm-3">15 Dec 2024</div>
+          </div>
+          <div class="row zebra-even">
+            <div class="col-sm-6">RMN-6421-20 Should be excluded</div>
+            <div class="col-sm-1">100%</div>
+            <div class="col-sm-3">01 Jan 2025</div>
+          </div>
+          <div class="row zebra-odd">
+            <div class="col-sm-6">IAN-1234-56 Another member ID</div>
+            <div class="col-sm-1">95%</div>
+            <div class="col-sm-3">02 Jan 2025</div>
+          </div>
+          <div class="row zebra-even">
+            <div class="col-sm-6">SIA-RMN-0002 Valid Course</div>
+            <div class="col-sm-1">85%</div>
+            <div class="col-sm-3">03 Jan 2025</div>
+          </div>
+        </div>
+      `
+
+      const result = parseMedusaHTML(htmlWithVariousMemberIDs)
+
+      expect(result.errors).toHaveLength(0)
+      expect(result.courses).toHaveLength(2)
+
+      const courseCodes = result.courses.map((c) => c.courseCode)
+      expect(courseCodes).toContain('SIA-RMN-0001')
+      expect(courseCodes).toContain('SIA-RMN-0002')
+      expect(courseCodes).not.toContain('RMN-6421-20')
+      expect(courseCodes).not.toContain('IAN-1234-56')
+    })
+
+    it('should not exclude valid course codes that might look similar to member IDs', () => {
+      const htmlWithSimilarCodes = `
+        <div role="tabpanel" id="RMN">
+          <div class="row zebra-odd">
+            <div class="col-sm-6">SIA-RMN-0001 Basic Course</div>
+            <div class="col-sm-1">90%</div>
+            <div class="col-sm-3">15 Dec 2024</div>
+          </div>
+          <div class="row zebra-even">
+            <div class="col-sm-6">GPU-ALC-0009 Valid Course</div>
+            <div class="col-sm-1">100%</div>
+            <div class="col-sm-3">01 Jan 2025</div>
+          </div>
+          <div class="row zebra-odd">
+            <div class="col-sm-6">MU-BEK-01 University Course</div>
+            <div class="col-sm-1">95%</div>
+            <div class="col-sm-3">02 Jan 2025</div>
+          </div>
+        </div>
+      `
+
+      const result = parseMedusaHTML(htmlWithSimilarCodes)
+
+      expect(result.errors).toHaveLength(0)
+      expect(result.courses).toHaveLength(3)
+
+      const courseCodes = result.courses.map((c) => c.courseCode)
+      expect(courseCodes).toContain('SIA-RMN-0001')
+      expect(courseCodes).toContain('GPU-ALC-0009')
+      expect(courseCodes).toContain('MU-BEK-01')
+    })
+
+    it('should only search in academic record sections', () => {
+      const htmlWithCodesInDifferentSections = `
+        <div role="tabpanel" id="sr">
+          <div class="filePhoto">
+            <a>RMN-6421-20</a>
+            <div>Some text with SIA-RMN-9999 in profile</div>
+          </div>
+        </div>
+        <div role="tabpanel" id="ar">
+          <div role="tabpanel" id="RMN">
+            <div class="row zebra-odd">
+              <div class="col-sm-6">SIA-RMN-0001 Basic Course</div>
+              <div class="col-sm-1">90%</div>
+              <div class="col-sm-3">15 Dec 2024</div>
+            </div>
+          </div>
+        </div>
+      `
+
+      const result = parseMedusaHTML(htmlWithCodesInDifferentSections)
+
+      expect(result.errors).toHaveLength(0)
+      expect(result.courses.length).toBeGreaterThan(0)
+
+      const courseCodes = result.courses.map((c) => c.courseCode)
+      expect(courseCodes).toContain('SIA-RMN-0001')
+
+      // Most importantly - member ID should NOT be included
+      expect(courseCodes).not.toContain('RMN-6421-20')
+
+      // The SIA-RMN-9999 might or might not be included, but member ID must be excluded
+      // This is the core requirement
+    })
+
+    it('should handle real medusa HTML structure with member ID in profile section', () => {
+      const realMedusaHTML = `
+        <!DOCTYPE html>
+        <html>
+        <body>
+          <div role="tabpanel" class="tab-pane active padding-top-10" id="sr">
+            <div id="user-profile" class="row">
+              <div class="float-left">
+                <div class="Incised901Light filePhoto">
+                  <a href="/id/qrcode/5f5535179c6b7f628b6230d2">RMN-6421-20</a>
+                  <div class="filePhotoBox">
+                    <img src="/photos/RMN-6421-20.JPG" alt="Official File Photo">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div role="tabpanel" class="tab-pane" id="ar">
+            <div role="tabpanel" class="tab-pane padding-top-10 active" id="RMN">
+              <div class="row zebra-odd">
+                <div class="col-sm-6">SIA-RMN-0001 Basic Enlisted Course</div>
+                <div class="col-sm-1">90%</div>
+                <div class="col-sm-3">15 Dec 2024</div>
+              </div>
+              <div class="row zebra-odd">
+                <div class="col-sm-6">SIA-RMN-0002 Basic Non-Comm Course</div>
+                <div class="col-sm-1">100%</div>
+                <div class="col-sm-3">15 Dec 2024</div>
+              </div>
+            </div>
+
+            <div role="tabpanel" class="tab-pane padding-top-10" id="RMNSpeciality">
+              <div class="row zebra-odd">
+                <div class="col-sm-6">SIA-SRN-01A Personnelman Specialist Course</div>
+                <div class="col-sm-1">100%</div>
+                <div class="col-sm-3">23 Jun 2025</div>
+              </div>
+            </div>
+          </div>
+        </body>
+        </html>
+      `
+
+      const result = parseMedusaHTML(realMedusaHTML)
+
+      expect(result.errors).toHaveLength(0)
+      expect(result.courses.length).toBeGreaterThanOrEqual(3)
+
+      const courseCodes = result.courses.map((c) => c.courseCode)
+      expect(courseCodes).toContain('SIA-RMN-0001')
+      expect(courseCodes).toContain('SIA-RMN-0002')
+      expect(courseCodes).toContain('SIA-SRN-01A')
+
+      // Most importantly - member ID should NOT be included
+      expect(courseCodes).not.toContain('RMN-6421-20')
+      expect(result.courses.find((c) => c.courseCode === 'RMN-6421-20')).toBeUndefined()
+    })
+  })
 })
