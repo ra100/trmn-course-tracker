@@ -42,22 +42,17 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
         return { satisfied: 0, completed: false }
       }
 
-      const departmentCourses = findCoursesByDepartmentAndLevel(courseData, requirement.departments, requirement.level)
-      const departmentGroups: { [dept: string]: string[] } = {}
+      // Use the findCoursesByDepartmentAndLevel function which properly uses department mappings
+      // Instead of doing our own filtering, let's check each department individually
+      let satisfiedDepartments = 0
 
       requirement.departments.forEach((dept: string) => {
-        departmentGroups[dept] = departmentCourses
-          .filter(
-            (course) =>
-              course.section.toLowerCase().includes(dept.toLowerCase()) ||
-              course.subsection.toLowerCase().includes(dept.toLowerCase())
-          )
-          .map((course) => course.code)
-      })
+        // Find courses for this specific department and level
+        const coursesInDept = findCoursesByDepartmentAndLevel(courseData, [dept], requirement.level)
+        const courseCodes = coursesInDept.map((course) => course.code)
 
-      let satisfiedDepartments = 0
-      Object.entries(departmentGroups).forEach(([, courses]) => {
-        const hasAnyCourse = courses.some((course) => userProgress.completedCourses.has(course))
+        // Check if user has completed any course in this department
+        const hasAnyCourse = courseCodes.some((courseCode) => userProgress.completedCourses.has(courseCode))
         if (hasAnyCourse) {
           satisfiedDepartments++
         }
