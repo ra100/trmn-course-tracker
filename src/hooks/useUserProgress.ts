@@ -896,14 +896,24 @@ export const recoverFromLocalStorage = async (): Promise<void> => {
   }
 }
 
+// Force refresh achievements (clears React Query cache)
+export const forceRefreshAchievements = (): void => {
+  if (typeof window !== 'undefined') {
+    console.log('🔄 Forcing page refresh to clear caches...')
+    window.location.reload()
+  }
+}
+
 // Expose debug functions globally for easy browser console access
 if (typeof window !== 'undefined') {
   const windowWithDebug = window as Window & {
     debugUserProgress?: () => Promise<void>
     recoverData?: () => Promise<void>
+    refreshAchievements?: () => void
   }
   windowWithDebug.debugUserProgress = debugIndexedDB
   windowWithDebug.recoverData = recoverFromLocalStorage
+  windowWithDebug.refreshAchievements = forceRefreshAchievements
 }
 
 // Export query key for cache invalidation

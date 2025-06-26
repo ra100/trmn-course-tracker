@@ -16,8 +16,19 @@ export function calculateAchievements(
     const config = loadAchievementConfiguration()
     const achievements: CalculatedAchievement[] = []
 
+    console.log('🏆 Achievement System Debug:', {
+      hasConfig: !!config,
+      configKeys: config ? Object.keys(config) : [],
+      progressionCount: config?.progressionMilestones?.length || 0,
+      departmentCount: config?.departmentBreadth?.length || 0,
+      specialtyCount: config?.specialtyDepth?.length || 0,
+      institutionCount: config?.institutionDiversity?.length || 0,
+      userCompletedCount: userProgress?.completedCourses?.size || 0
+    })
+
     // Safe fallback for missing data
     if (!config || !courseData || !userProgress || !translations) {
+      console.warn('🏆 Using fallback achievements - missing data')
       return getFallbackAchievements(userProgress, translations)
     }
 
@@ -134,6 +145,13 @@ export function calculateAchievements(
         }
       })
     }
+
+    console.log('🏆 Final Achievement Results:', {
+      totalAchievements: achievements.length,
+      achievementIds: achievements.map((a) => a.id),
+      completed: achievements.filter((a) => a.completed).map((a) => a.id),
+      usingFallback: achievements.length === 0
+    })
 
     return achievements.length > 0 ? achievements : getFallbackAchievements(userProgress, translations)
   } catch (error) {

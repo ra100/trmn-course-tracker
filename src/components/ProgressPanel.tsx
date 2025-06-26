@@ -229,9 +229,15 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
 
   const getAchievements = useCallback((): CalculatedAchievement[] => {
     try {
-      return calculateAchievements(courseData, userProgress, t)
+      const result = calculateAchievements(courseData, userProgress, t)
+      console.log('🎯 ProgressPanel received achievements:', {
+        count: result.length,
+        ids: result.map((a) => a.id),
+        categories: Array.from(new Set(result.map((a) => a.category)))
+      })
+      return result
     } catch (error) {
-      console.warn('Achievement calculation failed, using fallback:', error)
+      console.warn('🎯 Achievement calculation failed, using fallback:', error)
       // Fallback to basic achievements to prevent data loss
       const fallbackAchievements: CalculatedAchievement[] = []
       const completedCount = userProgress.completedCourses.size
@@ -254,6 +260,7 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
         progress: { current: Math.min(completedCount, 3), target: 3 }
       })
 
+      console.log('🎯 Using fallback achievements:', fallbackAchievements.length)
       return fallbackAchievements
     }
   }, [courseData, userProgress, t])
@@ -284,7 +291,7 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
         combinedEarned={combinedSpaceWarfareEarned}
       />
 
-      <BasicAchievements achievements={achievements} maxDisplay={5} />
+      <BasicAchievements achievements={achievements} maxDisplay={15} />
     </PanelContainer>
   )
 }
