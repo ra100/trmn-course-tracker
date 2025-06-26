@@ -330,6 +330,31 @@ class UserProgressDB {
     })
   }
 
+  async clearCourseStates(): Promise<void> {
+    if (!this.isAvailable || !this.dbPromise) {
+      throw new Error('IndexedDB is not available')
+    }
+
+    const db = await this.dbPromise
+
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([COURSES_STORE], 'readwrite')
+      const store = transaction.objectStore(COURSES_STORE)
+
+      const request = store.clear()
+
+      request.onerror = () => {
+        getLogger().error('Failed to clear course states from IndexedDB:', request.error)
+        reject(request.error)
+      }
+
+      request.onsuccess = () => {
+        getLogger().log('🗑️ Course states cleared from IndexedDB')
+        resolve()
+      }
+    })
+  }
+
   async clear(): Promise<void> {
     if (!this.isAvailable || !this.dbPromise) {
       throw new Error('IndexedDB is not available')
@@ -370,16 +395,6 @@ class UserProgressDB {
   async save(progress: UserProgress): Promise<void> {
     getLogger().log('📦 Starting IndexedDB save operation...')
 
-    // Save metadata
-    const metadata: UserMetadata = {
-      userId: progress.userId,
-      specialRulesProgress: Array.from(progress.specialRulesProgress.entries()),
-      lastUpdated: progress.lastUpdated.toISOString()
-    }
-
-    getLogger().log('📦 Saving metadata to IndexedDB...')
-    await this.saveMetadata(metadata)
-
     // Prepare course updates
     const updates: Array<{ courseId: string; status: CourseStatus }> = []
 
@@ -390,12 +405,22 @@ class UserProgressDB {
 
     getLogger().log(`📦 Preparing to save ${updates.length} course state records...`)
 
-    // Clear existing course states and add new ones
+    // Clear existing course states first (but NOT metadata)
     getLogger().log('🗑️ Clearing existing course states...')
-    await this.clear()
+    await this.clearCourseStates()
 
     getLogger().log('📦 Bulk updating course states...')
     await this.bulkUpdateCourseStates(updates)
+
+    // Save metadata AFTER course states to ensure consistency
+    const metadata: UserMetadata = {
+      userId: progress.userId,
+      specialRulesProgress: Array.from(progress.specialRulesProgress.entries()),
+      lastUpdated: progress.lastUpdated.toISOString()
+    }
+
+    getLogger().log('📦 Saving metadata to IndexedDB...')
+    await this.saveMetadata(metadata)
 
     getLogger().log('✅ IndexedDB save operation completed successfully')
   }
@@ -811,6 +836,74 @@ export const clearAllProgress = async (): Promise<void> => {
     getLogger().error('❌ Failed to clear progress data:', err)
     throw err
   }
+}
+
+// Debug function to inspect IndexedDB contents
+export const debugIndexedDB = async (): Promise<void> => {
+  if (!isIndexedDBAvailable()) {
+    console.log('❌ IndexedDB not available')
+    return
+  }
+
+  try {
+    const metadata = await userProgressDB.loadMetadata()
+    const courseStates = await userProgressDB.loadAllCourseStates()
+
+    console.log('🔍 IndexedDB Debug Info:')
+    console.log('📊 Metadata:', metadata)
+    console.log(`📚 Course States: ${courseStates.length} records`)
+    console.log('🎯 Sample course states:', courseStates.slice(0, 5))
+
+    // Check localStorage too
+    const localData = loadFromLocalStorage()
+    console.log('📱 localStorage data:', {
+      exists: !!localData,
+      completed: localData?.completedCourses?.size || 0,
+      userId: localData?.userId
+    })
+  } catch (err) {
+    console.error('❌ Error debugging IndexedDB:', err)
+  }
+}
+
+// Quick recovery function to immediately restore from localStorage
+export const recoverFromLocalStorage = async (): Promise<void> => {
+  const localData = loadFromLocalStorage()
+  if (localData && isIndexedDBAvailable()) {
+    console.log('🔄 Starting immediate recovery from localStorage...')
+    console.log(`📚 Found ${localData.completedCourses.size} completed courses`)
+
+    try {
+      await userProgressDB.save(localData)
+      console.log('✅ Successfully recovered data to IndexedDB!')
+
+      // Verify the recovery
+      const verified = await userProgressDB.load()
+      if (verified) {
+        console.log('✅ Recovery verified - data is now accessible!')
+        // Force refresh the React Query cache
+        if (typeof window !== 'undefined' && window.location) {
+          window.location.reload()
+        }
+      } else {
+        console.log('❌ Recovery verification failed')
+      }
+    } catch (err) {
+      console.error('❌ Recovery failed:', err)
+    }
+  } else {
+    console.log('❌ No localStorage data found to recover')
+  }
+}
+
+// Expose debug functions globally for easy browser console access
+if (typeof window !== 'undefined') {
+  const windowWithDebug = window as Window & {
+    debugUserProgress?: () => Promise<void>
+    recoverData?: () => Promise<void>
+  }
+  windowWithDebug.debugUserProgress = debugIndexedDB
+  windowWithDebug.recoverData = recoverFromLocalStorage
 }
 
 // Export query key for cache invalidation
