@@ -187,3 +187,33 @@ export interface AppState {
   loading: boolean
   error: string | null
 }
+
+export interface Achievement {
+  title: string
+  description: string
+  completed: boolean
+}
+
+export interface AchievementConfig {
+  id: string
+  threshold?: number
+  type: 'courseCount' | 'departmentCount' | 'qualificationComplete' | 'warrantLevel' | 'institutionDiversity'
+  institutions?: string[]
+  description?: string
+}
+
+export interface AchievementConfiguration {
+  progressionMilestones: AchievementConfig[]
+  departmentBreadth: AchievementConfig[]
+  specialtyDepth: AchievementConfig[]
+  institutionDiversity: AchievementConfig[]
+}
+
+export interface CalculatedAchievement extends Achievement {
+  id: string
+  category: 'progression' | 'department' | 'specialty' | 'institution'
+  progress?: {
+    current: number
+    target: number
+  }
+}

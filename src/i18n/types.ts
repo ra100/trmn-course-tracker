@@ -150,6 +150,7 @@ export interface TranslationStrings {
 
   // Achievements
   achievements: {
+    // Progression Milestones
     firstCourse: {
       title: string
       description: string
@@ -158,15 +159,47 @@ export interface TranslationStrings {
       title: string
       description: string
     }
-    makingProgress: {
-      title: string
-      description: string
-    }
     dedicatedStudent: {
       title: string
       description: string
     }
     expertLevel: {
+      title: string
+      description: string
+    }
+    courseVeteran: {
+      title: string
+      description: string
+    }
+    // Department Breadth
+    multiDepartmental: {
+      title: string
+      description: string
+    }
+    departmentExplorer: {
+      title: string
+      description: string
+    }
+    // Specialty Depth
+    firstQualification: {
+      title: string
+      description: string
+    }
+    warrantSpecialist: {
+      title: string
+      description: string
+    }
+    // Institution Diversity
+    wellRounded: {
+      title: string
+      description: string
+    }
+    scholar: {
+      title: string
+      description: string
+    }
+    // Legacy achievements (kept for backwards compatibility)
+    makingProgress: {
       title: string
       description: string
     }

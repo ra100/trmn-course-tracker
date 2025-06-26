@@ -150,25 +150,58 @@ export const enTranslations: TranslationStrings = {
 
   // Achievements
   achievements: {
+    // Progression Milestones
     firstCourse: {
       title: 'First Course',
       description: 'Complete your first course'
     },
     gettingStarted: {
       title: 'Getting Started',
-      description: 'Complete 5 courses'
-    },
-    makingProgress: {
-      title: 'Making Progress',
-      description: 'Complete 10 courses'
+      description: 'Complete 3 courses'
     },
     dedicatedStudent: {
       title: 'Dedicated Student',
-      description: 'Complete 25 courses'
+      description: 'Complete 10 courses'
     },
     expertLevel: {
       title: 'Expert Level',
+      description: 'Complete 25 courses'
+    },
+    courseVeteran: {
+      title: 'Course Veteran',
       description: 'Complete 50 courses'
+    },
+    // Department Breadth
+    multiDepartmental: {
+      title: 'Multi-Departmental',
+      description: 'Complete courses in 3 different departments'
+    },
+    departmentExplorer: {
+      title: 'Department Explorer',
+      description: 'Complete courses in 5 different departments'
+    },
+    // Specialty Depth
+    firstQualification: {
+      title: 'First Qualification',
+      description: 'Complete A→C→D progression in any specialty'
+    },
+    warrantSpecialist: {
+      title: 'Warrant Specialist',
+      description: 'Complete any W-level (Warrant) course'
+    },
+    // Institution Diversity
+    wellRounded: {
+      title: 'Well-Rounded',
+      description: 'Complete courses from both TSC and RMACA'
+    },
+    scholar: {
+      title: 'Scholar',
+      description: 'Complete courses from both TSC and University'
+    },
+    // Legacy achievements (kept for backwards compatibility but not used in new system)
+    makingProgress: {
+      title: 'Making Progress',
+      description: 'Complete 10 courses'
     },
     quarterComplete: {
       title: 'Quarter Complete',

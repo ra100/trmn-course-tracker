@@ -150,25 +150,58 @@ export const csTranslations: TranslationStrings = {
 
   // Achievements
   achievements: {
+    // Progression Milestones
     firstCourse: {
       title: 'První kurz',
       description: 'Dokončete svůj první kurz'
     },
     gettingStarted: {
       title: 'Začínáme',
-      description: 'Dokončete 5 kurzů'
-    },
-    makingProgress: {
-      title: 'Postupujeme',
-      description: 'Dokončete 10 kurzů'
+      description: 'Dokončete 3 kurzy'
     },
     dedicatedStudent: {
       title: 'Oddaný student',
-      description: 'Dokončete 25 kurzů'
+      description: 'Dokončete 10 kurzů'
     },
     expertLevel: {
       title: 'Expertní úroveň',
+      description: 'Dokončete 25 kurzů'
+    },
+    courseVeteran: {
+      title: 'Veterán kurzů',
       description: 'Dokončete 50 kurzů'
+    },
+    // Department Breadth
+    multiDepartmental: {
+      title: 'Více oddělení',
+      description: 'Dokončete kurzy ve 3 různých odděleních'
+    },
+    departmentExplorer: {
+      title: 'Průzkumník oddělení',
+      description: 'Dokončete kurzy v 5 různých odděleních'
+    },
+    // Specialty Depth
+    firstQualification: {
+      title: 'První kvalifikace',
+      description: 'Dokončete postup A→C→D v jakékoli specializaci'
+    },
+    warrantSpecialist: {
+      title: 'Warrant specialista',
+      description: 'Dokončete jakýkoli kurz úrovně W (Warrant)'
+    },
+    // Institution Diversity
+    wellRounded: {
+      title: 'Všestranný',
+      description: 'Dokončete kurzy z TSC i RMACA'
+    },
+    scholar: {
+      title: 'Učenec',
+      description: 'Dokončete kurzy z TSC i Univerzity'
+    },
+    // Legacy achievements (kept for backwards compatibility)
+    makingProgress: {
+      title: 'Postupujeme',
+      description: 'Dokončete 10 kurzů'
     },
     quarterComplete: {
       title: 'Čtvrtina hotová',

@@ -1,7 +1,8 @@
 import React, { useMemo, useCallback } from 'react'
-import { ParsedCourseData, UserProgress } from '../types'
+import { ParsedCourseData, UserProgress, CalculatedAchievement } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
 import { findCoursesByDepartmentAndLevel } from '../utils/departmentUtils'
+import { calculateAchievements } from '../utils/achievementLoader'
 import { useT } from '../i18n'
 import {
   StatisticsPanel,
@@ -13,7 +14,6 @@ import {
   OverallStats,
   SectionProgressData,
   LevelProgressData,
-  Achievement,
   PinRequirement,
   PinProgress
 } from './ProgressPanel/index'
@@ -227,48 +227,36 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
     }))
   }, [courseData.courses, userProgress.completedCourses])
 
-  const getAchievements = useCallback((): Achievement[] => {
-    const achievements: Achievement[] = []
-    const percentage = (userProgress.completedCourses.size / courseData.courses.length) * 100
+  const getAchievements = useCallback((): CalculatedAchievement[] => {
+    try {
+      return calculateAchievements(courseData, userProgress, t)
+    } catch (error) {
+      console.warn('Achievement calculation failed, using fallback:', error)
+      // Fallback to basic achievements to prevent data loss
+      const fallbackAchievements: CalculatedAchievement[] = []
+      const completedCount = userProgress.completedCourses.size
 
-    achievements.push({
-      title: t.achievements.firstCourse.title,
-      description: t.achievements.firstCourse.description,
-      completed: userProgress.completedCourses.size >= 1
-    })
+      fallbackAchievements.push({
+        id: 'firstCourse',
+        title: t.achievements.firstCourse.title,
+        description: t.achievements.firstCourse.description,
+        completed: completedCount >= 1,
+        category: 'progression',
+        progress: { current: completedCount >= 1 ? 1 : 0, target: 1 }
+      })
 
-    achievements.push({
-      title: t.achievements.gettingStarted.title,
-      description: t.achievements.gettingStarted.description,
-      completed: userProgress.completedCourses.size >= 5
-    })
+      fallbackAchievements.push({
+        id: 'gettingStarted',
+        title: t.achievements.gettingStarted.title,
+        description: t.achievements.gettingStarted.description,
+        completed: completedCount >= 3,
+        category: 'progression',
+        progress: { current: Math.min(completedCount, 3), target: 3 }
+      })
 
-    achievements.push({
-      title: t.achievements.makingProgress.title,
-      description: t.achievements.makingProgress.description,
-      completed: userProgress.completedCourses.size >= 10
-    })
-
-    achievements.push({
-      title: t.achievements.halfwayThere.title,
-      description: t.achievements.halfwayThere.description,
-      completed: percentage >= 50
-    })
-
-    achievements.push({
-      title: t.achievements.almostDone.title,
-      description: t.achievements.almostDone.description,
-      completed: percentage >= 75
-    })
-
-    achievements.push({
-      title: t.achievements.courseMaster.title,
-      description: t.achievements.courseMaster.description,
-      completed: percentage >= 100
-    })
-
-    return achievements
-  }, [userProgress.completedCourses.size, courseData.courses.length, t.achievements])
+      return fallbackAchievements
+    }
+  }, [courseData, userProgress, t])
 
   // Memoized calculations
   const overallStats = useMemo(() => getOverallStats(), [getOverallStats])

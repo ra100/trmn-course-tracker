@@ -1,0 +1,67 @@
+{
+  "progressionMilestones": [
+    {
+      "id": "firstCourse",
+      "threshold": 1,
+      "type": "courseCount"
+    },
+    {
+      "id": "gettingStarted",
+      "threshold": 3,
+      "type": "courseCount"
+    },
+    {
+      "id": "dedicatedStudent",
+      "threshold": 10,
+      "type": "courseCount"
+    },
+    {
+      "id": "expertLevel",
+      "threshold": 25,
+      "type": "courseCount"
+    },
+    {
+      "id": "courseVeteran",
+      "threshold": 50,
+      "type": "courseCount"
+    }
+  ],
+  "departmentBreadth": [
+    {
+      "id": "multiDepartmental",
+      "threshold": 3,
+      "type": "departmentCount"
+    },
+    {
+      "id": "departmentExplorer",
+      "threshold": 5,
+      "type": "departmentCount"
+    }
+  ],
+  "specialtyDepth": [
+    {
+      "id": "firstQualification",
+      "type": "qualificationComplete",
+      "description": "Complete A→C→D progression in any specialty"
+    },
+    {
+      "id": "warrantSpecialist",
+      "type": "warrantLevel",
+      "description": "Complete any W-level (Warrant) course"
+    }
+  ],
+  "institutionDiversity": [
+    {
+      "id": "wellRounded",
+      "institutions": ["TSC", "RMACA"],
+      "type": "institutionDiversity",
+      "description": "Complete courses from both TSC and RMACA"
+    },
+    {
+      "id": "scholar",
+      "institutions": ["TSC", "University"],
+      "type": "institutionDiversity",
+      "description": "Complete courses from both TSC and University"
+    }
+  ]
+}
