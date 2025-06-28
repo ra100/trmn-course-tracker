@@ -9,7 +9,8 @@ export const panelContainer = css({
   backgroundColor: 'bg.default',
   borderRadius: 'md',
   border: '1px solid',
-  borderColor: 'border.default'
+  borderColor: 'border.default',
+  overscrollBehavior: 'contain'
 })
 
 export const panelTitle = css({

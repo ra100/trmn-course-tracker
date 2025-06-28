@@ -56,6 +56,7 @@ export default defineConfig({
             9: { value: '#b91c1c' },
             11: { value: '#991b1b' }
           },
+
           // Accent color mapping
           accent: {
             default: { value: '{colors.iris.9}' },
@@ -72,6 +73,36 @@ export default defineConfig({
             700: { value: '{colors.iris.9}' },
             800: { value: '{colors.iris.10}' },
             900: { value: '{colors.iris.11}' }
+          }
+        }
+      },
+      semanticTokens: {
+        colors: {
+          // Custom colors with dark mode support
+          'course.completed': {
+            value: { _light: '{colors.green.9}', _dark: '#4ade80' }
+          },
+          'course.waiting': {
+            value: { _light: '{colors.amber.9}', _dark: '#fbbf24' }
+          },
+          'course.progress': {
+            value: { _light: '{colors.cyan.9}', _dark: '#22d3ee' }
+          },
+          'course.error': {
+            value: { _light: '{colors.red.9}', _dark: '#f87171' }
+          },
+          // Border colors
+          'course.completed.border': {
+            value: { _light: '{colors.green.6}', _dark: '#22c55e' }
+          },
+          'course.waiting.border': {
+            value: { _light: '{colors.amber.6}', _dark: '#f59e0b' }
+          },
+          'course.progress.border': {
+            value: { _light: '{colors.cyan.6}', _dark: '#06b6d4' }
+          },
+          'course.error.border': {
+            value: { _light: '{colors.red.6}', _dark: '#ef4444' }
           }
         }
       }

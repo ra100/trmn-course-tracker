@@ -7,7 +7,8 @@ export const debugContainer = css({
   borderColor: 'border.default',
   boxShadow: 'md',
   margin: '1rem',
-  overflow: 'hidden'
+  overflow: 'hidden',
+  overscrollBehavior: 'contain'
 })
 
 export const debugHeader = css({
@@ -27,7 +28,8 @@ export const debugHeader = css({
 export const debugContent = cva({
   base: {
     transition: 'all 0.3s ease',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    overscrollBehavior: 'contain'
   },
   variants: {
     expanded: {

@@ -5,7 +5,10 @@ export const treeContainer = css({
   height: '100%',
   position: 'relative',
   bg: 'bg.canvas',
-  overflow: 'auto'
+  overflow: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  overscrollBehavior: 'contain'
 })
 
 export const categorySection = css({
@@ -100,4 +103,11 @@ export const groupingLabel = css({
   fontSize: '0.9rem',
   color: 'fg.default',
   fontWeight: 500
+})
+
+export const contentArea = css({
+  flex: 1,
+  overflow: 'auto',
+  minHeight: 0,
+  overscrollBehavior: 'contain'
 })

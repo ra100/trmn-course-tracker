@@ -23,12 +23,15 @@ import { initializeAnalytics, trackPageView, trackViewModeChange, ConsentSetting
 const appContainer = css({
   display: 'flex',
   height: '100vh',
+  maxHeight: '100vh',
+  overflow: 'hidden',
   backgroundColor: 'bg.default',
   fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   color: 'fg.default',
   '@media (max-width: md)': {
     flexDirection: 'column',
-    height: '100vh'
+    height: '100vh',
+    maxHeight: '100vh'
   }
 })
 
@@ -39,7 +42,10 @@ const sidebar = css({
   display: 'flex',
   flexDirection: 'column',
   overflowY: 'auto',
-  borderRight: '1px solid',
+  overscrollBehavior: 'contain',
+  borderRight: 'borders.none',
+  borderRightWidth: '1px',
+  borderRightStyle: 'solid',
   borderColor: 'border.default',
   '@media (max-width: lg)': {
     width: '300px'
@@ -78,9 +84,10 @@ const mainContent = css({
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
+  minHeight: 0,
   '@media (max-width: 768px)': {
     width: '100%'
-  }
+  '@media (max-width: md)': {
 })
 
 const header = css({
@@ -109,6 +116,7 @@ const header = css({
 const contentArea = css({
   flex: 1,
   display: 'flex',
+  minHeight: 0,
   overflow: 'hidden',
   '@media (max-width: md)': {
     flexDirection: 'column'
@@ -117,7 +125,7 @@ const contentArea = css({
 
 const skillTreeContainer = css({
   flex: 1,
-  overflow: 'hidden',
+  overflow: 'auto',
   backgroundColor: 'bg.surface',
   '@media (max-width: md)': {
     height: '100vh',
@@ -139,11 +147,10 @@ const detailsPanel = css({
   borderLeftStyle: 'solid',
   borderColor: 'border.default',
   overflowY: 'auto',
+  overscrollBehavior: 'contain',
   '@media (max-width: 1024px)': {
     width: '300px'
   },
-
-  boxSizing: 'border-box',
   '@media (max-width: lg)': {
     borderLeft: 'none',
     borderTop: 'borders.none',
@@ -341,6 +348,20 @@ function App() {
       setLanguage(settings.language)
     }
   }, [settings?.language, setLanguage])
+
+  // Apply dark mode class to document element
+  useEffect(() => {
+    if (settings?.theme) {
+      const htmlElement = document.documentElement
+      if (settings.theme === 'dark') {
+        htmlElement.classList.add('dark')
+        htmlElement.classList.remove('light')
+      } else {
+        htmlElement.classList.add('light')
+        htmlElement.classList.remove('dark')
+      }
+    }
+  }, [settings?.theme])
 
   // Initialize analytics on app load
   useEffect(() => {

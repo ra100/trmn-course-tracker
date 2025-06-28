@@ -709,6 +709,12 @@
 }
 
   :where(:root, .light) {
+    --shadows-xs: 0px 1px 2px var(--colors-gray-a5), 0px 0px 1px var(--colors-gray-a7);
+    --shadows-sm: 0px 2px 4px var(--colors-gray-a3), 0px 0px 1px var(--colors-gray-a7);
+    --shadows-md: 0px 4px 8px var(--colors-gray-a3), 0px 0px 1px var(--colors-gray-a7);
+    --shadows-lg: 0px 8px 16px var(--colors-gray-a3), 0px 0px 1px var(--colors-gray-a7);
+    --shadows-xl: 0px 16px 24px var(--colors-gray-a3), 0px 0px 1px var(--colors-gray-a7);
+    --shadows-2xl: 0px 24px 40px var(--colors-gray-a3), 0px 0px 1px var(--colors-gray-a7);
     --colors-bg-canvas: var(--colors-gray-1);
     --colors-bg-default: white;
     --colors-bg-subtle: var(--colors-gray-2);
@@ -810,15 +816,23 @@
     --colors-iris-emphasized: var(--colors-iris-light-10);
     --colors-iris-fg: white;
     --colors-iris-text: var(--colors-iris-light-a11);
-    --shadows-xs: 0px 1px 2px var(--colors-gray-a5), 0px 0px 1px var(--colors-gray-a7);
-    --shadows-sm: 0px 2px 4px var(--colors-gray-a3), 0px 0px 1px var(--colors-gray-a7);
-    --shadows-md: 0px 4px 8px var(--colors-gray-a3), 0px 0px 1px var(--colors-gray-a7);
-    --shadows-lg: 0px 8px 16px var(--colors-gray-a3), 0px 0px 1px var(--colors-gray-a7);
-    --shadows-xl: 0px 16px 24px var(--colors-gray-a3), 0px 0px 1px var(--colors-gray-a7);
-    --shadows-2xl: 0px 24px 40px var(--colors-gray-a3), 0px 0px 1px var(--colors-gray-a7)
+    --colors-course\.completed: var(--colors-green-9);
+    --colors-course\.waiting: var(--colors-amber-9);
+    --colors-course\.progress: var(--colors-cyan-9);
+    --colors-course\.error: var(--colors-red-9);
+    --colors-course\.completed\.border: var(--colors-green-6);
+    --colors-course\.waiting\.border: var(--colors-amber-6);
+    --colors-course\.progress\.border: var(--colors-cyan-6);
+    --colors-course\.error\.border: var(--colors-red-6)
 }
 
   .dark {
+    --shadows-xs: 0px 1px 1px var(--colors-black-a12), 0px 0px 1px inset var(--colors-gray-a7);
+    --shadows-sm: 0px 2px 4px var(--colors-black-a10), 0px 0px 1px inset var(--colors-gray-a7);
+    --shadows-md: 0px 4px 8px var(--colors-black-a10), 0px 0px 1px inset var(--colors-gray-a7);
+    --shadows-lg: 0px 8px 16px var(--colors-black-a10), 0px 0px 1px inset var(--colors-gray-a7);
+    --shadows-xl: 0px 16px 24px var(--colors-black-a10), 0px 0px 1px inset var(--colors-gray-a7);
+    --shadows-2xl: 0px 24px 40px var(--colors-black-a10), 0px 0px 1px inset var(--colors-gray-a7);
     --colors-bg-canvas: var(--colors-gray-1);
     --colors-bg-default: var(--colors-gray-2);
     --colors-bg-subtle: var(--colors-gray-3);
@@ -920,12 +934,14 @@
     --colors-iris-emphasized: var(--colors-iris-dark-10);
     --colors-iris-fg: white;
     --colors-iris-text: var(--colors-iris-dark-a11);
-    --shadows-xs: 0px 1px 1px var(--colors-black-a12), 0px 0px 1px inset var(--colors-gray-a7);
-    --shadows-sm: 0px 2px 4px var(--colors-black-a10), 0px 0px 1px inset var(--colors-gray-a7);
-    --shadows-md: 0px 4px 8px var(--colors-black-a10), 0px 0px 1px inset var(--colors-gray-a7);
-    --shadows-lg: 0px 8px 16px var(--colors-black-a10), 0px 0px 1px inset var(--colors-gray-a7);
-    --shadows-xl: 0px 16px 24px var(--colors-black-a10), 0px 0px 1px inset var(--colors-gray-a7);
-    --shadows-2xl: 0px 24px 40px var(--colors-black-a10), 0px 0px 1px inset var(--colors-gray-a7)
+    --colors-course\.completed: #4ade80;
+    --colors-course\.waiting: #fbbf24;
+    --colors-course\.progress: #22d3ee;
+    --colors-course\.error: #f87171;
+    --colors-course\.completed\.border: #22c55e;
+    --colors-course\.waiting\.border: #f59e0b;
+    --colors-course\.progress\.border: #06b6d4;
+    --colors-course\.error\.border: #ef4444
 }
 
   @keyframes fade-in {

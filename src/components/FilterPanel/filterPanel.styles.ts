@@ -3,7 +3,8 @@ import { css } from 'styled-system/css'
 export const panelContainer = css({
   padding: { base: '1rem', md: '1.5rem' },
   borderBottom: '1px solid',
-  borderColor: 'border.default'
+  borderColor: 'border.default',
+  overscrollBehavior: 'contain'
 })
 
 export const panelTitle = css({

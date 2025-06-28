@@ -5,6 +5,7 @@ export const panelContainer = css({
   padding: '1.5rem',
   borderBottom: '1px solid',
   borderColor: 'border.default',
+  overscrollBehavior: 'contain',
   '@media (max-width: 768px)': {
     padding: '1rem'
   }
