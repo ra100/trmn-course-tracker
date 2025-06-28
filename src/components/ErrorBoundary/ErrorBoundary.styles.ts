@@ -23,6 +23,30 @@ export const errorMessage = css({
   lineHeight: 1.5
 })
 
+export const errorDetails = css({
+  textAlign: 'left',
+  backgroundColor: 'bg.subtle',
+  padding: '1rem',
+  borderRadius: 'md',
+  border: '1px solid',
+  borderColor: 'border.default',
+  marginTop: '1rem',
+  '& h3': {
+    color: 'fg.default',
+    fontSize: 'md',
+    fontWeight: 'semibold',
+    marginBottom: '0.5rem'
+  },
+  '& p': {
+    color: 'fg.default',
+    fontSize: 'sm',
+    marginBottom: '0.5rem',
+    '& strong': {
+      fontWeight: 'semibold'
+    }
+  }
+})
+
 export const errorStack = css({
   fontFamily: 'mono',
   fontSize: '0.8rem',
@@ -30,5 +54,17 @@ export const errorStack = css({
   overflowX: 'auto',
   whiteSpace: 'pre-wrap',
   wordBreak: 'break-word',
-  margin: '0.5rem 0 0 0'
+  margin: '0.5rem 0 0 0',
+  backgroundColor: 'bg.default',
+  padding: '0.75rem',
+  borderRadius: 'sm',
+  border: '1px solid',
+  borderColor: 'border.subtle'
+})
+
+export const errorStackContent = css({
+  margin: 0,
+  fontFamily: 'inherit',
+  fontSize: 'inherit',
+  color: 'inherit'
 })

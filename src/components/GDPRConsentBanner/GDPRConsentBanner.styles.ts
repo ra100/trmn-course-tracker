@@ -72,6 +72,27 @@ export const consentOption = css({
   borderRadius: 'md'
 })
 
+export const consentOptionInfo = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.25rem',
+  flex: 1
+})
+
+export const consentOptionTitle = css({
+  fontSize: 'sm',
+  fontWeight: 'medium',
+  color: 'fg.default',
+  margin: 0
+})
+
+export const consentOptionDescription = css({
+  fontSize: 'xs',
+  color: 'fg.muted',
+  lineHeight: 'tight',
+  margin: 0
+})
+
 export const consentLabel = css({
   display: 'flex',
   alignItems: 'center',
@@ -86,4 +107,20 @@ export const consentDescription = css({
   fontSize: '0.875rem',
   color: 'fg.muted',
   lineHeight: 1.4
+})
+
+// Modal styles
+export const modalContent = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem',
+  marginTop: '1rem',
+  marginBottom: '1.5rem'
+})
+
+export const modalActions = css({
+  display: 'flex',
+  gap: '0.75rem',
+  justifyContent: 'flex-end',
+  marginTop: '1rem'
 })

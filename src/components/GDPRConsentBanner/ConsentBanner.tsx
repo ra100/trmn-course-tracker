@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from '~/components/ui/button'
 import { useT } from '~/i18n'
-import { bannerContainer, bannerContent, bannerText, bannerActions } from './GDPRConsentBanner.styles'
+import { bannerWrapper, bannerContent, bannerText, buttonGroup } from './GDPRConsentBanner.styles'
 import { ConsentBannerProps } from './types'
 
 export const ConsentBanner: React.FC<ConsentBannerProps> = React.memo(
@@ -13,10 +13,10 @@ export const ConsentBanner: React.FC<ConsentBannerProps> = React.memo(
     }
 
     return (
-      <div className={bannerContainer}>
+      <div className={bannerWrapper({ isVisible })}>
         <div className={bannerContent}>
           <p className={bannerText}>{t.gdpr.bannerText}</p>
-          <div className={bannerActions}>
+          <div className={buttonGroup}>
             <Button onClick={onAcceptAll} size="sm">
               {t.gdpr.acceptAll}
             </Button>
