@@ -1,7 +1,9 @@
 import React from 'react'
-import { NodeStatus, FilterOptions } from '../../types'
-import { useT } from '../../i18n'
-import { FilterSection, FilterLabel, CheckboxGroup, CheckboxItem, Checkbox } from './FilterPanel.styles'
+import { NodeStatus, FilterOptions } from '~/types'
+import { useT } from '~/i18n'
+import { Checkbox } from '~/components/ui/checkbox'
+import { filterSection, filterLabel } from './filterPanel.styles'
+import { css } from 'styled-system/css'
 
 interface StatusFilterSectionProps {
   filters: FilterOptions
@@ -33,20 +35,25 @@ export const StatusFilterSection: React.FC<StatusFilterSectionProps> = ({ filter
   }
 
   return (
-    <FilterSection>
-      <FilterLabel id="status-filter-label">{t.filters.status}</FilterLabel>
-      <CheckboxGroup role="group" aria-labelledby="status-filter-label">
+    <div className={filterSection}>
+      <label id="status-filter-label" className={filterLabel}>
+        {t.filters.status}
+      </label>
+      <div
+        role="group"
+        aria-labelledby="status-filter-label"
+        className={css({ display: 'flex', flexDirection: 'column', gap: '0.3rem' })}
+      >
         {statuses.map((status) => (
-          <CheckboxItem key={status}>
-            <Checkbox
-              checked={filters.status?.includes(status) || false}
-              onChange={(e) => onStatusChange(status, e.target.checked)}
-              aria-describedby={`status-${status}-label`}
-            />
-            <span id={`status-${status}-label`}>{getStatusLabel(status)}</span>
-          </CheckboxItem>
+          <Checkbox
+            key={status}
+            checked={filters.status?.includes(status) || false}
+            onCheckedChange={(details) => onStatusChange(status, details.checked === true)}
+          >
+            {getStatusLabel(status)}
+          </Checkbox>
         ))}
-      </CheckboxGroup>
-    </FilterSection>
+      </div>
+    </div>
   )
 }

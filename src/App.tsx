@@ -379,7 +379,14 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider theme={currentTheme}>
-        <SkipLinks />
+        <SkipLinks
+          targets={[
+            { id: 'main-content', label: t.accessibility.skipToMainContent },
+            { id: 'skill-tree', label: t.accessibility.skipToSkillTree },
+            { id: 'sidebar', label: t.accessibility.skipToSidebar },
+            { id: 'course-details', label: t.accessibility.skipToCourseDetails }
+          ]}
+        />
         <AppContainer>
           <MobileOverlay $visible={mobileMenuOpen} onClick={handleMobileOverlayClick} />
 

@@ -1,7 +1,7 @@
 import React from 'react'
-import { Course, UserProgress } from '../types'
-import { EligibilityEngine } from '../utils/eligibilityEngine'
-import { useT } from '../i18n'
+import { Course, UserProgress } from '~/types'
+import { EligibilityEngine } from '~/utils/eligibilityEngine'
+import { useT } from '~/i18n'
 import {
   CourseHeader,
   CourseInfoGrid,
@@ -9,10 +9,16 @@ import {
   PrerequisitesSection,
   UnlockedCoursesSection,
   CourseDescription,
-  useCourseDetails,
-  DetailsContainer,
-  EmptyState
+  useCourseDetails
 } from './CourseDetails/index'
+import {
+  detailsContainer,
+  emptyState,
+  panelCard,
+  headerCard,
+  headerDivider,
+  actionGroup
+} from './CourseDetails/CourseDetails.styles'
 
 interface CourseDetailsProps {
   course: Course | null
@@ -102,14 +108,14 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
 
   if (!course) {
     return (
-      <DetailsContainer>
-        <EmptyState>{t.courseDetails.selectCourse}</EmptyState>
-      </DetailsContainer>
+      <div className={detailsContainer}>
+        <div className={emptyState}>{t.courseDetails.selectCourse}</div>
+      </div>
     )
   }
 
   return (
-    <DetailsContainer>
+    <div className={detailsContainer}>
       <CourseDetailsContent
         course={course}
         userProgress={userProgress}
@@ -118,6 +124,6 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
         onCourseStatusChange={onCourseStatusChange}
         onCourseSelect={onCourseSelect}
       />
-    </DetailsContainer>
+    </div>
   )
 }

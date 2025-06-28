@@ -1,7 +1,7 @@
-import { ConsentSettings } from '../../utils/analytics'
+import { ConsentSettings } from '~/utils/analytics'
 
 export interface GDPRConsentBannerProps {
-  onConsentChange?: (consent: Partial<ConsentSettings>) => void
+  onConsentChange: (consent: Partial<ConsentSettings>) => void
 }
 
 export interface ConsentBannerProps {
@@ -17,7 +17,6 @@ export interface ConsentSettingsModalProps {
   onClose: () => void
   onSave: () => void
   onConsentToggle: (key: keyof ConsentSettings) => void
-  focusTrapRef: React.RefObject<HTMLDivElement>
 }
 
 export interface ConsentOptionProps {

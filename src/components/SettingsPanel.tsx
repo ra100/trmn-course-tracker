@@ -1,16 +1,15 @@
 import React from 'react'
 import { MedusaImport } from './MedusaImport'
-import { useTranslation, useT } from '../i18n'
+import { useTranslation, useT } from '~/i18n'
 import {
   StatusFilterSection,
   LanguageSelector,
   PreferencesSection,
   useSettingsHandlers,
-  SettingsPanelProps,
-  PanelContainer,
-  PanelTitle,
-  ResetButton
+  SettingsPanelProps
 } from './SettingsPanel/index'
+import { Button } from '~/components/ui/button'
+import { panelContainer, panelTitle, resetButton } from './SettingsPanel/SettingsPanel.styles'
 
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettingsChange, onImportMedusaCourses }) => {
   const t = useT()
@@ -23,8 +22,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
   })
 
   return (
-    <PanelContainer>
-      <PanelTitle>{t.settings.title}</PanelTitle>
+    <div className={panelContainer}>
+      <h3 className={panelTitle}>{t.settings.title}</h3>
 
       <StatusFilterSection
         showCompleted={settings.showCompleted}
@@ -43,7 +42,9 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
 
       {onImportMedusaCourses && <MedusaImport onImportMedusaCourses={onImportMedusaCourses} />}
 
-      <ResetButton onClick={handleReset}>{t.ui.reset} to Defaults</ResetButton>
-    </PanelContainer>
+      <Button variant="outline" colorPalette="amber" className={resetButton} onClick={handleReset}>
+        {t.ui.reset} to Defaults
+      </Button>
+    </div>
   )
 }

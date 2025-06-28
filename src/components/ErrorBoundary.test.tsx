@@ -79,8 +79,9 @@ describe('ErrorBoundary', () => {
         </ErrorBoundary>
       )
 
-      expect(screen.getByText('Error Details (Development Only)')).toBeInTheDocument()
-      expect(screen.getByText(/Test error message/)).toBeInTheDocument()
+      expect(screen.getByText('Error Details (Development Mode)')).toBeInTheDocument()
+      const errorMessages = screen.getAllByText(/Test error message/)
+      expect(errorMessages.length).toBeGreaterThan(0)
 
       process.env.NODE_ENV = originalNodeEnv
     })

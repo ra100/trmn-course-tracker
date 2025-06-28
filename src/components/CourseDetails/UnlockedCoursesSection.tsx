@@ -1,12 +1,12 @@
 import React from 'react'
 import { UnlockedCoursesSectionProps } from './types'
-import { useT } from '../../i18n'
+import { useT } from '~/i18n'
 import {
-  Section,
-  SectionTitle,
-  UnlockedCoursesList,
-  UnlockedCourseItem,
-  ClickableUnlockedCourse
+  section,
+  sectionTitle,
+  unlockedCoursesList,
+  unlockedCourseItem,
+  clickableUnlockedCourse
 } from './CourseDetails.styles'
 
 export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = React.memo(
@@ -18,22 +18,26 @@ export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = Rea
     }
 
     return (
-      <Section>
-        <SectionTitle>{t.courseDetails.unlocksCourses}</SectionTitle>
-        <UnlockedCoursesList>
+      <div className={section}>
+        <h3 className={sectionTitle}>{t.courseDetails.unlocksCourses}</h3>
+        <div className={unlockedCoursesList}>
           {unlockedCourses.map((unlockedCourse) =>
             onCourseSelect ? (
-              <ClickableUnlockedCourse key={unlockedCourse.id} onClick={() => handleCourseClick(unlockedCourse.code)}>
+              <div
+                key={unlockedCourse.id}
+                onClick={() => handleCourseClick(unlockedCourse.code)}
+                className={clickableUnlockedCourse}
+              >
                 <strong>{unlockedCourse.code}</strong> - {unlockedCourse.name}
-              </ClickableUnlockedCourse>
+              </div>
             ) : (
-              <UnlockedCourseItem key={unlockedCourse.id}>
+              <div key={unlockedCourse.id} className={unlockedCourseItem}>
                 <strong>{unlockedCourse.code}</strong> - {unlockedCourse.name}
-              </UnlockedCourseItem>
+              </div>
             )
           )}
-        </UnlockedCoursesList>
-      </Section>
+        </div>
+      </div>
     )
   }
 )

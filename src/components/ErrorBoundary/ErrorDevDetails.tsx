@@ -1,35 +1,36 @@
 import React from 'react'
-import { ErrorDetails, ErrorStack } from './ErrorBoundary.styles'
+import { isDebugEnabled } from '../../config'
+import { errorDetails, errorStack, errorStackContent } from './ErrorBoundary.styles'
 import { ErrorDetailsProps } from './types'
 
 export const ErrorDevDetails: React.FC<ErrorDetailsProps> = React.memo(({ error, errorInfo }) => {
-  if (process.env.NODE_ENV !== 'development') {
+  if (!isDebugEnabled()) {
     return null
   }
 
   return (
-    <ErrorDetails>
-      <summary>Error Details (Development Only)</summary>
-      <ErrorStack>
-        <strong>Error:</strong> {error.message}
-        {error.stack && (
-          <>
-            <br />
-            <strong>Stack Trace:</strong>
-            <br />
-            {error.stack}
-          </>
-        )}
-        {errorInfo?.componentStack && (
-          <>
-            <br />
+    <div className={errorDetails}>
+      <h3>Error Details (Development Mode)</h3>
+      <p>
+        <strong>Message:</strong> {error.message}
+      </p>
+      <p>
+        <strong>Stack:</strong>
+      </p>
+      <pre className={errorStack}>
+        <code className={errorStackContent}>{error.stack}</code>
+      </pre>
+      {errorInfo && (
+        <>
+          <p>
             <strong>Component Stack:</strong>
-            <br />
-            {errorInfo.componentStack}
-          </>
-        )}
-      </ErrorStack>
-    </ErrorDetails>
+          </p>
+          <pre className={errorStack}>
+            <code className={errorStackContent}>{errorInfo.componentStack}</code>
+          </pre>
+        </>
+      )}
+    </div>
   )
 })
 

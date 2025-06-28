@@ -1,14 +1,14 @@
 import React from 'react'
-import { Course, NodeStatus, UserProgress } from '../../types'
+import { Course, NodeStatus, UserProgress } from '~/types'
 import { useCourseNode } from './useCourseNode'
 import {
-  CourseNodeContainer,
-  CourseCode,
-  CourseName,
-  CourseLevel,
-  Prerequisites,
-  StatusIcon
-} from './CourseNode.styles'
+  courseNodeContainer,
+  courseCode,
+  courseName,
+  courseLevel,
+  prerequisites,
+  statusIcon
+} from './courseNode.recipe'
 
 interface CourseNodeProps {
   course: Course
@@ -52,8 +52,8 @@ export const CourseNode: React.FC<CourseNodeProps> = ({
   })
 
   return (
-    <CourseNodeContainer
-      status={status}
+    <div
+      className={courseNodeContainer({ status: status || 'error' })}
       onClick={handleClick}
       onDoubleClick={handleDoubleClick}
       onContextMenu={handleRightClick}
@@ -63,11 +63,11 @@ export const CourseNode: React.FC<CourseNodeProps> = ({
       tabIndex={0}
       aria-label={getAriaLabel()}
     >
-      <CourseCode>{course.code}</CourseCode>
-      <CourseName>{course.name}</CourseName>
-      {course.level && <CourseLevel>{course.level}</CourseLevel>}
-      <Prerequisites>{getPrerequisiteText()}</Prerequisites>
-      <StatusIcon status={status} />
-    </CourseNodeContainer>
+      <div className={courseCode}>{course.code}</div>
+      <div className={courseName}>{course.name}</div>
+      {course.level && <div className={courseLevel}>{course.level}</div>}
+      <div className={prerequisites}>{getPrerequisiteText()}</div>
+      <div className={statusIcon({ status: status || 'error' })} />
+    </div>
   )
 }

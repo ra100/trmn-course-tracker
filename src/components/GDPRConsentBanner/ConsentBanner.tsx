@@ -1,30 +1,34 @@
 import React from 'react'
+import { Button } from '~/components/ui/button'
+import { useT } from '~/i18n'
+import { bannerContainer, bannerContent, bannerText, bannerActions } from './GDPRConsentBanner.styles'
 import { ConsentBannerProps } from './types'
-import { useT } from '../../i18n'
-import { BannerWrapper, BannerContent, BannerText, ButtonGroup, Button } from './GDPRConsentBanner.styles'
 
 export const ConsentBanner: React.FC<ConsentBannerProps> = React.memo(
   ({ isVisible, onAcceptAll, onRejectNonEssential, onShowSettings }) => {
     const t = useT()
 
-    return (
-      <BannerWrapper $isVisible={isVisible} role="banner" aria-label={t.gdpr.bannerLabel}>
-        <BannerContent>
-          <BannerText>{t.gdpr.bannerText}</BannerText>
+    if (!isVisible) {
+      return null
+    }
 
-          <ButtonGroup>
-            <Button $variant="outline" onClick={onShowSettings} aria-label={t.gdpr.customizeSettings}>
-              {t.gdpr.settings}
-            </Button>
-            <Button $variant="secondary" onClick={onRejectNonEssential} aria-label={t.gdpr.rejectNonEssential}>
-              {t.gdpr.rejectAll}
-            </Button>
-            <Button $variant="primary" onClick={onAcceptAll} aria-label={t.gdpr.acceptAll}>
+    return (
+      <div className={bannerContainer}>
+        <div className={bannerContent}>
+          <p className={bannerText}>{t.gdpr.bannerText}</p>
+          <div className={bannerActions}>
+            <Button onClick={onAcceptAll} size="sm">
               {t.gdpr.acceptAll}
             </Button>
-          </ButtonGroup>
-        </BannerContent>
-      </BannerWrapper>
+            <Button onClick={onRejectNonEssential} variant="outline" size="sm">
+              {t.gdpr.rejectNonEssential}
+            </Button>
+            <Button onClick={onShowSettings} variant="ghost" size="sm">
+              {t.gdpr.settings}
+            </Button>
+          </div>
+        </div>
+      </div>
     )
   }
 )

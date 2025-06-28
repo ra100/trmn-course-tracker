@@ -1,67 +1,84 @@
-import styled from 'styled-components'
+import { css, cva } from 'styled-system/css'
 
-export const DebugContainer = styled.div`
-  background: ${(props) => props.theme.colors.surface};
-  border-radius: 8px;
-  border: 1px solid ${(props) => props.theme.colors.border};
-  box-shadow: ${(props) => props.theme.shadows.medium};
-  margin: 1rem;
-  overflow: hidden;
-`
+export const debugContainer = css({
+  bg: 'bg.surface',
+  borderRadius: 'lg',
+  border: '1px solid',
+  borderColor: 'border.default',
+  boxShadow: 'md',
+  margin: '1rem',
+  overflow: 'hidden'
+})
 
-export const DebugHeader = styled.div`
-  background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
-  color: white;
-  padding: 1rem;
-  font-weight: bold;
-  font-size: 1.1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-`
+export const debugHeader = css({
+  bgGradient: 'to-br',
+  gradientFrom: 'red.400',
+  gradientTo: 'red.600',
+  color: 'white',
+  padding: '1rem',
+  fontWeight: 'bold',
+  fontSize: '1.1rem',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+  cursor: 'pointer'
+})
 
-export const DebugContent = styled.div<{ $expanded: boolean }>`
-  padding: ${(props) => (props.$expanded ? '1rem' : '0')};
-  max-height: ${(props) => (props.$expanded ? '400px' : '0')};
-  overflow-y: auto;
-  transition: all 0.3s ease;
-`
+export const debugContent = cva({
+  base: {
+    transition: 'all 0.3s ease',
+    overflowY: 'auto'
+  },
+  variants: {
+    expanded: {
+      true: {
+        padding: '1rem',
+        maxHeight: '400px'
+      },
+      false: {
+        padding: '0',
+        maxHeight: '0'
+      }
+    }
+  }
+})
 
-export const Section = styled.div`
-  margin-bottom: 1.5rem;
-  border: 1px solid ${(props) => props.theme.colors.border};
-  border-radius: 4px;
-  padding: 1rem;
-`
+export const section = css({
+  marginBottom: '1.5rem',
+  border: '1px solid',
+  borderColor: 'border.default',
+  borderRadius: 'md',
+  padding: '1rem'
+})
 
-export const SectionTitle = styled.h4`
-  color: ${(props) => props.theme.colors.primary};
-  margin: 0 0 1rem 0;
-  font-size: 1rem;
-`
+export const sectionTitle = css({
+  color: 'accent.default',
+  margin: '0 0 1rem 0',
+  fontSize: '1rem'
+})
 
-export const CourseList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
-`
+export const courseList = css({
+  listStyle: 'none',
+  padding: 0,
+  margin: 0
+})
 
-export const CourseItem = styled.li`
-  padding: 0.25rem 0;
-  font-family: 'Courier New', monospace;
-  font-size: 0.9rem;
-  color: ${(props) => props.theme.colors.text};
-  border-bottom: 1px solid ${(props) => props.theme.colors.border};
-`
+export const courseItem = css({
+  padding: '0.25rem 0',
+  fontFamily: 'mono',
+  fontSize: '0.9rem',
+  color: 'fg.default',
+  borderBottom: '1px solid',
+  borderColor: 'border.default'
+})
 
-export const JsonPre = styled.pre`
-  background: ${(props) => props.theme.colors.background};
-  color: ${(props) => props.theme.colors.text};
-  padding: 1rem;
-  border-radius: 4px;
-  overflow-x: auto;
-  font-size: 0.8rem;
-  max-height: 200px;
-  overflow-y: auto;
-`
+export const jsonPre = css({
+  bg: 'bg.canvas',
+  color: 'fg.default',
+  padding: '1rem',
+  borderRadius: 'md',
+  overflowX: 'auto',
+  fontSize: '0.8rem',
+  maxHeight: '200px',
+  overflowY: 'auto'
+})

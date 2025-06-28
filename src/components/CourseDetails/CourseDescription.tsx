@@ -1,7 +1,7 @@
 import React from 'react'
 import { CourseDescriptionProps } from './types'
-import { useT } from '../../i18n'
-import { Section, SectionTitle, DescriptionText } from './CourseDetails.styles'
+import { useT } from '~/i18n'
+import { section, sectionTitle, descriptionText } from './CourseDetails.styles'
 
 export const CourseDescription: React.FC<CourseDescriptionProps> = React.memo(({ course }) => {
   const t = useT()
@@ -11,10 +11,10 @@ export const CourseDescription: React.FC<CourseDescriptionProps> = React.memo(({
   }
 
   return (
-    <Section>
-      <SectionTitle>{t.courseDetails.description}</SectionTitle>
-      <DescriptionText>{course.description}</DescriptionText>
-    </Section>
+    <div className={section}>
+      <h3 className={sectionTitle}>{t.courseDetails.description}</h3>
+      <div className={descriptionText}>{course.description}</div>
+    </div>
   )
 })
 

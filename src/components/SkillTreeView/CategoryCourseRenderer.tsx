@@ -1,17 +1,19 @@
 import React, { useMemo, useCallback } from 'react'
 import { CategoryCourseRendererProps } from './types'
-import { getCourseMainDepartment } from '../../utils/departmentUtils'
+import { getCourseMainDepartment } from '~/utils/departmentUtils'
 import {
   getCourseSeriesCodes,
   getCourseSeriesPrefix,
   getSeriesDisplayName,
-  sortCoursesByNumber
-} from '../../utils/courseUtils'
-import { useT } from '../../i18n'
+  sortCoursesByNumber,
+  groupCoursesByMode
+} from '~/utils/courseUtils'
+import { useT } from '~/i18n'
 import { CourseSection } from './CourseSection'
 import { CourseSubsection } from './CourseSubsection'
-import { CategorySection, CategoryHeader } from './SkillTreeView.styles'
-import { Course } from '../../types'
+import { categorySection, categoryHeader, courseGrid } from './SkillTreeView.styles'
+import { Course } from '~/types'
+import { CourseNode } from '../CourseNode'
 
 type GroupedCourses = Map<string, Course[]>
 type NestedGroupedCourses = Map<string, Map<string, Course[]>>
@@ -119,8 +121,8 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
     // Memoized render function for categories
     const renderCoursesByCategory = useCallback(() => {
       return Array.from(categorizedCourses.entries()).map(([sectionName, subsections]) => (
-        <CategorySection key={sectionName}>
-          <CategoryHeader>{sectionName}</CategoryHeader>
+        <div key={sectionName} className={categorySection}>
+          <div className={categoryHeader}>{sectionName}</div>
           {Array.from(subsections.entries()).map(([subsectionName, courses]) => (
             <CourseSubsection
               key={`${sectionName}-${subsectionName}`}
@@ -133,7 +135,7 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
               onCourseStatusChange={onCourseStatusChange}
             />
           ))}
-        </CategorySection>
+        </div>
       ))
     }, [categorizedCourses, userProgress, getCourseStatus, onCourseSelect, onCourseToggle, onCourseStatusChange])
 

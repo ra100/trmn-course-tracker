@@ -1,5 +1,4 @@
 import React from 'react'
-import { useFocusTrap } from '../hooks/useFocusTrap'
 import { ConsentBanner, ConsentSettingsModal, useGDPRConsent, GDPRConsentBannerProps } from './GDPRConsentBanner/index'
 
 export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentChange }) => {
@@ -13,13 +12,6 @@ export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentC
     handleSaveSettings,
     handleConsentToggle
   } = useGDPRConsent({ onConsentChange })
-
-  // Focus trap for settings modal
-  const focusTrapRef = useFocusTrap({
-    isActive: showSettings,
-    restoreOnDeactivate: true,
-    onEscape: () => setShowSettings(false)
-  })
 
   if (!isVisible && !showSettings) {
     return null
@@ -40,7 +32,6 @@ export const GDPRConsentBanner: React.FC<GDPRConsentBannerProps> = ({ onConsentC
         onClose={() => setShowSettings(false)}
         onSave={handleSaveSettings}
         onConsentToggle={handleConsentToggle}
-        focusTrapRef={focusTrapRef as React.RefObject<HTMLDivElement>}
       />
     </>
   )

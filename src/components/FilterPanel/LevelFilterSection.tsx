@@ -1,7 +1,9 @@
 import React from 'react'
-import { CourseLevel, FilterOptions } from '../../types'
-import { useT } from '../../i18n'
-import { FilterSection, FilterLabel, CheckboxGroup, CheckboxItem, Checkbox } from './FilterPanel.styles'
+import { CourseLevel, FilterOptions } from '~/types'
+import { useT } from '~/i18n'
+import { Checkbox } from '~/components/ui/checkbox'
+import { filterSection, filterLabel } from './filterPanel.styles'
+import { css } from 'styled-system/css'
 
 interface LevelFilterSectionProps {
   filters: FilterOptions
@@ -20,20 +22,25 @@ export const LevelFilterSection: React.FC<LevelFilterSectionProps> = ({ filters,
   }
 
   return (
-    <FilterSection>
-      <FilterLabel id="level-filter-label">{t.filters.levels}</FilterLabel>
-      <CheckboxGroup role="group" aria-labelledby="level-filter-label">
+    <div className={filterSection}>
+      <label id="level-filter-label" className={filterLabel}>
+        {t.filters.levels}
+      </label>
+      <div
+        role="group"
+        aria-labelledby="level-filter-label"
+        className={css({ display: 'flex', flexDirection: 'column', gap: '0.3rem' })}
+      >
         {levels.map((level) => (
-          <CheckboxItem key={level}>
-            <Checkbox
-              checked={filters.levels?.includes(level) || false}
-              onChange={(e) => onLevelChange(level, e.target.checked)}
-              aria-describedby={`level-${level}-label`}
-            />
-            <span id={`level-${level}-label`}>{getLevelLabel(level)}</span>
-          </CheckboxItem>
+          <Checkbox
+            key={level}
+            checked={filters.levels?.includes(level) || false}
+            onCheckedChange={(details) => onLevelChange(level, details.checked === true)}
+          >
+            {getLevelLabel(level)}
+          </Checkbox>
         ))}
-      </CheckboxGroup>
-    </FilterSection>
+      </div>
+    </div>
   )
 }

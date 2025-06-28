@@ -96,9 +96,9 @@ describe('FilterPanel', () => {
       <FilterPanel filters={defaultFilters} courseData={mockCourseData} onFilterChange={mockOnFilterChange} />
     )
 
-    // Click on "Working On" status filter
-    const workingOnCheckbox = screen.getByLabelText(/Working On/i)
-    fireEvent.click(workingOnCheckbox)
+    // Find the checkbox input for "Working On" and click it
+    const workingOnCheckbox = screen.getByRole('checkbox', { name: /Working On/i })
+    await user.click(workingOnCheckbox)
 
     expect(mockOnFilterChange).toHaveBeenCalledWith({
       status: ['in_progress']
@@ -110,9 +110,9 @@ describe('FilterPanel', () => {
       <FilterPanel filters={defaultFilters} courseData={mockCourseData} onFilterChange={mockOnFilterChange} />
     )
 
-    // Click on "Waiting Grade" status filter
-    const waitingGradeCheckbox = screen.getByLabelText(/Waiting Grade/i)
-    fireEvent.click(waitingGradeCheckbox)
+    // Find the checkbox input for "Waiting Grade" and click it
+    const waitingGradeCheckbox = screen.getByRole('checkbox', { name: /Waiting Grade/i })
+    await user.click(waitingGradeCheckbox)
 
     expect(mockOnFilterChange).toHaveBeenCalledWith({
       status: ['waiting_grade']
@@ -198,9 +198,9 @@ describe('FilterPanel', () => {
       />
     )
 
-    // Uncheck "Working On" status filter
-    const workingOnCheckbox = screen.getByLabelText(/Working On/i)
-    fireEvent.click(workingOnCheckbox)
+    // Find the checkbox input for "Working On" (which should be checked) and click to uncheck it
+    const workingOnCheckbox = screen.getByRole('checkbox', { name: /Working On/i })
+    await user.click(workingOnCheckbox)
 
     expect(mockOnFilterChange).toHaveBeenCalledWith({
       status: ['completed']

@@ -1,17 +1,17 @@
 import React from 'react'
 import { PreferencesSectionProps } from './types'
-import { useT } from '../../i18n'
+import { useT } from '~/i18n'
 import { SettingToggle } from './SettingToggle'
-import { SettingSection, SettingLabel, ToggleGroup } from './SettingsPanel.styles'
+import { settingSection, settingLabel, toggleGroup } from './SettingsPanel.styles'
 
 export const PreferencesSection: React.FC<PreferencesSectionProps> = React.memo(
   ({ isDarkMode, autoSave, onThemeToggle, onAutoSaveToggle }) => {
     const t = useT()
 
     return (
-      <SettingSection>
-        <SettingLabel>{t.settings.theme}</SettingLabel>
-        <ToggleGroup>
+      <div className={settingSection}>
+        <div className={settingLabel}>{t.settings.theme}</div>
+        <div className={toggleGroup}>
           <SettingToggle
             label={t.settings.dark}
             description="Switch between light and dark theme"
@@ -25,8 +25,8 @@ export const PreferencesSection: React.FC<PreferencesSectionProps> = React.memo(
             checked={autoSave}
             onChange={onAutoSaveToggle}
           />
-        </ToggleGroup>
-      </SettingSection>
+        </div>
+      </div>
     )
   }
 )

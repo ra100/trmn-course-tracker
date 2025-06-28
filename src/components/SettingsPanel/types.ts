@@ -4,7 +4,13 @@ import { Language } from '../../i18n'
 export interface SettingsPanelProps {
   settings: UserSettings
   onSettingsChange: (settings: UserSettings) => void
-  onImportMedusaCourses?: (courseCodes: string[]) => { imported: number; trackable: number; alreadyCompleted: number }
+  onImportMedusaCourses?: (courseCodes: string[]) => {
+    imported: number
+    trackable: number
+    alreadyCompleted: number
+    newCourses: string[]
+    untrackedCourses: string[]
+  }
 }
 
 export interface SettingToggleProps {

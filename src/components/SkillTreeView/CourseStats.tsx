@@ -1,23 +1,23 @@
 import React from 'react'
 import { CourseStatsProps } from './types'
-import { StatsContainer, StatItem, StatValue, StatLabel } from './SkillTreeView.styles'
+import { statsContainer, statItem, statValue, statLabel } from './SkillTreeView.styles'
 
 export const CourseStats: React.FC<CourseStatsProps> = React.memo(({ stats }) => {
   return (
-    <StatsContainer>
-      <StatItem>
-        <StatValue>{stats.completed}</StatValue>
-        <StatLabel>Completed</StatLabel>
-      </StatItem>
-      <StatItem>
-        <StatValue>{stats.available}</StatValue>
-        <StatLabel>Available</StatLabel>
-      </StatItem>
-      <StatItem>
-        <StatValue>{stats.total}</StatValue>
-        <StatLabel>Total Courses</StatLabel>
-      </StatItem>
-    </StatsContainer>
+    <div className={statsContainer}>
+      <div className={statItem}>
+        <div className={statValue}>{stats.completed}</div>
+        <div className={statLabel}>Completed</div>
+      </div>
+      <div className={statItem}>
+        <div className={statValue}>{stats.available}</div>
+        <div className={statLabel}>Available</div>
+      </div>
+      <div className={statItem}>
+        <div className={statValue}>{stats.total}</div>
+        <div className={statLabel}>Total Courses</div>
+      </div>
+    </div>
   )
 })
 
