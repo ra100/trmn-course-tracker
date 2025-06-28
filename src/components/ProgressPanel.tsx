@@ -9,8 +9,8 @@ import {
   SectionProgressList,
   BasicAchievements,
   SpaceWarfareAchievement,
-  PanelContainer,
-  PanelTitle,
+  panelContainer,
+  panelTitle,
   OverallStats,
   SectionProgressData,
   LevelProgressData,
@@ -276,14 +276,14 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
   const combinedSpaceWarfareEarned = oswpProgress.earned || eswpProgress.earned
 
   return (
-    <PanelContainer>
-      <PanelTitle>{t.progress.title}</PanelTitle>
+    <div className={panelContainer}>
+      <h2 className={panelTitle}>{t.progress.title}</h2>
 
       <StatisticsPanel stats={overallStats} userProgress={userProgress} />
 
       <SectionProgressList sectionProgress={sectionProgress} levelProgress={levelProgress} />
 
-      <PanelTitle>{t.progress.achievements}</PanelTitle>
+      <h3 className={panelTitle}>{t.progress.achievements}</h3>
 
       <SpaceWarfareAchievement
         oswpProgress={oswpProgress}
@@ -292,7 +292,7 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
       />
 
       <BasicAchievements achievements={achievements} maxDisplay={15} />
-    </PanelContainer>
+    </div>
   )
 }
 

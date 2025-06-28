@@ -1,143 +1,237 @@
 import React, { useState, useCallback } from 'react'
-import styled from 'styled-components'
+import { css, cva } from 'styled-system/css'
 import { useT } from '../../i18n'
-import { FlexContainer, StatusIcon, RequirementText, DepartmentInfo } from './ProgressPanel.styles'
+import { flexContainer, statusIcon, requirementText, departmentInfo } from './ProgressPanel.styles'
 
-// Space Warfare specific styled components
-const SpaceWarfareContainer = styled.div<{ $earned: boolean }>`
-  padding: 0.7rem;
-  background: ${(props) => (props.$earned ? props.theme.colors.success : props.theme.colors.surface)};
-  border-radius: 4px;
-  font-size: 0.85rem;
-  color: ${(props) => (props.$earned ? 'white' : props.theme.colors.textSecondary)};
-  border-left: 3px solid ${(props) => (props.$earned ? props.theme.colors.success : props.theme.colors.secondary)};
-  border: 1px solid ${(props) => props.theme.colors.border};
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: ${(props) => (props.$earned ? props.theme.colors.success : `${props.theme.colors.border}40`)};
+// Space Warfare specific styles
+const spaceWarfareContainer = cva({
+  base: {
+    padding: '1rem',
+    borderRadius: '8px',
+    fontSize: '0.9rem',
+    border: '2px solid',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    _hover: {
+      transform: 'translateY(-1px)',
+      boxShadow: 'md'
+    }
+  },
+  variants: {
+    earned: {
+      true: {
+        bgGradient: 'to-br',
+        gradientFrom: 'green.9',
+        gradientTo: 'green.11',
+        color: 'white',
+        borderColor: 'green.6',
+        boxShadow: 'sm'
+      },
+      false: {
+        background: 'bg.surface',
+        color: 'fg.default',
+        borderColor: 'border.default',
+        _hover: {
+          borderColor: 'accent.default'
+        }
+      }
+    }
   }
-`
+})
 
-const SpaceWarfareHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-`
+const spaceWarfareHeader = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '2',
+  cursor: 'pointer'
+})
 
-const PinIcon = styled.div`
-  width: 20px;
-  height: 20px;
-  background: gold;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  color: #000;
-  font-weight: bold;
-  flex-shrink: 0;
-`
+const pinIcon = css({
+  width: '2rem',
+  height: '2rem',
+  borderRadius: '50%',
+  background: 'linear-gradient(135deg, #FFD700 60%, #FFB300 100%)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '1.2rem',
+  color: '#7c4700',
+  fontWeight: 'bold',
+  boxShadow: '0 1px 4px rgba(0,0,0,0.10)',
+  border: 'none',
+  flexShrink: 0
+})
 
-const ExpandIcon = styled.div<{ $expanded: boolean }>`
-  margin-left: auto;
-  font-size: 0.8rem;
-  transform: rotate(${(props) => (props.$expanded ? '180deg' : '0deg')});
-  transition: transform 0.3s ease;
-`
-
-const SpaceWarfareDetails = styled.div<{ $expanded: boolean }>`
-  max-height: ${(props) => (props.$expanded ? '500px' : '0')};
-  opacity: ${(props) => (props.$expanded ? '1' : '0')};
-  overflow: hidden;
-  transition: all 0.3s ease;
-  margin-top: ${(props) => (props.$expanded ? '0.5rem' : '0')};
-`
-
-const PinSection = styled.div`
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border: 1px solid ${(props) => props.theme.colors.border};
-  border-radius: 4px;
-  background: ${(props) => props.theme.colors.background};
-
-  &:last-child {
-    margin-bottom: 0;
+const expandIcon = cva({
+  base: {
+    marginLeft: 'auto',
+    fontSize: 'fontSizes.xs',
+    transition: 'transform 0.3s ease'
+  },
+  variants: {
+    expanded: {
+      true: { transform: 'rotate(180deg)' },
+      false: { transform: 'rotate(0deg)' }
+    }
   }
-`
+})
 
-const PinTitle = styled.h4`
-  margin: 0 0 0.5rem 0;
-  font-size: 0.9rem;
-  color: ${(props) => props.theme.colors.text};
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`
-
-const PinBadge = styled.div<{ $earned: boolean }>`
-  padding: 0.2rem 0.5rem;
-  border-radius: 8px;
-  font-size: 0.7rem;
-  font-weight: bold;
-  background: ${(props) => (props.$earned ? props.theme.colors.success : props.theme.colors.secondary)};
-  color: white;
-  margin-left: auto;
-`
-
-const RequirementsList = styled.div`
-  font-size: 0.8rem;
-  color: ${(props) => props.theme.colors.textSecondary};
-`
-
-const RequirementItem = styled.div<{ $completed: boolean }>`
-  display: flex;
-  align-items: flex-start;
-  gap: 0.3rem;
-  margin-bottom: 0.2rem;
-  padding: 0.2rem;
-  border-radius: 3px;
-  background: ${(props) => (props.$completed ? `${props.theme.colors.success}20` : 'transparent')};
-
-  &:last-child {
-    margin-bottom: 0;
+const spaceWarfareDetails = cva({
+  base: {
+    overflow: 'hidden',
+    transition: 'all 0.3s ease'
+  },
+  variants: {
+    expanded: {
+      true: {
+        maxHeight: '1000px',
+        opacity: '1',
+        marginTop: '4',
+        paddingBottom: '2'
+      },
+      false: {
+        maxHeight: '0',
+        opacity: '0',
+        marginTop: '0',
+        paddingBottom: '0'
+      }
+    }
   }
-`
+})
 
-const ProgressBarContainer = styled.div`
-  margin-top: 0.5rem;
-  height: 6px;
-  background: ${(props) => props.theme.colors.surface};
-  border-radius: 3px;
-  overflow: hidden;
-  border: 1px solid ${(props) => props.theme.colors.border};
-`
+const pinSection = css({
+  marginBottom: '1.5rem',
+  padding: '1rem',
+  borderColor: 'rgba(255, 255, 255, 0.3)',
+  borderRadius: '8px',
+  background: 'white',
+  boxShadow: 'md',
+  color: 'black',
+  '&:last-child': {
+    marginBottom: '1.5rem'
+  }
+})
 
-const ProgressBarFill = styled.div<{ progress: number }>`
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    ${(props) => props.theme.colors.primary},
-    ${(props) => props.theme.colors.success}
-  );
-  width: ${(props) => props.progress}%;
-  transition: width 0.3s ease;
-`
+const pinTitle = css({
+  fontSize: '1rem',
+  fontWeight: '600',
+  marginBottom: '0.25rem',
+  color: 'fg.default',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+  letterSpacing: '0.03em',
+  textShadow: 'none'
+})
 
-const ProgressText = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.7rem;
-  margin-top: 0.2rem;
-  color: ${(props) => props.theme.colors.textSecondary};
-`
+const pinBadge = cva({
+  base: {
+    padding: '0.13rem 0.8rem',
+    borderRadius: '999px',
+    fontSize: '0.95rem',
+    fontWeight: 'bold',
+    color: 'white',
+    marginLeft: 'auto',
+    letterSpacing: '0.03em',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.10)'
+  },
+  variants: {
+    earned: {
+      true: {
+        background: '#16a34a',
+        color: 'white'
+      },
+      false: {
+        background: '#64748b',
+        color: 'white'
+      }
+    }
+  }
+})
 
-const AchievementDescription = styled.div`
-  font-size: 0.8rem;
-  margin-top: 0.2rem;
-`
+const requirementsList = css({
+  fontSize: '0.98rem',
+  marginBottom: '0.7rem',
+  marginTop: '0.5rem'
+})
+
+const requirementItem = cva({
+  base: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '0.5rem',
+    marginBottom: '0.5rem',
+    padding: '0.5rem 0.8rem',
+    borderRadius: '6px',
+    fontWeight: 'normal',
+    fontSize: '0.98rem',
+    boxShadow: '0 0.5px 2px rgba(0,0,0,0.06)',
+    '&:last-child': {
+      marginBottom: '0'
+    }
+  },
+  variants: {
+    completed: {
+      true: {
+        background: 'linear-gradient(90deg, #bbf7d0 60%, #f0fdf4 100%)',
+        borderLeft: '4px solid #16a34a',
+        color: '#14532d',
+        fontWeight: 'bold'
+      },
+      false: {
+        background: 'linear-gradient(90deg, #f3f4f6 60%, #e5e7eb 100%)',
+        borderLeft: '4px solid #64748b',
+        color: '#334155',
+        fontWeight: 'normal'
+      }
+    }
+  }
+})
+
+const progressBarContainer = css({
+  marginTop: '0.5rem',
+  height: '10px',
+  background: 'rgba(229, 231, 235, 1)',
+  borderRadius: '5px',
+  overflow: 'hidden',
+  border: '1px solid #334155'
+})
+
+const progressBarFill = cva({
+  base: {
+    height: '100%',
+    transition: 'width 0.3s ease',
+    borderRadius: '5px'
+  },
+  variants: {
+    earned: {
+      true: {
+        background: '#16a34a'
+      },
+      false: {
+        background: '#64748b'
+      }
+    }
+  }
+})
+
+const progressText = css({
+  display: 'flex',
+  justifyContent: 'space-between',
+  fontSize: '0.98rem',
+  marginTop: '0.18rem',
+  color: '#22c55e',
+  fontWeight: 'bold'
+})
+
+const achievementDescription = css({
+  fontSize: 'fontSizes.sm',
+  marginTop: '2',
+  color: 'rgba(255, 255, 255, 0.95)',
+  fontWeight: 'fontWeights.normal',
+  textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+})
 
 interface PinRequirement {
   id: string
@@ -185,12 +279,12 @@ export const SpaceWarfareAchievement: React.FC<SpaceWarfareAchievementProps> = (
   const renderSpaceWarfareRequirement = useCallback((req: PinRequirement) => {
     if (req.type === 'course') {
       return (
-        <RequirementItem key={req.id} $completed={req.completed}>
-          <StatusIcon $completed={req.completed}>{req.completed ? '✓' : '○'}</StatusIcon>
-          <RequirementText $completed={req.completed}>
+        <div key={req.id} className={requirementItem({ completed: req.completed })}>
+          <div className={statusIcon({ completed: req.completed })}>{req.completed ? '✓' : '○'}</div>
+          <div className={requirementText({ completed: req.completed })}>
             {req.name} ({req.courseCode})
-          </RequirementText>
-        </RequirementItem>
+          </div>
+        </div>
       )
     } else if (req.type === 'department_choice') {
       const displayText = req.name.startsWith('Department Choice')
@@ -198,59 +292,69 @@ export const SpaceWarfareAchievement: React.FC<SpaceWarfareAchievementProps> = (
         : `Department Choice - ${req.description || req.name}`
 
       return (
-        <RequirementItem key={req.id} $completed={req.completed}>
-          <StatusIcon $completed={req.completed}>{req.completed ? '✓' : `${req.satisfied}/${req.minimum}`}</StatusIcon>
-          <FlexContainer>
-            <RequirementText $completed={req.completed}>
-              {displayText} - Progress: {req.satisfied}/{req.minimum} departments
-            </RequirementText>
+        <div key={req.id} className={requirementItem({ completed: req.completed })}>
+          <div className={statusIcon({ completed: req.completed })}>{req.completed ? '✓' : '○'}</div>
+          <div className={flexContainer}>
+            <div className={requirementText({ completed: req.completed })}>{displayText}</div>
             {req.departments && req.departments.length > 0 && (
-              <DepartmentInfo>Available: {req.departments.join(', ')}</DepartmentInfo>
+              <div className={departmentInfo}>
+                Departments: {req.departments.join(', ')} | Level: {req.level} | Progress: {req.satisfied || 0}/
+                {req.minimum || 0}
+              </div>
             )}
-          </FlexContainer>
-        </RequirementItem>
+          </div>
+        </div>
       )
     }
+
     return null
   }, [])
 
-  const renderPinSection = useCallback(
-    (progress: PinProgress) => (
-      <PinSection key={progress.type}>
-        <PinTitle>
-          <PinIcon>★</PinIcon>
-          {progress.name}
-          <PinBadge $earned={progress.earned}>
-            {progress.earned ? t.spaceWarfare.eligible : t.spaceWarfare.progress}
-          </PinBadge>
-        </PinTitle>
-        <RequirementsList>{progress.requirements.map(renderSpaceWarfareRequirement)}</RequirementsList>
-        <ProgressBarContainer>
-          <ProgressBarFill progress={progress.overallProgress} />
-        </ProgressBarContainer>
-        <ProgressText>
-          <span>{t.spaceWarfare.progress}</span>
-          <span>{Math.round(progress.overallProgress)}%</span>
-        </ProgressText>
-      </PinSection>
-    ),
-    [t, renderSpaceWarfareRequirement]
+  const renderPinDetails = useCallback(
+    (pinProgress: PinProgress) => {
+      return (
+        <div className={pinSection}>
+          <h4 className={pinTitle}>
+            <div className={pinIcon}>🏅</div>
+            {pinProgress.name}
+            <div className={pinBadge({ earned: pinProgress.earned })}>
+              {pinProgress.earned ? t.spaceWarfare.eligible : t.spaceWarfare.notEligible}
+            </div>
+          </h4>
+
+          <div className={requirementsList}>
+            {pinProgress.requirements.map((req) => renderSpaceWarfareRequirement(req))}
+          </div>
+
+          <div className={progressBarContainer}>
+            <div
+              className={progressBarFill({ earned: pinProgress.earned })}
+              style={{ width: `${pinProgress.overallProgress}%` }}
+            />
+          </div>
+          <div className={progressText}>
+            <span>{t.spaceWarfare.progress}</span>
+            <span>{pinProgress.overallProgress.toFixed(1)}%</span>
+          </div>
+        </div>
+      )
+    },
+    [renderSpaceWarfareRequirement, t.spaceWarfare.eligible, t.spaceWarfare.notEligible, t.spaceWarfare.progress]
   )
 
   return (
-    <SpaceWarfareContainer $earned={combinedEarned} onClick={toggleExpanded}>
-      <SpaceWarfareHeader>
-        <PinIcon>★</PinIcon>
-        <FlexContainer>
-          <strong>{t.achievements.spaceWarfarePins.title}</strong>
-          <AchievementDescription>{t.achievements.spaceWarfarePins.description}</AchievementDescription>
-        </FlexContainer>
-        <ExpandIcon $expanded={expanded}>▼</ExpandIcon>
-      </SpaceWarfareHeader>
-      <SpaceWarfareDetails $expanded={expanded}>
-        {renderPinSection(oswpProgress)}
-        {renderPinSection(eswpProgress)}
-      </SpaceWarfareDetails>
-    </SpaceWarfareContainer>
+    <div className={achievementItem({ completed: isEligible })} style={{ marginBottom: '0.5em' }}>
+      <div className={spaceWarfareHeader} onClick={toggleExpanded}>
+        <strong>{t.spaceWarfare.title}</strong>
+        <div className={expandIcon({ expanded })}>{expanded ? '▲' : '▼'}</div>
+      </div>
+      <div className={achievementDescription}>{t.spaceWarfare.requirements}</div>
+      {expanded && (
+        <div className={spaceWarfareDetails({ expanded })}>
+          {renderPinDetails(oswpProgress)}
+          {renderPinDetails(eswpProgress)}
+        </div>
+      )}
+    </div>
   )
 }

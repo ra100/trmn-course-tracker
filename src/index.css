@@ -1,5 +1,7 @@
 @layer reset, base, tokens, recipes, utilities;
 
+@import './styles/generated.css';
+
 @keyframes spin {
   from {
     transform: rotate(0deg);

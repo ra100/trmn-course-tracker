@@ -1,12 +1,12 @@
 import React from 'react'
 import { useT } from '../../i18n'
 import {
-  PanelTitle,
-  SectionProgress,
-  ProgressLabel,
-  SectionTitle,
-  ProgressBar,
-  ProgressFill
+  panelTitle,
+  sectionProgress as sectionProgressStyle,
+  progressLabel,
+  sectionTitle,
+  progressBar,
+  progressFill
 } from './ProgressPanel.styles'
 
 interface SectionProgressData {
@@ -35,55 +35,58 @@ interface SectionProgressListProps {
 export const SectionProgressList: React.FC<SectionProgressListProps> = ({ sectionProgress, levelProgress }) => {
   const t = useT()
 
-  const getLevelColor = (level: string): string => {
+  const getLevelColor = (level: string): 'primary' | 'success' | 'warning' | 'error' => {
     switch (level) {
       case 'A':
-        return '#e74c3c' // Red for advanced
+        return 'error' // Red for advanced
       case 'C':
-        return '#f39c12' // Orange for continuing
+        return 'warning' // Orange for continuing
       case 'D':
-        return '#9b59b6' // Purple for diploma
+        return 'primary' // Purple/blue for diploma
       case 'W':
-        return '#2ecc71' // Green for warfare
+        return 'success' // Green for warfare
       default:
-        return '#3498db' // Blue for default
+        return 'primary' // Blue for default
     }
   }
 
   return (
     <>
       {/* Section Progress */}
-      <PanelTitle>{t.progress.sectionProgress}</PanelTitle>
+      <h3 className={panelTitle}>{t.progress.sectionProgress}</h3>
       {sectionProgress.slice(0, 5).map((section) => (
-        <SectionProgress key={section.section}>
-          <ProgressLabel>
-            <SectionTitle>{section.section}</SectionTitle>
+        <div key={section.section} className={sectionProgressStyle}>
+          <div className={progressLabel}>
+            <div className={sectionTitle}>{section.section}</div>
             <span>
               {section.completed}/{section.total}
             </span>
-          </ProgressLabel>
-          <ProgressBar>
-            <ProgressFill percentage={section.percentage} />
-          </ProgressBar>
-        </SectionProgress>
+          </div>
+          <div className={progressBar}>
+            <div className={progressFill({ color: 'primary' })} style={{ width: `${section.percentage}%` }} />
+          </div>
+        </div>
       ))}
 
       {/* Level Progress */}
-      <PanelTitle>{t.progress.levelProgress}</PanelTitle>
+      <h3 className={panelTitle}>{t.progress.levelProgress}</h3>
       {levelProgress.map((level) => (
-        <SectionProgress key={level.level}>
-          <ProgressLabel>
-            <SectionTitle>
+        <div key={level.level} className={sectionProgressStyle}>
+          <div className={progressLabel}>
+            <div className={sectionTitle}>
               {t.progress.level} {level.level}
-            </SectionTitle>
+            </div>
             <span>
               {level.completed}/{level.total}
             </span>
-          </ProgressLabel>
-          <ProgressBar>
-            <ProgressFill percentage={level.percentage} color={getLevelColor(level.level)} />
-          </ProgressBar>
-        </SectionProgress>
+          </div>
+          <div className={progressBar}>
+            <div
+              className={progressFill({ color: getLevelColor(level.level) })}
+              style={{ width: `${level.percentage}%` }}
+            />
+          </div>
+        </div>
       ))}
     </>
   )

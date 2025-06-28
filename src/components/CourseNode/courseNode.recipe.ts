@@ -3,65 +3,88 @@ import { cva, css } from 'styled-system/css'
 export const courseNodeContainer = cva({
   base: {
     color: 'white',
-    padding: '1rem',
-    borderRadius: 'lg',
+    padding: '1.25rem',
+    borderRadius: 'xl',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
     position: 'relative',
-    boxShadow: 'sm',
+    boxShadow: 'md',
+    minHeight: '120px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
     _hover: {
-      transform: 'translateY(-2px)',
-      boxShadow: 'lg',
-      filter: 'brightness(1.1)'
+      transform: 'translateY(-3px)',
+      boxShadow: 'xl',
+      filter: 'brightness(1.05)'
     },
     _active: {
-      transform: 'scale(0.98)'
+      transform: 'scale(0.97)'
+    },
+    _focus: {
+      outline: '2px solid',
+      outlineColor: 'accent.default',
+      outlineOffset: '2px'
     },
     '@media (max-width: 768px)': {
-      padding: '1.2rem',
+      padding: '1rem',
       marginBottom: '0.5rem',
+      minHeight: '100px',
       _hover: {
-        transform: 'none'
+        transform: 'translateY(-1px)',
+        boxShadow: 'lg'
       }
     },
     '@media (max-width: 480px)': {
-      padding: '1rem',
-      fontSize: '0.9rem'
+      padding: '0.875rem',
+      fontSize: '0.9rem',
+      minHeight: '90px'
     }
   },
   variants: {
     status: {
       completed: {
         bgGradient: 'to-br',
-        gradientFrom: 'green.500',
-        gradientTo: 'green.700'
+        gradientFrom: 'green.9',
+        gradientTo: 'green.11',
+        borderColor: 'green.6',
+        borderWidth: '2px'
       },
       waiting_grade: {
         bgGradient: 'to-br',
-        gradientFrom: 'yellow.500',
-        gradientTo: 'yellow.700'
+        gradientFrom: 'amber.9',
+        gradientTo: 'amber.11',
+        borderColor: 'amber.6',
+        borderWidth: '2px'
       },
       in_progress: {
         bgGradient: 'to-br',
-        gradientFrom: 'teal.500',
-        gradientTo: 'teal.700'
+        gradientFrom: 'cyan.9',
+        gradientTo: 'cyan.11',
+        borderColor: 'cyan.6',
+        borderWidth: '2px'
       },
       available: {
         bgGradient: 'to-br',
-        gradientFrom: 'blue.500',
-        gradientTo: 'blue.700'
+        gradientFrom: 'accent.default',
+        gradientTo: 'accent.emphasized',
+        borderColor: 'accent.600',
+        borderWidth: '2px'
       },
       locked: {
-        bgGradient: 'to-br',
-        gradientFrom: 'gray.500',
-        gradientTo: 'gray.700',
+        bg: 'gray.6',
+        borderColor: 'gray.7',
+        borderWidth: '2px',
         cursor: 'not-allowed',
-        opacity: 0.6
+        opacity: 0.6,
+        color: 'gray.11'
       },
       error: {
         bgGradient: 'to-br',
-        gradientFrom: 'red.500',
-        gradientTo: 'red.700'
+        gradientFrom: 'red.9',
+        gradientTo: 'red.11',
+        borderColor: 'red.6',
+        borderWidth: '2px'
       }
     }
   }
@@ -69,33 +92,42 @@ export const courseNodeContainer = cva({
 
 export const courseCode = css({
   fontFamily: 'mono',
-  fontSize: '0.9rem',
-  opacity: 0.8,
-  marginBottom: '0.5rem'
+  fontSize: '0.875rem',
+  opacity: 0.85,
+  marginBottom: '0.375rem',
+  fontWeight: '500',
+  letterSpacing: '0.025em'
 })
 
 export const courseName = css({
-  fontWeight: 600,
-  fontSize: '1rem',
-  lineHeight: 1.3,
-  marginBottom: '0.5rem'
+  fontWeight: '600',
+  fontSize: '1.1rem',
+  lineHeight: 1.25,
+  marginBottom: '0.5rem',
+  flex: '1',
+  textShadow: '0 1px 2px rgba(0,0,0,0.1)'
 })
 
 export const courseLevel = css({
   position: 'absolute',
-  top: '0.5rem',
-  right: '0.5rem',
-  bg: 'rgba(255, 255, 255, 0.2)',
-  padding: '0.2rem 0.5rem',
+  top: '0.75rem',
+  right: '0.75rem',
+  bg: 'rgba(255, 255, 255, 0.25)',
+  backdropFilter: 'blur(4px)',
+  padding: '0.25rem 0.625rem',
   borderRadius: 'full',
-  fontSize: '0.8rem',
-  fontWeight: 'bold'
+  fontSize: '0.75rem',
+  fontWeight: '600',
+  border: '1px solid rgba(255, 255, 255, 0.2)',
+  textShadow: '0 1px 2px rgba(0,0,0,0.2)'
 })
 
 export const prerequisites = css({
   fontSize: '0.8rem',
   opacity: 0.9,
-  marginTop: '0.5rem'
+  marginTop: 'auto',
+  paddingTop: '0.5rem',
+  fontWeight: '400'
 })
 
 export const statusIcon = cva({
@@ -115,33 +147,35 @@ export const statusIcon = cva({
     status: {
       completed: {
         bg: 'white',
-        color: 'green.500',
-        _after: { content: '"✓"' }
+        color: 'green.9',
+        _after: { content: '"✓"' },
+        fontWeight: 'bold'
       },
       waiting_grade: {
-        bg: 'rgba(255,255,255,0.9)',
-        color: 'white',
+        bg: 'rgba(255,255,255,0.95)',
+        color: 'amber.11',
         _after: { content: '"⏳"' }
       },
       in_progress: {
-        bg: 'rgba(255,255,255,0.9)',
-        color: 'white',
+        bg: 'rgba(255,255,255,0.95)',
+        color: 'cyan.11',
         _after: { content: '"📚"' }
       },
       available: {
-        bg: 'rgba(255,255,255,0.3)',
+        bg: 'rgba(255,255,255,0.4)',
         color: 'white',
         _after: { content: '"○"' }
       },
       locked: {
-        bg: 'rgba(255,255,255,0.1)',
-        color: 'white',
+        bg: 'rgba(255,255,255,0.2)',
+        color: 'gray.11',
         _after: { content: '"●"' }
       },
       error: {
-        bg: 'rgba(255,255,255,0.2)',
-        color: 'white',
-        _after: { content: '"!"' }
+        bg: 'rgba(255,255,255,0.95)',
+        color: 'red.11',
+        _after: { content: '"!"' },
+        fontWeight: 'bold'
       }
     }
   }
