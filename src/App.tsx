@@ -126,10 +126,12 @@ const detailsPanel = css({
   borderColor: 'border.default',
   overflowY: 'auto',
   overscrollBehavior: 'contain',
-  '@media (max-width: 1024px)': {
+  padding: 'spacing.8',
+  boxSizing: 'border-box',
+  '@media (max-width: lg)': {
     width: '300px'
   },
-  '@media (max-width: lg)': {
+  '@media (max-width: md)': {
     borderLeft: 'none',
     borderTop: 'borders.none',
     borderTopWidth: '1px',
@@ -173,41 +175,41 @@ const loadingOverlay = css({
 const errorMessage = css({
   backgroundColor: 'brand.primary',
   color: 'white',
-  padding: '1.5rem',
-  margin: '1rem',
-  borderRadius: 'md',
-  boxShadow: 'lg',
-  '& h3': {
-    fontFamily: 'heading',
-    fontSize: '1.2rem',
-    fontWeight: 'bold',
-    margin: '0 0 0.5rem 0',
-    textTransform: 'uppercase',
   padding: 'spacing.6',
   margin: 'spacing.4',
   borderRadius: 'radii.md',
   boxShadow: 'shadows.lg',
-    margin: '0 0 1rem 0',
+  '& h3': {
     fontFamily: 'fonts.heading',
     fontSize: 'fontSizes.lg',
     fontWeight: 'fontWeights.bold',
     margin: '0 0 spacing.2 0',
-    color: 'brand.primary',
+    textTransform: 'uppercase',
     letterSpacing: 'letterSpacings.wide'
-    padding: '0.5rem 1rem',
-    borderRadius: 'sm',
+  },
+  '& p': {
     fontFamily: 'fonts.body',
     margin: '0 0 spacing.4 0',
     lineHeight: 'lineHeights.relaxed'
+  },
+  '& button': {
+    backgroundColor: 'white',
+    color: 'brand.primary',
+    border: 'none',
+    padding: 'spacing.2 spacing.4',
+    borderRadius: 'radii.sm',
+    fontFamily: 'fonts.body',
+    fontWeight: 'fontWeights.medium',
+    cursor: 'pointer',
     transition: 'all 0.2s ease',
     _hover: {
       backgroundColor: 'brand.secondary',
       color: 'white'
     }
-    padding: 'spacing.2 spacing.4',
-    borderRadius: 'radii.sm',
-    fontFamily: 'fonts.body',
-    fontWeight: 'fontWeights.medium',
+  }
+})
+
+const mobileOverlay = css({
   display: 'none',
   '@media (max-width: md)': {
     position: 'fixed',
@@ -229,30 +231,30 @@ const mobileOverlayVisible = css({
 const mobileDetailsToggle = css({
   display: 'none',
   position: 'fixed',
-  bottom: '20px',
-  right: '20px',
+  bottom: 'spacing.5',
+  right: 'spacing.5',
   backgroundColor: 'brand.primary',
   color: 'white',
   border: 'none',
-  borderRadius: '50%',
-  width: '56px',
-  height: '56px',
-  fontSize: '1.2rem',
-  cursor: 'pointer',
-  bottom: 'spacing.5',
-  right: 'spacing.5',
-  transition: 'all 0.3s ease',
-  fontFamily: 'body',
-  _hover: {
   borderRadius: 'radii.full',
   width: 'sizes.14',
   height: 'sizes.14',
   fontSize: 'fontSizes.lg',
+  cursor: 'pointer',
+  boxShadow: 'shadows.lg',
+  transition: 'all 0.3s ease',
+  fontFamily: 'fonts.body',
+  _hover: {
+    borderRadius: 'radii.full',
+    width: 'sizes.14',
+    height: 'sizes.14'
+  },
+  '@media (max-width: md)': {
     display: 'block'
   }
 })
 
-  fontFamily: 'fonts.body',
+const mobileCloseButton = css({
   display: 'none',
   position: 'absolute',
   top: 'spacing.4',
@@ -265,7 +267,7 @@ const mobileDetailsToggle = css({
   padding: 'spacing.2',
   borderRadius: 'radii.md',
   zIndex: 1001,
-  fontFamily: 'body',
+  fontFamily: 'fonts.body',
   transition: 'all 0.2s ease',
   _hover: {
     backgroundColor: 'bg.subtle',
@@ -275,7 +277,7 @@ const mobileDetailsToggle = css({
     display: 'block'
   }
 })
-  fontFamily: 'fonts.body',
+
 function App() {
   const t = useT()
   const { setLanguage } = useTranslation()

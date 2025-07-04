@@ -8,7 +8,7 @@ const spaceWarfareHeader = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: '2',
+  gap: 'spacing.2',
   cursor: 'pointer'
 })
 
@@ -52,8 +52,8 @@ const spaceWarfareDetails = cva({
       true: {
         maxHeight: '1000px',
         opacity: '1',
-        marginTop: '4',
-        paddingBottom: '2'
+        marginTop: 'spacing.4',
+        paddingBottom: 'spacing.2'
       },
       false: {
         maxHeight: '0',
@@ -72,8 +72,8 @@ const pinSection = css({
   borderColor: 'border.default',
   borderRadius: '8px',
   background: 'bg.surface',
-  boxShadow: 'md',
   color: 'fg.default',
+  boxShadow: 'none',
   '&:last-child': {
     marginBottom: '1.5rem'
   }
@@ -157,9 +157,9 @@ const requirementItem = cva({
 
 const progressBarContainer = css({
   marginTop: '0.5rem',
-  height: '10px',
   height: '0.7rem',
   background: '#1e293b',
+  borderRadius: '5px',
   overflow: 'hidden',
   border: '1px solid #334155'
 })
@@ -193,7 +193,7 @@ const progressText = css({
 
 const achievementDescription = css({
   fontSize: 'fontSizes.sm',
-  marginTop: '2',
+  marginTop: 'spacing.2',
   color: 'rgba(255, 255, 255, 0.95)',
   fontWeight: 'fontWeights.normal',
   textShadow: '0 1px 2px rgba(0,0,0,0.3)'
@@ -223,18 +223,13 @@ interface PinProgress {
 interface SpaceWarfareAchievementProps {
   oswpProgress: PinProgress
   eswpProgress: PinProgress
-  combinedEarned: boolean
 }
 
 /**
  * SpaceWarfareAchievement displays the complex space warfare pin achievement
  * with expandable details showing OSWP and ESWP requirements
  */
-export const SpaceWarfareAchievement: React.FC<SpaceWarfareAchievementProps> = ({
-  oswpProgress,
-  eswpProgress,
-  combinedEarned
-}) => {
+export const SpaceWarfareAchievement: React.FC<SpaceWarfareAchievementProps> = ({ oswpProgress, eswpProgress }) => {
   const t = useT()
   const [expanded, setExpanded] = useState(false)
 
@@ -307,6 +302,8 @@ export const SpaceWarfareAchievement: React.FC<SpaceWarfareAchievementProps> = (
     },
     [renderSpaceWarfareRequirement, t.spaceWarfare.eligible, t.spaceWarfare.notEligible, t.spaceWarfare.progress]
   )
+
+  const isEligible = oswpProgress.earned || eswpProgress.earned
 
   return (
     <div className={achievementItem({ completed: isEligible })} style={{ marginBottom: '0.5em' }}>

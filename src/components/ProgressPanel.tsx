@@ -17,6 +17,7 @@ import {
   PinRequirement,
   PinProgress
 } from './ProgressPanel/index'
+import { getLogger } from '~/utils/logger'
 
 interface ProgressPanelProps {
   userProgress: UserProgress
@@ -230,14 +231,14 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
   const getAchievements = useCallback((): CalculatedAchievement[] => {
     try {
       const result = calculateAchievements(courseData, userProgress, t)
-      console.log('🎯 ProgressPanel received achievements:', {
+      getLogger().log('🎯 ProgressPanel received achievements:', {
         count: result.length,
         ids: result.map((a) => a.id),
         categories: Array.from(new Set(result.map((a) => a.category)))
       })
       return result
     } catch (error) {
-      console.warn('🎯 Achievement calculation failed, using fallback:', error)
+      getLogger().warn('🎯 Achievement calculation failed, using fallback:', error)
       // Fallback to basic achievements to prevent data loss
       const fallbackAchievements: CalculatedAchievement[] = []
       const completedCount = userProgress.completedCourses.size
@@ -260,7 +261,7 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
         progress: { current: Math.min(completedCount, 3), target: 3 }
       })
 
-      console.log('🎯 Using fallback achievements:', fallbackAchievements.length)
+      getLogger().log('🎯 Using fallback achievements:', fallbackAchievements.length)
       return fallbackAchievements
     }
   }, [courseData, userProgress, t])

@@ -4,7 +4,6 @@ import { EligibilityEngine } from '~/utils/eligibilityEngine'
 import { useT } from '~/i18n'
 import {
   CourseHeader,
-  CourseInfoGrid,
   CourseActions,
   PrerequisitesSection,
   UnlockedCoursesSection,
@@ -62,22 +61,20 @@ const CourseDetailsContent: React.FC<CourseDetailsContentProps> = ({
     })
 
   return (
-    <>
-      <CourseHeader course={course} status={status} getStatusText={getStatusText} />
+    <div className={panelCard}>
+      <div className={headerCard}>
+        <CourseHeader course={course} status={status} getStatusText={getStatusText} />
+        <div className={headerDivider} />
+      </div>
 
-      <CourseInfoGrid
-        course={course}
-        prerequisites={prerequisites}
-        unlockedCourses={unlockedCourses}
-        getStatusText={getStatusText}
-      />
-
-      <CourseActions
-        course={course}
-        status={status}
-        onCourseToggle={handleToggleClick}
-        onCourseStatusChange={onCourseStatusChange}
-      />
+      <div className={actionGroup}>
+        <CourseActions
+          course={course}
+          status={status}
+          onCourseToggle={handleToggleClick}
+          onCourseStatusChange={onCourseStatusChange}
+        />
+      </div>
 
       <PrerequisitesSection
         prerequisites={prerequisites}
@@ -92,7 +89,7 @@ const CourseDetailsContent: React.FC<CourseDetailsContentProps> = ({
       />
 
       <CourseDescription course={course} />
-    </>
+    </div>
   )
 }
 

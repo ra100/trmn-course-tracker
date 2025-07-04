@@ -82,3 +82,5 @@ export const BasicAchievements: React.FC<BasicAchievementsProps> = ({ achievemen
     </div>
   )
 }
+
+export { achievementItem }
