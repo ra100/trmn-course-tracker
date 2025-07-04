@@ -841,7 +841,7 @@ export const clearAllProgress = async (): Promise<void> => {
 // Debug function to inspect IndexedDB contents
 export const debugIndexedDB = async (): Promise<void> => {
   if (!isIndexedDBAvailable()) {
-    console.log('❌ IndexedDB not available')
+    getLogger().log('❌ IndexedDB not available')
     return
   }
 
@@ -849,20 +849,20 @@ export const debugIndexedDB = async (): Promise<void> => {
     const metadata = await userProgressDB.loadMetadata()
     const courseStates = await userProgressDB.loadAllCourseStates()
 
-    console.log('🔍 IndexedDB Debug Info:')
-    console.log('📊 Metadata:', metadata)
-    console.log(`📚 Course States: ${courseStates.length} records`)
-    console.log('🎯 Sample course states:', courseStates.slice(0, 5))
+    getLogger().log('🔍 IndexedDB Debug Info:')
+    getLogger().log('📊 Metadata:', metadata)
+    getLogger().log(`📚 Course States: ${courseStates.length} records`)
+    getLogger().log('🎯 Sample course states:', courseStates.slice(0, 5))
 
     // Check localStorage too
     const localData = loadFromLocalStorage()
-    console.log('📱 localStorage data:', {
+    getLogger().log('📱 localStorage data:', {
       exists: !!localData,
       completed: localData?.completedCourses?.size || 0,
       userId: localData?.userId
     })
   } catch (err) {
-    console.error('❌ Error debugging IndexedDB:', err)
+    getLogger().error('❌ Error debugging IndexedDB:', err)
   }
 }
 
@@ -870,36 +870,36 @@ export const debugIndexedDB = async (): Promise<void> => {
 export const recoverFromLocalStorage = async (): Promise<void> => {
   const localData = loadFromLocalStorage()
   if (localData && isIndexedDBAvailable()) {
-    console.log('🔄 Starting immediate recovery from localStorage...')
-    console.log(`📚 Found ${localData.completedCourses.size} completed courses`)
+    getLogger().log('🔄 Starting immediate recovery from localStorage...')
+    getLogger().log(`📚 Found ${localData.completedCourses.size} completed courses`)
 
     try {
       await userProgressDB.save(localData)
-      console.log('✅ Successfully recovered data to IndexedDB!')
+      getLogger().log('✅ Successfully recovered data to IndexedDB!')
 
       // Verify the recovery
       const verified = await userProgressDB.load()
       if (verified) {
-        console.log('✅ Recovery verified - data is now accessible!')
+        getLogger().log('✅ Recovery verified - data is now accessible!')
         // Force refresh the React Query cache
         if (typeof window !== 'undefined' && window.location) {
           window.location.reload()
         }
       } else {
-        console.log('❌ Recovery verification failed')
+        getLogger().log('❌ Recovery verification failed')
       }
     } catch (err) {
-      console.error('❌ Recovery failed:', err)
+      getLogger().error('❌ Recovery failed:', err)
     }
   } else {
-    console.log('❌ No localStorage data found to recover')
+    getLogger().log('❌ No localStorage data found to recover')
   }
 }
 
 // Force refresh achievements (clears React Query cache)
 export const forceRefreshAchievements = (): void => {
   if (typeof window !== 'undefined') {
-    console.log('🔄 Forcing page refresh to clear caches...')
+    getLogger().log('🔄 Forcing page refresh to clear caches...')
     window.location.reload()
   }
 }

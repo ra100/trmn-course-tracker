@@ -2,6 +2,7 @@ import { AchievementConfiguration, CalculatedAchievement, ParsedCourseData, User
 import { TranslationStrings } from '../i18n/types'
 import { getCourseMainDepartment } from './departmentUtils'
 import achievementConfig from '../config/achievements.json'
+import { getLogger } from './logger'
 
 export function loadAchievementConfiguration(): AchievementConfiguration {
   return achievementConfig as AchievementConfiguration
@@ -16,7 +17,7 @@ export function calculateAchievements(
     const config = loadAchievementConfiguration()
     const achievements: CalculatedAchievement[] = []
 
-    console.log('🏆 Achievement System Debug:', {
+    getLogger().log('🏆 Achievement System Debug:', {
       hasConfig: !!config,
       configKeys: config ? Object.keys(config) : [],
       progressionCount: config?.progressionMilestones?.length || 0,
@@ -28,7 +29,7 @@ export function calculateAchievements(
 
     // Safe fallback for missing data
     if (!config || !courseData || !userProgress || !translations) {
-      console.warn('🏆 Using fallback achievements - missing data')
+      getLogger().warn('🏆 Using fallback achievements - missing data')
       return getFallbackAchievements(userProgress, translations)
     }
 
@@ -53,7 +54,7 @@ export function calculateAchievements(
             }
           })
         } catch (err) {
-          console.warn('Error calculating progression milestone:', milestone.id, err)
+          getLogger().warn('Error calculating progression milestone:', milestone.id, err)
         }
       })
     }
@@ -77,7 +78,7 @@ export function calculateAchievements(
             }
           })
         } catch (err) {
-          console.warn('Error calculating department breadth:', breadth.id, err)
+          getLogger().warn('Error calculating department breadth:', breadth.id, err)
         }
       })
     }
@@ -111,7 +112,7 @@ export function calculateAchievements(
             progress
           })
         } catch (err) {
-          console.warn('Error calculating specialty depth:', specialty.id, err)
+          getLogger().warn('Error calculating specialty depth:', specialty.id, err)
         }
       })
     }
@@ -141,12 +142,12 @@ export function calculateAchievements(
             }
           })
         } catch (err) {
-          console.warn('Error calculating institution diversity:', institution.id, err)
+          getLogger().warn('Error calculating institution diversity:', institution.id, err)
         }
       })
     }
 
-    console.log('🏆 Final Achievement Results:', {
+    getLogger().log('🏆 Final Achievement Results:', {
       totalAchievements: achievements.length,
       achievementIds: achievements.map((a) => a.id),
       completed: achievements.filter((a) => a.completed).map((a) => a.id),
@@ -155,7 +156,7 @@ export function calculateAchievements(
 
     return achievements.length > 0 ? achievements : getFallbackAchievements(userProgress, translations)
   } catch (error) {
-    console.error('Error in calculateAchievements:', error)
+    getLogger().error('Error in calculateAchievements:', error)
     return getFallbackAchievements(userProgress, translations)
   }
 }
@@ -200,13 +201,13 @@ function calculateUniqueDepartments(courseData: ParsedCourseData, userProgress: 
           }
         }
       } catch (err) {
-        console.warn('Error processing course for department calculation:', courseCode, err)
+        getLogger().warn('Error processing course for department calculation:', courseCode, err)
       }
     })
 
     return departments.size
   } catch (error) {
-    console.warn('Error calculating unique departments:', error)
+    getLogger().warn('Error calculating unique departments:', error)
     return 0
   }
 }
@@ -230,13 +231,13 @@ function calculateQualifications(courseData: ParsedCourseData, userProgress: Use
           }
         }
       } catch (err) {
-        console.warn('Error processing course for qualification calculation:', courseCode, err)
+        getLogger().warn('Error processing course for qualification calculation:', courseCode, err)
       }
     })
 
     return qualifications.size
   } catch (error) {
-    console.warn('Error calculating qualifications:', error)
+    getLogger().warn('Error calculating qualifications:', error)
     return 0
   }
 }
@@ -252,13 +253,13 @@ function calculateWarrantCourses(courseData: ParsedCourseData, userProgress: Use
           warrantCount++
         }
       } catch (err) {
-        console.warn('Error processing course for warrant calculation:', courseCode, err)
+        getLogger().warn('Error processing course for warrant calculation:', courseCode, err)
       }
     })
 
     return warrantCount
   } catch (error) {
-    console.warn('Error calculating warrant courses:', error)
+    getLogger().warn('Error calculating warrant courses:', error)
     return 0
   }
 }
@@ -290,13 +291,13 @@ function calculateInstitutionDiversity(
           }
         }
       } catch (err) {
-        console.warn('Error processing course for institution calculation:', courseCode, err)
+        getLogger().warn('Error processing course for institution calculation:', courseCode, err)
       }
     })
 
     return completedInstitutions.size
   } catch (error) {
-    console.warn('Error calculating institution diversity:', error)
+    getLogger().warn('Error calculating institution diversity:', error)
     return 0
   }
 }

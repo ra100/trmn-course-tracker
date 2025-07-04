@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
+
 import { readFileSync, writeFileSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import { parseCourseData } from '../src/utils/courseParser'
+import { getLogger } from '../src/utils/logger'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -11,13 +12,13 @@ const projectRoot = join(__dirname, '..')
 
 async function buildCourseData() {
   try {
-    console.log('🔨 Building course data...')
+    getLogger().log('🔨 Building course data...')
 
     // Read the markdown file
     const markdownPath = join(projectRoot, 'public', 'courses.md')
     const markdownContent = readFileSync(markdownPath, 'utf-8')
 
-    console.log(`📄 Read markdown file: ${markdownContent.length} characters`)
+    getLogger().log(`📄 Read markdown file: ${markdownContent.length} characters`)
 
     // Parse the course data
     const parsedData = parseCourseData(markdownContent)
@@ -40,15 +41,15 @@ async function buildCourseData() {
     const jsonPath = join(projectRoot, 'public', 'courses.json')
     writeFileSync(jsonPath, JSON.stringify(jsonData, null, 2))
 
-    console.log('✅ Course data built successfully!')
-    console.log(`📚 Total courses: ${parsedData.courses.length}`)
-    console.log(`📋 Categories: ${parsedData.categories.length}`)
-    console.log(`⚡ Special rules: ${parsedData.specialRules.length}`)
-    console.log(`🗂️ Department mappings: ${parsedData.departmentMappings?.size || 0}`)
-    console.log(`📺 Series mappings: ${parsedData.seriesMappings?.size || 0}`)
-    console.log(`💾 JSON file written to: ${jsonPath}`)
+    getLogger().log('✅ Course data built successfully!')
+    getLogger().log(`📚 Total courses: ${parsedData.courses.length}`)
+    getLogger().log(`📋 Categories: ${parsedData.categories.length}`)
+    getLogger().log(`⚡ Special rules: ${parsedData.specialRules.length}`)
+    getLogger().log(`🗂️ Department mappings: ${parsedData.departmentMappings?.size || 0}`)
+    getLogger().log(`📺 Series mappings: ${parsedData.seriesMappings?.size || 0}`)
+    getLogger().log(`💾 JSON file written to: ${jsonPath}`)
   } catch (error) {
-    console.error('❌ Error building course data:', error)
+    getLogger().error('❌ Error building course data:', error)
     process.exit(1)
   }
 }
