@@ -53,7 +53,6 @@ const createWrapper = (queryClient: QueryClient) => {
 }
 
 const mockUserSettings: UserSettings = {
-  theme: 'dark',
   layout: 'grid',
   showCompleted: false,
   showUnavailable: false,
@@ -62,7 +61,6 @@ const mockUserSettings: UserSettings = {
 }
 
 const defaultUserSettings: UserSettings = {
-  theme: 'light',
   layout: 'tree',
   showCompleted: true,
   showUnavailable: true,
@@ -117,8 +115,8 @@ describe('useUserSettings', () => {
 
     it('should merge partial settings with defaults', async () => {
       const partialSettings = {
-        theme: 'dark',
-        language: 'cs'
+        language: 'cs',
+        autoSave: false
       }
 
       localStorageMock.getItem.mockReturnValue(JSON.stringify(partialSettings))
@@ -133,8 +131,8 @@ describe('useUserSettings', () => {
 
       expect(result.current.data).toEqual({
         ...defaultUserSettings,
-        theme: 'dark',
-        language: 'cs'
+        language: 'cs',
+        autoSave: false
       })
     })
 
@@ -255,12 +253,12 @@ describe('useUserSettings', () => {
       })
 
       await act(async () => {
-        await result.current.updateSetting('theme', 'dark')
+        await result.current.updateSetting('language', 'cs')
       })
 
       const updatedData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
-      expect(updatedData?.theme).toBe('dark')
-      expect(updatedData?.language).toBe('en') // Other fields unchanged
+      expect(updatedData?.language).toBe('cs')
+      expect(updatedData?.layout).toBe('tree') // Other fields unchanged
     })
 
     it('should save updated setting to localStorage', async () => {
@@ -288,7 +286,7 @@ describe('useUserSettings', () => {
 
       // Verify data is set correctly before error
       const initialData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
-      expect(initialData?.theme).toBe('light')
+      expect(initialData?.language).toBe('en')
 
       localStorageMock.setItem.mockImplementation(() => {
         throw new Error('Storage error')
@@ -301,14 +299,15 @@ describe('useUserSettings', () => {
       let errorThrown = false
       await act(async () => {
         try {
-          await result.current.updateSetting('theme', 'dark')
+          await result.current.updateSetting('language', 'cs')
         } catch (error) {
           errorThrown = true
           expect(error).toEqual(new Error('Storage error'))
 
           // Check cache immediately after error handling
           const dataAfterError = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
-          expect(dataAfterError?.theme).toBe('light')
+          expect(dataAfterError).toEqual(defaultUserSettings)
+          expect(dataAfterError?.language).toBe('en')
         }
       })
 
@@ -321,7 +320,7 @@ describe('useUserSettings', () => {
       })
 
       await act(async () => {
-        await result.current.updateSetting('theme', 'dark')
+        await result.current.updateSetting('language', 'cs')
       })
 
       // Should not throw error and cache should remain empty
@@ -336,20 +335,20 @@ describe('useUserSettings', () => {
         wrapper: createWrapper(queryClient)
       })
 
-      // Test theme
-      await result.current.updateSetting('theme', 'dark')
+      // Test language
+      await result.current.updateSetting('language', 'cs')
       await result.current.updateSetting('layout', 'force')
       await result.current.updateSetting('showCompleted', false)
-      await result.current.updateSetting('language', 'cs')
+      await result.current.updateSetting('autoSave', false)
 
       // Verify final state
       const finalData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
       expect(finalData).toEqual({
         ...defaultUserSettings,
-        theme: 'dark',
+        language: 'cs',
         layout: 'force',
         showCompleted: false,
-        language: 'cs'
+        autoSave: false
       })
     })
   })
@@ -365,14 +364,14 @@ describe('useUserSettings', () => {
 
       const updater = (current: UserSettings): UserSettings => ({
         ...current,
-        theme: 'dark' as const,
+        language: 'cs' as const,
         autoSave: false
       })
 
       await result.current.updateOptimistically(updater)
 
       const updatedData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
-      expect(updatedData?.theme).toBe('dark')
+      expect(updatedData?.language).toBe('cs')
       expect(updatedData?.autoSave).toBe(false)
     })
 
@@ -388,7 +387,7 @@ describe('useUserSettings', () => {
 
       const updater = (current: UserSettings): UserSettings => ({
         ...current,
-        theme: 'dark' as const
+        language: 'cs' as const
       })
 
       let errorThrown = false
@@ -402,7 +401,7 @@ describe('useUserSettings', () => {
           // Check cache immediately after error in the catch block
           const dataAfterError = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
           expect(dataAfterError).toEqual(defaultUserSettings)
-          expect(dataAfterError?.theme).toBe('light')
+          expect(dataAfterError?.layout).toBe('tree')
         }
       })
 
@@ -416,7 +415,7 @@ describe('useUserSettings', () => {
 
       const updater = (current: UserSettings): UserSettings => ({
         ...current,
-        theme: 'dark' as const
+        language: 'cs' as const
       })
 
       await act(async () => {
@@ -433,8 +432,7 @@ describe('useUserSettings', () => {
     it('should work with complete flow: load -> update -> specific setting update', async () => {
       // Start with data in localStorage
       const initialSettings = {
-        theme: 'light',
-        language: 'en'
+        language: 'en' as const
       }
 
       localStorageMock.getItem.mockReturnValue(JSON.stringify(initialSettings))
@@ -453,10 +451,10 @@ describe('useUserSettings', () => {
         wrapper: createWrapper(queryClient)
       })
 
-              expect(queryResult.current.data).toBeDefined()
-        const updatedSettings = {
-          ...(queryResult.current.data as UserSettings),
-        theme: 'dark' as const
+      expect(queryResult.current.data).toBeDefined()
+      const updatedSettings = {
+        ...(queryResult.current.data as UserSettings),
+        language: 'cs' as const
       }
 
       await act(async () => {
@@ -477,9 +475,9 @@ describe('useUserSettings', () => {
       })
 
       const finalData = queryClient.getQueryData<UserSettings>(USER_SETTINGS_QUERY_KEY)
-      expect(finalData?.theme).toBe('dark')
+      expect(finalData?.language).toBe('cs')
       expect(finalData?.autoSave).toBe(false)
-      expect(finalData?.language).toBe('en')
+      expect(finalData?.layout).toBe('tree')
     })
   })
 })

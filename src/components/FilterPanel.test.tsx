@@ -1,15 +1,16 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ThemeProvider } from 'styled-components'
 import { FilterPanel } from './FilterPanel'
 import { FilterOptions, ParsedCourseData } from '../types'
-import { lightTheme } from '../theme'
+import { darkTheme } from '../theme'
 import { I18nProvider } from '../i18n'
 
 const renderWithTheme = (component: React.ReactElement) => {
   return render(
-    <ThemeProvider theme={lightTheme}>
+    <ThemeProvider theme={darkTheme}>
       <I18nProvider>{component}</I18nProvider>
     </ThemeProvider>
   )
@@ -91,7 +92,8 @@ describe('FilterPanel', () => {
     expect(screen.getByText('Locked')).toBeInTheDocument()
   })
 
-  it('calls onFilterChange when status filters are toggled', () => {
+  it('calls onFilterChange when status filters are toggled', async () => {
+    const user = userEvent.setup()
     renderWithTheme(
       <FilterPanel filters={defaultFilters} courseData={mockCourseData} onFilterChange={mockOnFilterChange} />
     )
@@ -105,7 +107,8 @@ describe('FilterPanel', () => {
     })
   })
 
-  it('calls onFilterChange when waiting grade filter is toggled', () => {
+  it('calls onFilterChange when waiting grade filter is toggled', async () => {
+    const user = userEvent.setup()
     renderWithTheme(
       <FilterPanel filters={defaultFilters} courseData={mockCourseData} onFilterChange={mockOnFilterChange} />
     )
@@ -185,7 +188,8 @@ describe('FilterPanel', () => {
     expect(mockOnFilterChange).toHaveBeenCalledWith({})
   })
 
-  it('removes status filter when unchecked', () => {
+  it('removes status filter when unchecked', async () => {
+    const user = userEvent.setup()
     const filtersWithMultipleStatus: FilterOptions = {
       status: ['completed', 'in_progress']
     }

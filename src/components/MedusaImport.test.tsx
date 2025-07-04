@@ -4,7 +4,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ThemeProvider } from 'styled-components'
 import { MedusaImport } from './MedusaImport'
-import { lightTheme } from '../theme'
+import { darkTheme } from '../theme'
 import { validateMedusaHTML, parseMedusaHTML } from '../utils/medusaParser'
 
 // Mock the medusa parser functions
@@ -23,7 +23,7 @@ describe('MedusaImport', () => {
   })
 
   const renderWithTheme = (ui: React.ReactElement) => {
-    return render(<ThemeProvider theme={lightTheme}>{ui}</ThemeProvider>)
+    return render(<ThemeProvider theme={darkTheme}>{ui}</ThemeProvider>)
   }
 
   it('renders import instructions', () => {

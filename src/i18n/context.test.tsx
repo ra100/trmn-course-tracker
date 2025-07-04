@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { ThemeProvider } from 'styled-components'
 import { I18nProvider } from './context'
-import { lightTheme } from '../theme'
+import { darkTheme } from '../theme'
 import { useT } from './hooks'
 
 // Test component that uses translations
@@ -19,7 +19,7 @@ const TestComponent = () => {
 
 const renderWithProviders = (component: React.ReactElement) => {
   return render(
-    <ThemeProvider theme={lightTheme}>
+    <ThemeProvider theme={darkTheme}>
       <I18nProvider>{component}</I18nProvider>
     </ThemeProvider>
   )

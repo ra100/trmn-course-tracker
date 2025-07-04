@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { ThemeProvider } from 'styled-components'
 import { SkillTreeView } from './SkillTreeView'
-import { lightTheme } from '../theme'
+import { darkTheme } from '../theme'
 import { ParsedCourseData, UserProgress, FilterOptions, UserSettings } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
 import { I18nProvider } from '../i18n'
@@ -115,6 +115,7 @@ const mockCourseData: ParsedCourseData = {
   categories: [],
   categoryMap: new Map(),
   dependencyGraph: new Map(),
+  seriesMappings: new Map(),
   specialRules: [],
   departmentMappings: new Map([
     [
@@ -149,8 +150,7 @@ const mockSettings: UserSettings = {
   language: 'en',
   layout: 'tree',
   showCompleted: true,
-  showUnavailable: true,
-  theme: 'light'
+  showUnavailable: true
 }
 
 const mockEligibilityEngine = {
@@ -176,7 +176,7 @@ const mockProps = {
 
 const renderWithTheme = (component: React.ReactElement) => {
   return render(
-    <ThemeProvider theme={lightTheme}>
+    <ThemeProvider theme={darkTheme}>
       <I18nProvider>{component}</I18nProvider>
     </ThemeProvider>
   )

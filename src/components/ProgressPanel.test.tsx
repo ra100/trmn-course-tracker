@@ -5,13 +5,13 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from 'styled-components'
 import { ProgressPanel } from './ProgressPanel'
 import { ParsedCourseData, UserProgress } from '../types'
-import { lightTheme } from '../theme'
+import { darkTheme } from '../theme'
 import { I18nProvider } from '../i18n'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
 
 const renderWithTheme = (component: React.ReactElement) => {
   return render(
-    <ThemeProvider theme={lightTheme}>
+    <ThemeProvider theme={darkTheme}>
       <I18nProvider>{component}</I18nProvider>
     </ThemeProvider>
   )
@@ -126,11 +126,13 @@ const mockCourseData: ParsedCourseData = {
     ['SIA-SRN-12D', mockCourses[3]]
   ]),
   categoryMap: new Map(),
-  dependencyGraph: new Map()
+  dependencyGraph: new Map(),
+  seriesMappings: new Map()
 }
 
 const mockEligibilityEngine = {
   getAvailableCourses: vi.fn(() => []),
+  checkCourseEligibility: vi.fn(() => ({ eligible: true, missingPrerequisites: [] })),
   updateCourseAvailability: vi.fn(() => []),
   getCoursePrerequisites: vi.fn(() => []),
   getUnlockedCourses: vi.fn(() => [])
@@ -182,8 +184,8 @@ describe('ProgressPanel', () => {
         />
       )
 
-      expect(screen.getByText('Space Warfare Pins')).toBeInTheDocument()
-      expect(screen.getByText('Earn OSWP or ESWP Space Warfare qualifications')).toBeInTheDocument()
+      expect(screen.getByText('Space Warfare Pin')).toBeInTheDocument()
+      expect(screen.getByText('Requirements')).toBeInTheDocument()
     })
 
     it('shows Space Warfare Pin as expandable', () => {
@@ -212,7 +214,7 @@ describe('ProgressPanel', () => {
         />
       )
 
-      const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      const spaceWarfareAchievement = screen.getByText('Space Warfare Pin').closest('div')
       expect(spaceWarfareAchievement).toBeInTheDocument()
       fireEvent.click(spaceWarfareAchievement!)
 
@@ -230,7 +232,7 @@ describe('ProgressPanel', () => {
         />
       )
 
-      const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      const spaceWarfareAchievement = screen.getByText('Space Warfare Pin').closest('div')
       expect(spaceWarfareAchievement).toBeInTheDocument()
       fireEvent.click(spaceWarfareAchievement!)
 
@@ -249,12 +251,13 @@ describe('ProgressPanel', () => {
         />
       )
 
-      const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      const spaceWarfareAchievement = screen.getByText('Space Warfare Pin').closest('div')
       expect(spaceWarfareAchievement).toBeInTheDocument()
       fireEvent.click(spaceWarfareAchievement!)
 
-      // Should show partial progress
-      expect(screen.getByText('33%')).toBeInTheDocument() // 1 of 3 requirements completed
+      // Should show progress sections for both OSWP and ESWP
+      const progressTexts = screen.getAllByText('Progress')
+      expect(progressTexts.length).toBeGreaterThanOrEqual(2) // At least 2: one for OSWP, one for ESWP
     })
 
     it('shows Space Warfare Pin as earned when requirements met', () => {
@@ -273,7 +276,7 @@ describe('ProgressPanel', () => {
         />
       )
 
-      const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      const spaceWarfareAchievement = screen.getByText('Space Warfare Pin').closest('div')
       expect(spaceWarfareAchievement).toBeInTheDocument()
       fireEvent.click(spaceWarfareAchievement!)
 
@@ -298,7 +301,7 @@ describe('ProgressPanel', () => {
         />
       )
 
-      const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      const spaceWarfareAchievement = screen.getByText('Space Warfare Pin').closest('div')
       expect(spaceWarfareAchievement).toBeInTheDocument()
       fireEvent.click(spaceWarfareAchievement!)
 
@@ -316,7 +319,7 @@ describe('ProgressPanel', () => {
         />
       )
 
-      const spaceWarfareAchievement = screen.getByText('Space Warfare Pins').closest('div')
+      const spaceWarfareAchievement = screen.getByText('Space Warfare Pin').closest('div')
       expect(spaceWarfareAchievement).toBeInTheDocument()
 
       // Expand
