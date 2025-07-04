@@ -1,17 +1,17 @@
 import React from 'react'
 import { PrerequisitesSectionProps } from './types'
-import { useT } from '../../i18n'
+import { useT } from '~/i18n'
+import { Progress } from '~/components/ui/progress'
 import {
-  Section,
-  SectionTitle,
-  PrerequisitesList,
-  PrerequisiteItem,
-  DepartmentChoiceItem,
-  DepartmentChoiceHeader,
-  DepartmentChoiceProgress,
-  DepartmentList,
-  ProgressBar,
-  ClickableCourseCode
+  section,
+  sectionTitle,
+  prerequisitesList,
+  prerequisiteItem,
+  departmentChoiceItem,
+  departmentChoiceHeader,
+  departmentChoiceProgress,
+  departmentList,
+  clickableCourseCode
 } from './CourseDetails.styles'
 
 export const PrerequisitesSection: React.FC<PrerequisitesSectionProps> = React.memo(
@@ -23,9 +23,9 @@ export const PrerequisitesSection: React.FC<PrerequisitesSectionProps> = React.m
     }
 
     return (
-      <Section>
-        <SectionTitle>{t.courseDetails.prerequisites}</SectionTitle>
-        <PrerequisitesList>
+      <div className={section}>
+        <h3 className={sectionTitle}>{t.courseDetails.prerequisites}</h3>
+        <div className={prerequisitesList}>
           {prerequisites.map((prereq, index) => {
             if (prereq.type === 'department_choice') {
               const progress = prereq.progress || 0
@@ -33,55 +33,61 @@ export const PrerequisitesSection: React.FC<PrerequisitesSectionProps> = React.m
               const percentage = total > 0 ? (progress / total) * 100 : 0
 
               return (
-                <DepartmentChoiceItem key={`dept-choice-${prereq.text || index}`} $satisfied={prereq.satisfied}>
-                  <DepartmentChoiceHeader>
+                <div
+                  key={`dept-choice-${prereq.text || index}`}
+                  className={departmentChoiceItem({ satisfied: prereq.satisfied })}
+                >
+                  <div className={departmentChoiceHeader}>
                     {prereq.satisfied ? '✓' : '○'} Department Choice Requirement
-                  </DepartmentChoiceHeader>
-                  <DepartmentChoiceProgress $satisfied={prereq.satisfied}>
+                  </div>
+                  <div className={departmentChoiceProgress({ satisfied: prereq.satisfied })}>
                     Progress: {progress}/{total} courses completed
-                  </DepartmentChoiceProgress>
-                  <DepartmentList>{prereq.text}</DepartmentList>
-                  <ProgressBar $percentage={percentage} $satisfied={prereq.satisfied} />
-                </DepartmentChoiceItem>
+                  </div>
+                  <div className={departmentList}>{prereq.text}</div>
+                  <Progress value={percentage} />
+                </div>
               )
             }
 
             if (prereq.type === 'course' && prereq.courseCode && onCourseSelect) {
               const courseCode = prereq.courseCode
               return (
-                <PrerequisiteItem key={`course-${courseCode}`} $satisfied={prereq.satisfied}>
+                <div key={`course-${courseCode}`} className={prerequisiteItem({ satisfied: prereq.satisfied })}>
                   Course:{' '}
-                  <ClickableCourseCode onClick={() => courseCode && handleCourseClick(courseCode)}>
+                  <span onClick={() => courseCode && handleCourseClick(courseCode)} className={clickableCourseCode}>
                     {courseCode}
-                  </ClickableCourseCode>
-                </PrerequisiteItem>
+                  </span>
+                </div>
               )
             }
 
             if (prereq.type === 'alternative_group' && prereq.courseCodes && onCourseSelect) {
               return (
-                <PrerequisiteItem key={`alt-group-${prereq.courseCodes.join('-')}`} $satisfied={prereq.satisfied}>
+                <div
+                  key={`alt-group-${prereq.courseCodes.join('-')}`}
+                  className={prerequisiteItem({ satisfied: prereq.satisfied })}
+                >
                   One of:{' '}
                   {prereq.courseCodes.map((courseCode, codeIndex) => (
                     <React.Fragment key={courseCode}>
                       {codeIndex > 0 && ' OR '}
-                      <ClickableCourseCode onClick={() => courseCode && handleCourseClick(courseCode)}>
+                      <span onClick={() => courseCode && handleCourseClick(courseCode)} className={clickableCourseCode}>
                         {courseCode}
-                      </ClickableCourseCode>
+                      </span>
                     </React.Fragment>
                   ))}
-                </PrerequisiteItem>
+                </div>
               )
             }
 
             return (
-              <PrerequisiteItem key={`prereq-${prereq.text || index}`} $satisfied={prereq.satisfied}>
+              <div key={`prereq-${prereq.text || index}`} className={prerequisiteItem({ satisfied: prereq.satisfied })}>
                 {prereq.text}
-              </PrerequisiteItem>
+              </div>
             )
           })}
-        </PrerequisitesList>
-      </Section>
+        </div>
+      </div>
     )
   }
 )

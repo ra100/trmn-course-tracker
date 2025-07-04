@@ -169,7 +169,6 @@ export interface FilterOptions {
 }
 
 export interface UserSettings {
-  theme: 'light' | 'dark'
   layout: 'tree' | 'grid' | 'force'
   showCompleted: boolean
   showUnavailable: boolean

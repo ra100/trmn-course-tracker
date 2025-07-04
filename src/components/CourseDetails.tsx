@@ -1,18 +1,23 @@
 import React from 'react'
-import { Course, UserProgress } from '../types'
-import { EligibilityEngine } from '../utils/eligibilityEngine'
-import { useT } from '../i18n'
+import { Course, UserProgress } from '~/types'
+import { EligibilityEngine } from '~/utils/eligibilityEngine'
+import { useT } from '~/i18n'
 import {
   CourseHeader,
-  CourseInfoGrid,
   CourseActions,
   PrerequisitesSection,
   UnlockedCoursesSection,
   CourseDescription,
-  useCourseDetails,
-  DetailsContainer,
-  EmptyState
+  useCourseDetails
 } from './CourseDetails/index'
+import {
+  detailsContainer,
+  emptyState,
+  panelCard,
+  headerCard,
+  headerDivider,
+  actionGroup
+} from './CourseDetails/CourseDetails.styles'
 
 interface CourseDetailsProps {
   course: Course | null
@@ -56,22 +61,20 @@ const CourseDetailsContent: React.FC<CourseDetailsContentProps> = ({
     })
 
   return (
-    <>
-      <CourseHeader course={course} status={status} getStatusText={getStatusText} />
+    <div className={panelCard}>
+      <div className={headerCard}>
+        <CourseHeader course={course} status={status} getStatusText={getStatusText} />
+        <div className={headerDivider} />
+      </div>
 
-      <CourseInfoGrid
-        course={course}
-        prerequisites={prerequisites}
-        unlockedCourses={unlockedCourses}
-        getStatusText={getStatusText}
-      />
-
-      <CourseActions
-        course={course}
-        status={status}
-        onCourseToggle={handleToggleClick}
-        onCourseStatusChange={onCourseStatusChange}
-      />
+      <div className={actionGroup}>
+        <CourseActions
+          course={course}
+          status={status}
+          onCourseToggle={handleToggleClick}
+          onCourseStatusChange={onCourseStatusChange}
+        />
+      </div>
 
       <PrerequisitesSection
         prerequisites={prerequisites}
@@ -86,7 +89,7 @@ const CourseDetailsContent: React.FC<CourseDetailsContentProps> = ({
       />
 
       <CourseDescription course={course} />
-    </>
+    </div>
   )
 }
 
@@ -102,14 +105,14 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
 
   if (!course) {
     return (
-      <DetailsContainer>
-        <EmptyState>{t.courseDetails.selectCourse}</EmptyState>
-      </DetailsContainer>
+      <div className={detailsContainer}>
+        <div className={emptyState}>{t.courseDetails.selectCourse}</div>
+      </div>
     )
   }
 
   return (
-    <DetailsContainer>
+    <div className={detailsContainer}>
       <CourseDetailsContent
         course={course}
         userProgress={userProgress}
@@ -118,6 +121,6 @@ export const CourseDetails: React.FC<CourseDetailsProps> = ({
         onCourseStatusChange={onCourseStatusChange}
         onCourseSelect={onCourseSelect}
       />
-    </DetailsContainer>
+    </div>
   )
 }

@@ -1,6 +1,6 @@
 import React from 'react'
-import { useT } from '../../i18n'
-import { FilterCount, CountValue, CountLabel } from './FilterPanel.styles'
+import { useT } from '~/i18n'
+import { filterCount, countValue, countLabel } from './filterPanel.styles'
 
 interface FilterCountDisplayProps {
   count: number
@@ -17,9 +17,9 @@ export const FilterCountDisplay: React.FC<FilterCountDisplayProps> = ({ count })
   }
 
   return (
-    <FilterCount>
-      <CountValue>{count}</CountValue>
-      <CountLabel>{count === 1 ? t.filters.activeFilter : t.filters.activeFilters}</CountLabel>
-    </FilterCount>
+    <div className={filterCount}>
+      <div className={countValue}>{count}</div>
+      <div className={countLabel}>{count === 1 ? t.filters.activeFilter : t.filters.activeFilters}</div>
+    </div>
   )
 }

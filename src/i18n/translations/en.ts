@@ -4,6 +4,12 @@ export const enTranslations: TranslationStrings = {
   // App Header
   appTitle: 'TRMN Course Tracker',
   appSubtitle: 'Track your progress through The Royal Manticoran Navy course system',
+  trmnHeader: {
+    line1: 'THE ROYAL',
+    line2: 'MANTICORAN NAVY',
+    subtitle: 'Course Tracker - Bureau of Communications',
+    menuToggleLabel: 'Toggle navigation menu'
+  },
 
   // Navigation and General
   loading: 'Loading TRMN Course Data...',

@@ -1,7 +1,7 @@
 import React from 'react'
 import { CourseSubsectionProps } from './types'
 import { CourseNode } from '../CourseNode'
-import { SubsectionContainer, SubsectionHeader, CourseGrid } from './SkillTreeView.styles'
+import { subsectionContainer, subsectionHeader, courseGrid } from './SkillTreeView.styles'
 
 export const CourseSubsection: React.FC<CourseSubsectionProps> = React.memo(
   ({
@@ -14,9 +14,9 @@ export const CourseSubsection: React.FC<CourseSubsectionProps> = React.memo(
     onCourseStatusChange
   }) => {
     return (
-      <SubsectionContainer>
-        {subsectionName !== 'General' && <SubsectionHeader>{subsectionName}</SubsectionHeader>}
-        <CourseGrid>
+      <div className={subsectionContainer}>
+        {subsectionName !== 'General' && <div className={subsectionHeader}>{subsectionName}</div>}
+        <div className={courseGrid}>
           {courses.map((course) => {
             const status = getCourseStatus(course)
             return (
@@ -31,8 +31,8 @@ export const CourseSubsection: React.FC<CourseSubsectionProps> = React.memo(
               />
             )
           })}
-        </CourseGrid>
-      </SubsectionContainer>
+        </div>
+      </div>
     )
   }
 )

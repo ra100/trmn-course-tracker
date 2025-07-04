@@ -1,168 +1,113 @@
-import styled from 'styled-components'
+import { css } from 'styled-system/css'
 
-export const TreeContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  position: relative;
-  background-color: ${(props) => props.theme.colors.background};
-  overflow: auto;
-`
+export const treeContainer = css({
+  width: '100%',
+  height: '100%',
+  position: 'relative',
+  bg: 'bg.canvas',
+  overflow: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  overscrollBehavior: 'contain'
+})
 
-export const CategorySection = styled.div`
-  margin: 2rem;
-  background: ${(props) => props.theme.colors.surface};
-  border-radius: 8px;
-  box-shadow: ${(props) => props.theme.shadows.medium};
-  overflow: hidden;
-  border: 1px solid ${(props) => props.theme.colors.border};
+export const categorySection = css({
+  margin: { base: '0.5rem', sm: '1rem', md: '2rem' },
+  bg: 'bg.surface',
+  borderRadius: { base: 'sm', sm: 'md', md: 'lg' },
+  boxShadow: 'md',
+  overflow: 'hidden',
+  border: '1px solid',
+  borderColor: 'border.default'
+})
 
-  @media (max-width: 768px) {
-    margin: 1rem;
-    border-radius: 6px;
+export const categoryHeader = css({
+  bgGradient: 'to-br',
+  gradientFrom: 'accent.default',
+  gradientTo: 'accent.a11y',
+  color: 'white',
+  padding: '1rem',
+  fontWeight: 'bold',
+  fontSize: '1.1rem'
+})
+
+export const subsectionContainer = css({
+  padding: '1rem'
+})
+
+export const subsectionHeader = css({
+  fontWeight: 600,
+  color: 'fg.default',
+  marginBottom: '1rem',
+  paddingBottom: '0.5rem',
+  borderBottom: '2px solid',
+  borderColor: 'border.subtle'
+})
+
+export const courseGrid = css({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+  gap: { base: '0.6rem', sm: '0.8rem', md: '1rem' },
+  marginBottom: { base: '1rem', sm: '1rem', md: '2rem' },
+  '@media (max-width: 768px)': {
+    gridTemplateColumns: '1fr'
   }
+})
 
-  @media (max-width: 480px) {
-    margin: 0.5rem;
-    border-radius: 4px;
+export const searchContainer = css({
+  padding: '1rem',
+  bg: 'bg.surface',
+  borderBottom: '1px solid',
+  borderColor: 'border.default'
+})
+
+export const statsContainer = css({
+  display: 'flex',
+  gap: { base: '0.3rem', sm: '0.5rem', md: '1rem' },
+  padding: { base: '0.5rem', sm: '0.8rem', md: '1rem' },
+  bg: 'bg.surface',
+  borderBottom: '1px solid',
+  borderColor: 'border.default',
+  '@media (max-width: 768px)': {
+    flexWrap: 'wrap'
   }
-`
+})
 
-export const CategoryHeader = styled.div`
-  background: linear-gradient(
-    135deg,
-    ${(props) => props.theme.colors.primary},
-    ${(props) => props.theme.colors.primaryHover}
-  );
-  color: white;
-  padding: 1rem;
-  font-weight: bold;
-  font-size: 1.1rem;
-`
+export const statItem = css({
+  textAlign: 'center',
+  flex: 1
+})
 
-export const SubsectionContainer = styled.div`
-  padding: 1rem;
-`
+export const statValue = css({
+  fontSize: '1.5rem',
+  fontWeight: 'bold',
+  color: 'fg.default'
+})
 
-export const SubsectionHeader = styled.div`
-  font-weight: 600;
-  color: ${(props) => props.theme.colors.text};
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid ${(props) => props.theme.colors.borderLight};
-`
+export const statLabel = css({
+  fontSize: '0.9rem',
+  color: 'fg.muted'
+})
 
-export const CourseGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
+export const groupingToggle = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: { base: '0.5rem', sm: '0.8rem', md: '1rem' },
+  padding: { base: '0.8rem', sm: '0.8rem 1rem', md: '1rem 2rem' },
+  bg: 'bg.surface',
+  borderBottom: '1px solid',
+  borderColor: 'border.default'
+})
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 0.8rem;
-    margin-bottom: 1rem;
-  }
+export const groupingLabel = css({
+  fontSize: '0.9rem',
+  color: 'fg.default',
+  fontWeight: 500
+})
 
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-    gap: 0.6rem;
-  }
-`
-
-export const SearchContainer = styled.div`
-  padding: 1rem;
-  background: ${(props) => props.theme.colors.surface};
-  border-bottom: 1px solid ${(props) => props.theme.colors.border};
-`
-
-export const SearchInput = styled.input`
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid ${(props) => props.theme.colors.border};
-  border-radius: 4px;
-  font-size: 1rem;
-  background: ${(props) => props.theme.colors.background};
-  color: ${(props) => props.theme.colors.text};
-
-  &:focus {
-    outline: none;
-    border-color: ${(props) => props.theme.colors.primary};
-    box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.2);
-  }
-`
-
-export const StatsContainer = styled.div`
-  display: flex;
-  gap: 1rem;
-  padding: 1rem;
-  background: ${(props) => props.theme.colors.surface};
-  border-bottom: 1px solid ${(props) => props.theme.colors.border};
-
-  @media (max-width: 768px) {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    padding: 0.8rem;
-  }
-
-  @media (max-width: 480px) {
-    gap: 0.3rem;
-    padding: 0.5rem;
-  }
-`
-
-export const StatItem = styled.div`
-  text-align: center;
-  flex: 1;
-`
-
-export const StatValue = styled.div`
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: ${(props) => props.theme.colors.text};
-`
-
-export const StatLabel = styled.div`
-  font-size: 0.9rem;
-  color: ${(props) => props.theme.colors.textSecondary};
-`
-
-export const GroupingToggle = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 2rem;
-  background: ${(props) => props.theme.colors.surface};
-  border-bottom: 1px solid ${(props) => props.theme.colors.border};
-
-  @media (max-width: 768px) {
-    padding: 0.8rem 1rem;
-    gap: 0.8rem;
-  }
-
-  @media (max-width: 480px) {
-    gap: 0.5rem;
-    padding: 0.8rem;
-  }
-`
-
-export const GroupingButton = styled.button<{ $active: boolean }>`
-  padding: 0.5rem 1rem;
-  border: 1px solid ${(props) => props.theme.colors.border};
-  border-radius: 4px;
-  background: ${(props) => (props.$active ? props.theme.colors.primary : props.theme.colors.background)};
-  color: ${(props) => (props.$active ? 'white' : props.theme.colors.text)};
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: ${(props) => (props.$active ? props.theme.colors.primaryHover : props.theme.colors.surface)};
-  }
-`
-
-export const GroupingLabel = styled.span`
-  font-size: 0.9rem;
-  color: ${(props) => props.theme.colors.text};
-  font-weight: 500;
-`
+export const contentArea = css({
+  flex: 1,
+  overflow: 'auto',
+  minHeight: 0,
+  overscrollBehavior: 'contain'
+})

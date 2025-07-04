@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ThemeProvider } from 'styled-components'
-import { lightTheme } from '../../theme'
+import { darkTheme } from '../../theme'
 import { CourseNode } from './CourseNode'
 import { Course, UserProgress, NodeStatus } from '../../types'
 
@@ -56,7 +56,7 @@ const createMockUserProgress = (): UserProgress => ({
 })
 
 const renderWithTheme = (component: React.ReactElement) => {
-  return render(<ThemeProvider theme={lightTheme}>{component}</ThemeProvider>)
+  return render(<ThemeProvider theme={darkTheme}>{component}</ThemeProvider>)
 }
 
 describe('CourseNode', () => {

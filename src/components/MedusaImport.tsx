@@ -1,5 +1,5 @@
 import React from 'react'
-import { ImportSection } from './MedusaImport/MedusaImport.styles'
+import { importSection } from './MedusaImport/MedusaImport.styles'
 import { ImportInstructions } from './MedusaImport/ImportInstructions'
 import { ImportForm } from './MedusaImport/ImportForm'
 import { ImportResults } from './MedusaImport/ImportResults'
@@ -11,7 +11,7 @@ export const MedusaImport: React.FC<MedusaImportProps> = React.memo(({ onImportM
     useMedusaImport({ onImportMedusaCourses })
 
   return (
-    <ImportSection>
+    <div className={importSection}>
       <ImportInstructions />
 
       <ImportForm
@@ -23,7 +23,7 @@ export const MedusaImport: React.FC<MedusaImportProps> = React.memo(({ onImportM
       />
 
       <ImportResults result={importResult} />
-    </ImportSection>
+    </div>
   )
 })
 

@@ -1,24 +1,36 @@
 import React from 'react'
 import { CourseHeaderProps } from './types'
-import {
-  CourseHeader as CourseHeaderContainer,
-  CourseTitle,
-  CourseCode,
-  CourseSection,
-  StatusBadge
-} from './CourseDetails.styles'
+import { Badge } from '~/components/ui/badge'
+import { courseHeader, courseTitle, courseCode, courseSection, badgeMargin } from './CourseDetails.styles'
 
 export const CourseHeader: React.FC<CourseHeaderProps> = React.memo(({ course, status, getStatusText }) => {
+  const getBadgeColor = () => {
+    switch (status) {
+      case 'completed':
+        return 'green'
+      case 'waiting_grade':
+        return 'amber'
+      case 'in_progress':
+        return 'blue'
+      case 'available':
+        return 'cyan'
+      case 'locked':
+        return 'gray'
+    }
+  }
+
   return (
-    <CourseHeaderContainer>
-      <CourseTitle>{course.name}</CourseTitle>
-      <CourseCode>{course.code}</CourseCode>
-      <CourseSection>
+    <div className={courseHeader}>
+      <h2 className={courseTitle}>{course.name}</h2>
+      <div className={courseCode}>{course.code}</div>
+      <div className={courseSection}>
         {course.section}
         {course.subsection && ` → ${course.subsection}`}
-      </CourseSection>
-      <StatusBadge status={status}>{getStatusText()}</StatusBadge>
-    </CourseHeaderContainer>
+      </div>
+      <Badge variant="solid" colorPalette={getBadgeColor()} className={badgeMargin}>
+        {getStatusText()}
+      </Badge>
+    </div>
   )
 })
 

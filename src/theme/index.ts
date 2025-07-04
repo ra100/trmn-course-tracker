@@ -1,5 +1,20 @@
 export interface Theme {
   colors: {
+    // TRMN Brand Colors
+    trmn: {
+      red: string
+      yellow: string
+      black: string
+      gold: string
+    }
+
+    // Space theme colors
+    space: {
+      dark: string
+      blue: string
+      navy: string
+    }
+
     // Main backgrounds
     background: string
     backgroundSecondary: string
@@ -11,7 +26,7 @@ export interface Theme {
     textSecondary: string
     textMuted: string
 
-    // Accent colors
+    // Accent colors (now using TRMN red)
     primary: string
     primaryHover: string
     secondary: string
@@ -44,119 +59,99 @@ export interface Theme {
     infoBackground: string
     code: string
   }
+  typography: {
+    // TRMN Typography from organizational style guide
+    fontFamily: {
+      heading: string // Cinzel approximates Incised 901 Nord BT
+      body: string // Roboto for body text
+      mono: string // Monospace for code
+    }
+  }
   shadows: {
     small: string
     medium: string
     large: string
+    glow: string
   }
 }
 
-export const lightTheme: Theme = {
-  colors: {
-    // Main backgrounds
-    background: '#f8f9fa',
-    backgroundSecondary: '#ffffff',
-    surface: '#ffffff',
-    surfaceSecondary: '#f1f3f4',
+// TRMN Brand Colors from RMN-4-40 Organizational Style Guide
+const trmn = {
+  red: '#BE2F26', // PMS 1805 - Official TRMN Red
+  yellow: '#FAE924', // PMS 604 - Official TRMN Yellow
+  black: '#010101', // Rich Black for deep space appearance
+  gold: '#D4AF37' // For accents and highlights
+}
 
-    // Text colors
-    text: '#1a202c',
-    textSecondary: '#4a5568',
-    textMuted: '#718096',
-
-    // Accent colors
-    primary: '#3182ce',
-    primaryHover: '#2c5282',
-    secondary: '#a0aec0',
-    success: '#38a169',
-    warning: '#ed8936',
-    error: '#e53e3e',
-
-    // UI elements
-    border: '#e2e8f0',
-    borderLight: '#f1f3f4',
-    shadow: 'rgba(0, 0, 0, 0.1)',
-    overlay: 'rgba(0, 0, 0, 0.6)',
-
-    // Course status colors
-    courseAvailable: '#2b6cb0',
-    courseCompleted: '#2f855a',
-    courseLocked: '#a0aec0',
-    courseInProgress: '#dd6b20',
-
-    // Node colors for skill tree
-    nodeAvailable: '#3182ce',
-    nodeCompleted: '#38a169',
-    nodeLocked: '#cbd5e0',
-    nodeHover: '#2c5282',
-
-    // Additional semantic colors
-    cardBackground: '#ffffff',
-    headerText: '#2c3e50',
-    bodyText: '#2c3e50',
-    infoBackground: '#f8f9fa',
-    code: '#7f8c8d'
-  },
-  shadows: {
-    small: '0 1px 3px rgba(0, 0, 0, 0.1)',
-    medium: '0 2px 6px rgba(0, 0, 0, 0.1)',
-    large: '0 4px 12px rgba(0, 0, 0, 0.15)'
-  }
+// Space theme colors matching official sites
+const space = {
+  dark: '#050B14', // Deep space dark
+  blue: '#0B1426', // Space blue
+  navy: '#1a237e' // Deep navy accent
 }
 
 export const darkTheme: Theme = {
   colors: {
-    // Main backgrounds
-    background: '#0f0f16',
-    backgroundSecondary: '#1a1b26',
-    surface: '#24263a',
-    surfaceSecondary: '#2a2d42',
+    trmn,
+    space,
+
+    // Main backgrounds (deeper space theme)
+    background: trmn.black,
+    backgroundSecondary: space.dark,
+    surface: 'rgba(5, 11, 20, 0.9)',
+    surfaceSecondary: 'rgba(11, 20, 38, 0.8)',
 
     // Text colors
-    text: '#f7fafc',
-    textSecondary: '#c3c7d1',
-    textMuted: '#9ca3af',
+    text: '#ffffff',
+    textSecondary: 'rgba(255, 255, 255, 0.8)',
+    textMuted: 'rgba(255, 255, 255, 0.6)',
 
-    // Accent colors
-    primary: '#7dd3fc',
-    primaryHover: '#38bdf8',
-    secondary: '#64748b',
+    // Accent colors (using TRMN colors)
+    primary: trmn.red,
+    primaryHover: '#D43D31',
+    secondary: trmn.gold,
     success: '#4ade80',
-    warning: '#fbbf24',
-    error: '#f87171',
+    warning: trmn.yellow,
+    error: trmn.red,
 
     // UI elements
-    border: '#374151',
-    borderLight: '#2a2d42',
-    shadow: 'rgba(0, 0, 0, 0.6)',
-    overlay: 'rgba(0, 0, 0, 0.85)',
+    border: 'rgba(255, 255, 255, 0.15)',
+    borderLight: 'rgba(255, 255, 255, 0.08)',
+    shadow: 'rgba(0, 0, 0, 0.9)',
+    overlay: 'rgba(1, 1, 1, 0.95)',
 
     // Course status colors
-    courseAvailable: '#3b82f6',
-    courseCompleted: '#10b981',
-    courseLocked: '#6b7280',
-    courseInProgress: '#f59e0b',
+    courseAvailable: trmn.red,
+    courseCompleted: '#4ade80',
+    courseLocked: 'rgba(255, 255, 255, 0.3)',
+    courseInProgress: trmn.yellow,
 
     // Node colors for skill tree
-    nodeAvailable: '#60a5fa',
-    nodeCompleted: '#34d399',
-    nodeLocked: '#6b7280',
-    nodeHover: '#3b82f6',
+    nodeAvailable: trmn.red,
+    nodeCompleted: '#4ade80',
+    nodeLocked: 'rgba(255, 255, 255, 0.25)',
+    nodeHover: '#D43D31',
 
     // Additional semantic colors
-    cardBackground: '#24263a',
-    headerText: '#e2e8f0',
-    bodyText: '#d1d5db',
-    infoBackground: '#1f2937',
-    code: '#9ca3af'
+    cardBackground: 'rgba(5, 11, 20, 0.8)',
+    headerText: '#ffffff',
+    bodyText: 'rgba(255, 255, 255, 0.9)',
+    infoBackground: 'rgba(11, 20, 38, 0.6)',
+    code: 'rgba(255, 255, 255, 0.8)'
+  },
+  typography: {
+    fontFamily: {
+      heading: "'Cinzel', 'Times New Roman', Georgia, serif",
+      body: "'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      mono: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
+    }
   },
   shadows: {
-    small: '0 1px 3px rgba(0, 0, 0, 0.5)',
-    medium: '0 2px 8px rgba(0, 0, 0, 0.6)',
-    large: '0 4px 16px rgba(0, 0, 0, 0.7)'
+    small: '0 2px 8px rgba(0, 0, 0, 0.8)',
+    medium: '0 4px 16px rgba(0, 0, 0, 0.9)',
+    large: '0 8px 32px rgba(0, 0, 0, 0.95)',
+    glow: '0 0 24px rgba(190, 47, 38, 0.5)'
   }
 }
 
-export const getTheme = (themeName: 'light' | 'dark'): Theme => {
-  return themeName === 'dark' ? darkTheme : lightTheme
-}
+export const getTheme = (): Theme => darkTheme

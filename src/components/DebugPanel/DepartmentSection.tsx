@@ -1,22 +1,22 @@
 import React from 'react'
-import { Section, SectionTitle, CourseList, CourseItem } from './DebugPanel.styles'
+import { section, sectionTitle, courseList, courseItem } from './DebugPanel.styles'
 import { DepartmentSectionProps } from './types'
 
 export const DepartmentSection: React.FC<DepartmentSectionProps> = React.memo(
   ({ department, courses, userProgress }) => (
-    <Section>
-      <SectionTitle>
+    <div className={section}>
+      <h4 className={sectionTitle}>
         {department} ({courses.length} courses)
-      </SectionTitle>
-      <CourseList>
+      </h4>
+      <ul className={courseList}>
         {courses.map((course) => (
-          <CourseItem key={course.code}>
+          <li key={course.code} className={courseItem}>
             {course.code}: {course.name}
             {userProgress.completedCourses.has(course.code) && ' ✅'}
-          </CourseItem>
+          </li>
         ))}
-      </CourseList>
-    </Section>
+      </ul>
+    </div>
   )
 )
 

@@ -1,16 +1,15 @@
 import React from 'react'
-import { FilterOptions, ParsedCourseData } from '../types'
-import { useT } from '../i18n'
+import { FilterOptions, ParsedCourseData } from '~/types'
+import { useT } from '~/i18n'
 import {
   FilterCountDisplay,
   StatusFilterSection,
   LevelFilterSection,
   DepartmentFilterSection,
-  useFilterHandlers,
-  PanelContainer,
-  PanelTitle,
-  ClearButton
+  useFilterHandlers
 } from './FilterPanel/index'
+import { Button } from '~/components/ui/button'
+import { panelContainer, panelTitle, clearButton } from './FilterPanel/filterPanel.styles'
 
 interface FilterPanelProps {
   filters: FilterOptions
@@ -30,8 +29,8 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ filters, courseData,
   const activeFilterCount = getFilterCount()
 
   return (
-    <PanelContainer>
-      <PanelTitle>{t.filters.title}</PanelTitle>
+    <div className={panelContainer}>
+      <h3 className={panelTitle}>{t.filters.title}</h3>
 
       <FilterCountDisplay count={activeFilterCount} />
 
@@ -41,8 +40,12 @@ const FilterPanelComponent: React.FC<FilterPanelProps> = ({ filters, courseData,
 
       <DepartmentFilterSection filters={filters} courseData={courseData} onDepartmentChange={handleDepartmentChange} />
 
-      {activeFilterCount > 0 && <ClearButton onClick={handleClearFilters}>{t.filters.clearFilters}</ClearButton>}
-    </PanelContainer>
+      {activeFilterCount > 0 && (
+        <Button variant="outline" colorPalette="red" className={clearButton} onClick={handleClearFilters}>
+          {t.filters.clearFilters}
+        </Button>
+      )}
+    </div>
   )
 }
 

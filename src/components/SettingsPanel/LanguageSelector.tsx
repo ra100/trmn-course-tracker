@@ -1,27 +1,28 @@
 import React from 'react'
 import { LanguageSelectorProps } from './types'
-import { useT, Language } from '../../i18n'
-import { SettingSection, SettingLabel, LanguageSelector as LanguageSelectorElement } from './SettingsPanel.styles'
+import { useT, Language } from '~/i18n'
+import { settingSection, settingLabel, languageSelector } from './SettingsPanel.styles'
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = React.memo(({ language, onLanguageChange }) => {
   const t = useT()
 
   return (
-    <SettingSection>
-      <SettingLabel as="label" htmlFor="language-select">
+    <div className={settingSection}>
+      <label htmlFor="language-select" className={settingLabel}>
         {t.settings.language}
-      </SettingLabel>
-      <LanguageSelectorElement
+      </label>
+      <select
         id="language-select"
         value={language}
         onChange={(e) => onLanguageChange(e.target.value as Language)}
         aria-label={t.settings.language}
         title={t.settings.language}
+        className={languageSelector}
       >
         <option value="en">English</option>
         <option value="cs">Čeština</option>
-      </LanguageSelectorElement>
-    </SettingSection>
+      </select>
+    </div>
   )
 })
 

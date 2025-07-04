@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { ThemeProvider } from 'styled-components'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { ErrorBoundary } from './ErrorBoundary'
-import { lightTheme } from '../theme'
+import { darkTheme } from '../theme'
 
 // Mock component that throws an error
 const ThrowError: React.FC<{ shouldThrow: boolean }> = ({ shouldThrow }) => {
@@ -24,7 +24,7 @@ afterEach(() => {
 })
 
 const renderWithTheme = (component: React.ReactNode) => {
-  return render(<ThemeProvider theme={lightTheme}>{component}</ThemeProvider>)
+  return render(<ThemeProvider theme={darkTheme}>{component}</ThemeProvider>)
 }
 
 describe('ErrorBoundary', () => {
@@ -79,8 +79,9 @@ describe('ErrorBoundary', () => {
         </ErrorBoundary>
       )
 
-      expect(screen.getByText('Error Details (Development Only)')).toBeInTheDocument()
-      expect(screen.getByText(/Test error message/)).toBeInTheDocument()
+      expect(screen.getByText('Error Details (Development Mode)')).toBeInTheDocument()
+      const errorMessages = screen.getAllByText(/Test error message/)
+      expect(errorMessages.length).toBeGreaterThan(0)
 
       process.env.NODE_ENV = originalNodeEnv
     })

@@ -1,49 +1,45 @@
 import React from 'react'
-import styled from 'styled-components'
-import { useT } from '../i18n'
+import { css } from 'styled-system/css'
 
-const SkipLinksContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-`
+const skipLinksContainer = css({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  zIndex: 'zIndex.skipLink'
+})
 
-const SkipLink = styled.a`
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: ${(props) => props.theme.colors.primary};
-  color: white;
-  padding: 8px 16px;
-  text-decoration: none;
-  border-radius: 0 0 4px 4px;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 1.4;
-  transform: translateY(-100%);
-  transition: transform 0.2s ease;
-  z-index: 10000;
-
-  &:focus {
-    transform: translateY(0);
-    outline: 2px solid ${(props) => props.theme.colors.primaryHover};
-    outline-offset: 2px;
+const skipLink = css({
+  position: 'absolute',
+  left: '-9999px',
+  top: 'auto',
+  width: '1px',
+  height: '1px',
+  overflow: 'hidden',
+  backgroundColor: 'accent.default',
+  color: 'white',
+  padding: '2 4',
+  textDecoration: 'none',
+  borderRadius: 'radii.md',
+  _focus: {
+    position: 'static',
+    width: 'auto',
+    height: 'auto',
+    overflow: 'visible',
+    clip: 'auto',
+    whiteSpace: 'normal'
   }
+})
 
-  &:focus-visible {
-    transform: translateY(0);
-  }
+interface SkipLinksProps {
+  targets: Array<{
+    id: string
+    label: string
+  }>
+}
 
-  &:hover {
-    background: ${(props) => props.theme.colors.primaryHover};
-  }
-`
-
-export const SkipLinks: React.FC = () => {
-  const t = useT()
-
-  const handleSkipToContent = (targetId: string) => {
+export const SkipLinks: React.FC<SkipLinksProps> = ({ targets }) => {
+  const handleSkipClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
+    e.preventDefault()
     const target = document.getElementById(targetId)
     if (target) {
       target.focus()
@@ -52,43 +48,12 @@ export const SkipLinks: React.FC = () => {
   }
 
   return (
-    <SkipLinksContainer>
-      <SkipLink
-        href="#main-content"
-        onClick={(e) => {
-          e.preventDefault()
-          handleSkipToContent('main-content')
-        }}
-      >
-        {t.accessibility?.skipToMainContent || 'Skip to main content'}
-      </SkipLink>
-      <SkipLink
-        href="#skill-tree"
-        onClick={(e) => {
-          e.preventDefault()
-          handleSkipToContent('skill-tree')
-        }}
-      >
-        {t.accessibility?.skipToSkillTree || 'Skip to skill tree'}
-      </SkipLink>
-      <SkipLink
-        href="#sidebar"
-        onClick={(e) => {
-          e.preventDefault()
-          handleSkipToContent('sidebar')
-        }}
-      >
-        {t.accessibility?.skipToSidebar || 'Skip to sidebar'}
-      </SkipLink>
-      <SkipLink
-        href="#course-details"
-        onClick={(e) => {
-          e.preventDefault()
-          handleSkipToContent('course-details')
-        }}
-      >
-        {t.accessibility?.skipToCourseDetails || 'Skip to course details'}
-      </SkipLink>
-    </SkipLinksContainer>
+    <div className={skipLinksContainer}>
+      {targets.map((target) => (
+        <a key={target.id} href={`#${target.id}`} className={skipLink} onClick={(e) => handleSkipClick(e, target.id)}>
+          {target.label}
+        </a>
+      ))}
+    </div>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { DebugContainer, DebugHeader, DebugContent } from './DebugPanel/DebugPanel.styles'
+import { debugContainer, debugHeader, debugContent } from './DebugPanel/DebugPanel.styles'
 import { ParseSummarySection } from './DebugPanel/ParseSummarySection'
 import { DepartmentSection } from './DebugPanel/DepartmentSection'
 import { CompletedCoursesSection } from './DebugPanel/CompletedCoursesSection'
@@ -11,9 +11,11 @@ export const DebugPanel: React.FC<DebugPanelProps> = React.memo(({ courseData, u
   const { debugData, departmentCourses } = useDebugData({ courseData, userProgress })
 
   return (
-    <DebugContainer>
-      <DebugHeader onClick={() => setExpanded(!expanded)}>🐛 Debug Info {expanded ? '▼' : '▶'}</DebugHeader>
-      <DebugContent $expanded={expanded}>
+    <div className={debugContainer}>
+      <div className={debugHeader} onClick={() => setExpanded(!expanded)}>
+        🐛 Debug Info {expanded ? '▼' : '▶'}
+      </div>
+      <div className={debugContent({ expanded })}>
         {expanded && (
           <>
             <ParseSummarySection debugData={debugData} />
@@ -30,8 +32,8 @@ export const DebugPanel: React.FC<DebugPanelProps> = React.memo(({ courseData, u
             <CompletedCoursesSection courseData={courseData} userProgress={userProgress} />
           </>
         )}
-      </DebugContent>
-    </DebugContainer>
+      </div>
+    </div>
   )
 })
 

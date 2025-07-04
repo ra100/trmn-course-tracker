@@ -1,27 +1,59 @@
 import React from 'react'
-import styled from 'styled-components'
+import { css, cva } from 'styled-system/css'
 
-// Achievement-specific styled components
-const AchievementsList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`
+// Achievement-specific styles
+const achievementsList = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.5rem'
+})
 
-const AchievementItem = styled.div<{ $completed: boolean }>`
-  padding: 0.7rem;
-  background: ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.surface)};
-  border-radius: 4px;
-  font-size: 0.85rem;
-  color: ${(props) => (props.$completed ? 'white' : props.theme.colors.textSecondary)};
-  border-left: 3px solid ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.secondary)};
-  border: 1px solid ${(props) => props.theme.colors.border};
-`
+const achievementItem = cva({
+  base: {
+    padding: '1rem',
+    borderRadius: '8px',
+    fontSize: '0.9rem',
+    border: '2px solid',
+    transition: 'all 0.2s ease',
+    _hover: {
+      transform: 'translateY(-1px)',
+      boxShadow: 'md'
+    }
+  },
+  variants: {
+    completed: {
+      true: {
+        bgGradient: 'to-br',
+        gradientFrom: 'green.9',
+        gradientTo: 'green.11',
+        color: 'white',
+        borderColor: 'green.6',
+        boxShadow: 'sm'
+      },
+      false: {
+        background: 'bg.surface',
+        color: 'fg.default',
+        borderColor: 'border.default',
+        _hover: {
+          borderColor: 'accent.default'
+        }
+      }
+    }
+  }
+})
 
-const AchievementDescription = styled.div`
-  font-size: 0.8rem;
-  margin-top: 0.2rem;
-`
+const achievementDescription = css({
+  fontSize: '0.85rem',
+  marginTop: '0.5rem',
+  opacity: 0.9,
+  lineHeight: 1.4
+})
+
+const achievementTitle = css({
+  fontSize: '1rem',
+  fontWeight: '600',
+  marginBottom: '0.25rem'
+})
 
 interface Achievement {
   title: string
@@ -40,13 +72,15 @@ interface BasicAchievementsProps {
  */
 export const BasicAchievements: React.FC<BasicAchievementsProps> = ({ achievements, maxDisplay = 5 }) => {
   return (
-    <AchievementsList>
+    <div className={achievementsList}>
       {achievements.slice(0, maxDisplay).map((achievement) => (
-        <AchievementItem key={achievement.title} $completed={achievement.completed}>
-          <strong>{achievement.title}</strong>
-          <AchievementDescription>{achievement.description}</AchievementDescription>
-        </AchievementItem>
+        <div key={achievement.title} className={achievementItem({ completed: achievement.completed })}>
+          <div className={achievementTitle}>{achievement.title}</div>
+          <div className={achievementDescription}>{achievement.description}</div>
+        </div>
       ))}
-    </AchievementsList>
+    </div>
   )
 }
+
+export { achievementItem }

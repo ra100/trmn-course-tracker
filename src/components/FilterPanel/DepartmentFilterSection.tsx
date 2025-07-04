@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react'
-import { FilterOptions, ParsedCourseData } from '../../types'
-import { getAllDepartments } from '../../utils/departmentUtils'
-import { useT } from '../../i18n'
-import { FilterSection, FilterLabel, CheckboxGroup, CheckboxItem, Checkbox } from './FilterPanel.styles'
+import { FilterOptions, ParsedCourseData } from '~/types'
+import { getAllDepartments } from '~/utils/departmentUtils'
+import { useT } from '~/i18n'
+import { Checkbox } from '~/components/ui/checkbox'
+import { filterSection, filterLabel } from './filterPanel.styles'
+import { css } from 'styled-system/css'
 
 interface DepartmentFilterSectionProps {
   filters: FilterOptions
@@ -26,20 +28,25 @@ export const DepartmentFilterSection: React.FC<DepartmentFilterSectionProps> = (
   }
 
   return (
-    <FilterSection>
-      <FilterLabel id="department-filter-label">{t.filters.departments}</FilterLabel>
-      <CheckboxGroup role="group" aria-labelledby="department-filter-label">
+    <div className={filterSection}>
+      <label id="department-filter-label" className={filterLabel}>
+        {t.filters.departments}
+      </label>
+      <div
+        role="group"
+        aria-labelledby="department-filter-label"
+        className={css({ display: 'flex', flexDirection: 'column', gap: '0.3rem' })}
+      >
         {departments.map((department) => (
-          <CheckboxItem key={department}>
-            <Checkbox
-              checked={filters.departments?.includes(department) || false}
-              onChange={(e) => onDepartmentChange(department, e.target.checked)}
-              aria-describedby={`department-${department}-label`}
-            />
-            <span id={`department-${department}-label`}>{getDepartmentLabel(department)}</span>
-          </CheckboxItem>
+          <Checkbox
+            key={department}
+            checked={filters.departments?.includes(department) || false}
+            onCheckedChange={(details) => onDepartmentChange(department, details.checked === true)}
+          >
+            {getDepartmentLabel(department)}
+          </Checkbox>
         ))}
-      </CheckboxGroup>
-    </FilterSection>
+      </div>
+    </div>
   )
 }

@@ -1,13 +1,13 @@
 import React from 'react'
 import { CourseSectionProps } from './types'
 import { CourseSubsection } from './CourseSubsection'
-import { CategorySection, CategoryHeader } from './SkillTreeView.styles'
+import { categorySection, categoryHeader } from './SkillTreeView.styles'
 
 export const CourseSection: React.FC<CourseSectionProps> = React.memo(
   ({ sectionName, courses, userProgress, getCourseStatus, onCourseSelect, onCourseToggle, onCourseStatusChange }) => {
     return (
-      <CategorySection>
-        <CategoryHeader>{sectionName}</CategoryHeader>
+      <div className={categorySection}>
+        <div className={categoryHeader}>{sectionName}</div>
         <CourseSubsection
           subsectionName="General"
           courses={courses}
@@ -17,7 +17,7 @@ export const CourseSection: React.FC<CourseSectionProps> = React.memo(
           onCourseToggle={onCourseToggle}
           onCourseStatusChange={onCourseStatusChange}
         />
-      </CategorySection>
+      </div>
     )
   }
 )

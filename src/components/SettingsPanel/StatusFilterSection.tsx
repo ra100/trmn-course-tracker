@@ -1,17 +1,17 @@
 import React from 'react'
 import { StatusFilterSectionProps } from './types'
-import { useT } from '../../i18n'
+import { useT } from '~/i18n'
 import { SettingToggle } from './SettingToggle'
-import { SettingSection, SettingLabel, ToggleGroup } from './SettingsPanel.styles'
+import { settingSection, settingLabel, toggleGroup } from './SettingsPanel.styles'
 
 export const StatusFilterSection: React.FC<StatusFilterSectionProps> = React.memo(
   ({ showCompleted, showUnavailable, onToggle }) => {
     const t = useT()
 
     return (
-      <SettingSection>
-        <SettingLabel>{t.filters.status}</SettingLabel>
-        <ToggleGroup>
+      <div className={settingSection}>
+        <div className={settingLabel}>{t.filters.status}</div>
+        <div className={toggleGroup}>
           <SettingToggle
             label={t.filters.showCompleted}
             description="Display courses you've already completed"
@@ -25,8 +25,8 @@ export const StatusFilterSection: React.FC<StatusFilterSectionProps> = React.mem
             checked={showUnavailable}
             onChange={(checked) => onToggle('showUnavailable', checked)}
           />
-        </ToggleGroup>
-      </SettingSection>
+        </div>
+      </div>
     )
   }
 )

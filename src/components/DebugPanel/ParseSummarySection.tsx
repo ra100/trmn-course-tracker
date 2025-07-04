@@ -1,12 +1,12 @@
 import React from 'react'
-import { Section, SectionTitle, JsonPre } from './DebugPanel.styles'
+import { section, sectionTitle, jsonPre } from './DebugPanel.styles'
 import { ParseSummarySectionProps } from './types'
 
 export const ParseSummarySection: React.FC<ParseSummarySectionProps> = React.memo(({ debugData }) => (
-  <Section>
-    <SectionTitle>Parse Summary</SectionTitle>
-    <JsonPre>{JSON.stringify(debugData, null, 2)}</JsonPre>
-  </Section>
+  <div className={section}>
+    <h4 className={sectionTitle}>Parse Summary</h4>
+    <pre className={jsonPre}>{JSON.stringify(debugData, null, 2)}</pre>
+  </div>
 ))
 
 ParseSummarySection.displayName = 'ParseSummarySection'

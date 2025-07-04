@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import styled, { ThemeProvider } from 'styled-components'
+import { css } from 'styled-system/css'
 import { EligibilityEngine } from './utils/eligibilityEngine'
 import { useCourseData } from './hooks/useCourseData'
 import { useUserProgress } from './hooks/useUserProgress'
@@ -16,242 +16,266 @@ import { GDPRConsentBanner } from './components/GDPRConsentBanner'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { DebugPanel } from './components/DebugPanel'
 import { SkipLinks } from './components/SkipLinks'
+import { TRMNHeader } from './components/TRMNHeader'
 import { Course, FilterOptions, UserSettings } from './types'
-import { getTheme } from './theme'
 import { useT, useTranslation } from './i18n'
 import { initializeAnalytics, trackPageView, trackViewModeChange, ConsentSettings } from './utils/analytics'
 
-const AppContainer = styled.div`
-  display: flex;
-  height: 100vh;
-  background-color: ${(props) => props.theme.colors.background};
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: ${(props) => props.theme.colors.text};
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    height: 100vh;
+const appContainer = css({
+  display: 'flex',
+  height: '100vh',
+  maxHeight: '100vh',
+  overflow: 'hidden',
+  backgroundColor: 'bg.default',
+  fontFamily: 'body',
+  color: 'fg.default',
+  '@media (max-width: md)': {
+    flexDirection: 'column',
+    height: '100vh',
+    maxHeight: '100vh'
   }
-`
+})
 
-const Sidebar = styled.div<{ $mobileOpen?: boolean }>`
-  width: 350px;
-  background-color: ${(props) => props.theme.colors.backgroundSecondary};
-  color: ${(props) => props.theme.colors.text};
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  border-right: 1px solid ${(props) => props.theme.colors.border};
-
-  @media (max-width: 1024px) {
-    width: 300px;
+const sidebar = css({
+  width: '350px',
+  backgroundColor: 'bg.subtle',
+  color: 'fg.default',
+  display: 'flex',
+  flexDirection: 'column',
+  overflowY: 'auto',
+  overscrollBehavior: 'contain',
+  borderRight: 'borders.none',
+  borderRightWidth: '1px',
+  borderRightStyle: 'solid',
+  borderColor: 'border.default',
+  '@media (max-width: lg)': {
+    width: '300px'
+  },
+  '@media (max-width: md)': {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100vh',
+    zIndex: 1000,
+    borderRight: 'none',
+    borderBottom: 'borders.none',
+    borderBottomWidth: '1px',
+    borderBottomStyle: 'solid',
+    borderBottomColor: 'border.default'
   }
+})
 
-  @media (max-width: 768px) {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100vh;
-    z-index: 1000;
-    transform: translateX(${(props) => (props.$mobileOpen ? '0' : '-100%')});
-    transition: transform 0.3s ease;
-    border-right: none;
-    border-bottom: 1px solid ${(props) => props.theme.colors.border};
+const sidebarMobileOpen = css({
+  '@media (max-width: md)': {
+    transform: 'translateX(0)',
+    transition: 'transform 0.3s ease'
   }
-`
+})
 
-const MainContent = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-
-  @media (max-width: 768px) {
-    width: 100%;
+const sidebarMobileClosed = css({
+  '@media (max-width: md)': {
+    transform: 'translateX(-100%)',
+    transition: 'transform 0.3s ease'
   }
-`
+})
 
-const Header = styled.header`
-  background-color: ${(props) => props.theme.colors.surface};
-  color: ${(props) => props.theme.colors.text};
-  padding: 1rem;
-  box-shadow: ${(props) => props.theme.shadows.medium};
-  border-bottom: 1px solid ${(props) => props.theme.colors.border};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+const mainContent = css({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'hidden',
+  minHeight: 0,
+  '@media (max-width: md)': {
+    width: '100%'
+  }
+})
 
-  @media (max-width: 768px) {
-    padding: 0.8rem;
+const contentArea = css({
+  flex: 1,
+  display: 'flex',
+  minHeight: 0,
+  overflow: 'hidden',
+  '@media (max-width: md)': {
+    flexDirection: 'column'
+  }
+})
 
-    h1 {
-      font-size: 1.2rem;
-      margin: 0;
+const skillTreeContainer = css({
+  flex: 1,
+  overflow: 'auto',
+  backgroundColor: 'bg.surface',
+  '@media (max-width: md)': {
+    height: '100vh',
+    display: 'block'
+  }
+})
+
+const skillTreeContainerMobileDetails = css({
+  '@media (max-width: md)': {
+    height: '50vh'
+  }
+})
+
+const detailsPanel = css({
+  width: '350px',
+  backgroundColor: 'bg.surface',
+  borderLeft: 'borders.none',
+  borderLeftWidth: '1px',
+  borderLeftStyle: 'solid',
+  borderColor: 'border.default',
+  overflowY: 'auto',
+  overscrollBehavior: 'contain',
+  boxSizing: 'border-box',
+  '@media (max-width: lg)': {
+    width: '300px'
+  },
+  '@media (max-width: md)': {
+    borderLeft: 'none',
+    borderTop: 'borders.none',
+    borderTopWidth: '1px',
+    borderTopStyle: 'solid',
+    borderTopColor: 'border.default',
+    transition: 'all 0.3s ease'
+  }
+})
+
+const detailsPanelMobileVisible = css({
+  '@media (max-width: md)': {
+    height: '50vh',
+    overflow: 'auto',
+    transform: 'translateY(0)'
+  }
+})
+
+const detailsPanelMobileHidden = css({
+  '@media (max-width: md)': {
+    height: '0',
+    overflow: 'hidden',
+    transform: 'translateY(100%)'
+  }
+})
+
+const loadingOverlay = css({
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'bg.overlay',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'fg.default',
+  fontSize: 'fontSizes.lg',
+  zIndex: 1000
+})
+
+const errorMessage = css({
+  backgroundColor: 'brand.primary',
+  color: 'white',
+  padding: '6',
+  margin: '4',
+  borderRadius: 'radii.md',
+  boxShadow: 'shadows.lg',
+  '& h3': {
+    fontFamily: 'heading',
+    fontSize: 'fontSizes.lg',
+    fontWeight: 'bold',
+    margin: '0 0 2 0',
+    textTransform: 'uppercase',
+    letterSpacing: 'letterSpacings.wide'
+  },
+  '& p': {
+    fontFamily: 'body',
+    margin: '0 0 4 0',
+    lineHeight: 'relaxed'
+  },
+  '& button': {
+    backgroundColor: 'white',
+    color: 'brand.primary',
+    border: 'none',
+    padding: '2 4',
+    borderRadius: 'radii.sm',
+    fontFamily: 'body',
+    fontWeight: 'medium',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    _hover: {
+      backgroundColor: 'brand.secondary',
+      color: 'white'
     }
-
-    p {
-      font-size: 0.9rem;
-      margin: 0;
-    }
   }
-`
+})
 
-const ContentArea = styled.div<{ $mobileLayout?: string }>`
-  flex: 1;
-  display: flex;
-  overflow: hidden;
-
-  @media (max-width: 768px) {
-    flex-direction: ${(props) => (props.$mobileLayout === 'details' ? 'column-reverse' : 'column')};
+const mobileOverlay = css({
+  display: 'none',
+  '@media (max-width: md)': {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 999
   }
-`
+})
 
-const SkillTreeContainer = styled.div<{ $mobileLayout?: string }>`
-  flex: 1;
-  overflow: hidden;
-  background-color: ${(props) => props.theme.colors.surface};
-
-  @media (max-width: 768px) {
-    height: ${(props) => (props.$mobileLayout === 'details' ? '50vh' : '100vh')};
-    display: ${(props) => (props.$mobileLayout === 'details' ? 'block' : 'block')};
+const mobileOverlayVisible = css({
+  '@media (max-width: md)': {
+    display: 'block'
   }
-`
+})
 
-const DetailsPanel = styled.div<{ $mobileLayout?: string }>`
-  width: 350px;
-  background-color: ${(props) => props.theme.colors.surface};
-  border-left: 1px solid ${(props) => props.theme.colors.border};
-  overflow-y: auto;
-
-  @media (max-width: 1024px) {
-    width: 300px;
+const mobileDetailsToggle = css({
+  display: 'none',
+  position: 'fixed',
+  bottom: '5',
+  right: '5',
+  backgroundColor: 'brand.primary',
+  color: 'white',
+  border: 'none',
+  borderRadius: 'radii.full',
+  width: 'sizes.14',
+  height: 'sizes.14',
+  fontSize: 'fontSizes.lg',
+  cursor: 'pointer',
+  boxShadow: 'shadows.lg',
+  transition: 'all 0.3s ease',
+  fontFamily: 'body',
+  _hover: {
+    borderRadius: 'radii.full',
+    width: 'sizes.14',
+    height: 'sizes.14'
+  },
+  '@media (max-width: md)': {
+    display: 'block'
   }
+})
 
-  @media (max-width: 768px) {
-    width: 100%;
-    height: ${(props) => (props.$mobileLayout === 'details' ? '50vh' : '0')};
-    overflow: ${(props) => (props.$mobileLayout === 'details' ? 'auto' : 'hidden')};
-    border-left: none;
-    border-top: 1px solid ${(props) => props.theme.colors.border};
-    transform: translateY(${(props) => (props.$mobileLayout === 'details' ? '0' : '100%')});
-    transition: all 0.3s ease;
+const mobileCloseButton = css({
+  display: 'none',
+  position: 'absolute',
+  top: '4',
+  right: '4',
+  background: 'none',
+  border: 'none',
+  color: 'fg.default',
+  fontSize: 'fontSizes.xl',
+  cursor: 'pointer',
+  padding: '2',
+  borderRadius: 'radii.md',
+  zIndex: 1001,
+  fontFamily: 'body',
+  transition: 'all 0.2s ease',
+  _hover: {
+    backgroundColor: 'bg.subtle',
+    color: 'brand.primary'
+  },
+  '@media (max-width: md)': {
+    display: 'block'
   }
-`
-
-const LoadingOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: ${(props) => props.theme.colors.overlay};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${(props) => props.theme.colors.text};
-  font-size: 1.2rem;
-  z-index: 1000;
-`
-
-const ErrorMessage = styled.div`
-  background-color: ${(props) => props.theme.colors.error};
-  color: white;
-  padding: 1rem;
-  margin: 1rem;
-  border-radius: 4px;
-`
-
-const MobileMenuButton = styled.button`
-  display: none;
-  background: none;
-  border: none;
-  color: ${(props) => props.theme.colors.text};
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background-color: ${(props) => props.theme.colors.border};
-  }
-
-  @media (max-width: 768px) {
-    display: block;
-  }
-`
-
-const MobileOverlay = styled.div<{ $visible: boolean }>`
-  display: none;
-
-  @media (max-width: 768px) {
-    display: ${(props) => (props.$visible ? 'block' : 'none')};
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-  }
-`
-
-const HeaderContent = styled.div`
-  @media (max-width: 768px) {
-    flex: 1;
-  }
-`
-
-const MobileDetailsToggle = styled.button`
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: ${(props) => props.theme.colors.primary};
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  box-shadow: ${(props) => props.theme.shadows.large};
-  z-index: 100;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: ${(props) => props.theme.colors.primaryHover};
-    transform: scale(1.1);
-  }
-
-  @media (max-width: 768px) {
-    display: block;
-  }
-`
-
-const MobileCloseButton = styled.button`
-  display: none;
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  color: ${(props) => props.theme.colors.text};
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 4px;
-  z-index: 1001;
-
-  &:hover {
-    background-color: ${(props) => props.theme.colors.border};
-  }
-
-  @media (max-width: 768px) {
-    display: block;
-  }
-`
+})
 
 function App() {
   const t = useT()
@@ -303,6 +327,13 @@ function App() {
     }
   }, [settings?.language, setLanguage])
 
+  // Always apply dark mode class
+  useEffect(() => {
+    const htmlElement = document.documentElement
+    htmlElement.classList.add('dark')
+    htmlElement.classList.remove('light')
+  }, [])
+
   // Initialize analytics on app load
   useEffect(() => {
     initializeAnalytics()
@@ -339,114 +370,118 @@ function App() {
     // This handler is available for future use if needed
   }
 
-  const currentTheme = getTheme(settings?.theme || 'light')
   const isLoading = courseLoading || progressLoading || settingsLoading
 
   if (isLoading) {
     return (
-      <ThemeProvider theme={currentTheme}>
-        <LoadingOverlay>
-          <div>{t.loading}</div>
-        </LoadingOverlay>
-      </ThemeProvider>
+      <div className={loadingOverlay}>
+        <div>{t.loading}</div>
+      </div>
     )
   }
 
   if (isError) {
     return (
-      <ThemeProvider theme={currentTheme}>
-        <AppContainer>
-          <ErrorMessage>
-            <h3>{t.error}</h3>
-            <p>{queryError?.message || 'Failed to load course data'}</p>
-            <button onClick={() => window.location.reload()}>{t.retry}</button>
-          </ErrorMessage>
-        </AppContainer>
-      </ThemeProvider>
+      <div className={appContainer}>
+        <div className={errorMessage}>
+          <h3>{t.error}</h3>
+          <p>{queryError?.message || 'Failed to load course data'}</p>
+          <button onClick={() => window.location.reload()}>{t.retry}</button>
+        </div>
+      </div>
     )
   }
 
   if (!courseData || !eligibilityEngine || !userProgress || !settings) {
     return (
-      <ThemeProvider theme={currentTheme}>
-        <AppContainer>
-          <ErrorMessage>{t.errors?.noDataAvailable || 'No data available'}</ErrorMessage>
-        </AppContainer>
-      </ThemeProvider>
+      <div className={appContainer}>
+        <div className={errorMessage}>{t.errors?.noDataAvailable || 'No data available'}</div>
+      </div>
     )
   }
 
   return (
     <ErrorBoundary>
-      <ThemeProvider theme={currentTheme}>
-        <SkipLinks />
-        <AppContainer>
-          <MobileOverlay $visible={mobileMenuOpen} onClick={handleMobileOverlayClick} />
+      <SkipLinks
+        targets={[
+          { id: 'main-content', label: t.accessibility.skipToMainContent },
+          { id: 'skill-tree', label: t.accessibility.skipToSkillTree },
+          { id: 'sidebar', label: t.accessibility.skipToSidebar },
+          { id: 'course-details', label: t.accessibility.skipToCourseDetails }
+        ]}
+      />
+      <div className={appContainer}>
+        <div
+          className={`${mobileOverlay} ${mobileMenuOpen ? mobileOverlayVisible : ''}`}
+          onClick={handleMobileOverlayClick}
+        />
 
-          <Sidebar $mobileOpen={mobileMenuOpen} id="sidebar">
-            <MobileCloseButton onClick={closeMobileMenu} aria-label="Close menu">
-              ✕
-            </MobileCloseButton>
-            <ProgressPanel userProgress={userProgress} courseData={courseData} eligibilityEngine={eligibilityEngine} />
-            <DebugPanel courseData={courseData} userProgress={userProgress} />
-            <FilterPanel filters={filters} courseData={courseData} onFilterChange={handleFilterChange} />
-            <SettingsPanel
-              settings={settings}
-              onSettingsChange={handleSettingsChange}
-              onImportMedusaCourses={handleImportMedusaCourses}
-            />
-          </Sidebar>
+        <div className={`${sidebar} ${mobileMenuOpen ? sidebarMobileOpen : sidebarMobileClosed}`} id="sidebar">
+          <button className={mobileCloseButton} onClick={closeMobileMenu} aria-label="Close menu">
+            ✕
+          </button>
+          <ProgressPanel userProgress={userProgress} courseData={courseData} eligibilityEngine={eligibilityEngine} />
+          <DebugPanel courseData={courseData} userProgress={userProgress} />
+          <FilterPanel filters={filters} courseData={courseData} onFilterChange={handleFilterChange} />
+          <SettingsPanel
+            settings={settings}
+            onSettingsChange={handleSettingsChange}
+            onImportMedusaCourses={handleImportMedusaCourses}
+          />
+        </div>
 
-          <MainContent id="main-content">
-            <Header>
-              <MobileMenuButton onClick={toggleMobileMenu} aria-label={t.accessibility.menuToggle}>
-                ☰
-              </MobileMenuButton>
-              <HeaderContent>
-                <h1>{t.appTitle}</h1>
-                <p>{t.appSubtitle}</p>
-              </HeaderContent>
-            </Header>
+        <div className={mainContent} id="main-content">
+          <TRMNHeader
+            showMobileMenu
+            onMobileMenuToggle={toggleMobileMenu}
+            menuToggleLabel={t.accessibility.menuToggle}
+          />
 
-            <ContentArea $mobileLayout={mobileLayout}>
-              <SkillTreeContainer $mobileLayout={mobileLayout} id="skill-tree">
-                <SkillTreeView
-                  courseData={courseData}
-                  userProgress={userProgress}
-                  filters={filters}
-                  settings={settings}
-                  eligibilityEngine={eligibilityEngine}
-                  onCourseSelect={handleCourseSelect}
-                  onCourseToggle={toggleCourseCompletion}
-                  onCourseStatusChange={setCourseStatus}
-                />
-              </SkillTreeContainer>
+          <div className={contentArea}>
+            <div
+              className={`${skillTreeContainer} ${mobileLayout === 'details' ? skillTreeContainerMobileDetails : ''}`}
+              id="skill-tree"
+            >
+              <SkillTreeView
+                courseData={courseData}
+                userProgress={userProgress}
+                filters={filters}
+                settings={settings}
+                eligibilityEngine={eligibilityEngine}
+                onCourseSelect={handleCourseSelect}
+                onCourseToggle={toggleCourseCompletion}
+                onCourseStatusChange={setCourseStatus}
+              />
+            </div>
 
-              <DetailsPanel $mobileLayout={mobileLayout} id="course-details">
-                <CourseDetails
-                  course={selectedCourse}
-                  userProgress={userProgress}
-                  eligibilityEngine={eligibilityEngine}
-                  onCourseToggle={toggleCourseCompletion}
-                  onCourseStatusChange={setCourseStatus}
-                  onCourseSelect={handleCourseSelect}
-                />
-              </DetailsPanel>
-            </ContentArea>
+            <div
+              className={`${detailsPanel} ${mobileLayout === 'details' ? detailsPanelMobileVisible : detailsPanelMobileHidden}`}
+              id="course-details"
+            >
+              <CourseDetails
+                course={selectedCourse}
+                userProgress={userProgress}
+                eligibilityEngine={eligibilityEngine}
+                onCourseToggle={toggleCourseCompletion}
+                onCourseStatusChange={setCourseStatus}
+                onCourseSelect={handleCourseSelect}
+              />
+            </div>
+          </div>
 
-            {selectedCourse && (
-              <MobileDetailsToggle
-                onClick={toggleMobileLayout}
-                aria-label={mobileLayout === 'courses' ? 'Show course details' : 'Show course list'}
-              >
-                {mobileLayout === 'courses' ? '📋' : '📚'}
-              </MobileDetailsToggle>
-            )}
-          </MainContent>
+          {selectedCourse && (
+            <button
+              className={mobileDetailsToggle}
+              onClick={toggleMobileLayout}
+              aria-label={mobileLayout === 'courses' ? 'Show course details' : 'Show course list'}
+            >
+              {mobileLayout === 'courses' ? '📋' : '📚'}
+            </button>
+          )}
+        </div>
 
-          <GDPRConsentBanner onConsentChange={handleConsentChange} />
-        </AppContainer>
-      </ThemeProvider>
+        <GDPRConsentBanner onConsentChange={handleConsentChange} />
+      </div>
     </ErrorBoundary>
   )
 }

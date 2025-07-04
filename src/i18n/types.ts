@@ -4,6 +4,12 @@ export interface TranslationStrings {
   // App Header
   appTitle: string
   appSubtitle: string
+  trmnHeader: {
+    line1: string
+    line2: string
+    subtitle: string
+    menuToggleLabel: string
+  }
 
   // Navigation and General
   loading: string

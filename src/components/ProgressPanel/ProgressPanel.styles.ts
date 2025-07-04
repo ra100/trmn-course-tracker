@@ -1,87 +1,163 @@
-import styled from 'styled-components'
+import { css, cva } from 'styled-system/css'
 
 // Main container and layout
-export const PanelContainer = styled.div`
-  padding: 1.5rem;
-  border-bottom: 1px solid ${(props) => props.theme.colors.border};
-
-  @media (max-width: 768px) {
-    padding: 1rem;
+export const panelContainer = css({
+  padding: '1.5rem',
+  borderBottom: '1px solid',
+  borderColor: 'border.default',
+  overscrollBehavior: 'contain',
+  '@media (max-width: 768px)': {
+    padding: '1rem'
   }
-`
+})
 
-export const PanelTitle = styled.h3`
-  color: ${(props) => props.theme.colors.text};
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
-`
+export const panelTitle = css({
+  color: 'fg.default',
+  margin: '0 0 1rem 0',
+  fontSize: '1.1rem'
+})
 
-export const FlexContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-`
+export const flexContainer = css({
+  display: 'flex',
+  flexDirection: 'column',
+  flex: 1
+})
 
 // Progress bars and visual indicators
-export const ProgressBar = styled.div`
-  background: ${(props) => props.theme.colors.surface};
-  border-radius: 10px;
-  height: 8px;
-  margin: 0.5rem 0;
-  overflow: hidden;
-  border: 1px solid ${(props) => props.theme.colors.border};
-`
+export const progressBar = css({
+  backgroundColor: 'gray.200',
+  borderRadius: '8px',
+  height: '12px',
+  margin: '0.75rem 0',
+  overflow: 'hidden',
+  border: '1px solid',
+  borderColor: 'gray.300',
+  boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.1)'
+})
 
-export const ProgressFill = styled.div<{ percentage: number; color?: string }>`
-  height: 100%;
-  background: ${(props) => props.color || props.theme.colors.primary};
-  width: ${(props) => props.percentage}%;
-  transition: width 0.3s ease;
-`
+export const progressFill = cva({
+  base: {
+    height: '100%',
+    transition: 'width 0.3s ease',
+    borderRadius: '7px',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
+  },
+  variants: {
+    color: {
+      primary: {
+        bgGradient: 'to-r',
+        gradientFrom: 'accent.default',
+        gradientTo: 'accent.emphasized'
+      },
+      success: {
+        bgGradient: 'to-r',
+        gradientFrom: 'green.9',
+        gradientTo: 'green.11'
+      },
+      warning: {
+        bgGradient: 'to-r',
+        gradientFrom: 'amber.9',
+        gradientTo: 'amber.11'
+      },
+      error: {
+        bgGradient: 'to-r',
+        gradientFrom: 'red.9',
+        gradientTo: 'red.11'
+      }
+    }
+  },
+  defaultVariants: {
+    color: 'primary'
+  }
+})
 
-export const ProgressLabel = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  color: ${(props) => props.theme.colors.textSecondary};
-  margin-bottom: 0.2rem;
-`
+export const progressLabel = css({
+  display: 'flex',
+  justifyContent: 'space-between',
+  fontSize: '0.8rem',
+  color: 'fg.muted',
+  marginBottom: '0.2rem'
+})
 
 // Section and subsection components
-export const SectionProgress = styled.div`
-  margin-bottom: 1rem;
-`
+export const sectionProgress = css({
+  marginBottom: '1rem'
+})
 
-export const SectionTitle = styled.div`
-  font-size: 0.9rem;
-  color: ${(props) => props.theme.colors.text};
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-`
+export const sectionTitle = css({
+  fontSize: '0.9rem',
+  color: 'fg.default',
+  fontWeight: '500',
+  marginBottom: '0.5rem'
+})
 
 // Status indicators
-export const StatusIcon = styled.div<{ $completed: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  font-size: 0.7rem;
-  font-weight: bold;
-  flex-shrink: 0;
-  background: ${(props) => (props.$completed ? props.theme.colors.success : props.theme.colors.secondary)};
-  color: white;
-  margin-right: 0.5rem;
-`
+export const statusIcon = cva({
+  base: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '22px',
+    height: '22px',
+    borderRadius: '50%',
+    fontSize: '0.8rem',
+    fontWeight: 'bold',
+    flexShrink: 0,
+    marginRight: '0.5rem',
+    border: '2px solid'
+  },
+  variants: {
+    completed: {
+      true: {
+        backgroundColor: 'green.9',
+        color: 'white',
+        borderColor: 'green.6'
+      },
+      false: {
+        backgroundColor: 'gray.300',
+        color: 'gray.700',
+        borderColor: 'gray.400'
+      }
+    }
+  }
+})
 
-export const RequirementText = styled.span<{ $completed: boolean }>`
-  color: ${(props) => (props.$completed ? props.theme.colors.text : props.theme.colors.textSecondary)};
-  text-decoration: ${(props) => (props.$completed ? 'none' : 'none')};
-`
+export const requirementText = cva({
+  base: {
+    textDecoration: 'none',
+    fontSize: '0.9rem',
+    lineHeight: 1.4
+  },
+  variants: {
+    completed: {
+      true: {
+        color: 'black',
+        fontWeight: '500'
+      },
+      false: {
+        color: 'black',
+        fontWeight: '400'
+      }
+    }
+  }
+})
 
-export const DepartmentInfo = styled.div`
-  font-size: 0.7rem;
-  color: ${(props) => props.theme.colors.textSecondary};
-  margin-top: 0.2rem;
-`
+export const departmentInfo = css({
+  fontSize: '0.75rem',
+  color: 'gray.600',
+  marginTop: '0.3rem',
+  fontStyle: 'italic'
+})
+
+// Legacy exports for backward compatibility (will be removed after full migration)
+export const PanelContainer = panelContainer
+export const PanelTitle = panelTitle
+export const FlexContainer = flexContainer
+export const ProgressBar = progressBar
+export const ProgressFill = progressFill
+export const ProgressLabel = progressLabel
+export const SectionProgress = sectionProgress
+export const SectionTitle = sectionTitle
+export const StatusIcon = statusIcon
+export const RequirementText = requirementText
+export const DepartmentInfo = departmentInfo

@@ -6,7 +6,8 @@ import {
   CourseStats,
   SkillTreeViewProps,
   GroupingMode,
-  TreeContainer,
+  treeContainer,
+  contentArea,
   CategoryCourseRenderer
 } from './SkillTreeView/index'
 
@@ -40,24 +41,26 @@ const SkillTreeViewComponent: React.FC<SkillTreeViewProps> = ({
   })
 
   return (
-    <TreeContainer ref={containerRef}>
+    <div ref={containerRef} className={treeContainer}>
       <CourseSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
       <GroupingControls groupingMode={groupingMode} onGroupingModeChange={setGroupingMode} />
 
       <CourseStats stats={stats} />
 
-      <CategoryCourseRenderer
-        filteredCourses={filteredCourses}
-        groupingMode={groupingMode}
-        userProgress={userProgress}
-        courseData={courseData}
-        getCourseStatus={getCourseStatus}
-        onCourseSelect={onCourseSelect}
-        onCourseToggle={onCourseToggle}
-        onCourseStatusChange={onCourseStatusChange}
-      />
-    </TreeContainer>
+      <div className={contentArea}>
+        <CategoryCourseRenderer
+          filteredCourses={filteredCourses}
+          groupingMode={groupingMode}
+          userProgress={userProgress}
+          courseData={courseData}
+          getCourseStatus={getCourseStatus}
+          onCourseSelect={onCourseSelect}
+          onCourseToggle={onCourseToggle}
+          onCourseStatusChange={onCourseStatusChange}
+        />
+      </div>
+    </div>
   )
 }
 

@@ -4,7 +4,13 @@ import { Language } from '../../i18n'
 export interface SettingsPanelProps {
   settings: UserSettings
   onSettingsChange: (settings: UserSettings) => void
-  onImportMedusaCourses?: (courseCodes: string[]) => { imported: number; trackable: number; alreadyCompleted: number }
+  onImportMedusaCourses?: (courseCodes: string[]) => {
+    imported: number
+    trackable: number
+    alreadyCompleted: number
+    newCourses: string[]
+    untrackedCourses: string[]
+  }
 }
 
 export interface SettingToggleProps {
@@ -31,9 +37,7 @@ export interface StatusFilterSectionProps {
 }
 
 export interface PreferencesSectionProps {
-  isDarkMode: boolean
   autoSave: boolean
-  onThemeToggle: () => void
   onAutoSaveToggle: (checked: boolean) => void
 }
 
@@ -45,7 +49,6 @@ export interface UseSettingsHandlersProps {
 
 export interface UseSettingsHandlersReturn {
   handleToggle: (key: keyof UserSettings, value: boolean) => void
-  handleThemeToggle: () => void
   handleLanguageChange: (language: Language) => void
   handleReset: () => void
 }

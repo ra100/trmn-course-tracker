@@ -1,15 +1,16 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ThemeProvider } from 'styled-components'
 import { FilterPanel } from './FilterPanel'
 import { FilterOptions, ParsedCourseData } from '../types'
-import { lightTheme } from '../theme'
+import { darkTheme } from '../theme'
 import { I18nProvider } from '../i18n'
 
 const renderWithTheme = (component: React.ReactElement) => {
   return render(
-    <ThemeProvider theme={lightTheme}>
+    <ThemeProvider theme={darkTheme}>
       <I18nProvider>{component}</I18nProvider>
     </ThemeProvider>
   )
@@ -91,28 +92,30 @@ describe('FilterPanel', () => {
     expect(screen.getByText('Locked')).toBeInTheDocument()
   })
 
-  it('calls onFilterChange when status filters are toggled', () => {
+  it('calls onFilterChange when status filters are toggled', async () => {
+    const user = userEvent.setup()
     renderWithTheme(
       <FilterPanel filters={defaultFilters} courseData={mockCourseData} onFilterChange={mockOnFilterChange} />
     )
 
-    // Click on "Working On" status filter
-    const workingOnCheckbox = screen.getByLabelText(/Working On/i)
-    fireEvent.click(workingOnCheckbox)
+    // Find the checkbox input for "Working On" and click it
+    const workingOnCheckbox = screen.getByRole('checkbox', { name: /Working On/i })
+    await user.click(workingOnCheckbox)
 
     expect(mockOnFilterChange).toHaveBeenCalledWith({
       status: ['in_progress']
     })
   })
 
-  it('calls onFilterChange when waiting grade filter is toggled', () => {
+  it('calls onFilterChange when waiting grade filter is toggled', async () => {
+    const user = userEvent.setup()
     renderWithTheme(
       <FilterPanel filters={defaultFilters} courseData={mockCourseData} onFilterChange={mockOnFilterChange} />
     )
 
-    // Click on "Waiting Grade" status filter
-    const waitingGradeCheckbox = screen.getByLabelText(/Waiting Grade/i)
-    fireEvent.click(waitingGradeCheckbox)
+    // Find the checkbox input for "Waiting Grade" and click it
+    const waitingGradeCheckbox = screen.getByRole('checkbox', { name: /Waiting Grade/i })
+    await user.click(waitingGradeCheckbox)
 
     expect(mockOnFilterChange).toHaveBeenCalledWith({
       status: ['waiting_grade']
@@ -185,7 +188,8 @@ describe('FilterPanel', () => {
     expect(mockOnFilterChange).toHaveBeenCalledWith({})
   })
 
-  it('removes status filter when unchecked', () => {
+  it('removes status filter when unchecked', async () => {
+    const user = userEvent.setup()
     const filtersWithMultipleStatus: FilterOptions = {
       status: ['completed', 'in_progress']
     }
@@ -198,9 +202,9 @@ describe('FilterPanel', () => {
       />
     )
 
-    // Uncheck "Working On" status filter
-    const workingOnCheckbox = screen.getByLabelText(/Working On/i)
-    fireEvent.click(workingOnCheckbox)
+    // Find the checkbox input for "Working On" (which should be checked) and click to uncheck it
+    const workingOnCheckbox = screen.getByRole('checkbox', { name: /Working On/i })
+    await user.click(workingOnCheckbox)
 
     expect(mockOnFilterChange).toHaveBeenCalledWith({
       status: ['completed']
