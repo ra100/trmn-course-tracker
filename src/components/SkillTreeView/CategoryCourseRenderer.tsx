@@ -5,15 +5,13 @@ import {
   getCourseSeriesCodes,
   getCourseSeriesPrefix,
   getSeriesDisplayName,
-  sortCoursesByNumber,
-  groupCoursesByMode
+  sortCoursesByNumber
 } from '~/utils/courseUtils'
 import { useT } from '~/i18n'
 import { CourseSection } from './CourseSection'
 import { CourseSubsection } from './CourseSubsection'
-import { categorySection, categoryHeader, courseGrid } from './SkillTreeView.styles'
+import { categorySection, categoryHeader } from './SkillTreeView.styles'
 import { Course } from '~/types'
-import { CourseNode } from '../CourseNode'
 
 type GroupedCourses = Map<string, Course[]>
 type NestedGroupedCourses = Map<string, Map<string, Course[]>>

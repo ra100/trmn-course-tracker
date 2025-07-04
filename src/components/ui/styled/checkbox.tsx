@@ -16,30 +16,27 @@ export const RootProvider = withProvider<
 export type RootProps = ComponentProps<typeof Root>
 export const Root = withProvider<
   HTMLLabelElement,
-  Assign<Assign<HTMLStyledProps<'label'>, Checkbox.RootBaseProps>, CheckboxVariantProps>
+  Assign<Assign<HTMLStyledProps<'label'>, Checkbox.RootBaseProps>, CheckboxVariantProps> & { [key: string]: unknown }
 >(Checkbox.Root, 'root')
 
-export const Control = withContext<
-  HTMLDivElement,
-  Assign<HTMLStyledProps<'div'>, Checkbox.ControlBaseProps>
->(Checkbox.Control, 'control')
+export const Control = withContext<HTMLDivElement, Assign<HTMLStyledProps<'div'>, Checkbox.ControlBaseProps>>(
+  Checkbox.Control,
+  'control'
+)
 
-export const Group = withContext<
-  HTMLDivElement,
-  Assign<HTMLStyledProps<'div'>, Checkbox.GroupBaseProps>
->(Checkbox.Group, 'group')
+export const Group = withContext<HTMLDivElement, Assign<HTMLStyledProps<'div'>, Checkbox.GroupBaseProps>>(
+  Checkbox.Group,
+  'group'
+)
 
-export const Indicator = withContext<
-  HTMLDivElement,
-  Assign<HTMLStyledProps<'div'>, Checkbox.IndicatorBaseProps>
->(Checkbox.Indicator, 'indicator')
+export const Indicator = withContext<HTMLDivElement, Assign<HTMLStyledProps<'div'>, Checkbox.IndicatorBaseProps>>(
+  Checkbox.Indicator,
+  'indicator'
+)
 
-export const Label = withContext<
-  HTMLSpanElement,
-  Assign<HTMLStyledProps<'span'>, Checkbox.LabelBaseProps>
->(Checkbox.Label, 'label')
+export const Label = withContext<HTMLSpanElement, Assign<HTMLStyledProps<'span'>, Checkbox.LabelBaseProps>>(
+  Checkbox.Label,
+  'label'
+)
 
-export {
-  CheckboxContext as Context,
-  CheckboxHiddenInput as HiddenInput,
-} from '@ark-ui/react/checkbox'
+export { CheckboxContext as Context, CheckboxHiddenInput as HiddenInput } from '@ark-ui/react/checkbox'

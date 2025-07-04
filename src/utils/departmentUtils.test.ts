@@ -70,7 +70,8 @@ describe('departmentUtils', () => {
     dependencyGraph: new Map(),
     categories: [],
     specialRules: [],
-    departmentMappings: mockDepartmentMappings
+    departmentMappings: mockDepartmentMappings,
+    seriesMappings: new Map()
   }
 
   // Set up course map

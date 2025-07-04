@@ -41,7 +41,9 @@ export const DepartmentFilterSection: React.FC<DepartmentFilterSectionProps> = (
           <Checkbox
             key={department}
             checked={filters.departments?.includes(department) || false}
-            onCheckedChange={(details) => onDepartmentChange(department, details.checked === true)}
+            onCheckedChange={(details: { checked: boolean }) =>
+              onDepartmentChange(department, details.checked === true)
+            }
           >
             {getDepartmentLabel(department)}
           </Checkbox>

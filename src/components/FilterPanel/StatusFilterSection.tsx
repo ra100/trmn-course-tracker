@@ -48,7 +48,7 @@ export const StatusFilterSection: React.FC<StatusFilterSectionProps> = ({ filter
           <Checkbox
             key={status}
             checked={filters.status?.includes(status) || false}
-            onCheckedChange={(details) => onStatusChange(status, details.checked === true)}
+            onCheckedChange={(details: { checked: boolean }) => onStatusChange(status, details.checked === true)}
           >
             {getStatusLabel(status)}
           </Checkbox>

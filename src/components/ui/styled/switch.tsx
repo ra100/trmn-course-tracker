@@ -16,25 +16,22 @@ export const RootProvider = withProvider<
 export type RootProps = ComponentProps<typeof Root>
 export const Root = withProvider<
   HTMLLabelElement,
-  Assign<Assign<HTMLStyledProps<'label'>, Switch.RootBaseProps>, SwitchRecipeVariantProps>
+  Assign<Assign<HTMLStyledProps<'label'>, Switch.RootBaseProps>, SwitchRecipeVariantProps> & { [key: string]: unknown }
 >(Switch.Root, 'root')
 
 export const Control = withContext<
   HTMLSpanElement,
-  Assign<HTMLStyledProps<'span'>, Switch.ControlBaseProps>
+  Assign<HTMLStyledProps<'span'>, Switch.ControlBaseProps> & { [key: string]: unknown }
 >(Switch.Control, 'control')
 
 export const Label = withContext<
   HTMLSpanElement,
-  Assign<HTMLStyledProps<'span'>, Switch.LabelBaseProps>
+  Assign<HTMLStyledProps<'span'>, Switch.LabelBaseProps> & { [key: string]: unknown }
 >(Switch.Label, 'label')
 
-export const Thumb = withContext<
-  HTMLSpanElement,
-  Assign<HTMLStyledProps<'span'>, Switch.ThumbBaseProps>
->(Switch.Thumb, 'thumb')
+export const Thumb = withContext<HTMLSpanElement, Assign<HTMLStyledProps<'span'>, Switch.ThumbBaseProps>>(
+  Switch.Thumb,
+  'thumb'
+)
 
-export {
-  SwitchContext as Context,
-  SwitchHiddenInput as HiddenInput,
-} from '@ark-ui/react/switch'
+export { SwitchContext as Context, SwitchHiddenInput as HiddenInput } from '@ark-ui/react/switch'

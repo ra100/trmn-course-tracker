@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react'
 import { css, cva } from 'styled-system/css'
 import { useT } from '../../i18n'
 import { flexContainer, statusIcon, requirementText, departmentInfo } from './ProgressPanel.styles'
-import { achievementItem } from './BasicAchievements'
+import { achievementItem } from './BasicAchievements.styles'
 
 const spaceWarfareHeader = css({
   display: 'flex',

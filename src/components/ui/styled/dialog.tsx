@@ -8,17 +8,15 @@ import { createStyleContext } from './utils/create-style-context'
 const { withRootProvider, withContext } = createStyleContext(dialog)
 
 export type RootProviderProps = ComponentProps<typeof RootProvider>
-export const RootProvider = withRootProvider<Assign<Dialog.RootProviderProps, DialogVariantProps>>(
-  Dialog.RootProvider,
-)
+export const RootProvider = withRootProvider<Assign<Dialog.RootProviderProps, DialogVariantProps>>(Dialog.RootProvider)
 
 export type RootProps = ComponentProps<typeof Root>
 export const Root = withRootProvider<Assign<Dialog.RootProps, DialogVariantProps>>(Dialog.Root)
 
-export const Backdrop = withContext<
-  HTMLDivElement,
-  Assign<HTMLStyledProps<'div'>, Dialog.BackdropBaseProps>
->(Dialog.Backdrop, 'backdrop')
+export const Backdrop = withContext<HTMLDivElement, Assign<HTMLStyledProps<'div'>, Dialog.BackdropBaseProps>>(
+  Dialog.Backdrop,
+  'backdrop'
+)
 
 export const CloseTrigger = withContext<
   HTMLButtonElement,
@@ -27,27 +25,27 @@ export const CloseTrigger = withContext<
 
 export const Content = withContext<
   HTMLDivElement,
-  Assign<HTMLStyledProps<'div'>, Dialog.ContentBaseProps>
+  Assign<HTMLStyledProps<'div'>, Dialog.ContentBaseProps> & { [key: string]: unknown }
 >(Dialog.Content, 'content')
 
 export const Description = withContext<
   HTMLDivElement,
-  Assign<HTMLStyledProps<'div'>, Dialog.DescriptionBaseProps>
+  Assign<HTMLStyledProps<'div'>, Dialog.DescriptionBaseProps> & { [key: string]: unknown }
 >(Dialog.Description, 'description')
 
-export const Positioner = withContext<
-  HTMLDivElement,
-  Assign<HTMLStyledProps<'div'>, Dialog.PositionerBaseProps>
->(Dialog.Positioner, 'positioner')
+export const Positioner = withContext<HTMLDivElement, Assign<HTMLStyledProps<'div'>, Dialog.PositionerBaseProps>>(
+  Dialog.Positioner,
+  'positioner'
+)
 
-export const Title = withContext<
-  HTMLHeadingElement,
-  Assign<HTMLStyledProps<'h2'>, Dialog.TitleBaseProps>
->(Dialog.Title, 'title')
+export const Title = withContext<HTMLHeadingElement, Assign<HTMLStyledProps<'h2'>, Dialog.TitleBaseProps>>(
+  Dialog.Title,
+  'title'
+)
 
-export const Trigger = withContext<
-  HTMLButtonElement,
-  Assign<HTMLStyledProps<'button'>, Dialog.TriggerBaseProps>
->(Dialog.Trigger, 'trigger')
+export const Trigger = withContext<HTMLButtonElement, Assign<HTMLStyledProps<'button'>, Dialog.TriggerBaseProps>>(
+  Dialog.Trigger,
+  'trigger'
+)
 
 export { DialogContext as Context } from '@ark-ui/react/dialog'

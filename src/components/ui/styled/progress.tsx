@@ -16,13 +16,13 @@ export const RootProvider = withProvider<
 export type RootProps = ComponentProps<typeof Root>
 export const Root = withProvider<
   HTMLDivElement,
-  Assign<Assign<HTMLStyledProps<'div'>, Progress.RootBaseProps>, ProgressVariantProps>
+  Assign<Assign<HTMLStyledProps<'div'>, Progress.RootBaseProps>, ProgressVariantProps> & { [key: string]: unknown }
 >(Progress.Root, 'root')
 
-export const Circle = withContext<
-  SVGSVGElement,
-  Assign<HTMLStyledProps<'svg'>, Progress.CircleBaseProps>
->(Progress.Circle, 'circle')
+export const Circle = withContext<SVGSVGElement, Assign<HTMLStyledProps<'svg'>, Progress.CircleBaseProps>>(
+  Progress.Circle,
+  'circle'
+)
 
 export const CircleRange = withContext<
   SVGCircleElement,
@@ -36,27 +36,27 @@ export const CircleTrack = withContext<
 
 export const Label = withContext<
   HTMLLabelElement,
-  Assign<HTMLStyledProps<'label'>, Progress.LabelBaseProps>
+  Assign<HTMLStyledProps<'label'>, Progress.LabelBaseProps> & { [key: string]: unknown }
 >(Progress.Label, 'label')
 
-export const Range = withContext<
-  HTMLDivElement,
-  Assign<HTMLStyledProps<'div'>, Progress.RangeBaseProps>
->(Progress.Range, 'range')
+export const Range = withContext<HTMLDivElement, Assign<HTMLStyledProps<'div'>, Progress.RangeBaseProps>>(
+  Progress.Range,
+  'range'
+)
 
-export const Track = withContext<
-  HTMLDivElement,
-  Assign<HTMLStyledProps<'div'>, Progress.TrackBaseProps>
->(Progress.Track, 'track')
+export const Track = withContext<HTMLDivElement, Assign<HTMLStyledProps<'div'>, Progress.TrackBaseProps>>(
+  Progress.Track,
+  'track'
+)
 
 export const ValueText = withContext<
   HTMLSpanElement,
-  Assign<HTMLStyledProps<'span'>, Progress.ValueTextBaseProps>
+  Assign<HTMLStyledProps<'span'>, Progress.ValueTextBaseProps> & { [key: string]: unknown }
 >(Progress.ValueText, 'valueText')
 
 export const View = withContext<
   HTMLSpanElement,
-  Assign<HTMLStyledProps<'span'>, Progress.ViewBaseProps>
+  Assign<HTMLStyledProps<'span'>, Progress.ViewBaseProps> & { [key: string]: unknown }
 >(Progress.View, 'view')
 
 export { ProgressContext as Context } from '@ark-ui/react/progress'

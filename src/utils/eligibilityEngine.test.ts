@@ -208,7 +208,8 @@ describe('EligibilityEngine', () => {
       specialRules,
       courseMap,
       categoryMap,
-      dependencyGraph
+      dependencyGraph,
+      seriesMappings: new Map()
     }
 
     eligibilityEngine = new EligibilityEngine(sampleCourseData)

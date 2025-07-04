@@ -10,7 +10,7 @@ export const SettingToggle: React.FC<SettingToggleProps> = React.memo(({ label, 
         <label className={toggleLabel}>{label}</label>
         <div className={settingDescription}>{description}</div>
       </div>
-      <Switch checked={checked} onCheckedChange={(details) => onChange(details.checked)} />
+      <Switch checked={checked} onCheckedChange={(details: { checked: boolean }) => onChange(details.checked)} />
     </div>
   )
 })

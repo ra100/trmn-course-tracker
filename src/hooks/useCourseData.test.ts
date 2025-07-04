@@ -47,7 +47,8 @@ const mockCourseData = {
   departmentMappings: new Map(),
   courseMap: new Map(),
   categoryMap: new Map(),
-  dependencyGraph: new Map()
+  dependencyGraph: new Map(),
+  seriesMappings: new Map()
 }
 
 describe('useCourseData', () => {

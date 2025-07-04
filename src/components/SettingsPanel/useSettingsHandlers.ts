@@ -1,6 +1,5 @@
 import { UserSettings } from '../../types'
 import { Language } from '../../i18n'
-import { trackSettingsChange } from '../../utils/analytics'
 import { UseSettingsHandlersProps, UseSettingsHandlersReturn } from './types'
 
 export const useSettingsHandlers = ({

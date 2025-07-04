@@ -55,7 +55,8 @@ describe('Medusa Import Status Override Logic', () => {
       dependencyGraph: new Map(),
       categories: [],
       specialRules: [],
-      departmentMappings: new Map()
+      departmentMappings: new Map(),
+      seriesMappings: new Map()
     }
 
     // Set up the course map

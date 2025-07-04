@@ -35,7 +35,7 @@ export const LevelFilterSection: React.FC<LevelFilterSectionProps> = ({ filters,
           <Checkbox
             key={level}
             checked={filters.levels?.includes(level) || false}
-            onCheckedChange={(details) => onLevelChange(level, details.checked === true)}
+            onCheckedChange={(details: { checked: boolean }) => onLevelChange(level, details.checked === true)}
           >
             {getLevelLabel(level)}
           </Checkbox>
