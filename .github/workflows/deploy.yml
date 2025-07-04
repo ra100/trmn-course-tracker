@@ -28,7 +28,9 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
-        run: pnpm install
+        run: |
+          corepack enable
+          pnpm install
 
       - name: Run lint
         run: pnpm run lint
@@ -61,7 +63,9 @@ jobs:
           node-version: '24'
 
       - name: Install dependencies
-        run: pnpm install
+        run: |
+          corepack enable
+          pnpm install
 
       - name: Build application
         run: pnpm run build
