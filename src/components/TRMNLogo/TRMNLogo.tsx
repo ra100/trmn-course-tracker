@@ -19,6 +19,15 @@ const logoContainer = css({
   }
 })
 
+const logoSize = (size: number) => css({ width: `${size}px`, height: `${size}px` })
+
+const logoImage = css({
+  display: 'block',
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain'
+})
+
 /**
  * TRMN Logo Component
  *
@@ -36,20 +45,19 @@ export const TRMNLogo: React.FC<TRMNLogoProps> = ({
   const t = useT()
   return (
     <div
-      className={`${logoContainer} ${className}`}
+      className={`${logoContainer} ${logoSize(size)} ${className}`}
       data-interactive={interactive}
       data-glow={glow}
       onClick={interactive ? onClick : undefined}
       tabIndex={interactive ? 0 : undefined}
       aria-label={t.trmnHeader ? t.trmnHeader.line2 : 'The Royal Manticoran Navy Logo'}
-      style={{ width: size, height: size }}
     >
       <img
-        src="/trmn-seal.png"
+        src={`${import.meta.env.BASE_URL}trmn-seal.png`}
         width={size}
         height={size}
         alt={t.trmnHeader ? t.trmnHeader.line2 : 'The Royal Manticoran Navy Logo'}
-        style={{ display: 'block', width: '100%', height: '100%', objectFit: 'contain' }}
+        className={logoImage}
         draggable={false}
       />
     </div>
