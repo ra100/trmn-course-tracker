@@ -16,6 +16,7 @@ import { GDPRConsentBanner } from './components/GDPRConsentBanner'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { DebugPanel } from './components/DebugPanel'
 import { SkipLinks } from './components/SkipLinks'
+import { TRMNHeader } from './components/TRMNHeader'
 import { Course, FilterOptions, UserSettings } from './types'
 import { useT, useTranslation } from './i18n'
 import { initializeAnalytics, trackPageView, trackViewModeChange, ConsentSettings } from './utils/analytics'
@@ -26,7 +27,7 @@ const appContainer = css({
   maxHeight: '100vh',
   overflow: 'hidden',
   backgroundColor: 'bg.default',
-  fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+  fontFamily: 'fonts.body',
   color: 'fg.default',
   '@media (max-width: md)': {
     flexDirection: 'column',
@@ -85,31 +86,8 @@ const mainContent = css({
   flexDirection: 'column',
   overflow: 'hidden',
   minHeight: 0,
-  '@media (max-width: 768px)': {
-    width: '100%'
   '@media (max-width: md)': {
-})
-
-const header = css({
-  backgroundColor: 'bg.surface',
-  color: 'fg.default',
-  padding: '1rem',
-  boxShadow: 'md',
-  borderBottom: '1px solid',
-  borderColor: 'border.default',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  '@media (max-width: 768px)': {
-    padding: '0.8rem',
-    '& h1': {
-      fontSize: '1.2rem',
-      margin: 0
-    },
-    '& p': {
-      fontSize: '0.9rem',
-      margin: 0
-    }
+    width: '100%'
   }
 })
 
@@ -193,32 +171,43 @@ const loadingOverlay = css({
 })
 
 const errorMessage = css({
-  backgroundColor: 'red.500',
+  backgroundColor: 'brand.primary',
   color: 'white',
-  padding: '1rem',
+  padding: '1.5rem',
   margin: '1rem',
-  borderRadius: 'md'
-})
-
-const mobileMenuButton = css({
-  display: 'none',
-  background: 'none',
-  border: 'none',
-  color: 'fg.default',
-  fontSize: '1.5rem',
-  cursor: 'pointer',
-  padding: '0.5rem',
   borderRadius: 'md',
-  transition: 'background-color 0.2s ease',
-  _hover: {
-    backgroundColor: 'bg.subtle'
-  },
-  '@media (max-width: 768px)': {
-    display: 'block'
-  }
-})
-
-const mobileOverlay = css({
+  boxShadow: 'lg',
+  '& h3': {
+    fontFamily: 'heading',
+    fontSize: '1.2rem',
+    fontWeight: 'bold',
+    margin: '0 0 0.5rem 0',
+    textTransform: 'uppercase',
+  padding: 'spacing.6',
+  margin: 'spacing.4',
+  borderRadius: 'radii.md',
+  boxShadow: 'shadows.lg',
+    margin: '0 0 1rem 0',
+    fontFamily: 'fonts.heading',
+    fontSize: 'fontSizes.lg',
+    fontWeight: 'fontWeights.bold',
+    margin: '0 0 spacing.2 0',
+    color: 'brand.primary',
+    letterSpacing: 'letterSpacings.wide'
+    padding: '0.5rem 1rem',
+    borderRadius: 'sm',
+    fontFamily: 'fonts.body',
+    margin: '0 0 spacing.4 0',
+    lineHeight: 'lineHeights.relaxed'
+    transition: 'all 0.2s ease',
+    _hover: {
+      backgroundColor: 'brand.secondary',
+      color: 'white'
+    }
+    padding: 'spacing.2 spacing.4',
+    borderRadius: 'radii.sm',
+    fontFamily: 'fonts.body',
+    fontWeight: 'fontWeights.medium',
   display: 'none',
   '@media (max-width: md)': {
     position: 'fixed',
@@ -237,28 +226,12 @@ const mobileOverlayVisible = css({
   }
 })
 
-const headerContent = css({
-  display: 'flex',
-  flexDirection: 'column',
-  flex: 1,
-  '& h1': {
-    margin: 0,
-    fontSize: '1.5rem',
-    fontWeight: 'bold'
-  },
-  '& p': {
-    margin: 0,
-    fontSize: '0.9rem',
-    color: 'fg.muted'
-  }
-})
-
 const mobileDetailsToggle = css({
   display: 'none',
   position: 'fixed',
   bottom: '20px',
   right: '20px',
-  backgroundColor: 'accent.default',
+  backgroundColor: 'brand.primary',
   color: 'white',
   border: 'none',
   borderRadius: '50%',
@@ -266,19 +239,20 @@ const mobileDetailsToggle = css({
   height: '56px',
   fontSize: '1.2rem',
   cursor: 'pointer',
-  boxShadow: 'lg',
-  zIndex: 100,
+  bottom: 'spacing.5',
+  right: 'spacing.5',
   transition: 'all 0.3s ease',
+  fontFamily: 'body',
   _hover: {
-    borderRadius: 'radii.full',
-    width: 'sizes.14',
-    height: 'sizes.14',
-    fontSize: 'lg',
+  borderRadius: 'radii.full',
+  width: 'sizes.14',
+  height: 'sizes.14',
+  fontSize: 'fontSizes.lg',
     display: 'block'
   }
 })
 
-const mobileCloseButton = css({
+  fontFamily: 'fonts.body',
   display: 'none',
   position: 'absolute',
   top: 'spacing.4',
@@ -291,14 +265,17 @@ const mobileCloseButton = css({
   padding: 'spacing.2',
   borderRadius: 'radii.md',
   zIndex: 1001,
+  fontFamily: 'body',
+  transition: 'all 0.2s ease',
   _hover: {
-    backgroundColor: 'bg.subtle'
+    backgroundColor: 'bg.subtle',
+    color: 'brand.primary'
   },
   '@media (max-width: md)': {
     display: 'block'
   }
 })
-
+  fontFamily: 'fonts.body',
 function App() {
   const t = useT()
   const { setLanguage } = useTranslation()
@@ -349,19 +326,12 @@ function App() {
     }
   }, [settings?.language, setLanguage])
 
-  // Apply dark mode class to document element
+  // Always apply dark mode class
   useEffect(() => {
-    if (settings?.theme) {
-      const htmlElement = document.documentElement
-      if (settings.theme === 'dark') {
-        htmlElement.classList.add('dark')
-        htmlElement.classList.remove('light')
-      } else {
-        htmlElement.classList.add('light')
-        htmlElement.classList.remove('dark')
-      }
-    }
-  }, [settings?.theme])
+    const htmlElement = document.documentElement
+    htmlElement.classList.add('dark')
+    htmlElement.classList.remove('light')
+  }, [])
 
   // Initialize analytics on app load
   useEffect(() => {
@@ -460,15 +430,11 @@ function App() {
         </div>
 
         <div className={mainContent} id="main-content">
-          <header className={header}>
-            <button className={mobileMenuButton} onClick={toggleMobileMenu} aria-label={t.accessibility.menuToggle}>
-              ☰
-            </button>
-            <div className={headerContent}>
-              <h1>{t.appTitle}</h1>
-              <p>{t.appSubtitle}</p>
-            </div>
-          </header>
+          <TRMNHeader
+            showMobileMenu
+            onMobileMenuToggle={toggleMobileMenu}
+            menuToggleLabel={t.accessibility.menuToggle}
+          />
 
           <div className={contentArea}>
             <div

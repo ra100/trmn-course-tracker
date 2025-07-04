@@ -7,7 +7,6 @@ const USER_SETTINGS_STORAGE_KEY = 'trmn-user-settings'
 
 // Default user settings
 const getDefaultUserSettings = (): UserSettings => ({
-  theme: 'light',
   layout: 'tree',
   showCompleted: true,
   showUnavailable: true,

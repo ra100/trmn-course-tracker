@@ -37,9 +37,7 @@ export interface StatusFilterSectionProps {
 }
 
 export interface PreferencesSectionProps {
-  isDarkMode: boolean
   autoSave: boolean
-  onThemeToggle: () => void
   onAutoSaveToggle: (checked: boolean) => void
 }
 
@@ -51,7 +49,6 @@ export interface UseSettingsHandlersProps {
 
 export interface UseSettingsHandlersReturn {
   handleToggle: (key: keyof UserSettings, value: boolean) => void
-  handleThemeToggle: () => void
   handleLanguageChange: (language: Language) => void
   handleReset: () => void
 }

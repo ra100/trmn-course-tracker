@@ -15,7 +15,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
   const t = useT()
   const { setLanguage } = useTranslation()
 
-  const { handleToggle, handleThemeToggle, handleLanguageChange, handleReset } = useSettingsHandlers({
+  const { handleToggle, handleLanguageChange, handleReset } = useSettingsHandlers({
     settings,
     onSettingsChange,
     setLanguage
@@ -34,9 +34,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ settings, onSettin
       <LanguageSelector language={settings.language} onLanguageChange={handleLanguageChange} />
 
       <PreferencesSection
-        isDarkMode={settings.theme === 'dark'}
         autoSave={settings.autoSave}
-        onThemeToggle={handleThemeToggle}
         onAutoSaveToggle={(checked) => handleToggle('autoSave', checked)}
       />
 

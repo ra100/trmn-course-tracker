@@ -4,6 +4,12 @@ export const csTranslations: TranslationStrings = {
   // App Header
   appTitle: 'TRMN Sledování kurzů',
   appSubtitle: 'Sledujte svůj pokrok v systému kurzů Královského mantikorského námořnictva',
+  trmnHeader: {
+    line1: 'KRÁLOVSKÉ',
+    line2: 'MANTIKORSKÉ NÁMOŘNICTVO',
+    subtitle: 'Sledování kurzů - Úřad komunikace',
+    menuToggleLabel: 'Přepnout navigační menu'
+  },
 
   // Navigation and General
   loading: 'Načítání dat kurzů TRMN...',

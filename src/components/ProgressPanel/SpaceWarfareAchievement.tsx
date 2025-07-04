@@ -2,42 +2,7 @@ import React, { useState, useCallback } from 'react'
 import { css, cva } from 'styled-system/css'
 import { useT } from '../../i18n'
 import { flexContainer, statusIcon, requirementText, departmentInfo } from './ProgressPanel.styles'
-
-// Space Warfare specific styles
-const spaceWarfareContainer = cva({
-  base: {
-    padding: '1rem',
-    borderRadius: '8px',
-    fontSize: '0.9rem',
-    border: '2px solid',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    _hover: {
-      transform: 'translateY(-1px)',
-      boxShadow: 'md'
-    }
-  },
-  variants: {
-    earned: {
-      true: {
-        bgGradient: 'to-br',
-        gradientFrom: 'green.9',
-        gradientTo: 'green.11',
-        color: 'white',
-        borderColor: 'green.6',
-        boxShadow: 'sm'
-      },
-      false: {
-        background: 'bg.surface',
-        color: 'fg.default',
-        borderColor: 'border.default',
-        _hover: {
-          borderColor: 'accent.default'
-        }
-      }
-    }
-  }
-})
+import { achievementItem } from './BasicAchievements'
 
 const spaceWarfareHeader = css({
   display: 'flex',
@@ -103,11 +68,12 @@ const spaceWarfareDetails = cva({
 const pinSection = css({
   marginBottom: '1.5rem',
   padding: '1rem',
-  borderColor: 'rgba(255, 255, 255, 0.3)',
+  border: '2px solid',
+  borderColor: 'border.default',
   borderRadius: '8px',
-  background: 'white',
+  background: 'bg.surface',
   boxShadow: 'md',
-  color: 'black',
+  color: 'fg.default',
   '&:last-child': {
     marginBottom: '1.5rem'
   }
@@ -192,8 +158,8 @@ const requirementItem = cva({
 const progressBarContainer = css({
   marginTop: '0.5rem',
   height: '10px',
-  background: 'rgba(229, 231, 235, 1)',
-  borderRadius: '5px',
+  height: '0.7rem',
+  background: '#1e293b',
   overflow: 'hidden',
   border: '1px solid #334155'
 })
