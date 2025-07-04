@@ -72,7 +72,7 @@ describe('CourseDetails', () => {
     expect(screen.getByText('Test Course')).toBeInTheDocument()
     expect(screen.getByText('TC-101')).toBeInTheDocument()
     expect(screen.getByText('Test Section → Test Subsection')).toBeInTheDocument()
-    expect(screen.getAllByText('Available')).toHaveLength(2) // Badge and info grid
+    expect(screen.getByText('Available')).toBeInTheDocument() // Only badge now
   })
 
   it('shows "Working On" status correctly', () => {
@@ -90,7 +90,7 @@ describe('CourseDetails', () => {
       />
     )
 
-    expect(screen.getAllByText('Working On')).toHaveLength(2) // Badge and info grid
+    expect(screen.getByText('Working On')).toBeInTheDocument() // Only badge now
   })
 
   it('shows "Waiting for Grade" status correctly', () => {
@@ -108,7 +108,7 @@ describe('CourseDetails', () => {
       />
     )
 
-    expect(screen.getAllByText('Waiting for Grade')).toHaveLength(2) // Badge and info grid
+    expect(screen.getByText('Waiting for Grade')).toBeInTheDocument() // Only badge now
   })
 
   it('calls onCourseStatusChange when status buttons are clicked', () => {
