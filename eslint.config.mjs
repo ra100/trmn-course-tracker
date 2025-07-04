@@ -124,6 +124,16 @@ export default [
   },
 
   {
-    ignores: ['build/**', 'dist/**', 'coverage/**', 'node_modules/**', '*.min.js', 'public/**', '.git/**']
+    ignores: [
+      'build/**',
+      'dist/**',
+      'coverage/**',
+      'node_modules/**',
+      '*.min.js',
+      'public/**',
+      '.git/**',
+      'styled-system/**',
+      'src/styled-system/**'
+    ]
   }
 ]
