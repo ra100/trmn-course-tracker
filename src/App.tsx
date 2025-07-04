@@ -27,7 +27,7 @@ const appContainer = css({
   maxHeight: '100vh',
   overflow: 'hidden',
   backgroundColor: 'bg.default',
-  fontFamily: 'fonts.body',
+  fontFamily: 'body',
   color: 'fg.default',
   '@media (max-width: md)': {
     flexDirection: 'column',
@@ -126,7 +126,6 @@ const detailsPanel = css({
   borderColor: 'border.default',
   overflowY: 'auto',
   overscrollBehavior: 'contain',
-  padding: 'spacing.8',
   boxSizing: 'border-box',
   '@media (max-width: lg)': {
     width: '300px'
@@ -175,31 +174,31 @@ const loadingOverlay = css({
 const errorMessage = css({
   backgroundColor: 'brand.primary',
   color: 'white',
-  padding: 'spacing.6',
-  margin: 'spacing.4',
+  padding: '6',
+  margin: '4',
   borderRadius: 'radii.md',
   boxShadow: 'shadows.lg',
   '& h3': {
-    fontFamily: 'fonts.heading',
+    fontFamily: 'heading',
     fontSize: 'fontSizes.lg',
-    fontWeight: 'fontWeights.bold',
-    margin: '0 0 spacing.2 0',
+    fontWeight: 'bold',
+    margin: '0 0 2 0',
     textTransform: 'uppercase',
     letterSpacing: 'letterSpacings.wide'
   },
   '& p': {
-    fontFamily: 'fonts.body',
-    margin: '0 0 spacing.4 0',
-    lineHeight: 'lineHeights.relaxed'
+    fontFamily: 'body',
+    margin: '0 0 4 0',
+    lineHeight: 'relaxed'
   },
   '& button': {
     backgroundColor: 'white',
     color: 'brand.primary',
     border: 'none',
-    padding: 'spacing.2 spacing.4',
+    padding: '2 4',
     borderRadius: 'radii.sm',
-    fontFamily: 'fonts.body',
-    fontWeight: 'fontWeights.medium',
+    fontFamily: 'body',
+    fontWeight: 'medium',
     cursor: 'pointer',
     transition: 'all 0.2s ease',
     _hover: {
@@ -231,8 +230,8 @@ const mobileOverlayVisible = css({
 const mobileDetailsToggle = css({
   display: 'none',
   position: 'fixed',
-  bottom: 'spacing.5',
-  right: 'spacing.5',
+  bottom: '5',
+  right: '5',
   backgroundColor: 'brand.primary',
   color: 'white',
   border: 'none',
@@ -243,7 +242,7 @@ const mobileDetailsToggle = css({
   cursor: 'pointer',
   boxShadow: 'shadows.lg',
   transition: 'all 0.3s ease',
-  fontFamily: 'fonts.body',
+  fontFamily: 'body',
   _hover: {
     borderRadius: 'radii.full',
     width: 'sizes.14',
@@ -257,17 +256,17 @@ const mobileDetailsToggle = css({
 const mobileCloseButton = css({
   display: 'none',
   position: 'absolute',
-  top: 'spacing.4',
-  right: 'spacing.4',
+  top: '4',
+  right: '4',
   background: 'none',
   border: 'none',
   color: 'fg.default',
   fontSize: 'fontSizes.xl',
   cursor: 'pointer',
-  padding: 'spacing.2',
+  padding: '2',
   borderRadius: 'radii.md',
   zIndex: 1001,
-  fontFamily: 'fonts.body',
+  fontFamily: 'body',
   transition: 'all 0.2s ease',
   _hover: {
     backgroundColor: 'bg.subtle',

@@ -273,9 +273,6 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
   const achievements = useMemo(() => getAchievements(), [getAchievements])
   const { oswpProgress, eswpProgress } = useMemo(() => getSpaceWarfarePins(), [getSpaceWarfarePins])
 
-  // Calculate combined Space Warfare eligibility for the main achievement
-  const combinedSpaceWarfareEarned = oswpProgress.earned || eswpProgress.earned
-
   return (
     <div className={panelContainer}>
       <h2 className={panelTitle}>{t.progress.title}</h2>
@@ -286,11 +283,7 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
 
       <h3 className={panelTitle}>{t.progress.achievements}</h3>
 
-      <SpaceWarfareAchievement
-        oswpProgress={oswpProgress}
-        eswpProgress={eswpProgress}
-        combinedEarned={combinedSpaceWarfareEarned}
-      />
+      <SpaceWarfareAchievement oswpProgress={oswpProgress} eswpProgress={eswpProgress} />
 
       <BasicAchievements achievements={achievements} maxDisplay={15} />
     </div>

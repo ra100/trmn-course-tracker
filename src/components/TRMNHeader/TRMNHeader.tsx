@@ -72,7 +72,7 @@ const mobileMenuButton = css({
   padding: '2',
   borderRadius: 'radii.md',
   transition: 'all 0.2s ease',
-  fontFamily: 'fonts.body',
+  fontFamily: 'body',
   position: 'relative',
   zIndex: 3,
 
@@ -98,14 +98,14 @@ const logotypeContainer = css({
 
 const dualLineLogotype = css({
   margin: 0,
-  fontFamily: 'fonts.heading',
+  fontFamily: 'heading',
   color: '#ffffff',
   textTransform: 'uppercase',
   letterSpacing: 'letterSpacings.wide',
-  lineHeight: 'lineHeights.tight',
+  lineHeight: 'tight',
   textShadow: '0 2px 8px rgba(0,0,0,0.8), 0 0 16px rgba(190, 47, 38, 0.3)',
   fontSize: 'fontSizes.3xl',
-  fontWeight: 'fontWeights.bold',
+  fontWeight: 'bold',
   textAlign: 'left',
 
   // Responsive typography following TRMN style guide principles
@@ -116,7 +116,7 @@ const dualLineLogotype = css({
   '@media (max-width: md)': {
     fontSize: 'fontSizes.lg',
     letterSpacing: 'letterSpacings.tight',
-    lineHeight: 'lineHeights.tight'
+    lineHeight: 'tight'
   },
   '@media (max-width: sm)': {
     fontSize: 'fontSizes.md',
@@ -128,9 +128,9 @@ const subtitleText = css({
   margin: '1 0 0 0',
   fontSize: 'fontSizes.sm',
   color: 'rgba(250, 233, 36, 0.9)',
-  fontWeight: 'fontWeights.normal',
-  fontFamily: 'fonts.body',
-  lineHeight: 'lineHeights.relaxed',
+  fontWeight: 'normal',
+  fontFamily: 'body',
+  lineHeight: 'relaxed',
   fontStyle: 'italic',
   textShadow: '0 1px 4px rgba(0,0,0,0.6)',
 

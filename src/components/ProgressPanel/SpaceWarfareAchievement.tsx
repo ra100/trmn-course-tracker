@@ -8,7 +8,7 @@ const spaceWarfareHeader = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: 'spacing.2',
+  gap: '2',
   cursor: 'pointer'
 })
 
@@ -52,8 +52,8 @@ const spaceWarfareDetails = cva({
       true: {
         maxHeight: '1000px',
         opacity: '1',
-        marginTop: 'spacing.4',
-        paddingBottom: 'spacing.2'
+        marginTop: '4',
+        paddingBottom: '2'
       },
       false: {
         maxHeight: '0',
@@ -193,9 +193,9 @@ const progressText = css({
 
 const achievementDescription = css({
   fontSize: 'fontSizes.sm',
-  marginTop: 'spacing.2',
+  marginTop: '2',
   color: 'rgba(255, 255, 255, 0.95)',
-  fontWeight: 'fontWeights.normal',
+  fontWeight: 'normal',
   textShadow: '0 1px 2px rgba(0,0,0,0.3)'
 })
 

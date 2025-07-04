@@ -192,7 +192,6 @@ export const infoLabel = css({
   fontWeight: 'semibold',
   background: 'amber.100',
   borderRadius: 'radii.sm',
-  padding: '0.1em 0.5em',
   marginBottom: '0.5',
   letterSpacing: '0.02em',
   alignSelf: 'flex-start'
@@ -205,7 +204,7 @@ export const infoValue = css({
 
 export const descriptionText = css({
   color: 'fg.default',
-  lineHeight: 'lineHeights.relaxed'
+  lineHeight: 'relaxed'
 })
 
 export const panelCard = css({
