@@ -242,3 +242,11 @@ export const actionGroup = css({
 export const badgeMargin = css({
   marginY: '3'
 })
+
+export const badgeStatusStyle = {
+  completed: css({ background: 'green.9', color: 'white' }),
+  waiting_grade: css({ background: 'amber.9', color: 'white' }),
+  in_progress: css({ background: 'blue.9', color: 'white' }),
+  available: css({ background: 'cyan.9', color: 'white' }),
+  locked: css({ background: 'gray.9', color: 'white' })
+}
