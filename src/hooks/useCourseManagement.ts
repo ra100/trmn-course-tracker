@@ -3,6 +3,7 @@ import { UserProgress, Course, CourseData, CourseStatusTimestamp } from '../type
 import { EligibilityEngine } from '../utils/eligibilityEngine'
 import { trackCourseCompletion } from '../utils/analytics'
 import { useOptimisticUserProgress } from './useUserProgress'
+import { logger } from '~/utils/logger'
 
 interface UseCourseManagementProps {
   courseData: CourseData | undefined
@@ -270,9 +271,9 @@ export const useCourseManagement = ({
 
         // Store completion date if available
         if (completionDates?.has(courseCode)) {
-          const date = completionDates.get(courseCode)!
+          const date = completionDates.get(courseCode) ?? new Date()
           newCourseCompletionDates.set(courseCode, date)
-          console.log('💾 Storing completion date for course:', courseCode, '→', date)
+          logger.log('💾 Storing completion date for course:', courseCode, '→', date)
         }
       })
 
@@ -286,7 +287,7 @@ export const useCourseManagement = ({
         lastUpdated: new Date()
       }
 
-      console.log('📊 Final progress after import:', {
+      logger.log('📊 Final progress after import:', {
         completedCourses: Array.from(newCompleted),
         completionDates: Array.from(newCourseCompletionDates.entries()),
         totalCompletionDates: newCourseCompletionDates.size

@@ -9,7 +9,7 @@ import {
   CourseLevel,
   Prerequisite
 } from '../types'
-import { getLogger } from './logger'
+import { logger } from './logger'
 
 export class EligibilityEngine {
   private courseData: ParsedCourseData
@@ -258,7 +258,7 @@ export class EligibilityEngine {
   ): number {
     let count = 0
 
-    getLogger().log('🔍 Checking department requirements:', {
+    logger.log('🔍 Checking department requirements:', {
       departments,
       level,
       completedCourses: Array.from(userProgress.completedCourses)
@@ -287,7 +287,7 @@ export class EligibilityEngine {
 
       const hasCorrectLevel = !level || course.level === level
 
-      getLogger().log(`📚 Course ${courseCode}:`, {
+      logger.log(`📚 Course ${courseCode}:`, {
         name: course.name,
         section: course.section,
         subsection: course.subsection,
@@ -302,7 +302,7 @@ export class EligibilityEngine {
       }
     }
 
-    getLogger().log(`✅ Total count: ${count}`)
+    logger.log(`✅ Total count: ${count}`)
     return count
   }
 

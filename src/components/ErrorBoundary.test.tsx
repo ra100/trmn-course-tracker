@@ -4,7 +4,7 @@ import { ThemeProvider } from 'styled-components'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { ErrorBoundary } from './ErrorBoundary'
 import { darkTheme } from '../theme'
-import { getLogger } from '~/utils/logger'
+import { logger } from '~/utils/logger'
 
 // Mock component that throws an error
 const ThrowError: React.FC<{ shouldThrow: boolean }> = ({ shouldThrow }) => {
@@ -14,14 +14,14 @@ const ThrowError: React.FC<{ shouldThrow: boolean }> = ({ shouldThrow }) => {
   return <div data-testid="working-component">Component works fine</div>
 }
 
-// Mock getLogger().error to avoid noise in tests
-const originalConsoleError = getLogger().error
+// Mock logger.error to avoid noise in tests
+const originalConsoleError = logger.error
 beforeEach(() => {
-  getLogger().error = vi.fn()
+  logger.error = vi.fn()
 })
 
 afterEach(() => {
-  getLogger().error = originalConsoleError
+  logger.error = originalConsoleError
 })
 
 const renderWithTheme = (component: React.ReactNode) => {
@@ -164,8 +164,8 @@ describe('ErrorBoundary', () => {
         </ErrorBoundary>
       )
 
-      expect(getLogger().error).toHaveBeenCalledWith('ErrorBoundary caught an error:', expect.any(Error))
-      expect(getLogger().error).toHaveBeenCalledWith('Error info:', expect.any(Object))
+      expect(logger.error).toHaveBeenCalledWith('ErrorBoundary caught an error:', expect.any(Error))
+      expect(logger.error).toHaveBeenCalledWith('Error info:', expect.any(Object))
 
       process.env.NODE_ENV = originalNodeEnv
     })

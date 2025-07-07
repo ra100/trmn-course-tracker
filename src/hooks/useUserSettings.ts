@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { UserSettings } from '../types'
-import { getLogger } from '../utils/logger'
+import { logger } from '../utils/logger'
 
 const USER_SETTINGS_QUERY_KEY = ['userSettings']
 const USER_SETTINGS_STORAGE_KEY = 'trmn-user-settings'
@@ -26,7 +26,7 @@ const loadUserSettingsFromStorage = (): UserSettings => {
       }
     }
   } catch (err) {
-    getLogger().error('Error loading user settings:', err)
+    logger.error('Error loading user settings:', err)
   }
 
   return getDefaultUserSettings()
@@ -37,11 +37,11 @@ const saveUserSettingsToStorage = async (settings: UserSettings): Promise<UserSe
   try {
     localStorage.setItem(USER_SETTINGS_STORAGE_KEY, JSON.stringify(settings))
 
-    getLogger().log('⚙️ User settings saved to localStorage')
+    logger.log('⚙️ User settings saved to localStorage')
 
     return Promise.resolve(settings)
   } catch (err) {
-    getLogger().error('Error saving user settings:', err)
+    logger.error('Error saving user settings:', err)
 
     throw err
   }
@@ -67,10 +67,10 @@ export const useUpdateUserSettings = () => {
       // Update the cache immediately
       queryClient.setQueryData(USER_SETTINGS_QUERY_KEY, updatedSettings)
 
-      getLogger().log('✅ User settings updated successfully')
+      logger.log('✅ User settings updated successfully')
     },
     onError: (error) => {
-      getLogger().error('❌ Failed to update user settings:', error)
+      logger.error('❌ Failed to update user settings:', error)
     }
   })
 }

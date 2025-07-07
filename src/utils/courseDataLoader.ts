@@ -1,5 +1,5 @@
 import { ParsedCourseData, Course, Category, SpecialRule } from '../types'
-import { getLogger } from './logger'
+import { logger } from './logger'
 
 interface SerializedCourseData {
   courses: Course[]
@@ -29,14 +29,14 @@ export async function loadCourseData(): Promise<ParsedCourseData> {
     const departmentMappings = new Map<string, string[]>(Object.entries(data.departmentMappings))
     const seriesMappings = new Map<string, string>(data.seriesMappings || [])
 
-    getLogger().group('📄 Course Data Loader')
-    getLogger().log('📚 Total courses loaded:', data.courses.length)
-    getLogger().log('📋 Categories loaded:', data.categories.length)
-    getLogger().log('⚡ Special rules loaded:', data.specialRules.length)
-    getLogger().log('🗂️ Department mappings loaded:', departmentMappings.size)
-    getLogger().log('📺 Series mappings loaded:', seriesMappings.size)
-    getLogger().log('🕒 Built at:', data.buildTimestamp)
-    getLogger().groupEnd()
+    logger.group('📄 Course Data Loader')
+    logger.log('📚 Total courses loaded:', data.courses.length)
+    logger.log('📋 Categories loaded:', data.categories.length)
+    logger.log('⚡ Special rules loaded:', data.specialRules.length)
+    logger.log('🗂️ Department mappings loaded:', departmentMappings.size)
+    logger.log('📺 Series mappings loaded:', seriesMappings.size)
+    logger.log('🕒 Built at:', data.buildTimestamp)
+    logger.groupEnd()
 
     return {
       courses: data.courses,
@@ -49,7 +49,7 @@ export async function loadCourseData(): Promise<ParsedCourseData> {
       dependencyGraph
     }
   } catch (error) {
-    getLogger().error('Failed to load course data:', error)
+    logger.error('Failed to load course data:', error)
     throw error
   }
 }

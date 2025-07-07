@@ -8,6 +8,7 @@ import {
 } from '../../utils/medusaParser'
 import { trackFileImport } from '../../utils/analytics'
 import { UseMedusaImportProps, UseMedusaImportReturn } from './types'
+import { logger } from '~/utils/logger'
 
 export const useMedusaImport = ({ onImportMedusaCourses }: UseMedusaImportProps): UseMedusaImportReturn => {
   const [importHtml, setImportHtml] = useState('')
@@ -48,7 +49,7 @@ export const useMedusaImport = ({ onImportMedusaCourses }: UseMedusaImportProps)
         const completionDates = extractCompletionDates(result.courses)
 
         // Debug completion dates during import
-        console.log('📅 Medusa import completion dates:', {
+        logger.log('📅 Medusa import completion dates:', {
           totalCourses: result.courses.length,
           courseCodes,
           completionDates: Array.from(completionDates.entries()),

@@ -1,5 +1,5 @@
 import { config } from '../config'
-import { getLogger } from './logger'
+import { logger } from './logger'
 
 // Google Analytics gtag function type
 declare global {
@@ -29,7 +29,7 @@ const loadGTM = (gtmId: string): void => {
   // Check if script is already loaded
   const existingScript = document.querySelector(`script[src="${scriptSrc}"]`)
   if (existingScript) {
-    getLogger().log(`Analytics: GTM script already loaded (${gtmId})`)
+    logger.log(`Analytics: GTM script already loaded (${gtmId})`)
     return
   }
 
@@ -37,12 +37,12 @@ const loadGTM = (gtmId: string): void => {
   script.async = true
   script.src = scriptSrc
 
-  getLogger().log(`Analytics: Loading GTM script (${gtmId})`)
+  logger.log(`Analytics: Loading GTM script (${gtmId})`)
   script.onload = () => {
-    getLogger().log(`Analytics: GTM script loaded successfully (${gtmId})`)
+    logger.log(`Analytics: GTM script loaded successfully (${gtmId})`)
   }
   script.onerror = (error) => {
-    getLogger().error(`Analytics: Error loading GTM script (${gtmId}):`, error)
+    logger.error(`Analytics: Error loading GTM script (${gtmId}):`, error)
   }
 
   document.head.appendChild(script)
@@ -59,19 +59,19 @@ let lastConsentUpdate: string | null = null
 export const initializeAnalytics = (): void => {
   // Prevent multiple initializations
   if (isAnalyticsInitialized) {
-    getLogger().log('Analytics: Already initialized, skipping...')
+    logger.log('Analytics: Already initialized, skipping...')
     return
   }
 
   if (!config.analytics.enabled) {
-    getLogger().log('Analytics: Disabled - no GTM ID provided')
+    logger.log('Analytics: Disabled - no GTM ID provided')
     return
   }
 
-  getLogger().log(`Analytics: Initializing with GTM ID: ${config.analytics.gtmId}`)
+  logger.log(`Analytics: Initializing with GTM ID: ${config.analytics.gtmId}`)
 
   // Debug: Log the exact configuration
-  getLogger().log('Analytics: Configuration details:', {
+  logger.log('Analytics: Configuration details:', {
     gtmId: config.analytics.gtmId,
     gtmIdLength: config.analytics.gtmId.length,
     gtmIdCharCodes: Array.from(config.analytics.gtmId).map((c) => c.charCodeAt(0)),
@@ -116,7 +116,7 @@ export const initializeAnalytics = (): void => {
     trackPageView()
   }
 
-  getLogger().log('Analytics: Initialization completed')
+  logger.log('Analytics: Initialization completed')
 }
 
 // Update consent settings
@@ -132,18 +132,18 @@ export const updateGTMConsent = (consentSettings: Partial<ConsentSettings>): voi
   localStorage.setItem('gdpr-consent', JSON.stringify(consentSettings))
 
   if (!config.analytics.enabled || !window.gtag) {
-    getLogger().log('Analytics: Cannot update consent - not initialized')
+    logger.log('Analytics: Cannot update consent - not initialized')
     return
   }
 
   // Prevent duplicate consent updates
   const consentKey = JSON.stringify(consentSettings)
   if (lastConsentUpdate === consentKey) {
-    getLogger().log('Analytics: Skipping duplicate consent update')
+    logger.log('Analytics: Skipping duplicate consent update')
     return
   }
 
-  getLogger().log('Analytics: Updating consent settings', consentSettings)
+  logger.log('Analytics: Updating consent settings', consentSettings)
 
   window.gtag('consent', 'update', {
     analytics_storage: consentSettings.analytics || defaultConsentSettings.analytics,
@@ -155,7 +155,7 @@ export const updateGTMConsent = (consentSettings: Partial<ConsentSettings>): voi
 
   // Reset last tracked page when consent is granted to allow new page view
   if (consentSettings.analytics === 'granted') {
-    getLogger().log('Analytics: Consent granted, resetting page tracking')
+    logger.log('Analytics: Consent granted, resetting page tracking')
     lastTrackedPage = null
   }
 }
@@ -166,7 +166,7 @@ export const getStoredConsent = (): Partial<ConsentSettings> | null => {
     const stored = localStorage.getItem('gdpr-consent')
     return stored ? JSON.parse(stored) : null
   } catch (error) {
-    getLogger().error('Analytics: Error reading stored consent', error)
+    logger.error('Analytics: Error reading stored consent', error)
     return null
   }
 }
@@ -178,11 +178,11 @@ export const trackPageView = (path?: string): void => {
 
   // Prevent duplicate page views
   if (lastTrackedPage === page) {
-    getLogger().log(`Analytics: Skipping duplicate page view for ${page}`)
+    logger.log(`Analytics: Skipping duplicate page view for ${page}`)
     return
   }
 
-  getLogger().log('Analytics page view tracking attempt:', {
+  logger.log('Analytics page view tracking attempt:', {
     enabled: config.analytics.enabled,
     gtagExists: !!window.gtag,
     gtmId: config.analytics.gtmId,
@@ -192,13 +192,13 @@ export const trackPageView = (path?: string): void => {
   })
 
   if (!config.analytics.enabled || !window.gtag) {
-    getLogger().log('Analytics: Cannot track page view - not initialized')
+    logger.log('Analytics: Cannot track page view - not initialized')
     return
   }
 
   // Check if analytics consent is granted
   if (consent?.analytics !== 'granted') {
-    getLogger().log('Analytics: Page view not sent - analytics consent not granted')
+    logger.log('Analytics: Page view not sent - analytics consent not granted')
     return
   }
 
@@ -210,7 +210,7 @@ export const trackPageView = (path?: string): void => {
 
     // Update last tracked page
     lastTrackedPage = page
-    getLogger().log(`Analytics: Page view tracked - ${page}`)
+    logger.log(`Analytics: Page view tracked - ${page}`)
   }
 }
 
@@ -219,19 +219,19 @@ export const trackEvent = (eventName: string, parameters?: Record<string, unknow
   const consent = getStoredConsent()
 
   if (!config.analytics.enabled || !window.gtag) {
-    getLogger().log(`Analytics: Cannot track event ${eventName} - not initialized`)
+    logger.log(`Analytics: Cannot track event ${eventName} - not initialized`)
     return
   }
 
   // Check if analytics consent is granted
   if (consent?.analytics !== 'granted') {
-    getLogger().log(`Analytics: Event ${eventName} not sent - analytics consent not granted`)
+    logger.log(`Analytics: Event ${eventName} not sent - analytics consent not granted`)
     return
   }
 
   window.gtag('event', eventName, parameters)
 
-  getLogger().log(`Analytics: Event tracked - ${eventName}`, parameters)
+  logger.log(`Analytics: Event tracked - ${eventName}`, parameters)
 }
 
 // Track course completion
@@ -396,14 +396,14 @@ export const debugAnalytics = () => {
     recentDataLayerEntries: window.dataLayer?.slice(-5) || []
   }
 
-  getLogger().log('🔍 Google Analytics Debug Info:', debugInfo)
+  logger.log('🔍 Google Analytics Debug Info:', debugInfo)
 
   // Test tracking
   if (consent?.analytics === 'granted') {
-    getLogger().log('🧪 Testing event tracking...')
+    logger.log('🧪 Testing event tracking...')
     trackEvent('debug_test', { timestamp: Date.now() })
   } else {
-    getLogger().log('❌ Cannot test tracking - analytics consent not granted')
+    logger.log('❌ Cannot test tracking - analytics consent not granted')
   }
 
   return debugInfo
@@ -419,6 +419,6 @@ if (config.isDevelopment && typeof window !== 'undefined') {
     isAnalyticsInitialized = false
     lastTrackedPage = null
     lastConsentUpdate = null
-    getLogger().log('🔄 Analytics state reset')
+    logger.log('🔄 Analytics state reset')
   }
 }

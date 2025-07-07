@@ -11,7 +11,7 @@ import {
   CourseLevel,
   SpecialRuleType
 } from '../types'
-import { getLogger } from './logger'
+import { logger } from './logger'
 
 // Updated regex to handle both traditional and new course formats:
 // Traditional: SIA-RMN-0001, GPU-ALC-0010, SIA-SRN-20W
@@ -726,12 +726,12 @@ export function parseCourseData(markdownContent: string): ParsedCourseData {
 
   // Debug logging (development only)
 
-  getLogger().group('🔍 Course Data Parser Debug')
-  getLogger().log('📄 Markdown length:', markdownContent.length)
-  getLogger().log('📚 Total courses parsed:', data.courses.length)
-  getLogger().log('📋 Categories parsed:', data.categories.length)
-  getLogger().log('⚡ Special rules parsed:', data.specialRules.length)
-  getLogger().log('🗂️ Department mappings parsed:', data.departmentMappings?.size || 0)
+  logger.group('🔍 Course Data Parser Debug')
+  logger.log('📄 Markdown length:', markdownContent.length)
+  logger.log('📚 Total courses parsed:', data.courses.length)
+  logger.log('📋 Categories parsed:', data.categories.length)
+  logger.log('⚡ Special rules parsed:', data.specialRules.length)
+  logger.log('🗂️ Department mappings parsed:', data.departmentMappings?.size || 0)
 
   // Log Space Warfare Pin related courses
   const swpCourses = data.courses.filter((course) => {
@@ -744,18 +744,18 @@ export function parseCourseData(markdownContent: string): ParsedCourseData {
       code.match(/^SIA-SRN-(05|06|07|35|08|09|10|27|28|29|32|14|15|16|17|18|19|11|12|13)[CD]$/)
     )
   })
-  getLogger().log('🏅 Space Warfare Pin related courses found:', swpCourses.length)
-  getLogger().table(swpCourses.map((c) => ({ code: c.code, name: c.name })))
+  logger.log('🏅 Space Warfare Pin related courses found:', swpCourses.length)
+  logger.table(swpCourses.map((c) => ({ code: c.code, name: c.name })))
 
   // Log special rules
   if (data.specialRules.length > 0) {
-    getLogger().log('📜 Special Rules:')
+    logger.log('📜 Special Rules:')
     data.specialRules.forEach((rule) => {
-      getLogger().log(`  - ${rule.name}: ${rule.description}`)
+      logger.log(`  - ${rule.name}: ${rule.description}`)
     })
   }
 
-  getLogger().groupEnd()
+  logger.groupEnd()
 
   // Create additional maps and dependency graph
   const courseMap = new Map<string, Course>()

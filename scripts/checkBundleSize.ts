@@ -3,7 +3,7 @@
 import { execSync } from 'child_process'
 import { readFileSync, existsSync } from 'fs'
 import { join } from 'path'
-import { getLogger } from '../src/utils/logger'
+import { logger } from '../src/utils/logger'
 
 interface BundleSizeConfig {
   maxJsSize: number // in KB
@@ -35,7 +35,7 @@ function getGzipSize(filePath: string): number {
     const result = execSync(`gzip -c "${filePath}" | wc -c`, { encoding: 'utf8' })
     return Math.round(parseInt(result.trim()) / 1024) // Convert to KB
   } catch (error) {
-    getLogger().warn(`Could not get gzip size for ${filePath}:`, error)
+    logger.warn(`Could not get gzip size for ${filePath}:`, error)
     return 0
   }
 }
@@ -53,7 +53,7 @@ function findAssetFiles(buildDir: string): { js: string[]; css: string[] } {
       css: files.filter((f) => f.endsWith('.css'))
     }
   } catch (error) {
-    getLogger().error('Error finding asset files:', error)
+    logger.error('Error finding asset files:', error)
     return { js: [], css: [] }
   }
 }
@@ -80,12 +80,12 @@ function checkBundleSize(): void {
   const buildDir = join(process.cwd(), 'build')
 
   if (!existsSync(buildDir)) {
-    getLogger().error('❌ Build directory not found. Run "npm run build" first.')
+    logger.error('❌ Build directory not found. Run "npm run build" first.')
     process.exit(1)
   }
 
-  getLogger().log('📦 Bundle Size Analysis')
-  getLogger().log('='.repeat(50))
+  logger.log('📦 Bundle Size Analysis')
+  logger.log('='.repeat(50))
 
   const { js: jsFiles, css: cssFiles } = findAssetFiles(buildDir)
 
@@ -93,7 +93,7 @@ function checkBundleSize(): void {
   let totalJsSize = 0
   let totalJsGzipSize = 0
 
-  getLogger().log('\n📄 JavaScript Files:')
+  logger.log('\n📄 JavaScript Files:')
   jsFiles.forEach((file) => {
     const size = getFileSize(file)
     const gzipSize = getGzipSize(file)
@@ -101,14 +101,14 @@ function checkBundleSize(): void {
     totalJsGzipSize += gzipSize
 
     const filename = file.split('/').pop() || file
-    getLogger().log(`  ${filename}: ${formatSize(size)} (${formatSize(gzipSize)} gzipped)`)
+    logger.log(`  ${filename}: ${formatSize(size)} (${formatSize(gzipSize)} gzipped)`)
   })
 
   // Calculate CSS sizes
   let totalCssSize = 0
   let totalCssGzipSize = 0
 
-  getLogger().log('\n🎨 CSS Files:')
+  logger.log('\n🎨 CSS Files:')
   cssFiles.forEach((file) => {
     const size = getFileSize(file)
     const gzipSize = getGzipSize(file)
@@ -116,31 +116,31 @@ function checkBundleSize(): void {
     totalCssGzipSize += gzipSize
 
     const filename = file.split('/').pop() || file
-    getLogger().log(`  ${filename}: ${formatSize(size)} (${formatSize(gzipSize)} gzipped)`)
+    logger.log(`  ${filename}: ${formatSize(size)} (${formatSize(gzipSize)} gzipped)`)
   })
 
   // Summary
   const totalSize = totalJsSize + totalCssSize
   const totalGzipSize = totalJsGzipSize + totalCssGzipSize
 
-  getLogger().log('\n📊 Summary:')
-  getLogger().log('='.repeat(30))
+  logger.log('\n📊 Summary:')
+  logger.log('='.repeat(30))
 
   const jsIcon = getStatusIcon(totalJsSize, config.maxJsSize, config.warnThreshold)
   const cssIcon = getStatusIcon(totalCssSize, config.maxCssSize, config.warnThreshold)
   const totalIcon = getStatusIcon(totalSize, config.maxTotalSize, config.warnThreshold)
 
-  getLogger().log(
+  logger.log(
     `${jsIcon} JavaScript: ${formatSize(totalJsSize)} / ${formatSize(config.maxJsSize)} (${formatSize(
       totalJsGzipSize
     )} gzipped)`
   )
-  getLogger().log(
+  logger.log(
     `${cssIcon} CSS: ${formatSize(totalCssSize)} / ${formatSize(config.maxCssSize)} (${formatSize(
       totalCssGzipSize
     )} gzipped)`
   )
-  getLogger().log(
+  logger.log(
     `${totalIcon} Total: ${formatSize(totalSize)} / ${formatSize(config.maxTotalSize)} (${formatSize(
       totalGzipSize
     )} gzipped)`
@@ -151,12 +151,12 @@ function checkBundleSize(): void {
   let hasErrors = false
 
   if (totalJsSize > config.maxJsSize) {
-    getLogger().log(
+    logger.log(
       `\n🔴 ERROR: JavaScript bundle size (${formatSize(totalJsSize)}) exceeds limit (${formatSize(config.maxJsSize)})`
     )
     hasErrors = true
   } else if (totalJsSize > config.maxJsSize * (config.warnThreshold / 100)) {
-    getLogger().log(
+    logger.log(
       `\n🟡 WARNING: JavaScript bundle size (${formatSize(totalJsSize)}) is approaching limit (${formatSize(
         config.maxJsSize
       )})`
@@ -165,12 +165,12 @@ function checkBundleSize(): void {
   }
 
   if (totalCssSize > config.maxCssSize) {
-    getLogger().log(
+    logger.log(
       `\n🔴 ERROR: CSS bundle size (${formatSize(totalCssSize)}) exceeds limit (${formatSize(config.maxCssSize)})`
     )
     hasErrors = true
   } else if (totalCssSize > config.maxCssSize * (config.warnThreshold / 100)) {
-    getLogger().log(
+    logger.log(
       `\n🟡 WARNING: CSS bundle size (${formatSize(totalCssSize)}) is approaching limit (${formatSize(
         config.maxCssSize
       )})`
@@ -179,12 +179,12 @@ function checkBundleSize(): void {
   }
 
   if (totalSize > config.maxTotalSize) {
-    getLogger().log(
+    logger.log(
       `\n🔴 ERROR: Total bundle size (${formatSize(totalSize)}) exceeds limit (${formatSize(config.maxTotalSize)})`
     )
     hasErrors = true
   } else if (totalSize > config.maxTotalSize * (config.warnThreshold / 100)) {
-    getLogger().log(
+    logger.log(
       `\n🟡 WARNING: Total bundle size (${formatSize(totalSize)}) is approaching limit (${formatSize(
         config.maxTotalSize
       )})`
@@ -194,22 +194,22 @@ function checkBundleSize(): void {
 
   // Recommendations
   if (hasErrors || hasWarnings) {
-    getLogger().log('\n💡 Optimization Suggestions:')
-    getLogger().log('  • Run "npm run bundle:analyze" to see detailed bundle composition')
-    getLogger().log('  • Consider code splitting with React.lazy()')
-    getLogger().log('  • Check for duplicate dependencies')
-    getLogger().log('  • Optimize images and assets')
-    getLogger().log('  • Remove unused code and dependencies')
+    logger.log('\n💡 Optimization Suggestions:')
+    logger.log('  • Run "npm run bundle:analyze" to see detailed bundle composition')
+    logger.log('  • Consider code splitting with React.lazy()')
+    logger.log('  • Check for duplicate dependencies')
+    logger.log('  • Optimize images and assets')
+    logger.log('  • Remove unused code and dependencies')
   }
 
   if (hasErrors) {
-    getLogger().log('\n❌ Bundle size check failed!')
+    logger.log('\n❌ Bundle size check failed!')
     process.exit(1)
   } else if (hasWarnings) {
-    getLogger().log('\n⚠️  Bundle size check passed with warnings.')
+    logger.log('\n⚠️  Bundle size check passed with warnings.')
     process.exit(0)
   } else {
-    getLogger().log('\n✅ Bundle size check passed!')
+    logger.log('\n✅ Bundle size check passed!')
     process.exit(0)
   }
 }

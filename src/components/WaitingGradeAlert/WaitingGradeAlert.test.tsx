@@ -96,7 +96,11 @@ describe('WaitingGradeAlert', () => {
     const courseItem = courseElement.closest('div')
     expect(courseItem).toBeInTheDocument()
 
-    fireEvent.click(courseItem!)
+    if (!courseItem) {
+      throw new Error('Course item not found')
+    }
+
+    fireEvent.click(courseItem)
     expect(mockOnCourseSelect).toHaveBeenCalledWith('COURSE-001')
   })
 

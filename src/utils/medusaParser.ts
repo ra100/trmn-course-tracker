@@ -1,4 +1,7 @@
 // Enhanced course code regex pattern (same as courseParser but without global flag)
+
+import { logger } from './logger'
+
 // Supports traditional and new formats: SIA-RMN-0001, LU-XI-CZ01, RMACA-AOPA-E07, etc.
 const MEDUSA_COURSE_CODE_REGEX = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/
 
@@ -131,7 +134,7 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
                 category
               })
 
-              console.log('🔍 Parsed course from HTML:', {
+              logger.log('🔍 Parsed course from HTML:', {
                 courseCode,
                 courseName: courseNameText,
                 grade: gradeText,
@@ -287,13 +290,13 @@ export function extractCompletionDates(medusaCourses: MedusaCourse[]): Map<strin
     const date = parseCompletionDate(course.completionDate)
     if (date) {
       completionDates.set(course.courseCode, date)
-      console.log('📝 Parsed completion date:', course.courseCode, '→', course.completionDate, '→', date)
+      logger.log('📝 Parsed completion date:', course.courseCode, '→', course.completionDate, '→', date)
     } else {
-      console.log('❌ Failed to parse completion date for:', course.courseCode, '→', course.completionDate)
+      logger.log('❌ Failed to parse completion date for:', course.courseCode, '→', course.completionDate)
     }
   })
 
-  console.log('📅 Total completion dates extracted:', completionDates.size, 'from', medusaCourses.length, 'courses')
+  logger.log('📅 Total completion dates extracted:', completionDates.size, 'from', medusaCourses.length, 'courses')
   return completionDates
 }
 
