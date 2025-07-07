@@ -35,6 +35,8 @@ const mockUserProgress: UserProgress = {
   availableCourses: new Set(['TC-101']),
   inProgressCourses: new Set(),
   waitingGradeCourses: new Set(),
+  courseStatusTimestamps: new Map(),
+  courseCompletionDates: new Map(),
   specialRulesProgress: new Map(),
   lastUpdated: new Date()
 }

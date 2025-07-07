@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { parseMedusaHTML, validateMedusaHTML, extractCompletedCourseCodes } from './medusaParser'
+import {
+  parseMedusaHTML,
+  validateMedusaHTML,
+  extractCompletedCourseCodes,
+  parseCompletionDate,
+  extractCompletionDates
+} from './medusaParser'
 
 describe('medusaParser', () => {
   const sampleMedusaHTML = `
@@ -788,6 +794,53 @@ describe('medusaParser', () => {
       // Most importantly - member ID should NOT be included
       expect(courseCodes).not.toContain('RMN-6421-20')
       expect(result.courses.find((c) => c.courseCode === 'RMN-6421-20')).toBeUndefined()
+    })
+  })
+
+  describe('completion date parsing', () => {
+    it('should parse valid completion dates', () => {
+      expect(parseCompletionDate('15 Dec 2024')).toEqual(new Date('15 Dec 2024'))
+      expect(parseCompletionDate('1 Jan 2025')).toEqual(new Date('1 Jan 2025'))
+      expect(parseCompletionDate('25 Jun 2024')).toEqual(new Date('25 Jun 2024'))
+    })
+
+    it('should handle invalid dates', () => {
+      expect(parseCompletionDate('')).toBeNull()
+      expect(parseCompletionDate('Unknown')).toBeNull()
+      expect(parseCompletionDate('invalid date')).toBeNull()
+    })
+
+    it('should extract completion dates from courses', () => {
+      const courses = [
+        {
+          courseCode: 'SIA-RMN-0001',
+          courseName: 'Basic Course',
+          grade: '90%',
+          completionDate: '15 Dec 2024',
+          category: 'RMN'
+        },
+        {
+          courseCode: 'SIA-RMN-0002',
+          courseName: 'Advanced Course',
+          grade: '95%',
+          completionDate: '1 Jan 2025',
+          category: 'RMN'
+        },
+        {
+          courseCode: 'SIA-RMN-0003',
+          courseName: 'Invalid Course',
+          grade: '85%',
+          completionDate: 'Unknown',
+          category: 'RMN'
+        }
+      ]
+
+      const dates = extractCompletionDates(courses)
+
+      expect(dates.size).toBe(2)
+      expect(dates.get('SIA-RMN-0001')).toEqual(new Date('15 Dec 2024'))
+      expect(dates.get('SIA-RMN-0002')).toEqual(new Date('1 Jan 2025'))
+      expect(dates.has('SIA-RMN-0003')).toBe(false)
     })
   })
 })

@@ -3,6 +3,7 @@ import {
   parseMedusaHTML,
   validateMedusaHTML,
   extractCompletedCourseCodes,
+  extractCompletionDates,
   MedusaParseResult
 } from '../../utils/medusaParser'
 import { trackFileImport } from '../../utils/analytics'
@@ -44,7 +45,17 @@ export const useMedusaImport = ({ onImportMedusaCourses }: UseMedusaImportProps)
       // If parsing was successful and we have courses, import them
       if (result.courses.length > 0 && result.errors.length === 0) {
         const courseCodes = extractCompletedCourseCodes(result.courses)
-        const importStats = onImportMedusaCourses(courseCodes)
+        const completionDates = extractCompletionDates(result.courses)
+
+        // Debug completion dates during import
+        console.log('📅 Medusa import completion dates:', {
+          totalCourses: result.courses.length,
+          courseCodes,
+          completionDates: Array.from(completionDates.entries()),
+          sampleCourses: result.courses.slice(0, 3)
+        })
+
+        const importStats = onImportMedusaCourses(courseCodes, completionDates)
 
         // Update result with import statistics
         result.importStats = importStats

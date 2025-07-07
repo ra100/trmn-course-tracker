@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { UserProgress, Course, CourseData } from '../types'
+import { UserProgress, Course, CourseData, CourseStatusTimestamp } from '../types'
 import { EligibilityEngine } from '../utils/eligibilityEngine'
 import { trackCourseCompletion } from '../utils/analytics'
 import { useOptimisticUserProgress } from './useUserProgress'
@@ -15,7 +15,10 @@ interface UseCourseManagementProps {
 interface UseCourseManagementReturn {
   toggleCourseCompletion: (courseCode: string) => void
   setCourseStatus: (courseCode: string, status: 'available' | 'in_progress' | 'waiting_grade' | 'completed') => void
-  handleImportMedusaCourses: (courseCodes: string[]) => {
+  handleImportMedusaCourses: (
+    courseCodes: string[],
+    completionDates?: Map<string, Date>
+  ) => {
     imported: number
     trackable: number
     alreadyCompleted: number
@@ -71,10 +74,34 @@ export const useCourseManagement = ({
       const newCompleted = new Set(userProgress.completedCourses)
       const newInProgress = new Set(userProgress.inProgressCourses)
       const newWaitingGrade = new Set(userProgress.waitingGradeCourses)
+      const newCourseStatusTimestamps = new Map(userProgress.courseStatusTimestamps)
+      const newCourseCompletionDates = new Map(userProgress.courseCompletionDates)
 
       const wasCompleted = newCompleted.has(courseCode)
+
+      // Determine previous status
+      let previousStatus: 'available' | 'in_progress' | 'waiting_grade' | 'completed' | undefined
+      if (userProgress.completedCourses.has(courseCode)) {
+        previousStatus = 'completed'
+      } else if (userProgress.inProgressCourses.has(courseCode)) {
+        previousStatus = 'in_progress'
+      } else if (userProgress.waitingGradeCourses.has(courseCode)) {
+        previousStatus = 'waiting_grade'
+      } else if (userProgress.availableCourses.has(courseCode)) {
+        previousStatus = 'available'
+      }
+
       if (wasCompleted) {
         newCompleted.delete(courseCode)
+        // When uncompleting, remove completion date
+        newCourseCompletionDates.delete(courseCode)
+        // When uncompleting, set back to available
+        const timestamp: CourseStatusTimestamp = {
+          status: 'available',
+          timestamp: new Date(),
+          previousStatus
+        }
+        newCourseStatusTimestamps.set(courseCode, timestamp)
       } else {
         newCompleted.add(courseCode)
         // Remove from other statuses when marking as completed
@@ -86,6 +113,18 @@ export const useCourseManagement = ({
         if (course) {
           trackCourseCompletion(courseCode, course.name)
         }
+
+        // Set completion date to current date
+        const completionDate = new Date()
+        newCourseCompletionDates.set(courseCode, completionDate)
+
+        // Update timestamp tracking
+        const timestamp: CourseStatusTimestamp = {
+          status: 'completed',
+          timestamp: completionDate,
+          previousStatus
+        }
+        newCourseStatusTimestamps.set(courseCode, timestamp)
       }
 
       const newProgress: UserProgress = {
@@ -93,6 +132,8 @@ export const useCourseManagement = ({
         completedCourses: newCompleted,
         inProgressCourses: newInProgress,
         waitingGradeCourses: newWaitingGrade,
+        courseStatusTimestamps: newCourseStatusTimestamps,
+        courseCompletionDates: newCourseCompletionDates,
         lastUpdated: new Date()
       }
 
@@ -110,16 +151,38 @@ export const useCourseManagement = ({
       const newCompleted = new Set(userProgress.completedCourses)
       const newInProgress = new Set(userProgress.inProgressCourses)
       const newWaitingGrade = new Set(userProgress.waitingGradeCourses)
+      const newCourseStatusTimestamps = new Map(userProgress.courseStatusTimestamps)
+      const newCourseCompletionDates = new Map(userProgress.courseCompletionDates)
+
+      // Determine previous status
+      let previousStatus: 'available' | 'in_progress' | 'waiting_grade' | 'completed' | undefined
+      if (userProgress.completedCourses.has(courseCode)) {
+        previousStatus = 'completed'
+      } else if (userProgress.inProgressCourses.has(courseCode)) {
+        previousStatus = 'in_progress'
+      } else if (userProgress.waitingGradeCourses.has(courseCode)) {
+        previousStatus = 'waiting_grade'
+      } else if (userProgress.availableCourses.has(courseCode)) {
+        previousStatus = 'available'
+      }
 
       // Remove from all status sets first
       newCompleted.delete(courseCode)
       newInProgress.delete(courseCode)
       newWaitingGrade.delete(courseCode)
 
+      // Handle completion date based on status
+      if (status !== 'completed') {
+        // Remove completion date when not completed
+        newCourseCompletionDates.delete(courseCode)
+      }
+
       // Add to appropriate set based on new status
       switch (status) {
         case 'completed':
           newCompleted.add(courseCode)
+          // Set completion date to current date
+          newCourseCompletionDates.set(courseCode, new Date())
           break
         case 'in_progress':
           newInProgress.add(courseCode)
@@ -132,11 +195,21 @@ export const useCourseManagement = ({
           break
       }
 
+      // Update timestamp tracking
+      const timestamp: CourseStatusTimestamp = {
+        status,
+        timestamp: new Date(),
+        previousStatus
+      }
+      newCourseStatusTimestamps.set(courseCode, timestamp)
+
       const newProgress: UserProgress = {
         ...userProgress,
         completedCourses: newCompleted,
         inProgressCourses: newInProgress,
         waitingGradeCourses: newWaitingGrade,
+        courseStatusTimestamps: newCourseStatusTimestamps,
+        courseCompletionDates: newCourseCompletionDates,
         lastUpdated: new Date()
       }
 
@@ -147,7 +220,8 @@ export const useCourseManagement = ({
 
   const handleImportMedusaCourses = useCallback(
     (
-      courseCodes: string[]
+      courseCodes: string[],
+      completionDates?: Map<string, Date>
     ): {
       imported: number
       trackable: number
@@ -177,11 +251,29 @@ export const useCourseManagement = ({
       const newCompleted = new Set([...Array.from(existingCourses), ...newCourses])
       const newInProgress = new Set(userProgress.inProgressCourses)
       const newWaitingGrade = new Set(userProgress.waitingGradeCourses)
+      const newCourseStatusTimestamps = new Map(userProgress.courseStatusTimestamps)
+      const newCourseCompletionDates = new Map(userProgress.courseCompletionDates)
 
       // Remove all imported trackable courses from other status sets (Medusa import overrides manual status)
       trackableImportedCourses.forEach((courseCode) => {
         newInProgress.delete(courseCode)
         newWaitingGrade.delete(courseCode)
+
+        // Update timestamp for imported courses (use completion date if available, otherwise current date)
+        const completionDate = completionDates?.get(courseCode) || new Date()
+        const timestamp: CourseStatusTimestamp = {
+          status: 'completed',
+          timestamp: completionDate,
+          previousStatus: newCourseStatusTimestamps.get(courseCode)?.status
+        }
+        newCourseStatusTimestamps.set(courseCode, timestamp)
+
+        // Store completion date if available
+        if (completionDates?.has(courseCode)) {
+          const date = completionDates.get(courseCode)!
+          newCourseCompletionDates.set(courseCode, date)
+          console.log('💾 Storing completion date for course:', courseCode, '→', date)
+        }
       })
 
       const newProgress: UserProgress = {
@@ -189,8 +281,16 @@ export const useCourseManagement = ({
         completedCourses: newCompleted,
         inProgressCourses: newInProgress,
         waitingGradeCourses: newWaitingGrade,
+        courseStatusTimestamps: newCourseStatusTimestamps,
+        courseCompletionDates: newCourseCompletionDates,
         lastUpdated: new Date()
       }
+
+      console.log('📊 Final progress after import:', {
+        completedCourses: Array.from(newCompleted),
+        completionDates: Array.from(newCourseCompletionDates.entries()),
+        totalCompletionDates: newCourseCompletionDates.size
+      })
 
       updateCourseAvailabilityAndProgress(newProgress)
 

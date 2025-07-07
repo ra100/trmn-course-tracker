@@ -63,7 +63,7 @@ const CourseDetailsContent: React.FC<CourseDetailsContentProps> = ({
   return (
     <div className={panelCard}>
       <div className={headerCard}>
-        <CourseHeader course={course} status={status} getStatusText={getStatusText} />
+        <CourseHeader course={course} status={status} getStatusText={getStatusText} userProgress={userProgress} />
         <div className={headerDivider} />
       </div>
 

@@ -39,6 +39,8 @@ describe('useCourseManagement', () => {
     inProgressCourses: new Set(['BASIC-002']),
     waitingGradeCourses: new Set(),
     availableCourses: new Set(['BASIC-001', 'BASIC-002']),
+    courseStatusTimestamps: new Map(),
+    courseCompletionDates: new Map(),
     specialRulesProgress: new Map(),
     lastUpdated: new Date()
   }

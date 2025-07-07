@@ -41,6 +41,15 @@ export const enTranslations: TranslationStrings = {
     rightClickForOptions: 'Right-click for options'
   },
 
+  // Waiting Grade Alert
+  waitingGradeAlert: {
+    title: 'Courses Waiting for Grade',
+    totalWaiting: 'waiting for grade',
+    overdue: 'overdue',
+    daysWaiting: 'days waiting',
+    overdueLabel: 'OVERDUE'
+  },
+
   // Progress Panel
   progress: {
     title: 'Progress Overview',
@@ -67,7 +76,8 @@ export const enTranslations: TranslationStrings = {
     description: 'Description',
     unlocksCourses: 'Unlocks These Courses',
     none: 'None',
-    courses: 'course(s)'
+    courses: 'course(s)',
+    completed: 'Completed'
   },
 
   // Filter Panel

@@ -41,6 +41,15 @@ export interface TranslationStrings {
     rightClickForOptions: string
   }
 
+  // Waiting Grade Alert
+  waitingGradeAlert: {
+    title: string
+    totalWaiting: string
+    overdue: string
+    daysWaiting: string
+    overdueLabel: string
+  }
+
   // Progress Panel
   progress: {
     title: string
@@ -68,6 +77,7 @@ export interface TranslationStrings {
     unlocksCourses: string
     none: string
     courses: string
+    completed: string
   }
 
   // Filter Panel

@@ -1004,7 +1004,9 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       availableCourses: new Set<string>(),
       inProgressCourses: new Set<string>(),
       waitingGradeCourses: new Set<string>(),
-      specialRulesProgress: new Map(),
+      courseStatusTimestamps: new Map(),
+    courseCompletionDates: new Map(),
+    specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
 
@@ -1020,7 +1022,9 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       availableCourses: new Set<string>(),
       inProgressCourses: new Set<string>(),
       waitingGradeCourses: new Set<string>(),
-      specialRulesProgress: new Map(),
+      courseStatusTimestamps: new Map(),
+    courseCompletionDates: new Map(),
+    specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
 
@@ -1036,7 +1040,9 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       availableCourses: new Set<string>(),
       inProgressCourses: new Set<string>(),
       waitingGradeCourses: new Set<string>(),
-      specialRulesProgress: new Map(),
+      courseStatusTimestamps: new Map(),
+    courseCompletionDates: new Map(),
+    specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
 
@@ -1062,7 +1068,9 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       availableCourses: new Set<string>(),
       inProgressCourses: new Set<string>(),
       waitingGradeCourses: new Set<string>(),
-      specialRulesProgress: new Map(),
+      courseStatusTimestamps: new Map(),
+    courseCompletionDates: new Map(),
+    specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
 
@@ -1088,7 +1096,9 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       availableCourses: new Set<string>(),
       inProgressCourses: new Set<string>(),
       waitingGradeCourses: new Set<string>(),
-      specialRulesProgress: new Map(),
+      courseStatusTimestamps: new Map(),
+    courseCompletionDates: new Map(),
+    specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
 

@@ -71,12 +71,20 @@ export interface Requirement {
 
 export type RequirementType = 'course' | 'department_choice' | 'level_requirement' | 'complex' | 'alternative_group'
 
+export interface CourseStatusTimestamp {
+  status: 'completed' | 'available' | 'in_progress' | 'waiting_grade'
+  timestamp: Date
+  previousStatus?: 'completed' | 'available' | 'in_progress' | 'waiting_grade'
+}
+
 export interface UserProgress {
   userId: string
   completedCourses: Set<string>
   availableCourses: Set<string>
   inProgressCourses: Set<string>
   waitingGradeCourses: Set<string>
+  courseStatusTimestamps: Map<string, CourseStatusTimestamp>
+  courseCompletionDates: Map<string, Date>
   specialRulesProgress: Map<string, SpecialRuleProgress>
   lastUpdated: Date
 }

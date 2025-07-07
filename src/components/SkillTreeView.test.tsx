@@ -139,6 +139,8 @@ const mockUserProgress: UserProgress = {
   availableCourses: new Set(['SIA-SRN-08C', 'SIA-SRN-14C', 'SIA-SRN-11C']),
   inProgressCourses: new Set(),
   waitingGradeCourses: new Set(),
+  courseStatusTimestamps: new Map(),
+  courseCompletionDates: new Map(),
   specialRulesProgress: new Map(),
   lastUpdated: new Date()
 }

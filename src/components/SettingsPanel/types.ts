@@ -4,7 +4,10 @@ import { Language } from '../../i18n'
 export interface SettingsPanelProps {
   settings: UserSettings
   onSettingsChange: (settings: UserSettings) => void
-  onImportMedusaCourses?: (courseCodes: string[]) => {
+  onImportMedusaCourses?: (
+    courseCodes: string[],
+    completionDates?: Map<string, Date>
+  ) => {
     imported: number
     trackable: number
     alreadyCompleted: number

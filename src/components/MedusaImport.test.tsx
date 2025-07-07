@@ -5,13 +5,19 @@ import userEvent from '@testing-library/user-event'
 import { ThemeProvider } from 'styled-components'
 import { MedusaImport } from './MedusaImport'
 import { darkTheme } from '../theme'
-import { validateMedusaHTML, parseMedusaHTML } from '../utils/medusaParser'
+import {
+  validateMedusaHTML,
+  parseMedusaHTML,
+  extractCompletedCourseCodes,
+  extractCompletionDates
+} from '../utils/medusaParser'
 
 // Mock the medusa parser functions
 vi.mock('../utils/medusaParser', () => ({
   validateMedusaHTML: vi.fn(),
   parseMedusaHTML: vi.fn(),
-  extractCompletedCourseCodes: vi.fn()
+  extractCompletedCourseCodes: vi.fn(),
+  extractCompletionDates: vi.fn()
 }))
 
 describe('MedusaImport', () => {
@@ -20,6 +26,11 @@ describe('MedusaImport', () => {
   beforeEach(() => {
     mockOnImportMedusaCourses.mockClear()
     vi.clearAllMocks()
+    // Set up default mock return values
+    ;(extractCompletedCourseCodes as ReturnType<typeof vi.fn>).mockReturnValue(['TEST-101'])
+    ;(extractCompletionDates as ReturnType<typeof vi.fn>).mockReturnValue(
+      new Map([['TEST-101', new Date('2024-01-01')]])
+    )
   })
 
   const renderWithTheme = (ui: React.ReactElement) => {

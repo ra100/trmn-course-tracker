@@ -17,13 +17,7 @@ export interface CourseHeaderProps {
   course: Course
   status: CourseStatus
   getStatusText: () => string
-}
-
-export interface CourseInfoGridProps {
-  course: Course
-  prerequisites: PrerequisiteInfo[]
-  unlockedCourses: Course[]
-  getStatusText: () => string
+  userProgress: UserProgress
 }
 
 export interface CourseActionsProps {

@@ -130,6 +130,14 @@ export function parseMedusaHTML(htmlContent: string): MedusaParseResult {
                 completionDate: dateText,
                 category
               })
+
+              console.log('🔍 Parsed course from HTML:', {
+                courseCode,
+                courseName: courseNameText,
+                grade: gradeText,
+                completionDate: dateText,
+                category
+              })
             }
           }
         } catch (error) {
@@ -242,6 +250,51 @@ function extractCourseCode(courseName: string): string | null {
  */
 export function extractCompletedCourseCodes(medusaCourses: MedusaCourse[]): string[] {
   return medusaCourses.map((course) => course.courseCode).filter((code) => code !== null && code !== '') as string[]
+}
+
+/**
+ * Parse completion date string from Medusa format to Date object
+ * Supports formats like: "15 Dec 2024", "1 Jan 2025", etc.
+ */
+export function parseCompletionDate(dateString: string): Date | null {
+  if (!dateString || dateString.trim() === '' || dateString.toLowerCase() === 'unknown') {
+    return null
+  }
+
+  try {
+    // Parse the date string which is in format "DD MMM YYYY" (e.g., "15 Dec 2024")
+    const parsedDate = new Date(dateString)
+
+    // Check if the date is valid
+    if (isNaN(parsedDate.getTime())) {
+      return null
+    }
+
+    return parsedDate
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Extract completion dates from medusa courses
+ * Returns a Map of courseCode -> completion date
+ */
+export function extractCompletionDates(medusaCourses: MedusaCourse[]): Map<string, Date> {
+  const completionDates = new Map<string, Date>()
+
+  medusaCourses.forEach((course) => {
+    const date = parseCompletionDate(course.completionDate)
+    if (date) {
+      completionDates.set(course.courseCode, date)
+      console.log('📝 Parsed completion date:', course.courseCode, '→', course.completionDate, '→', date)
+    } else {
+      console.log('❌ Failed to parse completion date for:', course.courseCode, '→', course.completionDate)
+    }
+  })
+
+  console.log('📅 Total completion dates extracted:', completionDates.size, 'from', medusaCourses.length, 'courses')
+  return completionDates
 }
 
 /**

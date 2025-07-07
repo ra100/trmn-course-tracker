@@ -178,6 +178,8 @@ describe('EligibilityEngine', () => {
       availableCourses: new Set(),
       inProgressCourses: new Set(),
       waitingGradeCourses: new Set(),
+      courseStatusTimestamps: new Map(),
+      courseCompletionDates: new Map(),
       specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
@@ -251,7 +253,9 @@ describe('EligibilityEngine', () => {
         availableCourses: new Set(),
         inProgressCourses: new Set(),
         waitingGradeCourses: new Set(),
-        specialRulesProgress: new Map(),
+        courseStatusTimestamps: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
 
@@ -270,7 +274,9 @@ describe('EligibilityEngine', () => {
         availableCourses: new Set(),
         inProgressCourses: new Set(),
         waitingGradeCourses: new Set(),
-        specialRulesProgress: new Map(),
+        courseStatusTimestamps: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
 
@@ -287,7 +293,9 @@ describe('EligibilityEngine', () => {
         availableCourses: new Set(),
         inProgressCourses: new Set(),
         waitingGradeCourses: new Set(),
-        specialRulesProgress: new Map(),
+        courseStatusTimestamps: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
 
@@ -355,7 +363,9 @@ describe('EligibilityEngine', () => {
         availableCourses: new Set(),
         inProgressCourses: new Set(),
         waitingGradeCourses: new Set(),
-        specialRulesProgress: new Map(),
+        courseStatusTimestamps: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
 
@@ -479,7 +489,9 @@ describe('EligibilityEngine', () => {
         availableCourses: new Set(),
         inProgressCourses: new Set(),
         waitingGradeCourses: new Set(),
-        specialRulesProgress: new Map(),
+        courseStatusTimestamps: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
 
@@ -503,7 +515,9 @@ describe('EligibilityEngine', () => {
         availableCourses: new Set(),
         inProgressCourses: new Set(),
         waitingGradeCourses: new Set(),
-        specialRulesProgress: new Map(),
+        courseStatusTimestamps: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
 
@@ -539,7 +553,9 @@ describe('EligibilityEngine', () => {
         availableCourses: new Set(),
         inProgressCourses: new Set(),
         waitingGradeCourses: new Set(),
-        specialRulesProgress: new Map(),
+        courseStatusTimestamps: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
 
@@ -596,7 +612,9 @@ describe('EligibilityEngine', () => {
         availableCourses: new Set(),
         inProgressCourses: new Set(),
         waitingGradeCourses: new Set(),
-        specialRulesProgress: new Map(),
+        courseStatusTimestamps: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
         lastUpdated: new Date()
       }
 

@@ -41,6 +41,15 @@ export const csTranslations: TranslationStrings = {
     rightClickForOptions: 'Pravý klik pro možnosti'
   },
 
+  // Waiting Grade Alert
+  waitingGradeAlert: {
+    title: 'Kurzy čekající na hodnocení',
+    totalWaiting: 'čeká na hodnocení',
+    overdue: 'po termínu',
+    daysWaiting: 'dní čekání',
+    overdueLabel: 'PO TERMÍNU'
+  },
+
   // Progress Panel
   progress: {
     title: 'Přehled pokroku',
@@ -67,7 +76,8 @@ export const csTranslations: TranslationStrings = {
     description: 'Popis',
     unlocksCourses: 'Odemyká tyto kurzy',
     none: 'Žádné',
-    courses: 'kurz(ů)'
+    courses: 'kurz(ů)',
+    completed: 'Dokončeno'
   },
 
   // Filter Panel

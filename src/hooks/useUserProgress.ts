@@ -25,6 +25,8 @@ interface CourseStateRecord {
   courseId: string
   status: CourseStatus
   lastUpdated: string
+  previousStatus?: CourseStatus
+  completionDate?: string
 }
 
 // Check if IndexedDB is available
@@ -284,7 +286,9 @@ class UserProgressDB {
     })
   }
 
-  async bulkUpdateCourseStates(updates: Array<{ courseId: string; status: CourseStatus }>): Promise<void> {
+  async bulkUpdateCourseStates(
+    updates: Array<{ courseId: string; status: CourseStatus; completionDate?: string }>
+  ): Promise<void> {
     if (!this.isAvailable || !this.dbPromise) {
       throw new Error('IndexedDB is not available')
     }
@@ -316,11 +320,12 @@ class UserProgressDB {
         reject(error)
       }
 
-      for (const { courseId, status } of updates) {
+      for (const { courseId, status, completionDate } of updates) {
         const record: CourseStateRecord = {
           courseId,
           status,
-          lastUpdated: now
+          lastUpdated: now,
+          completionDate
         }
 
         const request = store.put(record)
@@ -395,15 +400,28 @@ class UserProgressDB {
   async save(progress: UserProgress): Promise<void> {
     getLogger().log('📦 Starting IndexedDB save operation...')
 
-    // Prepare course updates
-    const updates: Array<{ courseId: string; status: CourseStatus }> = []
+    // Prepare course updates with completion dates
+    const updates: Array<{ courseId: string; status: CourseStatus; completionDate?: string }> = []
 
-    progress.completedCourses.forEach((courseId) => updates.push({ courseId, status: 'completed' }))
+    progress.completedCourses.forEach((courseId) => {
+      const completionDate = progress.courseCompletionDates.get(courseId)
+      updates.push({
+        courseId,
+        status: 'completed',
+        completionDate: completionDate?.toISOString()
+      })
+    })
     progress.availableCourses.forEach((courseId) => updates.push({ courseId, status: 'available' }))
     progress.inProgressCourses.forEach((courseId) => updates.push({ courseId, status: 'inProgress' }))
     progress.waitingGradeCourses.forEach((courseId) => updates.push({ courseId, status: 'waitingGrade' }))
 
     getLogger().log(`📦 Preparing to save ${updates.length} course state records...`)
+
+    // Debug completion dates being saved
+    const completionDatesCount = updates.filter((u) => u.completionDate).length
+    if (completionDatesCount > 0) {
+      getLogger().log(`📅 Saving ${completionDatesCount} completion dates to IndexedDB`)
+    }
 
     // Clear existing course states first (but NOT metadata)
     getLogger().log('🗑️ Clearing existing course states...')
@@ -439,11 +457,17 @@ class UserProgressDB {
       const availableCourses = new Set<string>()
       const inProgressCourses = new Set<string>()
       const waitingGradeCourses = new Set<string>()
+      const courseStatusTimestamps = new Map<string, import('../types').CourseStatusTimestamp>()
+      const courseCompletionDates = new Map<string, Date>()
 
       for (const record of courseStates) {
         switch (record.status) {
           case 'completed':
             completedCourses.add(record.courseId)
+            // Restore completion date if available
+            if (record.completionDate) {
+              courseCompletionDates.set(record.courseId, new Date(record.completionDate))
+            }
             break
           case 'available':
             availableCourses.add(record.courseId)
@@ -455,6 +479,35 @@ class UserProgressDB {
             waitingGradeCourses.add(record.courseId)
             break
         }
+
+        // Convert CourseStatus to proper status format
+        const statusMap: Record<CourseStatus, 'completed' | 'available' | 'in_progress' | 'waiting_grade'> = {
+          completed: 'completed',
+          available: 'available',
+          inProgress: 'in_progress',
+          waitingGrade: 'waiting_grade'
+        }
+
+        const previousStatusMap: Record<CourseStatus, 'completed' | 'available' | 'in_progress' | 'waiting_grade'> = {
+          completed: 'completed',
+          available: 'available',
+          inProgress: 'in_progress',
+          waitingGrade: 'waiting_grade'
+        }
+
+        courseStatusTimestamps.set(record.courseId, {
+          status: statusMap[record.status],
+          timestamp: new Date(record.lastUpdated),
+          previousStatus: record.previousStatus ? previousStatusMap[record.previousStatus] : undefined
+        })
+      }
+
+      // Debug completion dates loaded
+      if (courseCompletionDates.size > 0) {
+        getLogger().log(
+          `📅 Loaded ${courseCompletionDates.size} completion dates from IndexedDB:`,
+          Array.from(courseCompletionDates.entries()).map(([code, date]) => ({ code, date: date.toISOString() }))
+        )
       }
 
       return {
@@ -463,6 +516,8 @@ class UserProgressDB {
         availableCourses,
         inProgressCourses,
         waitingGradeCourses,
+        courseStatusTimestamps,
+        courseCompletionDates,
         specialRulesProgress: new Map(metadata.specialRulesProgress),
         lastUpdated: new Date(metadata.lastUpdated)
       }
@@ -483,6 +538,8 @@ const getDefaultUserProgress = (): UserProgress => ({
   availableCourses: new Set<string>(),
   inProgressCourses: new Set<string>(),
   waitingGradeCourses: new Set<string>(),
+  courseStatusTimestamps: new Map(),
+  courseCompletionDates: new Map(),
   specialRulesProgress: new Map(),
   lastUpdated: new Date()
 })
@@ -499,6 +556,23 @@ const loadFromLocalStorage = (): UserProgress | null => {
         availableCourses: new Set(parsed.availableCourses || []),
         inProgressCourses: new Set(parsed.inProgressCourses || []),
         waitingGradeCourses: new Set(parsed.waitingGradeCourses || []),
+        courseStatusTimestamps: new Map(
+          (parsed.courseStatusTimestamps || []).map(
+            ([courseId, timestamp]: [string, { status: string; timestamp: string; previousStatus?: string }]) => [
+              courseId,
+              {
+                ...timestamp,
+                timestamp: new Date(timestamp.timestamp)
+              }
+            ]
+          )
+        ),
+        courseCompletionDates: new Map(
+          (parsed.courseCompletionDates || []).map(([courseId, dateString]: [string, string]) => [
+            courseId,
+            new Date(dateString)
+          ])
+        ),
         specialRulesProgress: new Map(parsed.specialRulesProgress || []),
         lastUpdated: new Date(parsed.lastUpdated || Date.now())
       }
@@ -518,6 +592,17 @@ const saveToLocalStorage = (progress: UserProgress): void => {
       availableCourses: Array.from(progress.availableCourses),
       inProgressCourses: Array.from(progress.inProgressCourses),
       waitingGradeCourses: Array.from(progress.waitingGradeCourses),
+      courseStatusTimestamps: Array.from(progress.courseStatusTimestamps.entries()).map(([courseId, timestamp]) => [
+        courseId,
+        {
+          ...timestamp,
+          timestamp: timestamp.timestamp.toISOString()
+        }
+      ]),
+      courseCompletionDates: Array.from(progress.courseCompletionDates.entries()).map(([courseId, date]) => [
+        courseId,
+        date.toISOString()
+      ]),
       specialRulesProgress: Array.from(progress.specialRulesProgress.entries()),
       lastUpdated: progress.lastUpdated.toISOString()
     }

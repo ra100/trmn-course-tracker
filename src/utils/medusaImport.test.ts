@@ -71,7 +71,9 @@ describe('Medusa Import Status Override Logic', () => {
       availableCourses: new Set(['TEST-001', 'TEST-002', 'TEST-003']),
       inProgressCourses: new Set(),
       waitingGradeCourses: new Set(),
-      specialRulesProgress: new Map(),
+      courseStatusTimestamps: new Map(),
+     courseCompletionDates: new Map(),
+     specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
   })

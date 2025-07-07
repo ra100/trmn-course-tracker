@@ -202,7 +202,9 @@ export const StatisticsPanel: React.FC<StatisticsPanelProps> = ({ stats, userPro
         </div>
         <div className={quickStatRow}>
           <span className={quickStatLabel}>{t.progress.lastUpdated}</span>
-          <span className={quickStatValue}>{userProgress.lastUpdated.toLocaleDateString()}</span>
+          <span className={quickStatValue} title={`Full timestamp: ${userProgress.lastUpdated.toLocaleString()}`}>
+            {userProgress.lastUpdated.toLocaleDateString()}
+          </span>
         </div>
       </div>
     </>

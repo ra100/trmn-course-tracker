@@ -1,5 +1,4 @@
 export { CourseHeader } from './CourseHeader'
-export { CourseInfoGrid } from './CourseInfoGrid'
 export { CourseActions } from './CourseActions'
 export { PrerequisitesSection } from './PrerequisitesSection'
 export { UnlockedCoursesSection } from './UnlockedCoursesSection'

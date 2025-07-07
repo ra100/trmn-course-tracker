@@ -1,7 +1,10 @@
 import { MedusaParseResult } from '../../utils/medusaParser'
 
 export interface MedusaImportProps {
-  onImportMedusaCourses: (courseCodes: string[]) => {
+  onImportMedusaCourses: (
+    courseCodes: string[],
+    completionDates?: Map<string, Date>
+  ) => {
     imported: number
     trackable: number
     alreadyCompleted: number
@@ -43,7 +46,10 @@ export interface ImportStatsDisplayProps {
 }
 
 export interface UseMedusaImportProps {
-  onImportMedusaCourses: (courseCodes: string[]) => {
+  onImportMedusaCourses: (
+    courseCodes: string[],
+    completionDates?: Map<string, Date>
+  ) => {
     imported: number
     trackable: number
     alreadyCompleted: number

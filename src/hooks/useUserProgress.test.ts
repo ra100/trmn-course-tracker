@@ -57,6 +57,8 @@ const mockUserProgress: UserProgress = {
   availableCourses: new Set(['COURSE-003', 'COURSE-004']),
   inProgressCourses: new Set(['COURSE-005']),
   waitingGradeCourses: new Set(['COURSE-006']),
+  courseStatusTimestamps: new Map(),
+  courseCompletionDates: new Map(),
   specialRulesProgress: new Map([
     [
       'rule1',
@@ -105,6 +107,8 @@ describe('useUserProgress', () => {
         availableCourses: new Set(),
         inProgressCourses: new Set(),
         waitingGradeCourses: new Set(),
+        courseStatusTimestamps: new Map(),
+        courseCompletionDates: new Map(),
         specialRulesProgress: new Map(),
         lastUpdated: expect.any(Date)
       })
@@ -117,6 +121,8 @@ describe('useUserProgress', () => {
         availableCourses: ['COURSE-003', 'COURSE-004'],
         inProgressCourses: ['COURSE-005'],
         waitingGradeCourses: ['COURSE-006'],
+        courseStatusTimestamps: [],
+        courseCompletionDates: [],
         specialRulesProgress: [
           [
             'rule1',
@@ -161,6 +167,8 @@ describe('useUserProgress', () => {
         availableCourses: new Set(),
         inProgressCourses: new Set(),
         waitingGradeCourses: new Set(),
+        courseStatusTimestamps: new Map(),
+        courseCompletionDates: new Map(),
         specialRulesProgress: new Map(),
         lastUpdated: expect.any(Date)
       })
@@ -193,6 +201,8 @@ describe('useUserProgress', () => {
         availableCourses: new Set(),
         inProgressCourses: new Set(),
         waitingGradeCourses: new Set(),
+        courseStatusTimestamps: new Map(),
+        courseCompletionDates: new Map(),
         specialRulesProgress: new Map(),
         lastUpdated: expect.any(Date)
       })
@@ -237,6 +247,8 @@ describe('useUserProgress', () => {
           availableCourses: ['COURSE-003', 'COURSE-004'],
           inProgressCourses: ['COURSE-005'],
           waitingGradeCourses: ['COURSE-006'],
+          courseStatusTimestamps: [],
+          courseCompletionDates: [],
           specialRulesProgress: [
             [
               'rule1',

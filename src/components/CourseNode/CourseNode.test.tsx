@@ -51,6 +51,8 @@ const createMockUserProgress = (): UserProgress => ({
   availableCourses: new Set(),
   inProgressCourses: new Set(),
   waitingGradeCourses: new Set(),
+  courseStatusTimestamps: new Map(),
+  courseCompletionDates: new Map(),
   specialRulesProgress: new Map(),
   lastUpdated: new Date()
 })

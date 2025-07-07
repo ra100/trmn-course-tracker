@@ -52,7 +52,7 @@ export const TRMNLogo: React.FC<TRMNLogoProps> = ({
       aria-label={t.trmnHeader ? t.trmnHeader.line2 : 'The Royal Manticoran Navy Logo'}
     >
       <img
-        src={`${import.meta.env.BASE_URL}trmn-seal.png`}
+        src="/trmn-seal.png"
         width={size}
         height={size}
         alt={t.trmnHeader ? t.trmnHeader.line2 : 'The Royal Manticoran Navy Logo'}

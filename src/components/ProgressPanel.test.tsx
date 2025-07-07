@@ -23,6 +23,8 @@ const createUserProgress = (completedCourses: string[] = []): UserProgress => ({
   availableCourses: new Set(),
   inProgressCourses: new Set(),
   waitingGradeCourses: new Set(),
+  courseStatusTimestamps: new Map(),
+  courseCompletionDates: new Map(),
   specialRulesProgress: new Map(),
   lastUpdated: new Date()
 })
@@ -520,7 +522,8 @@ describe('ProgressPanel', () => {
           description: 'Description',
           unlocksCourses: 'Unlocks Courses',
           none: 'None',
-          courses: 'Courses'
+          courses: 'Courses',
+          completed: 'Completed'
         },
         prerequisites: {
           title: 'Prerequisites',
@@ -635,6 +638,13 @@ describe('ProgressPanel', () => {
           essentialDescription: 'Essential cookies description',
           analyticsCookies: 'Analytics Cookies',
           analyticsDescription: 'Analytics Description'
+        },
+        waitingGradeAlert: {
+          title: 'Waiting Grade Alert',
+          totalWaiting: 'Total Waiting',
+          overdue: 'Overdue',
+          daysWaiting: 'Days Waiting',
+          overdueLabel: 'Overdue Label'
         },
         ui: {
           yes: 'Yes',
