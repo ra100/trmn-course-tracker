@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { FilterOptions, ParsedCourseData } from '~/types'
 import { getAllDepartments } from '~/utils/departmentUtils'
 import { useT } from '~/i18n'
-import { Checkbox } from '~/components/ui/checkbox'
+import { Switch } from '~/components/ui/switch'
 import { filterSection, filterLabel } from './filterPanel.styles'
 import { css } from 'styled-system/css'
 
@@ -38,7 +38,7 @@ export const DepartmentFilterSection: React.FC<DepartmentFilterSectionProps> = (
         className={css({ display: 'flex', flexDirection: 'column', gap: '0.3rem' })}
       >
         {departments.map((department) => (
-          <Checkbox
+          <Switch
             key={department}
             checked={filters.departments?.includes(department) || false}
             onCheckedChange={(details: { checked: boolean }) =>
@@ -46,7 +46,7 @@ export const DepartmentFilterSection: React.FC<DepartmentFilterSectionProps> = (
             }
           >
             {getDepartmentLabel(department)}
-          </Checkbox>
+          </Switch>
         ))}
       </div>
     </div>

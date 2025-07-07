@@ -354,19 +354,6 @@ function App() {
 
   const handleFilterChange = (newFilters: FilterOptions) => {
     setFilters(newFilters)
-
-    // Fix layout recalculation bug when filters change
-    setTimeout(() => {
-      // Apply subtle layout fix to prevent content disappearing
-      const mainContent = document.getElementById('main-content')
-      if (mainContent) {
-        // Force layout recalculation without visible blinking
-        const originalTransform = mainContent.style.transform
-        mainContent.style.transform = 'translateZ(0)'
-        void mainContent.offsetHeight // Force reflow
-        mainContent.style.transform = originalTransform
-      }
-    }, 0)
   }
 
   const handleSettingsChange = (newSettings: UserSettings) => {

@@ -1,7 +1,7 @@
 import React from 'react'
 import { CourseLevel, FilterOptions } from '~/types'
 import { useT } from '~/i18n'
-import { Checkbox } from '~/components/ui/checkbox'
+import { Switch } from '~/components/ui/switch'
 import { filterSection, filterLabel } from './filterPanel.styles'
 import { css } from 'styled-system/css'
 
@@ -32,13 +32,13 @@ export const LevelFilterSection: React.FC<LevelFilterSectionProps> = ({ filters,
         className={css({ display: 'flex', flexDirection: 'column', gap: '0.3rem' })}
       >
         {levels.map((level) => (
-          <Checkbox
+          <Switch
             key={level}
             checked={filters.levels?.includes(level) || false}
             onCheckedChange={(details: { checked: boolean }) => onLevelChange(level, details.checked === true)}
           >
             {getLevelLabel(level)}
-          </Checkbox>
+          </Switch>
         ))}
       </div>
     </div>

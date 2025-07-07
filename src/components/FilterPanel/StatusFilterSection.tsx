@@ -1,7 +1,7 @@
 import React from 'react'
 import { NodeStatus, FilterOptions } from '~/types'
 import { useT } from '~/i18n'
-import { Checkbox } from '~/components/ui/checkbox'
+import { Switch } from '~/components/ui/switch'
 import { filterSection, filterLabel } from './filterPanel.styles'
 import { css } from 'styled-system/css'
 
@@ -45,13 +45,13 @@ export const StatusFilterSection: React.FC<StatusFilterSectionProps> = ({ filter
         className={css({ display: 'flex', flexDirection: 'column', gap: '0.3rem' })}
       >
         {statuses.map((status) => (
-          <Checkbox
+          <Switch
             key={status}
             checked={filters.status?.includes(status) || false}
             onCheckedChange={(details: { checked: boolean }) => onStatusChange(status, details.checked === true)}
           >
             {getStatusLabel(status)}
-          </Checkbox>
+          </Switch>
         ))}
       </div>
     </div>
