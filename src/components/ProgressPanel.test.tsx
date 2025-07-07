@@ -619,7 +619,8 @@ describe('ProgressPanel', () => {
           loadingCourseData: 'Loading course data...',
           noDataAvailable: 'No data available',
           failedToLoad: 'Failed to load',
-          connectionError: 'Connection error'
+          connectionError: 'Connection error',
+          noCoursesFound: 'No courses found'
         },
         analytics: { event: 'Event', value: 'Value' },
         theme: { light: 'Light', dark: 'Dark', system: 'System' },

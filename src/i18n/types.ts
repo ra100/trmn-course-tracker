@@ -247,6 +247,7 @@ export interface TranslationStrings {
     noDataAvailable: string
     failedToLoad: string
     connectionError: string
+    noCoursesFound: string
   }
 
   // GDPR Consent

@@ -246,7 +246,8 @@ export const csTranslations: TranslationStrings = {
     loadingCourseData: 'Nepodařilo se načíst data kurzů',
     noDataAvailable: 'Data kurzů nejsou k dispozici. Zkontrolujte připojení a zkuste to znovu.',
     failedToLoad: 'Nepodařilo se načíst data kurzů',
-    connectionError: 'Zkontrolujte připojení a zkuste to znovu'
+    connectionError: 'Zkontrolujte připojení a zkuste to znovu',
+    noCoursesFound: 'Žádné kurzy neodpovídají aktuálním filtrům'
   },
 
   // GDPR Consent

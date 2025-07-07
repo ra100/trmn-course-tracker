@@ -246,7 +246,8 @@ export const enTranslations: TranslationStrings = {
     loadingCourseData: 'Failed to load course data',
     noDataAvailable: 'No course data available. Please check your connection and try again.',
     failedToLoad: 'Failed to load course data',
-    connectionError: 'Please check your connection and try again'
+    connectionError: 'Please check your connection and try again',
+    noCoursesFound: 'No courses found matching current filters'
   },
 
   // GDPR Consent

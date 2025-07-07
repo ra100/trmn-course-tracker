@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import type { Course, FilterOptions, UserSettings, UserProgress, ParsedCourseData } from '../types'
 import { getCourseMainDepartment } from '../utils/departmentUtils'
 import { sortCoursesByNumber } from '../utils/courseUtils'
@@ -32,8 +32,6 @@ export const useCourseFiltering = ({
   userProgress,
   courseData
 }: UseCourseFilteringProps): UseCourseFilteringReturn => {
-  const [filteredCourses, setFilteredCourses] = useState<Course[]>([])
-
   const getCourseStatus = useCallback(
     (course: Course): NodeStatus => {
       if (course.completed) {
@@ -116,16 +114,11 @@ export const useCourseFiltering = ({
   )
 
   // Apply filters to courses with default sorting
-  const filteredCoursesResult = useMemo(() => {
+  const filteredCourses = useMemo(() => {
     const filtered = applyFilters(courses)
     // Apply default sorting by course number
     return sortCoursesByNumber(filtered)
   }, [applyFilters, courses])
-
-  // Update state when filtered courses change
-  useEffect(() => {
-    setFilteredCourses(filteredCoursesResult)
-  }, [filteredCoursesResult])
 
   // Calculate statistics
   const stats = useMemo(() => {

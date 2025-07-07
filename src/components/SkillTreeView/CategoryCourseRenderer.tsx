@@ -12,6 +12,7 @@ import { CourseSection } from './CourseSection'
 import { CourseSubsection } from './CourseSubsection'
 import { categorySection, categoryHeader } from './SkillTreeView.styles'
 import { Course } from '~/types'
+import { css } from 'styled-system/css'
 
 type GroupedCourses = Map<string, Course[]>
 type NestedGroupedCourses = Map<string, Map<string, Course[]>>
@@ -208,6 +209,22 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
 
     // Memoize the final render result based on grouping mode
     return useMemo(() => {
+      // Show "No results found" message when no courses match filters
+      if (filteredCourses.length === 0) {
+        return (
+          <div
+            className={css({
+              textAlign: 'center',
+              padding: '2rem',
+              color: 'gray.500',
+              fontSize: 'lg'
+            })}
+          >
+            {t.errors?.noCoursesFound || 'No courses found matching current filters'}
+          </div>
+        )
+      }
+
       switch (groupingMode) {
         case 'department':
           return renderCoursesByDepartment()
@@ -216,7 +233,14 @@ export const CategoryCourseRenderer: React.FC<CategoryCourseRendererProps> = Rea
         default:
           return renderCoursesByCategory()
       }
-    }, [groupingMode, renderCoursesByDepartment, renderCoursesBySeries, renderCoursesByCategory])
+    }, [
+      groupingMode,
+      renderCoursesByDepartment,
+      renderCoursesBySeries,
+      renderCoursesByCategory,
+      filteredCourses.length,
+      t
+    ])
   }
 )
 
