@@ -936,6 +936,93 @@ Both RMN and RMMC officers wear the same pin.
       expect(university?.level).toBe(undefined) // No level designation
     })
   })
+
+  describe('section hierarchy parsing with level 1 headers', () => {
+    it('should correctly handle level 1 SINA TSC headers creating new sections', () => {
+      const markdown = `
+## Steward School
+
+| Course Name         | Course Number | Prerequisites |
+| ------------------- | ------------- | ------------- |
+| Steward Specialist  | SIA-SRN-03A   | SIA-RMN-0001  |
+
+# SINA TSC Tactical
+
+### Fire Control School
+
+| Course Name                      | Course Number | Prerequisites     |
+| -------------------------------- | ------------- | ----------------- |
+| Fire Control Specialist          | SIA-SRN-08A   | SIA-RMN-0001      |
+| Fire Control Advanced Specialist | SIA-SRN-08C   | SIA-RMN-0002 SIA-SRN-08A |
+
+### Electronic Warfare School
+
+| Course Name                            | Course Number | Prerequisites     |
+| -------------------------------------- | ------------- | ----------------- |
+| Electronic Warfare Specialist          | SIA-SRN-09A   | SIA-RMN-0001      |
+
+# SINA TSC Engineering
+
+### Power School
+
+| Course Name       | Course Number | Prerequisites |
+| ----------------- | ------------- | ------------- |
+| Power Specialist  | SIA-SRN-15A   | SIA-RMN-0001  |
+`
+
+      const parser = new CourseParser(markdown)
+      const result = parser.parse()
+
+      // Should have 3 main sections
+      expect(result.categories).toHaveLength(3)
+      expect(result.categories.map((c) => c.title)).toEqual([
+        'Steward School',
+        'SINA TSC Tactical',
+        'SINA TSC Engineering'
+      ])
+
+      // Verify Steward course is in correct section
+      const stewardCourse = result.courses.find((c) => c.code === 'SIA-SRN-03A')
+      expect(stewardCourse).toBeDefined()
+      expect(stewardCourse?.section).toBe('Steward School')
+      expect(stewardCourse?.subsection).toBe('')
+
+      // Verify Fire Control courses are in SINA TSC Tactical, not Steward
+      const fireControlCourse = result.courses.find((c) => c.code === 'SIA-SRN-08A')
+      expect(fireControlCourse).toBeDefined()
+      expect(fireControlCourse?.section).toBe('SINA TSC Tactical')
+      expect(fireControlCourse?.subsection).toBe('Fire Control School')
+
+      const fireControlAdvanced = result.courses.find((c) => c.code === 'SIA-SRN-08C')
+      expect(fireControlAdvanced).toBeDefined()
+      expect(fireControlAdvanced?.section).toBe('SINA TSC Tactical')
+      expect(fireControlAdvanced?.subsection).toBe('Fire Control School')
+
+      // Verify Electronic Warfare courses are also in SINA TSC Tactical
+      const ewCourse = result.courses.find((c) => c.code === 'SIA-SRN-09A')
+      expect(ewCourse).toBeDefined()
+      expect(ewCourse?.section).toBe('SINA TSC Tactical')
+      expect(ewCourse?.subsection).toBe('Electronic Warfare School')
+
+      // Verify Engineering course is in its own section
+      const powerCourse = result.courses.find((c) => c.code === 'SIA-SRN-15A')
+      expect(powerCourse).toBeDefined()
+      expect(powerCourse?.section).toBe('SINA TSC Engineering')
+      expect(powerCourse?.subsection).toBe('Power School')
+
+      // Verify subsection structure
+      const tacticalSection = result.categories.find((c) => c.title === 'SINA TSC Tactical')
+      expect(tacticalSection?.subsections).toHaveLength(2)
+      expect(tacticalSection?.subsections.map((s) => s.title)).toEqual([
+        'Fire Control School',
+        'Electronic Warfare School'
+      ])
+
+      const engineeringSection = result.categories.find((c) => c.title === 'SINA TSC Engineering')
+      expect(engineeringSection?.subsections).toHaveLength(1)
+      expect(engineeringSection?.subsections[0].title).toBe('Power School')
+    })
+  })
 })
 
 // Test markdown with OR conditions
@@ -1005,8 +1092,8 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       inProgressCourses: new Set<string>(),
       waitingGradeCourses: new Set<string>(),
       courseStatusTimestamps: new Map(),
-    courseCompletionDates: new Map(),
-    specialRulesProgress: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
 
@@ -1023,8 +1110,8 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       inProgressCourses: new Set<string>(),
       waitingGradeCourses: new Set<string>(),
       courseStatusTimestamps: new Map(),
-    courseCompletionDates: new Map(),
-    specialRulesProgress: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
 
@@ -1041,8 +1128,8 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       inProgressCourses: new Set<string>(),
       waitingGradeCourses: new Set<string>(),
       courseStatusTimestamps: new Map(),
-    courseCompletionDates: new Map(),
-    specialRulesProgress: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
 
@@ -1069,8 +1156,8 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       inProgressCourses: new Set<string>(),
       waitingGradeCourses: new Set<string>(),
       courseStatusTimestamps: new Map(),
-    courseCompletionDates: new Map(),
-    specialRulesProgress: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
 
@@ -1097,8 +1184,8 @@ describe('Alternative Prerequisites (OR conditions)', () => {
       inProgressCourses: new Set<string>(),
       waitingGradeCourses: new Set<string>(),
       courseStatusTimestamps: new Map(),
-    courseCompletionDates: new Map(),
-    specialRulesProgress: new Map(),
+      courseCompletionDates: new Map(),
+      specialRulesProgress: new Map(),
       lastUpdated: new Date()
     }
 

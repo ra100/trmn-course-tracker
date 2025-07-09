@@ -84,6 +84,14 @@ export class CourseParser {
           // Check for Space Warfare Pin at level 1
           if (getSection(title)) {
             currentSpecialSection = getSection(title)
+          } else {
+            // Handle level 1 headers that represent major department sections
+            // These should create new sections (e.g., "SINA TSC Tactical", "SINA TSC Engineering")
+            if (title.includes('SINA TSC') || title.includes('TSC')) {
+              currentSection = this.createSection(title)
+              currentSubsection = null
+              currentSpecialSection = null
+            }
           }
         } else if (level === 2) {
           currentSection = this.createSection(title)
