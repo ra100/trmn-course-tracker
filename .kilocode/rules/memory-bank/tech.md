@@ -10,6 +10,7 @@
 
 ### UI and Styling
 
+- **@ark-ui/react 5.16.0**: Accessible UI component library
 - **Panda CSS 0.54.0**: Design system framework with CSS-in-JS capabilities
 - **Park UI 0.43.1**: Component library built on Panda CSS
 - **Styled Components 6.1.19**: Runtime styling for dynamic theme values
