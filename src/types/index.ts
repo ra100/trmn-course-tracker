@@ -1,18 +1,38 @@
 export interface Course {
+  /** Unique identifier for the course */
   id: string
+  /** Human-readable course name */
   name: string
+  /** Primary course code (e.g., 'SIA-RMN-0101') */
   code: string
+  /** Alternative course codes that are equivalent to this course */
+  aliases?: string[]
+  /** Prerequisites that must be met to take this course */
   prerequisites: Prerequisite[]
+  /** Course section (e.g., 'Command', 'Technical') */
   section: string
+  /** Course subsection within the section */
   subsection: string
+  /** Section identifier */
   sectionId: string
+  /** Subsection identifier */
   subsectionId: string
+  /** Whether the course is completed */
   completed: boolean
+  /** Whether the course is currently available */
   available: boolean
+  /** Optional course description */
   description?: string
+  /** Course level (A, C, D, W) */
   level?: CourseLevel
+  /** Departments this course belongs to */
   departments?: string[]
+  /** Primary department for this course */
   primaryDepartment?: string
+  /** Whether this is an introductory course that can be taken first */
+  isIntroductory?: boolean
+  /** Institution offering this course */
+  institution?: string
 }
 
 export interface Prerequisite {
@@ -104,12 +124,24 @@ export interface RequirementProgress {
   details?: string
 }
 
+export interface CourseAlias {
+  /** The primary course code */
+  primaryCode: string
+  /** Alternative course codes that map to the primary */
+  alternativeCodes: string[]
+  /** Description of the alias relationship */
+  description?: string
+  /** Whether this alias is active */
+  active: boolean
+}
+
 export interface CourseData {
   courses: Course[]
   categories: Category[]
   specialRules: SpecialRule[]
   departmentMappings?: Map<string, string[]>
   seriesMappings: Map<string, string>
+  courseAliases?: CourseAlias[]
 }
 
 export interface ParsedCourseData extends CourseData {
@@ -117,6 +149,8 @@ export interface ParsedCourseData extends CourseData {
   categoryMap: Map<string, Category>
   dependencyGraph: Map<string, string[]>
   seriesMappings: Map<string, string>
+  courseAliases?: CourseAlias[]
+  aliasMap?: Map<string, string> // Maps alias codes to primary codes
 }
 
 export interface EligibilityResult {

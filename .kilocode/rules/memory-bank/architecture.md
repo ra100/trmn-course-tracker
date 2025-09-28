@@ -53,7 +53,8 @@ src/
 ```
 scripts/
 ├── buildCourseData.ts     # Course data processing script
-└── checkBundleSize.ts     # Bundle analysis utilities
+├── checkBundleSize.ts     # Bundle analysis utilities
+└── updateCourseDataFromWiki.ts # TRMN wiki data integration
 
 public/
 ├── courses.md             # Source course data (markdown)

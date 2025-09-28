@@ -9,9 +9,11 @@ import {
   CourseData,
   ParsedCourseData,
   CourseLevel,
-  SpecialRuleType
+  SpecialRuleType,
+  CourseAlias
 } from '../types'
 import { logger } from './logger'
+import { CourseAliasManager } from './courseAliasUtils'
 
 // Updated regex to handle both traditional and new course formats:
 // Traditional: SIA-RMN-0001, GPU-ALC-0010, SIA-SRN-20W
@@ -50,6 +52,7 @@ export class CourseParser {
   private specialRules: SpecialRule[]
   private departmentMappings: Map<string, string[]>
   private seriesMappings: Map<string, string>
+  private courseAliases: CourseAlias[]
 
   constructor(markdownContent: string) {
     this.content = markdownContent
@@ -58,6 +61,7 @@ export class CourseParser {
     this.specialRules = []
     this.departmentMappings = new Map()
     this.seriesMappings = new Map()
+    this.courseAliases = []
   }
 
   public parse(): CourseData {
@@ -146,6 +150,8 @@ export class CourseParser {
           this.parseDepartmentMappingRow(line)
         } else if (currentSpecialSection === Section.CourseSeriesMappings) {
           this.parseCourseSeriesMappingRow(line)
+        } else if (line.includes('Primary Course') || line.includes('Alternative Courses')) {
+          this.parseCourseAliasRow(line)
         } else {
           this.parseTableRow(line, currentSection, currentSubsection)
         }
@@ -164,6 +170,12 @@ export class CourseParser {
         inTable = true
         continue
       }
+
+      // Handle course aliases table headers
+      if (line.includes('Primary Course') && line.includes('Alternative Courses')) {
+        inTable = true
+        continue
+      }
     }
 
     return {
@@ -171,7 +183,8 @@ export class CourseParser {
       categories: this.categories,
       specialRules: this.specialRules,
       departmentMappings: this.departmentMappings,
-      seriesMappings: this.seriesMappings
+      seriesMappings: this.seriesMappings,
+      courseAliases: this.courseAliases
     }
   }
 
@@ -239,6 +252,36 @@ export class CourseParser {
     }
   }
 
+  private parseCourseAliasRow(line: string): void {
+    const cells = this.parseTableCells(line)
+
+    if (cells.length >= 3) {
+      const primaryCourse = cells[0]
+      const alternativeCourses = cells[1]
+      const description = cells[2]
+
+      // Skip header rows
+      if (primaryCourse === 'Primary Course' || alternativeCourses === 'Alternative Courses') {
+        return
+      }
+
+      // Parse comma-separated alternative courses
+      const alternativeCodes = alternativeCourses
+        .split(',')
+        .map((code) => code.trim())
+        .filter((code) => code.length > 0)
+
+      if (primaryCourse && alternativeCodes.length > 0) {
+        this.courseAliases.push({
+          primaryCode: primaryCourse,
+          alternativeCodes,
+          description: description || `Alias for ${primaryCourse}`,
+          active: true
+        })
+      }
+    }
+  }
+
   private parseTableRow(line: string, section: Category | null, subsection: Subsection | null): void {
     const cells = this.parseTableCells(line)
 
@@ -275,7 +318,9 @@ export class CourseParser {
         subsectionId: subsection?.id || '',
         completed: false,
         available: false,
-        level: this.extractCourseLevel(courseNumber)
+        level: this.extractCourseLevel(courseNumber),
+        isIntroductory: this.isIntroductoryCourse(courseNumber),
+        institution: this.extractInstitution(courseNumber)
       }
 
       this.courses.set(courseNumber, course)
@@ -726,6 +771,30 @@ export class CourseParser {
       /\d+\s+[acdw]\s+(courses?)/i.test(prereqString)
     )
   }
+
+  private isIntroductoryCourse(courseCode: string): boolean {
+    // GPU-TRMN courses are introductory and can be taken first
+    return courseCode.startsWith('GPU-TRMN-000')
+  }
+
+  private extractInstitution(courseCode: string): string | undefined {
+    if (courseCode.startsWith('GPU-')) {
+      return 'Gryphon Planetary University'
+    }
+    if (courseCode.startsWith('SIA-')) {
+      return 'Saganami Island Naval Academy'
+    }
+    if (courseCode.startsWith('RMACA-')) {
+      return 'Royal Manticoran Aerospace Command Academy'
+    }
+    if (courseCode.startsWith('MU-')) {
+      return 'Mannheim University'
+    }
+    if (courseCode.startsWith('LU-')) {
+      return 'Landing University'
+    }
+    return undefined
+  }
 }
 
 export function parseCourseData(markdownContent: string): ParsedCourseData {
@@ -787,11 +856,14 @@ export function parseCourseData(markdownContent: string): ParsedCourseData {
     categoryMap.set(category.id, category)
   })
 
-  return {
+  // Enhance course data with aliases
+  const enhancedData = CourseAliasManager.enhanceCourseDataWithAliases({
     ...data,
     courseMap,
     categoryMap,
     dependencyGraph,
     seriesMappings: data.seriesMappings || new Map()
-  }
+  })
+
+  return enhancedData
 }

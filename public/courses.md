@@ -28,6 +28,27 @@ The following table defines display names for course series prefixes:
 | MU            | Mannheim University            |
 | LU            | Xenology Society               |
 | GPU-ALC       | Gryphon Planetary University   |
+| GPU-TRMN      | GPU TRMN Leadership Studies    |
+
+## Course Aliases
+
+The following course aliases allow equivalent courses from different institutions to satisfy the same prerequisites:
+
+| Primary Course | Alternative Courses | Description                                         |
+| -------------- | ------------------- | --------------------------------------------------- |
+| GPU-TRMN-0001  | SIA-RMN-0001        | Basic Enlistment Course equivalent                  |
+| GPU-TRMN-0002  | SIA-RMN-0002        | Basic Non-Commissioned Officer Course equivalent    |
+| GPU-TRMN-0003  | SIA-RMN-0003        | Advanced Non-Commissioned Officer Course equivalent |
+
+## GPU TRMN Leadership Studies
+
+The GPU TRMN Leadership Studies program provides introductory courses that serve as equivalents to the basic RMN enlisted training courses. These courses are designed to be accessible to all TRMN members and can be completed before or alongside other courses.
+
+| Course Name                              | Course Number | Prerequisites | Description                                                      |
+| ---------------------------------------- | ------------- | ------------- | ---------------------------------------------------------------- |
+| Basic Enlistment Course                  | GPU-TRMN-0001 |               | Introductory course covering basic TRMN knowledge and procedures |
+| Basic Non-Commissioned Officer Course    | GPU-TRMN-0002 | GPU-TRMN-0001 | Introduction to NCO leadership and responsibilities              |
+| Advanced Non-Commissioned Officer Course | GPU-TRMN-0003 | GPU-TRMN-0002 | Advanced NCO skills and management techniques                    |
 
 ## GPU Advanced Leadership College
 

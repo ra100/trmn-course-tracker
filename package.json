@@ -43,6 +43,7 @@
   },
   "scripts": {
     "build:courses": "tsx scripts/buildCourseData.ts",
+    "update:courses": "tsx scripts/updateCourseDataFromWiki.ts",
     "build": "vite build",
     "build:analyze": "vite build && echo 'Bundle analysis available at build/bundle-analysis.html'",
     "bundle:analyze": "npm run build:analyze && open build/bundle-analysis.html",

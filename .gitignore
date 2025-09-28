@@ -64,3 +64,6 @@ dist
 ## Panda
 styled-system
 styled-system-studio
+
+playwright-report
+test-results

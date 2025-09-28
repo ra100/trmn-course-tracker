@@ -10,12 +10,15 @@ import {
   Prerequisite
 } from '../types'
 import { logger } from './logger'
+import { CourseAliasManager } from './courseAliasUtils'
 
 export class EligibilityEngine {
   private courseData: ParsedCourseData
+  private aliasManager: CourseAliasManager
 
   constructor(courseData: ParsedCourseData) {
     this.courseData = courseData
+    this.aliasManager = new CourseAliasManager(courseData)
   }
 
   public checkCourseEligibility(courseCode: string, userProgress: UserProgress): EligibilityResult {
@@ -66,8 +69,26 @@ export class EligibilityEngine {
       return null
     }
 
+    // Check if the exact course code is completed
     if (userProgress.completedCourses.has(prerequisite.code)) {
       return null // Requirement satisfied
+    }
+
+    // Check if any alias of the required course is completed
+    const requiredPrimary = this.aliasManager.resolveCourseCode(prerequisite.code)
+    const aliases = this.aliasManager.getAliases(requiredPrimary)
+
+    for (const alias of aliases) {
+      if (userProgress.completedCourses.has(alias)) {
+        return null // Requirement satisfied by alias
+      }
+    }
+
+    // Check if any completed course satisfies this requirement
+    for (const completedCode of Array.from(userProgress.completedCourses)) {
+      if (this.aliasManager.satisfiesRequirement(completedCode, prerequisite.code)) {
+        return null // Requirement satisfied by completed course
+      }
     }
 
     return {
@@ -166,10 +187,22 @@ export class EligibilityEngine {
     // Check each alternative - if any is satisfied, the whole group is satisfied
     for (const alternative of prerequisite.alternativePrerequisites) {
       if (alternative.type === 'course' && alternative.code) {
+        // Check if the exact course code is completed
         if (userProgress.completedCourses.has(alternative.code)) {
           satisfied.push(alternative.code)
-        } else {
-          missing.push(alternative.code)
+        }
+        // Check if any alias of the alternative course is completed
+        else {
+          const alternativePrimary = this.aliasManager.resolveCourseCode(alternative.code)
+          const alternativeAliases = this.aliasManager.getAliases(alternativePrimary)
+
+          const isSatisfied = alternativeAliases.some((alias) => userProgress.completedCourses.has(alias))
+
+          if (isSatisfied) {
+            satisfied.push(alternative.code)
+          } else {
+            missing.push(alternative.code)
+          }
         }
       }
     }
@@ -210,8 +243,22 @@ export class EligibilityEngine {
 
   private checkRequirement(requirement: Requirement, userProgress: UserProgress): boolean {
     switch (requirement.type) {
-      case 'course':
-        return requirement.code ? userProgress.completedCourses.has(requirement.code) : false
+      case 'course': {
+        if (!requirement.code) {
+          return false
+        }
+
+        // Check if the exact course code is completed
+        if (userProgress.completedCourses.has(requirement.code)) {
+          return true
+        }
+
+        // Check if any alias of the required course is completed
+        const requiredPrimary = this.aliasManager.resolveCourseCode(requirement.code)
+        const aliases = this.aliasManager.getAliases(requiredPrimary)
+
+        return aliases.some((alias) => userProgress.completedCourses.has(alias))
+      }
 
       case 'department_choice':
         return this.checkDepartmentChoiceRequirement(requirement, userProgress)
