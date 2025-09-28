@@ -28,7 +28,7 @@ const ProgressPanelComponent: React.FC<ProgressPanelProps> = ({ userProgress, co
     useProgressPanelData({ userProgress, courseData, eligibilityEngine, t })
 
   return (
-    <div className={panelContainer}>
+    <div className={panelContainer} data-testid="progress-panel">
       <h2 className={panelTitle}>{t.progress.title}</h2>
 
       <StatisticsPanel stats={overallStats} userProgress={userProgress} />
