@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { renderHook, act, waitFor } from '@testing-library/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import React from 'react'
+import { QueryClient } from '@tanstack/react-query'
 import {
   useUserProgress,
   useUpdateUserProgress,
@@ -9,47 +8,14 @@ import {
   USER_PROGRESS_QUERY_KEY
 } from './useUserProgress'
 import { UserProgress } from '../types'
-
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn()
-}
-
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock
-})
-
-// Mock console methods
-const consoleMock = {
-  log: vi.fn(),
-  error: vi.fn()
-}
-
-Object.defineProperty(console, 'log', { value: consoleMock.log })
-Object.defineProperty(console, 'error', { value: consoleMock.error })
-
-const createTestQueryClient = () => {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: 0
-      },
-      mutations: {
-        retry: false
-      }
-    }
-  })
-}
-
-const createWrapper = (queryClient: QueryClient) => {
-  const Wrapper = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(QueryClientProvider, { client: queryClient }, children)
-  return Wrapper
-}
+import {
+  localStorageMock,
+  consoleMock,
+  createTestQueryClient,
+  createWrapper,
+  setupTestMocks,
+  cleanupTestMocks
+} from '../test-utils/testSetup'
 
 const mockUserProgress: UserProgress = {
   userId: 'test-user',
@@ -78,15 +44,12 @@ describe('useUserProgress', () => {
 
   beforeEach(() => {
     queryClient = createTestQueryClient()
-    vi.clearAllMocks()
-    // Reset localStorage mock implementation
-    localStorageMock.setItem.mockImplementation(() => {})
+    setupTestMocks()
   })
 
   afterEach(() => {
     queryClient.clear()
-    localStorageMock.clear()
-    vi.clearAllMocks()
+    cleanupTestMocks()
   })
 
   describe('useUserProgress', () => {
