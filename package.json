@@ -11,12 +11,13 @@
     "react-dom": "^19.1.1",
     "styled-components": "^6.1.19",
     "typescript": "^5.9.2",
-    "uuid": "^11.1.0"
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
-    "@pandacss/dev": "^0.54.0",
+    "@pandacss/dev": "^1.4.0",
     "@park-ui/panda-preset": "^0.43.1",
+    "@playwright/test": "^1.55.1",
     "@tanstack/react-query-devtools": "^5.90.2",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
@@ -25,7 +26,7 @@
     "@types/react": "^19.1.14",
     "@types/react-dom": "^19.1.9",
     "@types/styled-components": "^5.1.26",
-    "@vitejs/plugin-react": "^4.7.0",
+    "@vitejs/plugin-react": "^5.0.4",
     "@vitest/ui": "^3.2.4",
     "eslint": "^9.36.0",
     "eslint-plugin-react": "^7.37.5",
@@ -56,6 +57,8 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "type-check": "tsc --noEmit",
     "prepare": "panda codegen"
   },
