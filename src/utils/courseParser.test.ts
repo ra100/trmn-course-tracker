@@ -599,7 +599,7 @@ Both RMN and RMMC officers wear the same pin.
 
 | Course Name               | Course Number | Course Prerequisites                                                                                                                                      |
 | ------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Navy Counselor Specialist | SIA-SRN-02A   | SIA-RMN-0001 SIA-SRN-01A 5 A courses from any of the following departments: Astrogation Tactical Command Communications Engineering Logistics, or Medical |
+| Navy Counselor Specialist | SIA-SRN-02A   | INTRO-TRMN-0001 SIA-SRN-01A 5 A courses from any of the following departments: Astrogation Tactical Command Communications Engineering Logistics, or Medical |
 `
 
       const parser = new CourseParser(markdown)
@@ -612,7 +612,7 @@ Both RMN and RMMC officers wear the same pin.
       // Should have specific course prerequisites
       const coursePrereqs = navyCounselorSpecialist?.prerequisites.filter((p) => p.type === 'course')
       expect(coursePrereqs).toHaveLength(2)
-      expect(coursePrereqs?.[0].code).toBe('SIA-RMN-0001')
+      expect(coursePrereqs?.[0].code).toBe('INTRO-TRMN-0001')
       expect(coursePrereqs?.[1].code).toBe('SIA-SRN-01A')
 
       // Should have department choice requirement
@@ -735,7 +735,7 @@ Both RMN and RMMC officers wear the same pin.
 
       const specialistCoursePrereqs = navyCounselorSpecialist?.prerequisites.filter((p) => p.type === 'course')
       expect(specialistCoursePrereqs).toHaveLength(2)
-      expect(specialistCoursePrereqs?.[0].code).toBe('SIA-RMN-0001')
+      expect(specialistCoursePrereqs?.[0].code).toBe('INTRO-TRMN-0001')
       expect(specialistCoursePrereqs?.[1].code).toBe('SIA-SRN-01A')
 
       const specialistDeptReq = navyCounselorSpecialist?.prerequisites.find((p) => p.type === 'department_choice')

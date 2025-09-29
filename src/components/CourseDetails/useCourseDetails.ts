@@ -66,12 +66,42 @@ export const useCourseDetails = ({
 
     course.prerequisites.forEach((prereq) => {
       if (prereq.type === 'course' && prereq.code) {
-        const satisfied = userProgress.completedCourses.has(prereq.code)
+        const requiredCode = prereq.code
+
+        // Check if the exact course code is completed
+        const directSatisfied = userProgress.completedCourses.has(requiredCode)
+
+        // Check if any alias of the required course is completed
+        const allEquivalentCodes = eligibilityEngine.getAllEquivalentCourses(requiredCode)
+        const aliasSatisfied = allEquivalentCodes.some((code) => userProgress.completedCourses.has(code))
+
+        const satisfied = directSatisfied || aliasSatisfied
+
+        // Find which specific course satisfied this requirement
+        let satisfyingCourse: string | undefined
+        if (directSatisfied) {
+          satisfyingCourse = requiredCode
+        } else if (aliasSatisfied) {
+          // Find which alias was actually completed
+          satisfyingCourse = allEquivalentCodes.find((code) => userProgress.completedCourses.has(code))
+        }
+
+        let text = `Course: ${requiredCode}`
+        let courseCodes: string[] | undefined
+
+        if (allEquivalentCodes.length > 1) {
+          // Show the primary course and its aliases
+          text = `Course: ${allEquivalentCodes.join(' / ')}`
+          courseCodes = allEquivalentCodes
+        }
+
         prerequisites.push({
-          text: `Course: ${prereq.code}`,
+          text,
           satisfied,
           type: 'course',
-          courseCode: prereq.code
+          courseCode: requiredCode,
+          courseCodes,
+          satisfyingCourse
         })
       } else if (prereq.type === 'alternative_group' && prereq.alternativePrerequisites) {
         // Check if any of the alternatives are satisfied
@@ -80,17 +110,31 @@ export const useCourseDetails = ({
         )
         const satisfied = satisfiedAlternatives.length > 0
 
-        // Create a readable description
-        const alternativeTexts = prereq.alternativePrerequisites
-          .filter((alt) => alt.type === 'course' && alt.code)
-          .map((alt) => alt.code)
-          .filter((code): code is string => Boolean(code))
+        // Create a readable description with aliases
+        const alternativeTexts: string[] = []
+        const allAlternativeCodes: string[] = []
+
+        prereq.alternativePrerequisites.forEach((alt) => {
+          if (alt.type === 'course' && alt.code) {
+            const altCode = alt.code
+            const allEquivalentCodes = eligibilityEngine.getAllEquivalentCourses(altCode)
+
+            if (allEquivalentCodes.length > 1) {
+              // Show all equivalent codes for this alternative
+              alternativeTexts.push(allEquivalentCodes.join(' / '))
+              allAlternativeCodes.push(...allEquivalentCodes)
+            } else {
+              alternativeTexts.push(altCode)
+              allAlternativeCodes.push(altCode)
+            }
+          }
+        })
 
         prerequisites.push({
           text: `One of: ${alternativeTexts.join(' OR ')}`,
           satisfied,
           type: 'alternative_group',
-          courseCodes: alternativeTexts
+          courseCodes: allAlternativeCodes
         })
       } else if (prereq.type === 'department_choice') {
         // Handle department choice requirements (like Navy Counselor courses)

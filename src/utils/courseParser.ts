@@ -327,6 +327,16 @@ export class CourseParser {
     }
   }
 
+  private extractCourseCodes(prereqString: string): string[] {
+    const codes: string[] = []
+    let match
+    const regex = new RegExp(COURSE_CODE_REGEX.source, 'g')
+    while ((match = regex.exec(prereqString)) !== null) {
+      codes.push(match[1])
+    }
+    return codes
+  }
+
   private parsePrerequisites(prereqString: string): Prerequisite[] {
     if (!prereqString || prereqString.trim() === '') {
       return []
@@ -382,7 +392,7 @@ export class CourseParser {
       }
     }
 
-    // Handle course code prerequisites (no OR condition)
+    // Handle simple course code prerequisites (no OR condition, no complex requirements)
     let match
     const matches = []
     const regex = new RegExp(COURSE_CODE_REGEX.source, 'g')
@@ -624,7 +634,7 @@ export class CourseParser {
   private parseComplexCourseRequirements(prereqString: string): Prerequisite[] {
     const prerequisites: Prerequisite[] = []
 
-    // Extract specific course codes first
+    // First extract any course codes that appear in the string
     let match
     const courses = []
     const regex = new RegExp(COURSE_CODE_REGEX.source, 'g')
@@ -632,7 +642,7 @@ export class CourseParser {
       courses.push(match[1])
     }
 
-    // Add course requirements
+    // Add course requirements for any course codes found
     courses.forEach((code) => {
       prerequisites.push({
         type: 'course',
@@ -643,6 +653,7 @@ export class CourseParser {
     })
 
     // Parse complex requirements like "5 A courses from any of the following departments"
+    // This pattern should match even when course codes appear before it
     const complexMatch = prereqString.match(
       /(\d+)\s+([ACDW])\s+(courses?)\s+from\s+any\s+of\s+the\s+(?:following\s+)?departments?:?\s*(.+)/i
     )

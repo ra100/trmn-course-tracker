@@ -416,4 +416,15 @@ export class EligibilityEngine {
   public getCourseByCode(courseCode: string): Course | undefined {
     return this.courseData.courseMap.get(courseCode)
   }
+
+  public getCourseAliases(courseCode: string): string[] {
+    const primary = this.aliasManager.resolveCourseCode(courseCode)
+    return this.aliasManager.getAliases(primary)
+  }
+
+  public getAllEquivalentCourses(courseCode: string): string[] {
+    const primary = this.aliasManager.resolveCourseCode(courseCode)
+    const aliases = this.aliasManager.getAliases(primary)
+    return [primary, ...aliases]
+  }
 }

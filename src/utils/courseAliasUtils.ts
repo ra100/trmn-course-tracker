@@ -77,25 +77,26 @@ export class CourseAliasManager {
 
   /**
    * Create introductory course aliases for GPU-TRMN courses
-   * Maps SIA-RMN-0001 → GPU-TRMN-0001, etc.
+   * Maps INTRO-TRMN-0001 ← GPU-TRMN-0001 SIA-RMN-0001, etc.
+   * Based on markdown definition where INTRO-TRMN-000x is primary
    */
   static createIntroductoryAliases(): CourseAlias[] {
     return [
       {
-        primaryCode: 'GPU-TRMN-0001',
-        alternativeCodes: ['SIA-RMN-0001'],
+        primaryCode: 'INTRO-TRMN-0001',
+        alternativeCodes: ['GPU-TRMN-0001', 'SIA-RMN-0001'],
         description: 'Introductory course equivalent - Basic Enlistment',
         active: true
       },
       {
-        primaryCode: 'GPU-TRMN-0002',
-        alternativeCodes: ['SIA-RMN-0002'],
+        primaryCode: 'INTRO-TRMN-0002',
+        alternativeCodes: ['GPU-TRMN-0002', 'SIA-RMN-0002'],
         description: 'Introductory course equivalent - Basic Non-Commissioned Officer',
         active: true
       },
       {
-        primaryCode: 'GPU-TRMN-0003',
-        alternativeCodes: ['SIA-RMN-0003'],
+        primaryCode: 'INTRO-TRMN-0003',
+        alternativeCodes: ['GPU-TRMN-0003', 'SIA-RMN-0003'],
         description: 'Introductory course equivalent - Advanced Non-Commissioned Officer',
         active: true
       }

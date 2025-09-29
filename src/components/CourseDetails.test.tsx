@@ -44,7 +44,8 @@ const mockUserProgress: UserProgress = {
 const mockEligibilityEngine = {
   getCoursesUnlockedBy: vi.fn(() => []),
   getCourseByCode: vi.fn(),
-  updateCourseAvailability: vi.fn()
+  updateCourseAvailability: vi.fn(),
+  getAllEquivalentCourses: vi.fn((code: string) => [code])
 } as unknown as EligibilityEngine
 
 describe('CourseDetails', () => {

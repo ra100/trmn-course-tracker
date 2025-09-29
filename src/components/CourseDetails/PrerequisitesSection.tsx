@@ -11,7 +11,10 @@ import {
   departmentChoiceHeader,
   departmentChoiceProgress,
   departmentList,
-  clickableCourseCode
+  clickableCourseCode,
+  courseAliasGroup,
+  courseAliasBadge,
+  primaryCourseCode
 } from './CourseDetails.styles'
 
 export const PrerequisitesSection: React.FC<PrerequisitesSectionProps> = React.memo(
@@ -51,12 +54,57 @@ export const PrerequisitesSection: React.FC<PrerequisitesSectionProps> = React.m
 
             if (prereq.type === 'course' && prereq.courseCode && onCourseSelect) {
               const courseCode = prereq.courseCode
+              const courseCodes = prereq.courseCodes
+              const satisfyingCourse = prereq.satisfyingCourse
+
               return (
                 <div key={`course-${courseCode}`} className={prerequisiteItem({ satisfied: prereq.satisfied })}>
-                  Course:{' '}
-                  <span onClick={() => courseCode && handleCourseClick(courseCode)} className={clickableCourseCode}>
-                    {courseCode}
-                  </span>
+                  <div>
+                    Course:{' '}
+                    {courseCodes && courseCodes.length > 1 ? (
+                      <span className={courseAliasGroup}>
+                        {courseCodes.map((code, index) => (
+                          <React.Fragment key={code}>
+                            <span
+                              onClick={() => handleCourseClick(code)}
+                              className={index === 0 ? primaryCourseCode : courseAliasBadge}
+                              style={{
+                                background:
+                                  satisfyingCourse === code
+                                    ? 'var(--colors-green-100)'
+                                    : index === 0
+                                    ? 'var(--colors-accent-100)'
+                                    : 'var(--colors-bg-subtle)',
+                                color:
+                                  satisfyingCourse === code
+                                    ? 'var(--colors-green-700)'
+                                    : index === 0
+                                    ? 'var(--colors-accent-700)'
+                                    : 'var(--colors-fg-muted)'
+                              }}
+                            >
+                              {code}
+                              {satisfyingCourse === code && (
+                                <span style={{ marginLeft: '0.25rem', fontSize: 'xs' }}>✓</span>
+                              )}
+                            </span>
+                            {index < courseCodes.length - 1 && (
+                              <span style={{ color: 'var(--colors-fg-muted)', fontSize: 'xs' }}> / </span>
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </span>
+                    ) : (
+                      <span onClick={() => handleCourseClick(courseCode)} className={clickableCourseCode}>
+                        {courseCode}
+                      </span>
+                    )}
+                  </div>
+                  {satisfyingCourse && satisfyingCourse !== courseCode && (
+                    <div style={{ fontSize: 'xs', opacity: 0.8, marginTop: '0.25rem' }}>
+                      Satisfied by: {satisfyingCourse}
+                    </div>
+                  )}
                 </div>
               )
             }

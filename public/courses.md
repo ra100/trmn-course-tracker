@@ -36,9 +36,9 @@ The following course aliases allow equivalent courses from different institution
 
 | Primary Course  | Alternative Courses        |
 | --------------- | -------------------------- |
-| Intro-TRMN-0001 | GPU-TRMN-0001 SIA-RMN-0001 |
-| Intro-TRMN-0002 | GPU-TRMN-0002 SIA-RMN-0002 |
-| Intro-TRMN-0003 | GPU-TRMN-0003 SIA-RMN-0003 |
+| INTRO-TRMN-0001 | GPU-TRMN-0001 SIA-RMN-0001 |
+| INTRO-TRMN-0002 | GPU-TRMN-0002 SIA-RMN-0002 |
+| INTRO-TRMN-0003 | GPU-TRMN-0003 SIA-RMN-0003 |
 
 ## GPU TRMN Leadership Studies
 
@@ -46,9 +46,9 @@ The GPU TRMN Leadership Studies program provides introductory courses that serve
 
 | Course Name     | Course Number | Prerequisites | Description                                                      |
 | --------------- | ------------- | ------------- | ---------------------------------------------------------------- |
-| Intro-TRMN-0001 | GPU-TRMN-0001 |               | Introductory course covering basic TRMN knowledge and procedures |
-| Intro-TRMN-0002 | GPU-TRMN-0002 | GPU-TRMN-0001 | Introduction to NCO leadership and responsibilities              |
-| Intro-TRMN-0003 | GPU-TRMN-0003 | GPU-TRMN-0002 | Advanced NCO skills and management techniques                    |
+| INTRO-TRMN-0001 | GPU-TRMN-0001 |               | Introductory course covering basic TRMN knowledge and procedures |
+| INTRO-TRMN-0002 | GPU-TRMN-0002 | GPU-TRMN-0001 | Introduction to NCO leadership and responsibilities              |
+| INTRO-TRMN-0003 | GPU-TRMN-0003 | GPU-TRMN-0002 | Advanced NCO skills and management techniques                    |
 
 ## GPU Advanced Leadership College
 
@@ -65,10 +65,10 @@ The GPU TRMN Leadership Studies program provides introductory courses that serve
 
 | Course Name                       | Course Number | Prerequisites                                   |
 | --------------------------------- | ------------- | ----------------------------------------------- |
-| Intro-TRMN-0001                   | SIA-RMN-0001  |                                                 |
-| Intro-TRMN-0002                   | SIA-RMN-0002  | SIA-RMN-0001                                    |
-| Intro-TRMN-0003                   | SIA-RMN-0003  | SIA-RMN-0002                                    |
-| Senior Chief Petty Officer        | SIA-RMN-0004  | Intro-TRMN-0001 Intro-TRMN-0002 Intro-TRMN-0003 |
+| INTRO-TRMN-0001                   | SIA-RMN-0001  |                                                 |
+| INTRO-TRMN-0002                   | SIA-RMN-0002  | SIA-RMN-0001                                    |
+| INTRO-TRMN-0003                   | SIA-RMN-0003  | SIA-RMN-0002                                    |
+| Senior Chief Petty Officer        | SIA-RMN-0004  | INTRO-TRMN-0001 INTRO-TRMN-0002 INTRO-TRMN-0003 |
 | Master Chief Petty Officer        | SIA-RMN-0005  | SIA-RMN-0004 GPU-ALC-0009                       |
 | Senior Master Chief Petty Officer | SIA-RMN-0006  | SIA-RMN-0005 GPU-ALC-0010                       |
 
@@ -119,7 +119,7 @@ In remembrance and recognition of Master Chief Warrant Officer Michael Cucchiare
 
 | Course Name                   | Course Number | Course Prerequisites                             |
 | ----------------------------- | ------------- | ------------------------------------------------ |
-| Boatswain Specialist          | SIA-SRN-30A   | Intro-TRMN-0003 SIA-SRN-01A SIA-SRN-19A          |
+| Boatswain Specialist          | SIA-SRN-30A   | INTRO-TRMN-0003 SIA-SRN-01A SIA-SRN-19A          |
 | Boatswain Advanced Specialist | SIA-SRN-30C   | SIA-RMN-0004 SIA-SRN-01C SIA-SRN-19C SIA-SRN-30A |
 | Boatswain Qualification       | SIA-SRN-30D   | SIA-RMN-0006 SIA-SRN-05C SIA-SRN-30C             |
 | Boatswain Warrant Project     | SIA-SRN-30W   | SIA-RMN-0005 SIA-SRN-05A SIA-SRN-30C             |
@@ -130,8 +130,8 @@ While not an official TRMN rating but a specialty job assignment, the Master-at-
 
 | Course Name                        | Course Number | Course Prerequisites        |
 | ---------------------------------- | ------------- | --------------------------- |
-| Master-at-Arms Specialist          | SIA-SRN-31A   | Intro-TRMN-0001             |
-| Master-at-Arms Advanced Specialist | SIA-SRN-31C   | Intro-TRMN-0002 SIA-SRN-31A |
+| Master-at-Arms Specialist          | SIA-SRN-31A   | INTRO-TRMN-0001             |
+| Master-at-Arms Advanced Specialist | SIA-SRN-31C   | INTRO-TRMN-0002 SIA-SRN-31A |
 | Master-at-Arms Qualification       | SIA-SRN-31D   | SIA-RMN-0101 SIA-SRN-31C    |
 | Master-at-Arms Warrant Project     | SIA-SRN-31W   | SIA-RMN-0011 SIA-SRN-31C    |
 
@@ -143,8 +143,8 @@ Operations Specialists work in the Combat Information Center (CIC). They are res
 
 | Course Name                    | Course Number | Course Prerequisites        |
 | ------------------------------ | ------------- | --------------------------- |
-| Operations Specialist          | SIA-SRN-25A   | Intro-TRMN-0001             |
-| Operations Advanced Specialist | SIA-SRN-25C   | Intro-TRMN-0002 SIA-SRN-25A |
+| Operations Specialist          | SIA-SRN-25A   | INTRO-TRMN-0001             |
+| Operations Advanced Specialist | SIA-SRN-25C   | INTRO-TRMN-0002 SIA-SRN-25A |
 | Operations Qualification       | SIA-SRN-25D   | SIA-RMN-0101 SIA-SRN-25C    |
 | Operations Warrant Project     | SIA-SRN-25W   | SIA-RMN-0011 SIA-SRN-25C    |
 
@@ -154,8 +154,8 @@ Intelligence Specialists are involved in collecting and interpreting intelligenc
 
 | Course Name                      | Course Number | Course Prerequisites        |
 | -------------------------------- | ------------- | --------------------------- |
-| Intelligence Specialist          | SIA-SRN-26A   | Intro-TRMN-0001             |
-| Intelligence Advanced Specialist | SIA-SRN-26C   | Intro-TRMN-0002 SIA-SRN-26A |
+| Intelligence Specialist          | SIA-SRN-26A   | INTRO-TRMN-0001             |
+| Intelligence Advanced Specialist | SIA-SRN-26C   | INTRO-TRMN-0002 SIA-SRN-26A |
 | Intelligence Qualification       | SIA-SRN-26D   | SIA-RMN-0101 SIA-SRN-26C    |
 | Intelligence Warrant Project     | SIA-SRN-26W   | SIA-RMN-0011 SIA-SRN-26C    |
 
@@ -163,7 +163,7 @@ Intelligence Specialists are involved in collecting and interpreting intelligenc
 
 | Course Name                  | Course Number | Course Prerequisites |
 | ---------------------------- | ------------- | -------------------- |
-| Legalman Specialist          | SIA-SRN-33A   | Intro-TRMN-0001      |
+| Legalman Specialist          | SIA-SRN-33A   | INTRO-TRMN-0001      |
 | Legalman Advanced Specialist | SIA-SRN-33C   | SIA-SRN-33A          |
 | Legalman Qualifying          | SIA-SRN-33D   | SIA-SRN-33C          |
 | Legalman Warrant Officer     | SIA-SRN-33W   | SIA-SRN-33C          |
@@ -176,8 +176,8 @@ Personnelman provide enlisted personnel with information and counseling about Na
 
 | Course Name                      | Course Number | Course Prerequisites        |
 | -------------------------------- | ------------- | --------------------------- |
-| Personnelman Specialist          | SIA-SRN-01A   | Intro-TRMN-0001             |
-| Personnelman Advanced Specialist | SIA-SRN-01C   | Intro-TRMN-0002 SIA-SRN-01A |
+| Personnelman Specialist          | SIA-SRN-01A   | INTRO-TRMN-0001             |
+| Personnelman Advanced Specialist | SIA-SRN-01C   | INTRO-TRMN-0002 SIA-SRN-01A |
 | Personnelman Qualification       | SIA-SRN-01D   | SIA-RMN-0101 SIA-SRN-01C    |
 | Personnelman Warrant Project     | SIA-SRN-01W   | SIA-RMN-0011 SIA-SRN-01C    |
 
@@ -187,8 +187,8 @@ Yeomen perform secretarial and clerical work. They deal with visitors, video/voi
 
 | Course Name                | Course Number | Course Prerequisites        |
 | -------------------------- | ------------- | --------------------------- |
-| Yeoman Specialist          | SIA-SRN-04A   | Intro-TRMN-0001             |
-| Yeoman Advanced Specialist | SIA-SRN-04C   | Intro-TRMN-0002 SIA-SRN-04A |
+| Yeoman Specialist          | SIA-SRN-04A   | INTRO-TRMN-0001             |
+| Yeoman Advanced Specialist | SIA-SRN-04C   | INTRO-TRMN-0002 SIA-SRN-04A |
 | Yeoman Qualification       | SIA-SRN-04D   | SIA-RMN-0101 SIA-SRN-04C    |
 | Yeoman Warrant Project     | SIA-SRN-04W   | SIA-RMN-0011 SIA-SRN-04C    |
 
@@ -198,8 +198,8 @@ Navy Counselors offer vocational guidance to Navy personnel — individually and
 
 | Course Name                        | Course Number | Course Prerequisites                                                                                                                                         |
 | ---------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Navy Counselor Specialist          | SIA-SRN-02A   | Intro-TRMN-0001 SIA-SRN-01A 5 A courses from any of the following departments: Astrogation Tactical Command Communications Engineering Logistics, or Medical |
-| Navy Counselor Advanced Specialist | SIA-SRN-02C   | Intro-TRMN-0002 SIA-SRN-02A 2 C courses from any of the departments listed above.                                                                            |
+| Navy Counselor Specialist          | SIA-SRN-02A   | INTRO-TRMN-0001 SIA-SRN-01A 5 A courses from any of the following departments: Astrogation Tactical Command Communications Engineering Logistics, or Medical |
+| Navy Counselor Advanced Specialist | SIA-SRN-02C   | INTRO-TRMN-0002 SIA-SRN-02A 2 C courses from any of the departments listed above.                                                                            |
 | Navy Counselor Qualification       | SIA-SRN-02D   | SIA-RMN-0101 SIA-SRN-02C 1 D course from any of the departments listed above.                                                                                |
 | Navy Counselor Warrant Project     | SIA-SRN-02W   | SIA-RMN-0011 SIA-SRN-02C                                                                                                                                     |
 
@@ -211,8 +211,8 @@ Storekeepers are the Navy’s supply clerks. They see that needed supplies are a
 
 | Course Name                     | Course Number       | Course Prerequisites        |
 | ------------------------------- | ------------------- | --------------------------- |
-| Storekeeper Specialist          | SIA-SRN-20A         | Intro-TRMN-0001             |
-| Storekeeper Advanced Specialist | SIA-SRN-20C         | Intro-TRMN-0002 SIA-SRN-20A |
+| Storekeeper Specialist          | SIA-SRN-20A         | INTRO-TRMN-0001             |
+| Storekeeper Advanced Specialist | SIA-SRN-20C         | INTRO-TRMN-0002 SIA-SRN-20A |
 | Storekeeper Qualification       | SIA-SRN-20D         | SIA-RMN-0101 SIA-SRN-20C    |
 | Storekeeper Warrant Project     | SIA-SRN-20W Project | SIA-RMN-0011 SIA-SRN-20C    |
 
@@ -222,8 +222,8 @@ Disbursing clerks maintain pay records and process travel claims for the Navy us
 
 | Course Name                          | Course Number       | Course Prerequisites        |
 | ------------------------------------ | ------------------- | --------------------------- |
-| Disbursing Clerk Specialist          | SIA-SRN-21A         | Intro-TRMN-0001             |
-| Disbursing Clerk Advanced Specialist | SIA-SRN-21C         | Intro-TRMN-0002 SIA-SRN-21A |
+| Disbursing Clerk Specialist          | SIA-SRN-21A         | INTRO-TRMN-0001             |
+| Disbursing Clerk Advanced Specialist | SIA-SRN-21C         | INTRO-TRMN-0002 SIA-SRN-21A |
 | Disbursing Clerk Qualification       | SIA-SRN-21D         | SIA-RMN-0101 SIA-SRN-21C    |
 | Disbursing Clerk Warrant Project     | SIA-SRN-21W Project | SIA-RMN-0011 SIA-SRN-21C    |
 
@@ -233,8 +233,8 @@ Ship’s Servicemen manage barber shops, tailor shops, ships’ uniform stores, 
 
 | Course Name                           | Course Number | Course Prerequisites        |
 | ------------------------------------- | ------------- | --------------------------- |
-| Ship’s Serviceman Specialist          | SIA-SRN-22A   | Intro-TRMN-0001             |
-| Ship’s Serviceman Advanced Specialist | SIA-SRN-22C   | Intro-TRMN-0002 SIA-SRN-22A |
+| Ship’s Serviceman Specialist          | SIA-SRN-22A   | INTRO-TRMN-0001             |
+| Ship’s Serviceman Advanced Specialist | SIA-SRN-22C   | INTRO-TRMN-0002 SIA-SRN-22A |
 | Ship’s Serviceman Qualification       | SIA-SRN-22D   | SIA-RMN-0101 SIA-SRN-22C    |
 | Ship’s Serviceman Warrant Project     | SIA-SRN-22W   | SIA-RMN-0011 SIA-SRN-22C    |
 
@@ -244,8 +244,8 @@ Stewards prepare menus and order the quantities and types of food items required
 
 | Course Name                 | Course Number | Course Prerequisites        |
 | --------------------------- | ------------- | --------------------------- |
-| Steward Specialist          | SIA-SRN-03A   | Intro-TRMN-0001             |
-| Steward Advanced Specialist | SIA-SRN-03C   | Intro-TRMN-0002 SIA-SRN-03A |
+| Steward Specialist          | SIA-SRN-03A   | INTRO-TRMN-0001             |
+| Steward Advanced Specialist | SIA-SRN-03C   | INTRO-TRMN-0002 SIA-SRN-03A |
 | Steward Qualification       | SIA-SRN-03D   | SIA-RMN-0101 SIA-SRN-03C    |
 | Steward Warrant Project     | SIA-SRN-03W   | SIA-RMN-0011 SIA-SRN-03C    |
 
@@ -290,8 +290,8 @@ Fire Control Technicians maintain the electronic equipment used in ship’s weap
 
 | Course Name                      | Course Number | Course Prerequisites        |
 | -------------------------------- | ------------- | --------------------------- |
-| Fire Control Specialist          | SIA-SRN-08A   | Intro-TRMN-0001             |
-| Fire Control Advanced Specialist | SIA-SRN-08C   | Intro-TRMN-0002 SIA-SRN-08A |
+| Fire Control Specialist          | SIA-SRN-08A   | INTRO-TRMN-0001             |
+| Fire Control Advanced Specialist | SIA-SRN-08C   | INTRO-TRMN-0002 SIA-SRN-08A |
 | Fire Control Qualification       | SIA-SRN-08D   | SIA-RMN-0101 SIA-SRN-08C    |
 | Fire Control Warrant Project     | SIA-SRN-08W   | SIA-RMN-0011 SIA-SRN-08C    |
 
@@ -301,8 +301,8 @@ Electronic Warfare Technicians operate and maintain ship’s electronic counterm
 
 | Course Name                            | Course Number       | Course Prerequisites        |
 | -------------------------------------- | ------------------- | --------------------------- |
-| Electronic Warfare Specialist          | SIA-SRN-09A         | Intro-TRMN-0001             |
-| Electronic Warfare Advanced Specialist | SIA-SRN-09C         | Intro-TRMN-0002 SIA-SRN-09A |
+| Electronic Warfare Specialist          | SIA-SRN-09A         | INTRO-TRMN-0001             |
+| Electronic Warfare Advanced Specialist | SIA-SRN-09C         | INTRO-TRMN-0002 SIA-SRN-09A |
 | Electronic Warfare Qualification       | SIA-SRN-09D         | SIA-RMN-0101 SIA-SRN-09C    |
 | Electronic Warfare Warrant Project     | SIA-SRN-09W Project | SIA-RMN-0011 SIA-SRN-09C    |
 
@@ -312,8 +312,8 @@ Tracking Specialists work in the Combat Information Center (CIC). They keep trac
 
 | Course Name                  | Course Number | Course Prerequisites        |
 | ---------------------------- | ------------- | --------------------------- |
-| Tracking Specialist          | SIA-SRN-10A   | Intro-TRMN-0001             |
-| Tracking Advanced Specialist | SIA-SRN-10C   | Intro-TRMN-0002 SIA-SRN-10A |
+| Tracking Specialist          | SIA-SRN-10A   | INTRO-TRMN-0001             |
+| Tracking Advanced Specialist | SIA-SRN-10C   | INTRO-TRMN-0002 SIA-SRN-10A |
 | Tracking Qualification       | SIA-SRN-10D   | SIA-RMN-0101 SIA-SRN-10C    |
 | Tracking Warrant Project     | SIA-SRN-10W   | SIA-RMN-0011 SIA-SRN-10C    |
 
@@ -323,8 +323,8 @@ Sensor Technicians are responsible for the operation and maintenance of the vari
 
 | Course Name                | Course Number | Course Prerequisites        |
 | -------------------------- | ------------- | --------------------------- |
-| Sensor Specialist          | SIA-SRN-32A   | Intro-TRMN-0001             |
-| Sensor Advanced Specialist | SIA-SRN-32C   | Intro-TRMN-0002 SIA-SRN-32A |
+| Sensor Specialist          | SIA-SRN-32A   | INTRO-TRMN-0001             |
+| Sensor Advanced Specialist | SIA-SRN-32C   | INTRO-TRMN-0002 SIA-SRN-32A |
 | Sensor Qualification       | SIA-SRN-32D   | SIA-RMN-0101 SIA-SRN-32C    |
 | Sensor Warrant Project     | SIA-SRN-32W   | SIA-RMN-0011 SIA-SRN-32C    |
 
@@ -336,8 +336,8 @@ Missile Technicians operate, test, maintain, troubleshoot, and repair missile we
 
 | Course Name                 | Course Number | Course Prerequisites        |
 | --------------------------- | ------------- | --------------------------- |
-| Missile Specialist          | SIA-SRN-27A   | Intro-TRMN-0001             |
-| Missile Advanced Specialist | SIA-SRN-27C   | Intro-TRMN-0002 SIA-SRN-27A |
+| Missile Specialist          | SIA-SRN-27A   | INTRO-TRMN-0001             |
+| Missile Advanced Specialist | SIA-SRN-27C   | INTRO-TRMN-0002 SIA-SRN-27A |
 | Missile Qualification       | SIA-SRN-27D   | SIA-RMN-0101 SIA-SRN-27C    |
 | Missile Warrant Project     | SIA-SRN-27W   | SIA-RMN-0011 SIA-SRN-27C    |
 
@@ -347,8 +347,8 @@ Beam Weapons Technicians operate, test, maintain, troubleshoot, and repair all e
 
 | Course Name                      | Course Number | Course Prerequisites        |
 | -------------------------------- | ------------- | --------------------------- |
-| Beam Weapons Specialist          | SIA-SRN-28A   | Intro-TRMN-0001             |
-| Beam Weapons Advanced Specialist | SIA-SRN-28C   | Intro-TRMN-0002 SIA-SRN-28A |
+| Beam Weapons Specialist          | SIA-SRN-28A   | INTRO-TRMN-0001             |
+| Beam Weapons Advanced Specialist | SIA-SRN-28C   | INTRO-TRMN-0002 SIA-SRN-28A |
 | Beam Weapons Qualification       | SIA-SRN-28D   | SIA-RMN-0101 SIA-SRN-28C    |
 | Beam Weapons Warrant Project     | SIA-SRN-28W   | SIA-RMN-0011 SIA-SRN-28C    |
 
@@ -358,8 +358,8 @@ Gunners operate and maintain all gunnery equipment, guided-missile launching sys
 
 | Course Name                | Course Number | Course Prerequisites                                |
 | -------------------------- | ------------- | --------------------------------------------------- |
-| Gunner Specialist          | SIA-SRN-29A   | Intro-TRMN-0001 SIA-SRN-27A SIA-SRN-28A             |
-| Gunner Advanced Specialist | SIA-SRN-29C   | Intro-TRMN-0002 SIA-SRN-27C SIA-SRN-28C SIA-SRN-29A |
+| Gunner Specialist          | SIA-SRN-29A   | INTRO-TRMN-0001 SIA-SRN-27A SIA-SRN-28A             |
+| Gunner Advanced Specialist | SIA-SRN-29C   | INTRO-TRMN-0002 SIA-SRN-27C SIA-SRN-28C SIA-SRN-29A |
 | Gunner Qualification       | SIA-SRN-29D   | SIA-RMN-0101 SIA-SRN-29C SIA-SRN-27D SIA-SRN-28D    |
 | Gunner Warrant Project     | SIA-SRN-29W   | SIA-RMN-0011 SIA-SRN-29C                            |
 
@@ -375,8 +375,8 @@ Commander Robert Lea Gartner was one of TRMN’s early members and served for ov
 
 | Course Name                  | Course Number | Course Prerequisites        |
 | ---------------------------- | ------------- | --------------------------- |
-| Impeller Specialist          | SIA-SRN-14A   | Intro-TRMN-0001             |
-| Impeller Advanced Specialist | SIA-SRN-14C   | Intro-TRMN-0002 SIA-SRN-14A |
+| Impeller Specialist          | SIA-SRN-14A   | INTRO-TRMN-0001             |
+| Impeller Advanced Specialist | SIA-SRN-14C   | INTRO-TRMN-0002 SIA-SRN-14A |
 | Impeller Qualification       | SIA-SRN-14D   | SIA-RMN-0101 SIA-SRN-14C    |
 | Impeller Warrant Project     | SIA-SRN-14W   | SIA-RMN-0011 SIA-SRN-14C    |
 
@@ -386,8 +386,8 @@ Power Technicians perform the work necessary for power distribution throughout t
 
 | Course Name               | Course Number | Course Prerequisites        |
 | ------------------------- | ------------- | --------------------------- |
-| Power Specialist          | SIA-SRN-15A   | Intro-TRMN-0001             |
-| Power Advanced Specialist | SIA-SRN-15C   | Intro-TRMN-0002 SIA-SRN-15A |
+| Power Specialist          | SIA-SRN-15A   | INTRO-TRMN-0001             |
+| Power Advanced Specialist | SIA-SRN-15C   | INTRO-TRMN-0002 SIA-SRN-15A |
 | Power Qualification       | SIA-SRN-15D   | SIA-RMN-0101 SIA-SRN-15C    |
 | Power Warrant Project     | SIA-SRN-15W   | SIA-RMN-0011 SIA-SRN-15C    |
 
@@ -397,8 +397,8 @@ Gravitics Technicians operate, test, maintain, troubleshoot, and repair ship's g
 
 | Course Name                   | Course Number | Course Prerequisites        |
 | ----------------------------- | ------------- | --------------------------- |
-| Gravitics Specialist          | SIA-SRN-16A   | Intro-TRMN-0001             |
-| Gravitics Advanced Specialist | SIA-SRN-16C   | Intro-TRMN-0002 SIA-SRN-16A |
+| Gravitics Specialist          | SIA-SRN-16A   | INTRO-TRMN-0001             |
+| Gravitics Advanced Specialist | SIA-SRN-16C   | INTRO-TRMN-0002 SIA-SRN-16A |
 | Gravitics Qualification       | SIA-SRN-16D   | SIA-RMN-0101 SIA-SRN-16C    |
 | Gravitics Warrant Project     | SIA-SRN-16W   | SIA-RMN-0011 SIA-SRN-16C    |
 
@@ -410,8 +410,8 @@ Environmental Technicians are responsible for operating and repairing ship’s l
 
 | Course Name                       | Course Number | Course Prerequisites        |
 | --------------------------------- | ------------- | --------------------------- |
-| Environmental Specialist          | SIA-SRN-17A   | Intro-TRMN-0001             |
-| Environmental Advanced Specialist | SIA-SRN-17C   | Intro-TRMN-0002 SIA-SRN-17A |
+| Environmental Specialist          | SIA-SRN-17A   | INTRO-TRMN-0001             |
+| Environmental Advanced Specialist | SIA-SRN-17C   | INTRO-TRMN-0002 SIA-SRN-17A |
 | Environmental Qualification       | SIA-SRN-17D   | SIA-RMN-0101 SIA-SRN-17C    |
 | Environmental Warrant Project     | SIA-SRN-17W   | SIA-RMN-0011 SIA-SRN-17C    |
 
@@ -421,8 +421,8 @@ Hydroponics Technicians operate all systems related to ship’s hydrological sys
 
 | Course Name                     | Course Number | Course Prerequisites        |
 | ------------------------------- | ------------- | --------------------------- |
-| Hydroponics Specialist          | SIA-SRN-18A   | Intro-TRMN-0001             |
-| Hydroponics Advanced Specialist | SIA-SRN-18C   | Intro-TRMN-0002 SIA-SRN-18A |
+| Hydroponics Specialist          | SIA-SRN-18A   | INTRO-TRMN-0001             |
+| Hydroponics Advanced Specialist | SIA-SRN-18C   | INTRO-TRMN-0002 SIA-SRN-18A |
 | Hydroponics Qualification       | SIA-SRN-18D   | SIA-RMN-0101 SIA-SRN-18C    |
 | Hydroponics Warrant Project     | SIA-SRN-18W   | SIA-RMN-0011 SIA-SRN-18C    |
 
@@ -432,8 +432,8 @@ Damage Control Technicians perform the work necessary for damage control, ship s
 
 | Course Name                        | Course Number | Course Prerequisites        |
 | ---------------------------------- | ------------- | --------------------------- |
-| Damage Control Specialist          | SIA-SRN-19A   | Intro-TRMN-0001             |
-| Damage Control Advanced Specialist | SIA-SRN-19C   | Intro-TRMN-0002 SIA-SRN-19A |
+| Damage Control Specialist          | SIA-SRN-19A   | INTRO-TRMN-0001             |
+| Damage Control Advanced Specialist | SIA-SRN-19C   | INTRO-TRMN-0002 SIA-SRN-19A |
 | Damage Control Qualification       | SIA-SRN-19D   | SIA-RMN-0101 SIA-SRN-19C    |
 | Damage Control Warrant Project     | SIA-SRN-19W   | SIA-RMN-0011 SIA-SRN-19C    |
 
@@ -445,8 +445,8 @@ Data Systems Technicians are responsible for ship’s computer systems including
 
 | Course Name                      | Course Number | Course Prerequisites        |
 | -------------------------------- | ------------- | --------------------------- |
-| Data Systems Specialist          | SIA-SRN-11A   | Intro-TRMN-0001             |
-| Data Systems Advanced Specialist | SIA-SRN-11C   | Intro-TRMN-0002 SIA-SRN-11A |
+| Data Systems Specialist          | SIA-SRN-11A   | INTRO-TRMN-0001             |
+| Data Systems Advanced Specialist | SIA-SRN-11C   | INTRO-TRMN-0002 SIA-SRN-11A |
 | Data Systems Qualification       | SIA-SRN-11D   | SIA-RMN-0101 SIA-SRN-11C    |
 | Data Systems Warrant Project     | SIA-SRN-11W   | SIA-RMN-0011 SIA-SRN-11C    |
 
@@ -456,8 +456,8 @@ Electronics Technicians are responsible for electronic equipment used to send an
 
 | Course Name                     | Course Number | Course Prerequisites        |
 | ------------------------------- | ------------- | --------------------------- |
-| Electronics Specialist          | SIA-SRN-12A   | Intro-TRMN-0001             |
-| Electronics Advanced Specialist | SIA-SRN-12C   | Intro-TRMN-0002 SIA-SRN-12A |
+| Electronics Specialist          | SIA-SRN-12A   | INTRO-TRMN-0001             |
+| Electronics Advanced Specialist | SIA-SRN-12C   | INTRO-TRMN-0002 SIA-SRN-12A |
 | Electronics Qualification       | SIA-SRN-12D   | SIA-RMN-0101 SIA-SRN-12C    |
 | Electronics Warrant Project     | SIA-SRN-12W   | SIA-RMN-0011 SIA-SRN-12C    |
 
@@ -467,8 +467,8 @@ Communications Technicians are responsible for maintaining ship’s communicatio
 
 | Course Name                        | Course Number | Course Prerequisites        |
 | ---------------------------------- | ------------- | --------------------------- |
-| Communications Specialist          | SIA-SRN-13A   | Intro-TRMN-0001             |
-| Communications Advanced Specialist | SIA-SRN-13C   | Intro-TRMN-0002 SIA-SRN-13A |
+| Communications Specialist          | SIA-SRN-13A   | INTRO-TRMN-0001             |
+| Communications Advanced Specialist | SIA-SRN-13C   | INTRO-TRMN-0002 SIA-SRN-13A |
 | Communications Qualification       | SIA-SRN-13D   | SIA-RMN-0101 SIA-SRN-13C    |
 | Communication Warrant Project      | SIA-SRN-13W   | SIA-RMN-0011 SIA-SRN-13C    |
 
@@ -480,8 +480,8 @@ The coxswain rating is responsible for steering small craft (pinnaces, cutters a
 
 | Course Name                           | Course Number | Course Prerequisites        |
 | ------------------------------------- | ------------- | --------------------------- |
-| Flight Operations Specialist          | SIA-SRN-05A   | Intro-TRMN-0001             |
-| Flight Operations Advanced Specialist | SIA-SRN-05C   | Intro-TRMN-0002 SIA-SRN-05A |
+| Flight Operations Specialist          | SIA-SRN-05A   | INTRO-TRMN-0001             |
+| Flight Operations Advanced Specialist | SIA-SRN-05C   | INTRO-TRMN-0002 SIA-SRN-05A |
 | Flight Operations Qualification       | SIA-SRN-05D   | SIA-RMN-0101 SIA-SRN-05C    |
 | Flight Operations Warrant Project     | SIA-SRN-05W   | SIA-RMN-0011 SIA-SRN-05C    |
 
@@ -491,8 +491,8 @@ The helmsman rating is responsible for steering the ship and executing ship’s 
 
 | Course Name                  | Course Number | Course Prerequisites        |
 | ---------------------------- | ------------- | --------------------------- |
-| Helmsman Specialist          | SIA-SRN-06A   | Intro-TRMN-0001             |
-| Helmsman Advanced Specialist | SIA-SRN-06C   | Intro-TRMN-0002 SIA-SRN-06A |
+| Helmsman Specialist          | SIA-SRN-06A   | INTRO-TRMN-0001             |
+| Helmsman Advanced Specialist | SIA-SRN-06C   | INTRO-TRMN-0002 SIA-SRN-06A |
 | Helmsman Qualification       | SIA-SRN-06D   | SIA-RMN-0101 SIA-SRN-06C    |
 | Helmsman Warrant Project     | SIA-SRN-06W   | SIA-RMN-0011 SIA-SRN-06C    |
 
@@ -502,8 +502,8 @@ Plotting Specialists keep track of the ship’s position, heading, and velocity.
 
 | Course Name                  | Course Number | Course Prerequisites        |
 | ---------------------------- | ------------- | --------------------------- |
-| Plotting Specialist          | SIA-SRN-07A   | Intro-TRMN-0001             |
-| Plotting Advanced Specialist | SIA-SRN-07C   | Intro-TRMN-0002 SIA-SRN-07A |
+| Plotting Specialist          | SIA-SRN-07A   | INTRO-TRMN-0001             |
+| Plotting Advanced Specialist | SIA-SRN-07C   | INTRO-TRMN-0002 SIA-SRN-07A |
 | Plotting Qualification       | SIA-SRN-07D   | SIA-RMN-0101 SIA-SRN-07C    |
 | Plotting Warrant Project     | SIA-SRN-07W   | SIA-RMN-0011 SIA-SRN-07C    |
 
@@ -511,8 +511,8 @@ Plotting Specialists keep track of the ship’s position, heading, and velocity.
 
 | Course Name                                | Course Number | Course Prerequisites                                |
 | ------------------------------------------ | ------------- | --------------------------------------------------- |
-| Basic Quartermaster of the Watch           | SIA-SRN-35A   | Intro-TRMN-0001 SIA-SRN-06A SIA-SRN-07A             |
-| Intermediate Quartermaster of the Watch    | SIA-SRN-35C   | Intro-TRMN-0002 SIA-SRN-35A SIA-SRN-06C SIA-SRN-07C |
+| Basic Quartermaster of the Watch           | SIA-SRN-35A   | INTRO-TRMN-0001 SIA-SRN-06A SIA-SRN-07A             |
+| Intermediate Quartermaster of the Watch    | SIA-SRN-35C   | INTRO-TRMN-0002 SIA-SRN-35A SIA-SRN-06C SIA-SRN-07C |
 | Advanced Quartermaster of the Watch        | SIA-SRN-35D   | SIA-RMN-0101 SIA-SRN-35C SIA-SRN-06D SIA-SRN-07D    |
 | Quartermaster of the Watch Warrant Project | SIA-SRN-35W   | SIA-RMN-0011 SIA-SRN-35C                            |
 
@@ -524,8 +524,8 @@ A corpsman is an enlisted medical specialist for the Royal Manticoran Navy who s
 
 | Course Name                  | Course Number | Course Prerequisites        |
 | ---------------------------- | ------------- | --------------------------- |
-| Corpsman Specialist          | SIA-SRN-23A   | Intro-TRMN-0001             |
-| Corpsman Advanced Specialist | SIA-SRN-23C   | Intro-TRMN-0002 SIA-SRN-23A |
+| Corpsman Specialist          | SIA-SRN-23A   | INTRO-TRMN-0001             |
+| Corpsman Advanced Specialist | SIA-SRN-23C   | INTRO-TRMN-0002 SIA-SRN-23A |
 | Corpsman Qualification       | SIA-SRN-23D   | SIA-RMN-0101 SIA-SRN-23C    |
 | Corpsman Warrant Project     | SIA-SRN-23W   | SIA-RMN-0011 SIA-SRN-23C    |
 
@@ -535,8 +535,8 @@ Sick Berth Attendants are medical professionals who provide health care to servi
 
 | Course Name                              | Course Number | Course Prerequisites        |
 | ---------------------------------------- | ------------- | --------------------------- |
-| Sick Berth Attendant Specialist          | SIA-SRN-24A   | Intro-TRMN-0001             |
-| Sick Berth Attendant Advanced Specialist | SIA-SRN-24C   | Intro-TRMN-0002 SIA-SRN-24A |
+| Sick Berth Attendant Specialist          | SIA-SRN-24A   | INTRO-TRMN-0001             |
+| Sick Berth Attendant Advanced Specialist | SIA-SRN-24C   | INTRO-TRMN-0002 SIA-SRN-24A |
 | Sick Berth Attendant Qualification       | SIA-SRN-24D   | SIA-RMN-0101 SIA-SRN-24C    |
 | Sick Berth Attendant Warrant Project     | SIA-SRN-24W   | SIA-RMN-0011 SIA-SRN-24C    |
 
@@ -563,7 +563,7 @@ A three-course series of increasingly difficulty courses focusing on atmospheric
 
 | Course Name            | Course Number   | Course Prerequisites |
 | ---------------------- | --------------- | -------------------- |
-| Basic Aviation         | RMACA-RMACS-02A | Intro-TRMN-0003      |
+| Basic Aviation         | RMACA-RMACS-02A | INTRO-TRMN-0003      |
 | Advanced Aviation      | RMACA-RMACS-02C | RMACA-RMACS-02A      |
 | Aviation Qualification | RMACA-RMACS-02D | RMACA-RMACS-02C      |
 
@@ -573,7 +573,7 @@ A three-course series of increasingly difficult courses focusing on real life an
 
 | Course Name                     | Course Number   | Course Prerequisites |
 | ------------------------------- | --------------- | -------------------- |
-| Basic Search and Rescue         | RMACA-RMACS-03A | Intro-TRMN-0003      |
+| Basic Search and Rescue         | RMACA-RMACS-03A | INTRO-TRMN-0003      |
 | Advanced Search and Rescue      | RMACA-RMACS-03C | RMACA-RMACS-03A      |
 | Search and Rescue Qualification | RMACA-RMACS-03D | RMACA-RMACS-03C      |
 
@@ -583,7 +583,7 @@ A three-course series of increasingly difficult courses focusing on communicatio
 
 | Course Name                  | Course Number   | Course Prerequisites |
 | ---------------------------- | --------------- | -------------------- |
-| Basic Communications         | RMACA-RMACS-04A | Intro-TRMN-0003      |
+| Basic Communications         | RMACA-RMACS-04A | INTRO-TRMN-0003      |
 | Advanced Communications      | RMACA-RMACS-04C | RMACA-RMACS-04A      |
 | Communications Qualification | RMACA-RMACS-04D | RMACA-RMACS-04C      |
 
@@ -593,7 +593,7 @@ A three-course series of increasingly difficult courses focusing on traffic cont
 
 | Course Name                   | Course Number   | Course Prerequisites |
 | ----------------------------- | --------------- | -------------------- |
-| Basic Traffic Control         | RMACA-RMACS-05A | Intro-TRMN-0003      |
+| Basic Traffic Control         | RMACA-RMACS-05A | INTRO-TRMN-0003      |
 | Advanced Traffic Control      | RMACA-RMACS-05C | RMACA-RMACS-05A      |
 | Traffic Control Qualification | RMACA-RMACS-05D | RMACA-RMACS-05C      |
 
@@ -603,7 +603,7 @@ A three-course series of increasingly difficult courses focusing on customs and 
 
 | Course Name           | Course Number   | Course Prerequisites |
 | --------------------- | --------------- | -------------------- |
-| Basic Customs         | RMACA-RMACS-06A | Intro-TRMN-0003      |
+| Basic Customs         | RMACA-RMACS-06A | INTRO-TRMN-0003      |
 | Advanced Customs      | RMACA-RMACS-06C | RMACA-RMACS-06A      |
 | Customs Qualification | RMACA-RMACS-06D | RMACA-RMACS-06C      |
 
@@ -623,29 +623,29 @@ The following external courses and quizzes offered through AOPA are required for
 
 | Course Name                             | Course Number  | Course Prerequisites |
 | --------------------------------------- | -------------- | -------------------- |
-| Aircraft Preflight                      | RMACA-AOPA-R01 | Intro-TRMN-0003      |
-| ATC Procedures                          | RMACA-AOPA-R02 | Intro-TRMN-0003      |
-| ATC Terminology                         | RMACA-AOPA-R03 | Intro-TRMN-0003      |
-| BasicMed Course Medical Self Assessment | RMACA-AOPA-R04 | Intro-TRMN-0003      |
-| Density Altitude                        | RMACA-AOPA-R05 | Intro-TRMN-0003      |
-| Do the Right Thing                      | RMACA-AOPA-R06 | Intro-TRMN-0003      |
-| Emergency Procedures                    | RMACA-AOPA-R07 | Intro-TRMN-0003      |
-| Essential Aerodynamics                  | RMACA-AOPA-R08 | Intro-TRMN-0003      |
-| General Aviation TSA Security Awareness | RMACA-AOPA-R09 | Intro-TRMN-0003      |
-| Ice Flight                              | RMACA-AOPA-R10 | Intro-TRMN-0003      |
-| IFR Insight A Practical Approach        | RMACA-AOPA-R11 | Intro-TRMN-0003      |
-| IFR Insights Cockpit Weather            | RMACA-AOPA-R12 | Intro-TRMN-0003      |
-| Into a Black Hole                       | RMACA-AOPA-R13 | Intro-TRMN-0003      |
-| Know Before You Go                      | RMACA-AOPA-R14 | Intro-TRMN-0003      |
-| Preventive Maintenance                  | RMACA-AOPA-R15 | Intro-TRMN-0003      |
-| Public Benefit Flying                   | RMACA-AOPA-R16 | Intro-TRMN-0003      |
-| Runway Safety                           | RMACA-AOPA-R17 | Intro-TRMN-0003      |
-| Say It Right                            | RMACA-AOPA-R18 | Intro-TRMN-0003      |
-| The Almost ILS                          | RMACA-AOPA-R19 | Intro-TRMN-0003      |
-| Thunderstorms                           | RMACA-AOPA-R20 | Intro-TRMN-0003      |
-| Transitioning to Other Airplanes        | RMACA-AOPA-R21 | Intro-TRMN-0003      |
-| Weather or Not Thunderstorm Challenge   | RMACA-AOPA-R22 | Intro-TRMN-0003      |
-| Weather Wise VFR into IMC               | RMACA-AOPA-R23 | Intro-TRMN-0003      |
+| Aircraft Preflight                      | RMACA-AOPA-R01 | INTRO-TRMN-0003      |
+| ATC Procedures                          | RMACA-AOPA-R02 | INTRO-TRMN-0003      |
+| ATC Terminology                         | RMACA-AOPA-R03 | INTRO-TRMN-0003      |
+| BasicMed Course Medical Self Assessment | RMACA-AOPA-R04 | INTRO-TRMN-0003      |
+| Density Altitude                        | RMACA-AOPA-R05 | INTRO-TRMN-0003      |
+| Do the Right Thing                      | RMACA-AOPA-R06 | INTRO-TRMN-0003      |
+| Emergency Procedures                    | RMACA-AOPA-R07 | INTRO-TRMN-0003      |
+| Essential Aerodynamics                  | RMACA-AOPA-R08 | INTRO-TRMN-0003      |
+| General Aviation TSA Security Awareness | RMACA-AOPA-R09 | INTRO-TRMN-0003      |
+| Ice Flight                              | RMACA-AOPA-R10 | INTRO-TRMN-0003      |
+| IFR Insight A Practical Approach        | RMACA-AOPA-R11 | INTRO-TRMN-0003      |
+| IFR Insights Cockpit Weather            | RMACA-AOPA-R12 | INTRO-TRMN-0003      |
+| Into a Black Hole                       | RMACA-AOPA-R13 | INTRO-TRMN-0003      |
+| Know Before You Go                      | RMACA-AOPA-R14 | INTRO-TRMN-0003      |
+| Preventive Maintenance                  | RMACA-AOPA-R15 | INTRO-TRMN-0003      |
+| Public Benefit Flying                   | RMACA-AOPA-R16 | INTRO-TRMN-0003      |
+| Runway Safety                           | RMACA-AOPA-R17 | INTRO-TRMN-0003      |
+| Say It Right                            | RMACA-AOPA-R18 | INTRO-TRMN-0003      |
+| The Almost ILS                          | RMACA-AOPA-R19 | INTRO-TRMN-0003      |
+| Thunderstorms                           | RMACA-AOPA-R20 | INTRO-TRMN-0003      |
+| Transitioning to Other Airplanes        | RMACA-AOPA-R21 | INTRO-TRMN-0003      |
+| Weather or Not Thunderstorm Challenge   | RMACA-AOPA-R22 | INTRO-TRMN-0003      |
+| Weather Wise VFR into IMC               | RMACA-AOPA-R23 | INTRO-TRMN-0003      |
 
 ### Elective Courses
 
@@ -653,16 +653,16 @@ The following external courses and quizzes offered through AOPA are available as
 
 | Course Name                   | Course Number  | Course Prerequisites |
 | ----------------------------- | -------------- | -------------------- |
-| A Tale of Two ILSs            | RMACA-AOPA-E01 | Intro-TRMN-0003      |
-| Aircraft Performance          | RMACA-AOPA-E02 | Intro-TRMN-0003      |
-| Cold Weather Ops              | RMACA-AOPA-E03 | Intro-TRMN-0003      |
-| Collision Avoidance           | RMACA-AOPA-E04 | Intro-TRMN-0003      |
-| Engine Operation              | RMACA-AOPA-E05 | Intro-TRMN-0003      |
-| Flying Rogue                  | RMACA-AOPA-E06 | Intro-TRMN-0003      |
-| Inflight Icing                | RMACA-AOPA-E07 | Intro-TRMN-0003      |
-| Mountain Flying               | RMACA-AOPA-E08 | Intro-TRMN-0003      |
-| Obstacle Departure Procedures | RMACA-AOPA-E09 | Intro-TRMN-0003      |
-| Special Use Airspace          | RMACA-AOPA-E10 | Intro-TRMN-0003      |
+| A Tale of Two ILSs            | RMACA-AOPA-E01 | INTRO-TRMN-0003      |
+| Aircraft Performance          | RMACA-AOPA-E02 | INTRO-TRMN-0003      |
+| Cold Weather Ops              | RMACA-AOPA-E03 | INTRO-TRMN-0003      |
+| Collision Avoidance           | RMACA-AOPA-E04 | INTRO-TRMN-0003      |
+| Engine Operation              | RMACA-AOPA-E05 | INTRO-TRMN-0003      |
+| Flying Rogue                  | RMACA-AOPA-E06 | INTRO-TRMN-0003      |
+| Inflight Icing                | RMACA-AOPA-E07 | INTRO-TRMN-0003      |
+| Mountain Flying               | RMACA-AOPA-E08 | INTRO-TRMN-0003      |
+| Obstacle Departure Procedures | RMACA-AOPA-E09 | INTRO-TRMN-0003      |
+| Special Use Airspace          | RMACA-AOPA-E10 | INTRO-TRMN-0003      |
 
 ## Royal Manticoran Astrophysics Investigation Agency
 
@@ -672,7 +672,7 @@ A three-course series of increasingly difficult courses focusing on astronomical
 
 | Course Name             | Course Number   | Course Prerequisites |
 | ----------------------- | --------------- | -------------------- |
-| Basic Astronomy         | RMACA-RMAIA-06A | Intro-TRMN-0003      |
+| Basic Astronomy         | RMACA-RMAIA-06A | INTRO-TRMN-0003      |
 | Advanced Astronomy      | RMACA-RMAIA-06C | RMACA-RMAIA-06A      |
 | Astronomy Qualification | RMACA-RMAIA-06D | RMACA-RMAIA-06C      |
 
@@ -682,7 +682,7 @@ A three-course series of increasingly difficult courses focusing on astrophysica
 
 | Course Name                | Course Number   | Course Prerequisites |
 | -------------------------- | --------------- | -------------------- |
-| Basic Astrophysics         | RMACA-RMAIA-07A | Intro-TRMN-0003      |
+| Basic Astrophysics         | RMACA-RMAIA-07A | INTRO-TRMN-0003      |
 | Advanced Astrophysics      | RMACA-RMAIA-07C | RMACA-RMAIA-07A      |
 | Astrophysics Qualification | RMACA-RMAIA-07D | RMACA-RMAIA-07C      |
 
@@ -698,7 +698,7 @@ Reginald Houseman put Mannheim's Economics department on the astro map.
 
 | Course Name     | Course Number | Course Prerequisites |
 | --------------- | ------------- | -------------------- |
-| Economics One   | MU-ECON-01    | Intro-TRMN-0003      |
+| Economics One   | MU-ECON-01    | INTRO-TRMN-0003      |
 | Economics Two   | MU-ECON-02    | MU-ECON-01           |
 | Economics Three | MU-ECON-03    | MU-ECON-02           |
 | Economics Four  | MU-ECON-04    | MU-ECON-03           |
@@ -709,7 +709,7 @@ Political Science offers some insights into the philosophy of government.
 
 | Course Name             | Course Number | Course Prerequisites |
 | ----------------------- | ------------- | -------------------- |
-| Political Science One   | MU-PLSC-01    | Intro-TRMN-0003      |
+| Political Science One   | MU-PLSC-01    | INTRO-TRMN-0003      |
 | Political Science Two   | MU-PLSC-02    | MU-PLSC-01           |
 | Political Science Three | MU-PLSC-03    | MU-PLSC-02           |
 | Political Science Four  | MU-PLSC-04    | MU-PLSC-03           |
@@ -722,7 +722,7 @@ Cryptozoology is the study of unknown creatures (cryptids) that may or may not e
 
 | Course Name      | Course Number | Course Prerequisites |
 | ---------------- | ------------- | -------------------- |
-| Cryptozoology 01 | LU-XI-CZ01    | Intro-TRMN-0003      |
+| Cryptozoology 01 | LU-XI-CZ01    | INTRO-TRMN-0003      |
 | Cryptozoology 02 | LU-XI-CZ02    | LU-XI-CZ01           |
 | Cryptozoology 03 | LU-XI-CZ03    | LU-XI-CZ02           |
 | Cryptozoology 04 | LU-XI-CZ04    | LU-XI-CZ03           |
@@ -733,7 +733,7 @@ School of Xenoanthropology covers the study of peoples and cultures found on oth
 
 | Course Name         | Course Number | Course Prerequisites |
 | ------------------- | ------------- | -------------------- |
-| Xenoanthropology 01 | LU-XI-XA01    | Intro-TRMN-0003      |
+| Xenoanthropology 01 | LU-XI-XA01    | INTRO-TRMN-0003      |
 | Xenoanthropology 02 | LU-XI-XA02    | LU-XI-XA01           |
 | Xenoanthropology 03 | LU-XI-XA03    | LU-XI-XA02           |
 | Xenoanthropology 04 | LU-XI-XA04    | LU-XI-XA03           |
@@ -744,7 +744,7 @@ Xenobiology is the study of flora and fauna found on other planets.
 
 | Course Name    | Course Number | Course Prerequisites |
 | -------------- | ------------- | -------------------- |
-| Xenobiology 01 | LU-XI-XB01    | Intro-TRMN-0003      |
+| Xenobiology 01 | LU-XI-XB01    | INTRO-TRMN-0003      |
 | Xenobiology 02 | LU-XI-XB02    | LU-XI-XB01           |
 | Xenobiology 03 | LU-XI-XB03    | LU-XI-XB02           |
 | Xenobiology 04 | LU-XI-XB04    | LU-XI-XB03           |
@@ -757,7 +757,7 @@ Take a whirlwind tour through the History of North America.
 
 | Course Name                    | Course Number | Course Prerequisites |
 | ------------------------------ | ------------- | -------------------- |
-| History of North America One   | MU-HSNAM-01   | Intro-TRMN-0003      |
+| History of North America One   | MU-HSNAM-01   | INTRO-TRMN-0003      |
 | History of North America Two   | MU-HSNAM-02   | MU-HSNAM-01          |
 | History of North America Three | MU-HSNAM-03   | MU-HSNAM-02          |
 | History of North America Four  | MU-HSNAM-04   | MU-HSNAM-03          |
@@ -768,7 +768,7 @@ This course explores the history of Old Earth's continent of Europe.
 
 | Course Name             | Course Number | Course Prerequisites |
 | ----------------------- | ------------- | -------------------- |
-| History of Europe One   | MU-HSEUR-01   | Intro-TRMN-0003      |
+| History of Europe One   | MU-HSEUR-01   | INTRO-TRMN-0003      |
 | History of Europe Two   | MU-HSEUR-02   | MU-HSEUR-01          |
 | History of Europe Three | MU-HSEUR-03   | MU-HSEUR-02          |
 | History of Europe Four  | MU-HSEUR-04   | MU-HSEUR-03          |
@@ -779,7 +779,7 @@ Learn about the largest and most populated part of Old Earth. All in just four c
 
 | Course Name           | Course Number | Course Prerequisites |
 | --------------------- | ------------- | -------------------- |
-| History of Asia One   | MU-HSASN-01   | Intro-TRMN-0003      |
+| History of Asia One   | MU-HSASN-01   | INTRO-TRMN-0003      |
 | History of Asia Two   | MU-HSASN-02   | MU-HSASN-01          |
 | History of Asia Three | MU-HSASN-03   | MU-HSASN-02          |
 | History of Asia Four  | MU-HSASN-04   | MU-HSASN-03          |
@@ -790,7 +790,7 @@ Learn about the cradle of civilization, and the 54 nations that make up the cont
 
 | Course Name             | Course Number | Course Prerequisites |
 | ----------------------- | ------------- | -------------------- |
-| History of Africa One   | MU-HSAFR-01   | Intro-TRMN-0003      |
+| History of Africa One   | MU-HSAFR-01   | INTRO-TRMN-0003      |
 | History of Africa Two   | MU-HSAFR-02   | MU-HSAFR-01          |
 | History of Africa Three | MU-HSAFR-03   | MU-HSAFR-02          |
 | History of Africa Four  | MU-HSAFR-04   | MU-HSAFR-03          |
@@ -801,7 +801,7 @@ These courses review the rich cultures of South America, home of Old Earth's lar
 
 | Course Name                    | Course Number | Course Prerequisites |
 | ------------------------------ | ------------- | -------------------- |
-| History of South America One   | MU-HSSAM-01   | Intro-TRMN-0003      |
+| History of South America One   | MU-HSSAM-01   | INTRO-TRMN-0003      |
 | History of South America Two   | MU-HSSAM-02   | MU-HSSAM-01          |
 | History of South America Three | MU-HSSAM-03   | MU-HSSAM-02          |
 | History of South America Four  | MU-HSSAM-04   | MU-HSSAM-03          |
@@ -812,7 +812,7 @@ Learn about the Australian aborigines, New Zealand's Maori, and Oceania.
 
 | Course Name                                          | Course Number | Course Prerequisites |
 | ---------------------------------------------------- | ------------- | -------------------- |
-| History of Australia, New Zealand, & East Asia One   | MU-HSAZN-01   | Intro-TRMN-0003      |
+| History of Australia, New Zealand, & East Asia One   | MU-HSAZN-01   | INTRO-TRMN-0003      |
 | History of Australia, New Zealand, & East Asia Two   | MU-HSAZN-02   | MU-HSAZN-01          |
 | History of Australia, New Zealand, & East Asia Three | MU-HSAZN-03   | MU-HSAZN-02          |
 | History of Australia, New Zealand, & East Asia Four  | MU-HSAZN-04   | MU-HSAZN-03          |
@@ -827,7 +827,7 @@ Learn about the foundation of the The Royal Manticoran Navy, The Official Honor 
 
 | Course Name           | Course Number | Course Prerequisites |
 | --------------------- | ------------- | -------------------- |
-| History of TRMN One   | MU-HSTRM-01   | Intro-TRMN-0003      |
+| History of TRMN One   | MU-HSTRM-01   | INTRO-TRMN-0003      |
 | History of TRMN Two   | MU-HSTRM-02   | MU-HSTRM-01          |
 | History of TRMN Three | MU-HSTRM-03   | MU-HSTRM-02          |
 | History of TRMN Four  | MU-HSTRM-04   | MU-HSTRM-03          |
@@ -838,7 +838,7 @@ This series of courses explores major historical events of the nineteenth centur
 
 | Course Name                       | Course Number | Course Prerequisites |
 | --------------------------------- | ------------- | -------------------- |
-| History of the 19th Century One   | MU-HS19C-01   | Intro-TRMN-0003      |
+| History of the 19th Century One   | MU-HS19C-01   | INTRO-TRMN-0003      |
 | History of the 19th Century Two   | MU-HS19C-02   | MU-HS19C-01          |
 | History of the 19th Century Three | MU-HS19C-03   | MU-HS19C-02          |
 | History of the 19th Century Four  | MU-HS19C-04   | MU-HS19C-03          |
@@ -849,7 +849,7 @@ This series of courses explores major historical events of the twentieth century
 
 | Course Name                       | Course Number | Course Prerequisites |
 | --------------------------------- | ------------- | -------------------- |
-| History of the 20th Century One   | MU-HS20C-01   | Intro-TRMN-0003      |
+| History of the 20th Century One   | MU-HS20C-01   | INTRO-TRMN-0003      |
 | History of the 20th Century Two   | MU-HS20C-02   | MU-HS20C-01          |
 | History of the 20th Century Three | MU-HS20C-03   | MU-HS20C-02          |
 | History of the 20th Century Four  | MU-HS20C-04   | MU-HS20C-03          |
@@ -860,7 +860,7 @@ This course series explores the events the Age of Sail and the Birth of the Roya
 
 | Course Name                              | Course Number | Course Prerequisites |
 | ---------------------------------------- | ------------- | -------------------- |
-| Age of Sail - Birth of the Royal Navy 01 | MU-HSBSA-01   | Intro-TRMN-0003      |
+| Age of Sail - Birth of the Royal Navy 01 | MU-HSBSA-01   | INTRO-TRMN-0003      |
 | Age of Sail - Birth of the Royal Navy 02 | MU-HSBSA-02   | MU-HSBSA-01          |
 | Age of Sail - Birth of the Royal Navy 03 | MU-HSBSA-03   | MU-HSBSA-02          |
 | Age of Sail - Birth of the Royal Navy 04 | MU-HSBSA-04   | MU-HSBSA-03          |
@@ -871,7 +871,7 @@ This course series explores historical and modern slavery, and abolitionism with
 
 | Course Name                   | Course Number | Course Prerequisites |
 | ----------------------------- | ------------- | -------------------- |
-| General History of Slavery    | MU-HSSLV-01   | Intro-TRMN-0003      |
+| General History of Slavery    | MU-HSSLV-01   | INTRO-TRMN-0003      |
 | General Abolition of Slavery  | MU-HSSLV-02   | MU-HSSLV-01          |
 | British Abolitionist Movement | MU-HSSLV-03   | MU-HSSLV-02          |
 | Modern Slavery                | MU-HSSLV-04   | MU-HSSLV-03          |
@@ -884,7 +884,7 @@ The origins of modern medical treatments are explored in this series of courses.
 
 | Course Name               | Course Number | Course Prerequisites |
 | ------------------------- | ------------- | -------------------- |
-| History of Medicine One   | MU-HSMED-01   | Intro-TRMN-0003      |
+| History of Medicine One   | MU-HSMED-01   | INTRO-TRMN-0003      |
 | History of Medicine Two   | MU-HSMED-02   | MU-HSMED-01          |
 | History of Medicine Three | MU-HSMED-03   | MU-HSMED-02          |
 | History of Medicine Four  | MU-HSMED-04   | MU-HSMED-03          |
@@ -895,7 +895,7 @@ The Landing University School of Criminology is the foremost school of criminolo
 
 | Course Name    | Course Number | Course Prerequisites |
 | -------------- | ------------- | -------------------- |
-| Criminology 01 | LU-CRIM-01    | Intro-TRMN-0003      |
+| Criminology 01 | LU-CRIM-01    | INTRO-TRMN-0003      |
 | Criminology 02 | LU-CRIM-02    | LU-CRIM-01           |
 | Criminology 03 | LU-CRIM-03    | LU-CRIM-02           |
 | Criminology 04 | LU-CRIM-04    | LU-CRIM-03           |
@@ -910,11 +910,11 @@ The below courses have been approved by BuTrain and may be accessed here: https:
 
 | Course Name                                                        | Course Number | Course Prerequisites |
 | ------------------------------------------------------------------ | ------------- | -------------------- |
-| IS 100 - Introduction to Incident Command System                   | MU-BEK-01     | Intro-TRMN-0003      |
-| IS 200 - Basic Incident Command System for Initial Response        | MU-BEK-02     | Intro-TRMN-0003      |
-| IS 700 - National Incident Management System                       | MU-BEK-03     | Intro-TRMN-0003      |
-| IS 800 - National Response Framework                               | MU-BEK-04     | Intro-TRMN-0003      |
-| IS 230 - Fundamentals of Emergency Management                      | MU-BEK-05     | Intro-TRMN-0003      |
-| IS 317 - Introduction to Community Emergency Response Team (CERTs) | MU-BEK-06     | Intro-TRMN-0003      |
-| IS 75 - Military Resources in Emergency Management                 | MU-BEK-07     | Intro-TRMN-0003      |
-| IS 10 - Animals in Disasters: Awareness and Preparedness           | MU-BEK-08     | Intro-TRMN-0003      |
+| IS 100 - Introduction to Incident Command System                   | MU-BEK-01     | INTRO-TRMN-0003      |
+| IS 200 - Basic Incident Command System for Initial Response        | MU-BEK-02     | INTRO-TRMN-0003      |
+| IS 700 - National Incident Management System                       | MU-BEK-03     | INTRO-TRMN-0003      |
+| IS 800 - National Response Framework                               | MU-BEK-04     | INTRO-TRMN-0003      |
+| IS 230 - Fundamentals of Emergency Management                      | MU-BEK-05     | INTRO-TRMN-0003      |
+| IS 317 - Introduction to Community Emergency Response Team (CERTs) | MU-BEK-06     | INTRO-TRMN-0003      |
+| IS 75 - Military Resources in Emergency Management                 | MU-BEK-07     | INTRO-TRMN-0003      |
+| IS 10 - Animals in Disasters: Awareness and Preparedness           | MU-BEK-08     | INTRO-TRMN-0003      |

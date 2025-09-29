@@ -158,6 +158,29 @@ export const clickableCourseCode = css({
   }
 })
 
+export const courseAliasGroup = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '1',
+  flexWrap: 'wrap'
+})
+
+export const courseAliasBadge = css({
+  background: 'bg.subtle',
+  color: 'fg.muted',
+  fontSize: 'xs',
+  padding: '0.5',
+  borderRadius: 'radii.sm',
+  fontFamily: 'mono',
+  border: '1px solid',
+  borderColor: 'border.default'
+})
+
+export const primaryCourseCode = css({
+  color: 'accent.default',
+  fontWeight: 'bold'
+})
+
 export const clickableUnlockedCourse = css({
   padding: '1',
   bg: 'accent.100',

@@ -56,6 +56,7 @@ export interface PrerequisiteInfo {
   courseCodes?: string[]
   progress?: number
   total?: number
+  satisfyingCourse?: string
 }
 
 export interface UseCourseDetailsReturn {
