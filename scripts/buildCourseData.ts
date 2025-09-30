@@ -34,6 +34,8 @@ async function buildCourseData() {
       categoryMap: Array.from(parsedData.categoryMap.entries()),
       dependencyGraph: Array.from(parsedData.dependencyGraph.entries()),
       seriesMappings: Array.from(parsedData.seriesMappings.entries()),
+      courseAliases: parsedData.courseAliases || [],
+      aliasMap: Array.from(parsedData.aliasMap?.entries() || []),
       buildTimestamp: new Date().toISOString()
     }
 

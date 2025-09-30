@@ -1,4 +1,4 @@
-import { ParsedCourseData, Course, Category, SpecialRule } from '../types'
+import { ParsedCourseData, Course, Category, SpecialRule, CourseAlias } from '../types'
 import { logger } from './logger'
 
 interface SerializedCourseData {
@@ -10,6 +10,8 @@ interface SerializedCourseData {
   courseMap: Array<[string, Course]>
   categoryMap: Array<[string, Category]>
   dependencyGraph: Array<[string, string[]]>
+  courseAliases?: CourseAlias[]
+  aliasMap?: Array<[string, string]>
   buildTimestamp: string
 }
 
@@ -28,6 +30,7 @@ export async function loadCourseData(): Promise<ParsedCourseData> {
     const dependencyGraph = new Map<string, string[]>(data.dependencyGraph)
     const departmentMappings = new Map<string, string[]>(Object.entries(data.departmentMappings))
     const seriesMappings = new Map<string, string>(data.seriesMappings || [])
+    const aliasMap = new Map<string, string>(data.aliasMap || [])
 
     logger.group('📄 Course Data Loader')
     logger.log('📚 Total courses loaded:', data.courses.length)
@@ -46,7 +49,9 @@ export async function loadCourseData(): Promise<ParsedCourseData> {
       seriesMappings,
       courseMap,
       categoryMap,
-      dependencyGraph
+      dependencyGraph,
+      courseAliases: data.courseAliases,
+      aliasMap
     }
   } catch (error) {
     logger.error('Failed to load course data:', error)

@@ -13,7 +13,6 @@ import {
   CourseAlias
 } from '../types'
 import { logger } from './logger'
-import { CourseAliasManager } from './courseAliasUtils'
 
 // Updated regex to handle both traditional and new course formats:
 // Traditional: SIA-RMN-0001, GPU-ALC-0010, SIA-SRN-20W
@@ -29,7 +28,8 @@ export interface DepartmentMapping {
 enum Section {
   SpaceWarfarePin = 'Space Warfare Pin',
   DepartmentMappings = 'Department Mappings',
-  CourseSeriesMappings = 'Course Series Mappings'
+  CourseSeriesMappings = 'Course Series Mappings',
+  CourseAliases = 'Course Aliases'
 }
 
 const getSection = (title: string): Section | null => {
@@ -41,6 +41,9 @@ const getSection = (title: string): Section | null => {
   }
   if (title.toLowerCase().includes(Section.CourseSeriesMappings.toLowerCase())) {
     return Section.CourseSeriesMappings
+  }
+  if (title.toLowerCase().includes(Section.CourseAliases.toLowerCase())) {
+    return Section.CourseAliases
   }
   return null
 }
@@ -98,11 +101,11 @@ export class CourseParser {
             }
           }
         } else if (level === 2) {
-          currentSection = this.createSection(title)
-          currentSubsection = null
           if (getSection(title)) {
             currentSpecialSection = getSection(title)
           } else {
+            currentSection = this.createSection(title)
+            currentSubsection = null
             // Only reset special section if we're not in Space Warfare Pin section
             // Space Warfare Pin is typically a level 1 header and should maintain state
             if (currentSpecialSection !== Section.SpaceWarfarePin) {
@@ -150,6 +153,8 @@ export class CourseParser {
           this.parseDepartmentMappingRow(line)
         } else if (currentSpecialSection === Section.CourseSeriesMappings) {
           this.parseCourseSeriesMappingRow(line)
+        } else if (currentSpecialSection === Section.CourseAliases) {
+          this.parseCourseAliasRow(line)
         } else if (line.includes('Primary Course') || line.includes('Alternative Courses')) {
           this.parseCourseAliasRow(line)
         } else {
@@ -867,14 +872,24 @@ export function parseCourseData(markdownContent: string): ParsedCourseData {
     categoryMap.set(category.id, category)
   })
 
-  // Enhance course data with aliases
-  const enhancedData = CourseAliasManager.enhanceCourseDataWithAliases({
+  // Build alias map from parsed aliases instead of using hardcoded ones
+  const aliasMap = new Map<string, string>()
+  if (data.courseAliases) {
+    data.courseAliases.forEach((alias) => {
+      alias.alternativeCodes.forEach((altCode) => {
+        aliasMap.set(altCode, alias.primaryCode)
+      })
+    })
+  }
+
+  // Return enhanced data with parsed aliases and built alias map
+  return {
     ...data,
     courseMap,
     categoryMap,
     dependencyGraph,
-    seriesMappings: data.seriesMappings || new Map()
-  })
-
-  return enhancedData
+    seriesMappings: data.seriesMappings || new Map(),
+    courseAliases: data.courseAliases,
+    aliasMap
+  }
 }

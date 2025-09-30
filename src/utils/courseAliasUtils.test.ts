@@ -5,9 +5,37 @@ describe('CourseAliasManager', () => {
     let aliasManager: CourseAliasManager
 
     beforeEach(() => {
-      // Create a mock course data with aliases
+      // Create a mock course data with aliases from parsed markdown data
       const mockCourseData = {
-        courseAliases: CourseAliasManager.createIntroductoryAliases()
+        courses: [],
+        categories: [],
+        specialRules: [],
+        departmentMappings: new Map(),
+        seriesMappings: new Map(),
+        courseMap: new Map(),
+        categoryMap: new Map(),
+        dependencyGraph: new Map(),
+        courseAliases: [
+          {
+            primaryCode: 'INTRO-TRMN-0001',
+            alternativeCodes: ['GPU-TRMN-0001', 'SIA-RMN-0001'],
+            description: 'Introductory course equivalent - Basic Enlistment',
+            active: true
+          },
+          {
+            primaryCode: 'INTRO-TRMN-0002',
+            alternativeCodes: ['GPU-TRMN-0002', 'SIA-RMN-0002'],
+            description: 'Introductory course equivalent - Basic Non-Commissioned Officer',
+            active: true
+          },
+          {
+            primaryCode: 'INTRO-TRMN-0003',
+            alternativeCodes: ['GPU-TRMN-0003', 'SIA-RMN-0003'],
+            description: 'Introductory course equivalent - Advanced Non-Commissioned Officer',
+            active: true
+          }
+        ],
+        aliasMap: new Map()
       }
       aliasManager = new CourseAliasManager(mockCourseData)
     })
