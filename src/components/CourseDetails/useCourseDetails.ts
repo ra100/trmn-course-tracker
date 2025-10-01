@@ -89,10 +89,23 @@ export const useCourseDetails = ({
         let text = `Course: ${requiredCode}`
         let courseCodes: string[] | undefined
 
-        if (allEquivalentCodes.length > 1) {
-          // Show the primary course and its aliases
-          text = `Course: ${allEquivalentCodes.join(' / ')}`
-          courseCodes = allEquivalentCodes
+        // Always show all equivalent courses that actually exist in the course data
+        const existingEquivalentCodes = allEquivalentCodes.filter(
+          (code) => eligibilityEngine.getCourseByCode(code) !== undefined
+        )
+
+        if (existingEquivalentCodes.length > 1) {
+          // Show all existing equivalent courses
+          text = `Course: ${existingEquivalentCodes.join(' / ')}`
+          courseCodes = existingEquivalentCodes
+        } else if (existingEquivalentCodes.length === 1) {
+          // Show the single existing course
+          text = `Course: ${existingEquivalentCodes[0]}`
+          courseCodes = existingEquivalentCodes
+        } else {
+          // Fallback to original code if no equivalent courses exist
+          text = `Course: ${requiredCode}`
+          courseCodes = [requiredCode]
         }
 
         prerequisites.push({
@@ -119,11 +132,21 @@ export const useCourseDetails = ({
             const altCode = alt.code
             const allEquivalentCodes = eligibilityEngine.getAllEquivalentCourses(altCode)
 
-            if (allEquivalentCodes.length > 1) {
-              // Show all equivalent codes for this alternative
-              alternativeTexts.push(allEquivalentCodes.join(' / '))
-              allAlternativeCodes.push(...allEquivalentCodes)
+            // Filter to only existing courses
+            const existingEquivalentCodes = allEquivalentCodes.filter(
+              (code) => eligibilityEngine.getCourseByCode(code) !== undefined
+            )
+
+            if (existingEquivalentCodes.length > 1) {
+              // Show all existing equivalent codes for this alternative
+              alternativeTexts.push(existingEquivalentCodes.join(' / '))
+              allAlternativeCodes.push(...existingEquivalentCodes)
+            } else if (existingEquivalentCodes.length === 1) {
+              // Show the single existing course
+              alternativeTexts.push(existingEquivalentCodes[0])
+              allAlternativeCodes.push(existingEquivalentCodes[0])
             } else {
+              // Fallback to original code if no equivalent courses exist
               alternativeTexts.push(altCode)
               allAlternativeCodes.push(altCode)
             }
@@ -192,11 +215,24 @@ export const useCourseDetails = ({
       return
     }
 
-    const targetCourse = eligibilityEngine.getCourseByCode(courseCode)
+    // First try to find the course directly by the clicked code
+    let targetCourse = eligibilityEngine.getCourseByCode(courseCode)
+
+    // If not found directly, try to find an equivalent course that exists
+    if (!targetCourse) {
+      const allEquivalentCodes = eligibilityEngine.getAllEquivalentCourses(courseCode)
+      for (const equivalentCode of allEquivalentCodes) {
+        targetCourse = eligibilityEngine.getCourseByCode(equivalentCode)
+        if (targetCourse) {
+          break
+        }
+      }
+    }
+
     if (targetCourse) {
       // Get the course with updated availability and completion status
       const updatedCourses = eligibilityEngine.updateCourseAvailability(userProgress)
-      const updatedTargetCourse = updatedCourses.find((c) => c.code === courseCode)
+      const updatedTargetCourse = updatedCourses.find((c) => c.code === targetCourse!.code)
 
       if (updatedTargetCourse) {
         onCourseSelect(updatedTargetCourse)

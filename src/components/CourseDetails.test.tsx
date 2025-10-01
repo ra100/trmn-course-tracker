@@ -245,4 +245,69 @@ describe('CourseDetails', () => {
     // Verify onCourseSelect was called with the updated course (with correct availability)
     expect(mockOnCourseSelect).toHaveBeenCalledWith(updatedPrereqCourse)
   })
+
+  it('handles clicking on alias courses by finding equivalent existing courses', () => {
+    const mockOnCourseSelect = vi.fn()
+    const mockGetCourseByCode = vi.fn()
+    const mockUpdateCourseAvailability = vi.fn()
+
+    // Create existing course
+    const existingCourse: Course = {
+      id: 'existing-course',
+      name: 'SIA RMN Basic Course',
+      code: 'SIA-RMN-0001',
+      prerequisites: [],
+      section: 'Enlisted Training',
+      subsection: '',
+      sectionId: 'enlisted',
+      subsectionId: '',
+      completed: false,
+      available: true,
+      description: 'Basic enlisted course'
+    }
+
+    const courseWithAliasPrereq: Course = {
+      ...mockCourse,
+      prerequisites: [
+        {
+          type: 'course',
+          code: 'INTRO-TRMN-0001',
+          required: true
+        }
+      ]
+    }
+
+    const mockEngineWithAliases = {
+      ...mockEligibilityEngine,
+      getCourseByCode: mockGetCourseByCode,
+      updateCourseAvailability: mockUpdateCourseAvailability,
+      getAllEquivalentCourses: vi.fn(() => ['INTRO-TRMN-0001', 'SIA-RMN-0001'])
+    } as unknown as EligibilityEngine
+
+    // Mock getCourseByCode to return null for alias but existing course for real course
+    mockGetCourseByCode.mockImplementation((code: string) => {
+      if (code === 'SIA-RMN-0001') {
+        return existingCourse
+      }
+      return null // INTRO-TRMN-0001 doesn't exist
+    })
+
+    mockUpdateCourseAvailability.mockReturnValue([existingCourse])
+
+    renderWithTheme(
+      <CourseDetails
+        course={courseWithAliasPrereq}
+        userProgress={mockUserProgress}
+        eligibilityEngine={mockEngineWithAliases}
+        onCourseToggle={vi.fn()}
+        onCourseSelect={mockOnCourseSelect}
+      />
+    )
+
+    // Should show the existing course code
+    const clickableCourseCode = screen.getByText('SIA-RMN-0001')
+    fireEvent.click(clickableCourseCode)
+
+    expect(mockOnCourseSelect).toHaveBeenCalledWith(existingCourse)
+  })
 })

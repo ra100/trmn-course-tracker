@@ -23,6 +23,14 @@ async function buildCourseData() {
     // Parse the course data
     const parsedData = parseCourseData(markdownContent)
 
+    // Debug logging for course aliases
+    logger.log('🔍 Course aliases parsed:', parsedData.courseAliases?.length || 0)
+    if (parsedData.courseAliases && parsedData.courseAliases.length > 0) {
+      parsedData.courseAliases.forEach((alias, index) => {
+        logger.log(`  ${index + 1}. ${alias.primaryCode} -> ${alias.alternativeCodes.join(', ')}`)
+      })
+    }
+
     // Convert Maps to Objects for JSON serialization
     const jsonData = {
       courses: parsedData.courses,

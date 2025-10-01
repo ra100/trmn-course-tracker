@@ -150,11 +150,11 @@ export const unlockedCourseItem = css({
 export const clickableCourseCode = css({
   color: 'accent.default',
   cursor: 'pointer',
-  textDecoration: 'underline',
   fontWeight: 'semibold',
+  transition: 'all 0.2s ease',
   _hover: {
     color: 'accent.a11y',
-    textDecoration: 'none'
+    transform: 'translateY(-1px)'
   }
 })
 
@@ -173,12 +173,26 @@ export const courseAliasBadge = css({
   borderRadius: 'radii.sm',
   fontFamily: 'mono',
   border: '1px solid',
-  borderColor: 'border.default'
+  borderColor: 'border.default',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  _hover: {
+    background: 'accent.100',
+    color: 'accent.700',
+    borderColor: 'accent.default',
+    transform: 'translateY(-1px)'
+  }
 })
 
 export const primaryCourseCode = css({
   color: 'accent.default',
-  fontWeight: 'bold'
+  fontWeight: 'bold',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  _hover: {
+    color: 'accent.a11y',
+    transform: 'translateY(-1px)'
+  }
 })
 
 export const clickableUnlockedCourse = css({

@@ -825,6 +825,7 @@ export function parseCourseData(markdownContent: string): ParsedCourseData {
   logger.log('📋 Categories parsed:', data.categories.length)
   logger.log('⚡ Special rules parsed:', data.specialRules.length)
   logger.log('🗂️ Department mappings parsed:', data.departmentMappings?.size || 0)
+  logger.log('🔗 Course aliases parsed:', data.courseAliases?.length || 0)
 
   // Log Space Warfare Pin related courses
   const swpCourses = data.courses.filter((course) => {
