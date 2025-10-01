@@ -232,7 +232,7 @@ export const useCourseDetails = ({
     if (targetCourse) {
       // Get the course with updated availability and completion status
       const updatedCourses = eligibilityEngine.updateCourseAvailability(userProgress)
-      const updatedTargetCourse = updatedCourses.find((c) => c.code === targetCourse!.code)
+      const updatedTargetCourse = updatedCourses.find((c) => c.code === targetCourse.code)
 
       if (updatedTargetCourse) {
         onCourseSelect(updatedTargetCourse)
