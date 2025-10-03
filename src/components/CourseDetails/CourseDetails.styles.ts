@@ -184,17 +184,6 @@ export const courseAliasBadge = css({
   }
 })
 
-export const primaryCourseCode = css({
-  color: 'accent.default',
-  fontWeight: 'bold',
-  cursor: 'pointer',
-  transition: 'all 0.2s ease',
-  _hover: {
-    color: 'accent.a11y',
-    transform: 'translateY(-1px)'
-  }
-})
-
 export const clickableUnlockedCourse = css({
   padding: '1',
   bg: 'accent.100',

@@ -435,5 +435,99 @@ describe('CourseDetails Alias Integration', () => {
       expect(screen.getByText('RMACA RMACS Course 02A')).toBeInTheDocument()
       expect(screen.getByText('SIA SRN Course 30A')).toBeInTheDocument()
     })
+
+    it('should show completion checkmark for all aliases when any alias is completed', async () => {
+      const userProgress: UserProgress = {
+        userId: 'test-user',
+        completedCourses: new Set(['SIA-RMN-0003']), // Complete the alias, not the primary
+        availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
+        courseStatusTimestamps: new Map(),
+        courseCompletionDates: new Map(),
+        specialRulesProgress: new Map(),
+        lastUpdated: new Date()
+      }
+
+      renderWithTheme(
+        <CourseDetails
+          course={mockCourseData.courses[1]} // RMACA-RMACS-02A which requires INTRO-TRMN-0003
+          userProgress={userProgress}
+          eligibilityEngine={eligibilityEngine}
+          onCourseToggle={mockOnCourseToggle}
+          onCourseSelect={mockOnCourseSelect}
+        />
+      )
+
+      // Should show prerequisites section
+      await waitFor(() => {
+        expect(screen.getByText('Prerequisites')).toBeInTheDocument()
+      })
+
+      // Should show all alias codes with checkmarks since SIA-RMN-0003 is completed
+      const prerequisiteSection = screen.getByText('Prerequisites').parentElement
+      expect(prerequisiteSection).toBeInTheDocument()
+
+      // All aliases should be visible
+      const introElements = screen.getAllByText('INTRO-TRMN-0003')
+      expect(introElements.length).toBeGreaterThanOrEqual(1)
+
+      const gpuElements = screen.getAllByText('GPU-TRMN-0003')
+      expect(gpuElements.length).toBeGreaterThanOrEqual(1)
+
+      const siaElements = screen.getAllByText('SIA-RMN-0003')
+      expect(siaElements.length).toBeGreaterThanOrEqual(1)
+
+      // Should show "Completed: SIA-RMN-0003" text indicating which alias satisfied the requirement
+      expect(screen.getByText(/Completed:/)).toBeInTheDocument()
+      const completedText = screen.getByText((content, element) => {
+        return element?.textContent === 'Completed: SIA-RMN-0003'
+      })
+      expect(completedText).toBeInTheDocument()
+
+      // All alias badges should have checkmarks (✓)
+      const checkmarks = screen.getAllByText('✓')
+      expect(checkmarks.length).toBeGreaterThanOrEqual(3) // One for each alias
+    })
+
+    it('should show completion checkmark for all aliases when primary course is completed', async () => {
+      const userProgress: UserProgress = {
+        userId: 'test-user',
+        completedCourses: new Set(['INTRO-TRMN-0003']), // Complete the primary, not the alias
+        availableCourses: new Set(),
+        inProgressCourses: new Set(),
+        waitingGradeCourses: new Set(),
+        courseStatusTimestamps: new Map(),
+        courseCompletionDates: new Map(),
+        specialRulesProgress: new Map(),
+        lastUpdated: new Date()
+      }
+
+      renderWithTheme(
+        <CourseDetails
+          course={mockCourseData.courses[1]} // RMACA-RMACS-02A which requires INTRO-TRMN-0003
+          userProgress={userProgress}
+          eligibilityEngine={eligibilityEngine}
+          onCourseToggle={mockOnCourseToggle}
+          onCourseSelect={mockOnCourseSelect}
+        />
+      )
+
+      // Should show prerequisites section
+      await waitFor(() => {
+        expect(screen.getByText('Prerequisites')).toBeInTheDocument()
+      })
+
+      // All alias badges should have checkmarks (✓)
+      const checkmarks = screen.getAllByText('✓')
+      expect(checkmarks.length).toBeGreaterThanOrEqual(3) // One for each alias
+
+      // Should show "Completed: INTRO-TRMN-0003" text
+      expect(screen.getByText(/Completed:/)).toBeInTheDocument()
+      const completedText = screen.getByText((content, element) => {
+        return element?.textContent === 'Completed: INTRO-TRMN-0003'
+      })
+      expect(completedText).toBeInTheDocument()
+    })
   })
 })

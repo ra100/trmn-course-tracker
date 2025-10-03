@@ -13,8 +13,7 @@ import {
   departmentList,
   clickableCourseCode,
   courseAliasGroup,
-  courseAliasBadge,
-  primaryCourseCode
+  courseAliasBadge
 } from './CourseDetails.styles'
 
 export const PrerequisitesSection: React.FC<PrerequisitesSectionProps> = React.memo(
@@ -56,6 +55,8 @@ export const PrerequisitesSection: React.FC<PrerequisitesSectionProps> = React.m
               const courseCode = prereq.courseCode
               const courseCodes = prereq.courseCodes
               const satisfyingCourse = prereq.satisfyingCourse
+              // If any alias is completed, all aliases should show as completed
+              const isCompleted = prereq.satisfied && satisfyingCourse !== undefined
 
               return (
                 <div key={`course-${courseCode}`} className={prerequisiteItem({ satisfied: prereq.satisfied })}>
@@ -67,26 +68,28 @@ export const PrerequisitesSection: React.FC<PrerequisitesSectionProps> = React.m
                           <React.Fragment key={code}>
                             <span
                               onClick={() => handleCourseClick(code)}
-                              className={index === 0 ? primaryCourseCode : courseAliasBadge}
+                              className={courseAliasBadge}
                               style={{
-                                background:
-                                  satisfyingCourse === code
-                                    ? 'var(--colors-green-100)'
-                                    : index === 0
-                                    ? 'var(--colors-accent-100)'
-                                    : 'var(--colors-bg-subtle)',
-                                color:
-                                  satisfyingCourse === code
-                                    ? 'var(--colors-green-700)'
-                                    : index === 0
-                                    ? 'var(--colors-accent-700)'
-                                    : 'var(--colors-fg-muted)'
+                                background: isCompleted
+                                  ? 'var(--colors-green-100)'
+                                  : index === 0
+                                  ? 'var(--colors-accent-100)'
+                                  : 'var(--colors-bg-subtle)',
+                                color: isCompleted
+                                  ? 'var(--colors-green-700)'
+                                  : index === 0
+                                  ? 'var(--colors-accent-700)'
+                                  : 'var(--colors-fg-muted)',
+                                borderColor: isCompleted
+                                  ? 'var(--colors-green-500)'
+                                  : index === 0
+                                  ? 'var(--colors-accent-default)'
+                                  : 'var(--colors-border-default)',
+                                fontWeight: index === 0 ? 'bold' : 'normal'
                               }}
                             >
                               {code}
-                              {satisfyingCourse === code && (
-                                <span style={{ marginLeft: '0.25rem', fontSize: 'xs' }}>✓</span>
-                              )}
+                              {isCompleted && <span style={{ marginLeft: '0.25rem', fontSize: 'xs' }}>✓</span>}
                             </span>
                             {index < courseCodes.length - 1 && (
                               <span style={{ color: 'var(--colors-fg-muted)', fontSize: 'xs' }}> / </span>
@@ -100,9 +103,9 @@ export const PrerequisitesSection: React.FC<PrerequisitesSectionProps> = React.m
                       </span>
                     )}
                   </div>
-                  {satisfyingCourse && satisfyingCourse !== courseCode && (
+                  {satisfyingCourse && courseCodes && courseCodes.length > 1 && (
                     <div style={{ fontSize: 'xs', opacity: 0.8, marginTop: '0.25rem' }}>
-                      Satisfied by: {satisfyingCourse}
+                      Completed: {satisfyingCourse}
                     </div>
                   )}
                 </div>

@@ -91,21 +91,13 @@ export const useCourseDetails = ({
         let text = `Course: ${requiredCode}`
         let courseCodes: string[] | undefined
 
-        // Always show all equivalent courses that actually exist in the course data
-        const existingEquivalentCodes = allEquivalentCodes.filter(
-          (code) => eligibilityEngine.getCourseByCode(code) !== undefined
-        )
-
-        if (existingEquivalentCodes.length > 1) {
-          // Show all existing equivalent courses
-          text = `Course: ${existingEquivalentCodes.join(' / ')}`
-          courseCodes = existingEquivalentCodes
-        } else if (existingEquivalentCodes.length === 1) {
-          // Show the single existing course
-          text = `Course: ${existingEquivalentCodes[0]}`
-          courseCodes = existingEquivalentCodes
+        // Show all equivalent courses (including aliases) if there are multiple
+        if (allEquivalentCodes.length > 1) {
+          // Show all equivalent courses
+          text = `Course: ${allEquivalentCodes.join(' / ')}`
+          courseCodes = allEquivalentCodes
         } else {
-          // Fallback to original code if no equivalent courses exist
+          // Show the single course
           text = `Course: ${requiredCode}`
           courseCodes = [requiredCode]
         }

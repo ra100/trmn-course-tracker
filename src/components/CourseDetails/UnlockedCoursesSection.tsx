@@ -9,8 +9,7 @@ import {
   unlockedCourseItem,
   clickableUnlockedCourse,
   courseAliasGroup,
-  courseAliasBadge,
-  primaryCourseCode
+  courseAliasBadge
 } from './CourseDetails.styles'
 
 export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = React.memo(
@@ -62,10 +61,13 @@ export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = Rea
                                   e.stopPropagation()
                                   handleCourseClick(alias)
                                 }}
-                                className={index === 0 ? primaryCourseCode : courseAliasBadge}
+                                className={courseAliasBadge}
                                 style={{
                                   background: index === 0 ? 'var(--colors-accent-100)' : 'var(--colors-bg-subtle)',
-                                  color: index === 0 ? 'var(--colors-accent-700)' : 'var(--colors-fg-muted)'
+                                  color: index === 0 ? 'var(--colors-accent-700)' : 'var(--colors-fg-muted)',
+                                  borderColor:
+                                    index === 0 ? 'var(--colors-accent-default)' : 'var(--colors-border-default)',
+                                  fontWeight: index === 0 ? 'bold' : 'normal'
                                 }}
                               >
                                 {alias}
@@ -107,10 +109,13 @@ export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = Rea
                           {aliases.map((alias, index) => (
                             <React.Fragment key={alias}>
                               <span
-                                className={index === 0 ? primaryCourseCode : courseAliasBadge}
+                                className={courseAliasBadge}
                                 style={{
                                   background: index === 0 ? 'var(--colors-accent-100)' : 'var(--colors-bg-subtle)',
-                                  color: index === 0 ? 'var(--colors-accent-700)' : 'var(--colors-fg-muted)'
+                                  color: index === 0 ? 'var(--colors-accent-700)' : 'var(--colors-fg-muted)',
+                                  borderColor:
+                                    index === 0 ? 'var(--colors-accent-default)' : 'var(--colors-border-default)',
+                                  fontWeight: index === 0 ? 'bold' : 'normal'
                                 }}
                               >
                                 {alias}
