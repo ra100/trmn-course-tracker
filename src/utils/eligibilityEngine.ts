@@ -396,11 +396,30 @@ export class EligibilityEngine {
 
     for (const course of this.courseData.courses) {
       const hasAsPrerequisite = course.prerequisites.some((prereq) => {
-        if (prereq.type === 'course' && prereq.code === courseCode) {
-          return true
+        if (prereq.type === 'course' && prereq.code) {
+          // Check if the course code matches exactly
+          if (prereq.code === courseCode) {
+            return true
+          }
+
+          // Check if any alias of the course code matches
+          const allEquivalentCodes = this.getAllEquivalentCourses(courseCode)
+          return allEquivalentCodes.includes(prereq.code)
         }
         if (prereq.type === 'alternative_group' && prereq.alternativePrerequisites) {
-          return prereq.alternativePrerequisites.some((alt) => alt.type === 'course' && alt.code === courseCode)
+          return prereq.alternativePrerequisites.some((alt) => {
+            if (alt.type === 'course' && alt.code) {
+              // Check if the alternative course code matches exactly
+              if (alt.code === courseCode) {
+                return true
+              }
+
+              // Check if any alias of the course code matches the alternative
+              const allEquivalentCodes = this.getAllEquivalentCourses(courseCode)
+              return allEquivalentCodes.includes(alt.code)
+            }
+            return false
+          })
         }
         return false
       })

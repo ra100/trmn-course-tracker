@@ -7,7 +7,10 @@ import {
   sectionTitle,
   unlockedCoursesList,
   unlockedCourseItem,
-  clickableUnlockedCourse
+  clickableUnlockedCourse,
+  courseAliasGroup,
+  courseAliasBadge,
+  primaryCourseCode
 } from './CourseDetails.styles'
 
 export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = React.memo(
@@ -41,7 +44,7 @@ export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = Rea
               </div>
               {courses.map((unlockedCourse) => {
                 const isIntroductory = unlockedCourse.isIntroductory
-                const hasAliases = unlockedCourse.aliases && unlockedCourse.aliases.length > 0
+                const aliases = unlockedCourse.aliases || []
 
                 return onCourseSelect ? (
                   <div
@@ -50,7 +53,32 @@ export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = Rea
                     className={clickableUnlockedCourse}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1', flexWrap: 'wrap' }}>
-                      <strong>{unlockedCourse.code}</strong>
+                      {aliases.length > 0 ? (
+                        <span className={courseAliasGroup}>
+                          {aliases.map((alias, index) => (
+                            <React.Fragment key={alias}>
+                              <span
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleCourseClick(alias)
+                                }}
+                                className={index === 0 ? primaryCourseCode : courseAliasBadge}
+                                style={{
+                                  background: index === 0 ? 'var(--colors-accent-100)' : 'var(--colors-bg-subtle)',
+                                  color: index === 0 ? 'var(--colors-accent-700)' : 'var(--colors-fg-muted)'
+                                }}
+                              >
+                                {alias}
+                              </span>
+                              {index < aliases.length - 1 && (
+                                <span style={{ color: 'var(--colors-fg-muted)', fontSize: 'xs' }}> / </span>
+                              )}
+                            </React.Fragment>
+                          ))}
+                        </span>
+                      ) : (
+                        <strong>{unlockedCourse.code}</strong>
+                      )}
                       {isIntroductory && (
                         <span
                           style={{
@@ -63,21 +91,6 @@ export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = Rea
                           }}
                         >
                           Introductory
-                        </span>
-                      )}
-                      {hasAliases && (
-                        <span
-                          style={{
-                            background: 'var(--colors-bg-subtle)',
-                            color: 'var(--colors-fg-muted)',
-                            fontSize: 'xs',
-                            padding: '0.25 0.5',
-                            borderRadius: 'var(--radii-sm)',
-                            border: '1px solid var(--colors-border-default)',
-                            fontWeight: 'medium'
-                          }}
-                        >
-                          Has Aliases
                         </span>
                       )}
                     </div>
@@ -89,7 +102,28 @@ export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = Rea
                 ) : (
                   <div key={unlockedCourse.id} className={unlockedCourseItem}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1', flexWrap: 'wrap' }}>
-                      <strong>{unlockedCourse.code}</strong>
+                      {aliases.length > 0 ? (
+                        <span className={courseAliasGroup}>
+                          {aliases.map((alias, index) => (
+                            <React.Fragment key={alias}>
+                              <span
+                                className={index === 0 ? primaryCourseCode : courseAliasBadge}
+                                style={{
+                                  background: index === 0 ? 'var(--colors-accent-100)' : 'var(--colors-bg-subtle)',
+                                  color: index === 0 ? 'var(--colors-accent-700)' : 'var(--colors-fg-muted)'
+                                }}
+                              >
+                                {alias}
+                              </span>
+                              {index < aliases.length - 1 && (
+                                <span style={{ color: 'var(--colors-fg-muted)', fontSize: 'xs' }}> / </span>
+                              )}
+                            </React.Fragment>
+                          ))}
+                        </span>
+                      ) : (
+                        <strong>{unlockedCourse.code}</strong>
+                      )}
                       {isIntroductory && (
                         <span
                           style={{
@@ -102,21 +136,6 @@ export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = Rea
                           }}
                         >
                           Introductory
-                        </span>
-                      )}
-                      {hasAliases && (
-                        <span
-                          style={{
-                            background: 'var(--colors-bg-subtle)',
-                            color: 'var(--colors-fg-muted)',
-                            fontSize: 'xs',
-                            padding: '0.25 0.5',
-                            borderRadius: 'var(--radii-sm)',
-                            border: '1px solid var(--colors-border-default)',
-                            fontWeight: 'medium'
-                          }}
-                        >
-                          Has Aliases
                         </span>
                       )}
                     </div>

@@ -30,7 +30,8 @@ export const useCourseDetails = ({
   }, [course])
 
   const getStatus = (): CourseStatus => {
-    if (course.completed) {
+    // Check user progress first (dynamic status)
+    if (userProgress.completedCourses.has(course.code)) {
       return 'completed'
     }
     if (userProgress.waitingGradeCourses.has(course.code)) {
@@ -39,6 +40,7 @@ export const useCourseDetails = ({
     if (userProgress.inProgressCourses.has(course.code)) {
       return 'in_progress'
     }
+    // Fall back to static course data
     if (course.available) {
       return 'available'
     }

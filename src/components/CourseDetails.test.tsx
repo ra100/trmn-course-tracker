@@ -310,4 +310,301 @@ describe('CourseDetails', () => {
 
     expect(mockOnCourseSelect).toHaveBeenCalledWith(existingCourse)
   })
+
+  describe('alias prerequisite/unlock display', () => {
+    const mockEligibilityEngineWithAliases = {
+      ...mockEligibilityEngine,
+      getCoursesUnlockedBy: vi.fn(() => [
+        {
+          id: 'unlocked-1',
+          name: 'RMACA-RMACS-02A',
+          code: 'RMACA-RMACS-02A',
+          prerequisites: [
+            {
+              type: 'course' as const,
+              code: 'INTRO-TRMN-0003',
+              required: true
+            }
+          ],
+          section: 'RMACA',
+          subsection: 'RMACS',
+          sectionId: 'rmaca',
+          subsectionId: 'rmacs',
+          completed: false,
+          available: false,
+          institution: 'RMACA',
+          aliases: ['INTRO-TRMN-0003', 'GPU-TRMN-0003', 'SIA-RMN-0003']
+        },
+        {
+          id: 'unlocked-2',
+          name: 'SIA-SRN-30A',
+          code: 'SIA-SRN-30A',
+          prerequisites: [
+            {
+              type: 'course' as const,
+              code: 'INTRO-TRMN-0003',
+              required: true
+            }
+          ],
+          section: 'SIA',
+          subsection: 'SRN',
+          sectionId: 'sia',
+          subsectionId: 'srn',
+          completed: false,
+          available: false,
+          institution: 'SIA',
+          aliases: ['INTRO-TRMN-0003', 'GPU-TRMN-0003', 'SIA-RMN-0003']
+        }
+      ]),
+      getAllEquivalentCourses: vi.fn((code: string) => {
+        if (code === 'INTRO-TRMN-0003') {
+          return ['INTRO-TRMN-0003', 'GPU-TRMN-0003', 'SIA-RMN-0003']
+        }
+        return [code]
+      }),
+      getCourseByCode: vi.fn((code: string) => {
+        if (code === 'RMACA-RMACS-02A') {
+          return {
+            id: 'unlocked-1',
+            name: 'RMACA-RMACS-02A',
+            code: 'RMACA-RMACS-02A',
+            prerequisites: [],
+            section: 'RMACA',
+            subsection: 'RMACS',
+            sectionId: 'rmaca',
+            subsectionId: 'rmacs',
+            completed: false,
+            available: true,
+            institution: 'RMACA'
+          }
+        }
+        if (code === 'SIA-SRN-30A') {
+          return {
+            id: 'unlocked-2',
+            name: 'SIA-SRN-30A',
+            code: 'SIA-SRN-30A',
+            prerequisites: [],
+            section: 'SIA',
+            subsection: 'SRN',
+            sectionId: 'sia',
+            subsectionId: 'srn',
+            completed: false,
+            available: true,
+            institution: 'SIA'
+          }
+        }
+        return null
+      }),
+      updateCourseAvailability: vi.fn((_progress) => [
+        {
+          id: 'unlocked-1',
+          name: 'RMACA-RMACS-02A',
+          code: 'RMACA-RMACS-02A',
+          prerequisites: [],
+          section: 'RMACA',
+          subsection: 'RMACS',
+          sectionId: 'rmaca',
+          subsectionId: 'rmacs',
+          completed: false,
+          available: true,
+          institution: 'RMACA'
+        }
+      ])
+    } as unknown as EligibilityEngine
+
+    it('should display unlocked courses when GPU-TRMN-0003 is completed', () => {
+      const progressWithAliasCompleted = {
+        ...mockUserProgress,
+        completedCourses: new Set(['GPU-TRMN-0003'])
+      }
+
+      renderWithTheme(
+        <CourseDetails
+          course={{
+            id: 'test-course',
+            name: 'GPU-TRMN-0003',
+            code: 'GPU-TRMN-0003',
+            prerequisites: [],
+            section: 'GPU',
+            subsection: 'TRMN',
+            sectionId: 'gpu',
+            subsectionId: 'trmn',
+            completed: true,
+            available: false,
+            institution: 'GPU',
+            isIntroductory: true,
+            aliases: ['INTRO-TRMN-0003', 'SIA-RMN-0003']
+          }}
+          userProgress={progressWithAliasCompleted}
+          eligibilityEngine={mockEligibilityEngineWithAliases}
+          onCourseToggle={vi.fn()}
+        />
+      )
+
+      expect(screen.getByText('RMACA-RMACS-02A')).toBeInTheDocument()
+      expect(screen.getByText('SIA-SRN-30A')).toBeInTheDocument()
+    })
+
+    it('should show alias information for unlocked courses', () => {
+      const progressWithAliasCompleted = {
+        ...mockUserProgress,
+        completedCourses: new Set(['GPU-TRMN-0003'])
+      }
+
+      renderWithTheme(
+        <CourseDetails
+          course={{
+            id: 'test-course',
+            name: 'GPU-TRMN-0003',
+            code: 'GPU-TRMN-0003',
+            prerequisites: [],
+            section: 'GPU',
+            subsection: 'TRMN',
+            sectionId: 'gpu',
+            subsectionId: 'trmn',
+            completed: true,
+            available: false,
+            institution: 'GPU',
+            isIntroductory: true,
+            aliases: ['INTRO-TRMN-0003', 'SIA-RMN-0003']
+          }}
+          userProgress={progressWithAliasCompleted}
+          eligibilityEngine={mockEligibilityEngineWithAliases}
+          onCourseToggle={vi.fn()}
+        />
+      )
+
+      // Should show actual alias codes instead of generic "Has Aliases" badge
+      expect(screen.getAllByText('INTRO-TRMN-0003')).toHaveLength(2) // Each course shows all aliases
+      expect(screen.getAllByText('GPU-TRMN-0003')).toHaveLength(4) // Each course shows all aliases
+      expect(screen.getAllByText('SIA-RMN-0003')).toHaveLength(2) // Each course shows all aliases
+    })
+
+    it('should handle clicking on unlocked courses with aliases', () => {
+      const mockOnCourseSelect = vi.fn()
+      const progressWithAliasCompleted = {
+        ...mockUserProgress,
+        completedCourses: new Set(['GPU-TRMN-0003'])
+      }
+
+      renderWithTheme(
+        <CourseDetails
+          course={{
+            id: 'test-course',
+            name: 'GPU-TRMN-0003',
+            code: 'GPU-TRMN-0003',
+            prerequisites: [],
+            section: 'GPU',
+            subsection: 'TRMN',
+            sectionId: 'gpu',
+            subsectionId: 'trmn',
+            completed: true,
+            available: false,
+            institution: 'GPU',
+            isIntroductory: true,
+            aliases: ['INTRO-TRMN-0003', 'SIA-RMN-0003']
+          }}
+          userProgress={progressWithAliasCompleted}
+          eligibilityEngine={mockEligibilityEngineWithAliases}
+          onCourseToggle={vi.fn()}
+          onCourseSelect={mockOnCourseSelect}
+        />
+      )
+
+      const unlockedCourse = screen.getByText('RMACA-RMACS-02A')
+      fireEvent.click(unlockedCourse)
+
+      expect(mockOnCourseSelect).toHaveBeenCalled()
+    })
+
+    it('should show introductory badge for unlocked courses that are introductory', () => {
+      const mockEligibilityEngineWithIntroductory = {
+        ...mockEligibilityEngine,
+        getCoursesUnlockedBy: vi.fn(() => [
+          {
+            id: 'unlocked-1',
+            name: 'GPU-TRMN-0001',
+            code: 'GPU-TRMN-0001',
+            prerequisites: [],
+            section: 'GPU',
+            subsection: 'TRMN',
+            sectionId: 'gpu',
+            subsectionId: 'trmn',
+            completed: false,
+            available: true,
+            institution: 'GPU',
+            isIntroductory: true,
+            aliases: ['INTRO-TRMN-0001', 'SIA-RMN-0001']
+          }
+        ]),
+        getAllEquivalentCourses: vi.fn(() => ['INTRO-TRMN-0001', 'GPU-TRMN-0001', 'SIA-RMN-0001']),
+        getCourseByCode: vi.fn(() => null),
+        updateCourseAvailability: vi.fn(() => [])
+      } as unknown as EligibilityEngine
+
+      const progressWithAliasCompleted = {
+        ...mockUserProgress,
+        completedCourses: new Set(['GPU-TRMN-0003'])
+      }
+
+      renderWithTheme(
+        <CourseDetails
+          course={{
+            id: 'test-course',
+            name: 'GPU-TRMN-0003',
+            code: 'GPU-TRMN-0003',
+            prerequisites: [],
+            section: 'GPU',
+            subsection: 'TRMN',
+            sectionId: 'gpu',
+            subsectionId: 'trmn',
+            completed: true,
+            available: false,
+            institution: 'GPU',
+            isIntroductory: true,
+            aliases: ['INTRO-TRMN-0003', 'SIA-RMN-0003']
+          }}
+          userProgress={progressWithAliasCompleted}
+          eligibilityEngine={mockEligibilityEngineWithIntroductory}
+          onCourseToggle={vi.fn()}
+        />
+      )
+
+      expect(screen.getByText('Introductory')).toBeInTheDocument()
+    })
+
+    it('should group unlocked courses by institution', () => {
+      const progressWithAliasCompleted = {
+        ...mockUserProgress,
+        completedCourses: new Set(['GPU-TRMN-0003'])
+      }
+
+      renderWithTheme(
+        <CourseDetails
+          course={{
+            id: 'test-course',
+            name: 'GPU-TRMN-0003',
+            code: 'GPU-TRMN-0003',
+            prerequisites: [],
+            section: 'GPU',
+            subsection: 'TRMN',
+            sectionId: 'gpu',
+            subsectionId: 'trmn',
+            completed: true,
+            available: false,
+            institution: 'GPU',
+            isIntroductory: true,
+            aliases: ['INTRO-TRMN-0003', 'SIA-RMN-0003']
+          }}
+          userProgress={progressWithAliasCompleted}
+          eligibilityEngine={mockEligibilityEngineWithAliases}
+          onCourseToggle={vi.fn()}
+        />
+      )
+
+      // Should show institution headers
+      expect(screen.getByText('RMACA')).toBeInTheDocument()
+      expect(screen.getByText('SIA')).toBeInTheDocument()
+    })
+  })
 })
