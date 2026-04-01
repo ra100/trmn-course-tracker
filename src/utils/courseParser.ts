@@ -258,19 +258,19 @@ export class CourseParser {
   private parseCourseAliasRow(line: string): void {
     const cells = this.parseTableCells(line)
 
-    if (cells.length >= 3) {
+    if (cells.length >= 2) {
       const primaryCourse = cells[0]
       const alternativeCourses = cells[1]
-      const description = cells[2]
+      const description = cells.length >= 3 ? cells[2] : undefined
 
       // Skip header rows
       if (primaryCourse === 'Primary Course' || alternativeCourses === 'Alternative Courses') {
         return
       }
 
-      // Parse comma-separated alternative courses
+      // Parse space-separated alternative courses
       const alternativeCodes = alternativeCourses
-        .split(',')
+        .split(/[\s,]+/)
         .map((code) => code.trim())
         .filter((code) => code.length > 0)
 
