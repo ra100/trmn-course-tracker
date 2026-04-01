@@ -8,9 +8,9 @@ import {
   USER_PROGRESS_QUERY_KEY
 } from './useUserProgress'
 import { UserProgress } from '../types'
+import { logger } from '../utils/logger'
 import {
   localStorageMock,
-  consoleMock,
   createTestQueryClient,
   createWrapper,
   setupTestMocks,
@@ -136,7 +136,7 @@ describe('useUserProgress', () => {
         lastUpdated: expect.any(Date)
       })
 
-      expect(consoleMock.error).toHaveBeenCalledWith(
+      expect(logger.error).toHaveBeenCalledWith(
         'Error loading user progress from localStorage:',
         expect.any(Error)
       )
@@ -265,7 +265,7 @@ describe('useUserProgress', () => {
       )
 
       expect(result.current.error).toEqual(new Error('Storage quota exceeded'))
-      expect(consoleMock.error).toHaveBeenCalledWith('❌ Critical: All storage methods failed!', expect.any(Error))
+      expect(logger.error).toHaveBeenCalledWith('❌ Critical: All storage methods failed!', expect.any(Error))
     })
 
     it('should log success message in debug mode', async () => {
@@ -286,7 +286,7 @@ describe('useUserProgress', () => {
         expect(result.current.isSuccess).toBe(true)
       })
 
-      expect(consoleMock.log).toHaveBeenCalledWith('✅ User progress saved to localStorage (primary)')
+      expect(logger.log).toHaveBeenCalledWith('✅ User progress saved to localStorage (primary)')
     })
   })
 

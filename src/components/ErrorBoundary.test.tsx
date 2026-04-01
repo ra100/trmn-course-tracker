@@ -1,10 +1,10 @@
-import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
-import { ThemeProvider } from 'styled-components'
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ErrorBoundary } from './ErrorBoundary'
 import { darkTheme } from '../theme'
 import { logger } from '~/utils/logger'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { ThemeProvider } from 'styled-components'
+import React from 'react'
 
 // Mock component that throws an error
 const ThrowError: React.FC<{ shouldThrow: boolean }> = ({ shouldThrow }) => {
@@ -14,14 +14,9 @@ const ThrowError: React.FC<{ shouldThrow: boolean }> = ({ shouldThrow }) => {
   return <div data-testid="working-component">Component works fine</div>
 }
 
-// Mock logger.error to avoid noise in tests
-const originalConsoleError = logger.error
+// logger is already mocked in test-setup.ts, just clear between tests
 beforeEach(() => {
-  logger.error = vi.fn()
-})
-
-afterEach(() => {
-  logger.error = originalConsoleError
+  vi.clearAllMocks()
 })
 
 const renderWithTheme = (component: React.ReactNode) => {

@@ -9,9 +9,9 @@ import {
   USER_SETTINGS_QUERY_KEY
 } from './useUserSettings'
 import { UserSettings } from '../types'
+import { logger } from '../utils/logger'
 import {
   localStorageMock,
-  consoleMock,
   createTestQueryClient,
   createWrapper,
   setupTestMocks,
@@ -111,7 +111,7 @@ describe('useUserSettings', () => {
       })
 
       expect(result.current.data).toEqual(defaultUserSettings)
-      expect(consoleMock.error).toHaveBeenCalledWith('Error loading user settings:', expect.any(Error))
+      expect(logger.error).toHaveBeenCalledWith('Error loading user settings:', expect.any(Error))
     })
 
     it('should have correct query configuration', async () => {
@@ -181,7 +181,7 @@ describe('useUserSettings', () => {
       })
 
       expect(result.current.error).toEqual(new Error('Storage quota exceeded'))
-      expect(consoleMock.error).toHaveBeenCalledWith('Error saving user settings:', expect.any(Error))
+      expect(logger.error).toHaveBeenCalledWith('Error saving user settings:', expect.any(Error))
     })
 
     it('should log success message in debug mode', async () => {
@@ -202,7 +202,7 @@ describe('useUserSettings', () => {
         expect(result.current.isSuccess).toBe(true)
       })
 
-      expect(consoleMock.log).toHaveBeenCalledWith('⚙️ User settings saved to localStorage')
+      expect(logger.log).toHaveBeenCalledWith('⚙️ User settings saved to localStorage')
     })
   })
 
