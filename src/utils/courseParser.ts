@@ -92,13 +92,11 @@ export class CourseParser {
           if (getSection(title)) {
             currentSpecialSection = getSection(title)
           } else {
-            // Handle level 1 headers that represent major department sections
-            // These should create new sections (e.g., "SINA TSC Tactical", "SINA TSC Engineering")
-            if (title.includes('SINA TSC') || title.includes('TSC')) {
-              currentSection = this.createSection(title)
-              currentSubsection = null
-              currentSpecialSection = null
-            }
+            // Level 1 headers always create new sections
+            // (e.g., "SINA TSC Tactical", "SINA TSC Engineering", "PAMA Tsingtao College")
+            currentSection = this.createSection(title)
+            currentSubsection = null
+            currentSpecialSection = null
           }
         } else if (level === 2) {
           if (getSection(title)) {
@@ -808,6 +806,9 @@ export class CourseParser {
     }
     if (courseCode.startsWith('LU-')) {
       return 'Landing University'
+    }
+    if (courseCode.startsWith('PAMA-')) {
+      return 'PAMA Tsingtao College of Naval Specialization'
     }
     return undefined
   }

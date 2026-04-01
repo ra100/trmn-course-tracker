@@ -29,6 +29,7 @@ The following table defines display names for course series prefixes:
 | LU            | Xenology Society               |
 | GPU-ALC       | Gryphon Planetary University   |
 | GPU-TRMN      | GPU TRMN Leadership Studies    |
+| PAMA-IAN      | PAMA Tsingtao College          |
 
 ## Course Aliases
 
@@ -918,3 +919,210 @@ The below courses have been approved by BuTrain and may be accessed here: https:
 | IS 317 - Introduction to Community Emergency Response Team (CERTs) | MU-BEK-06     | INTRO-TRMN-0003      |
 | IS 75 - Military Resources in Emergency Management                 | MU-BEK-07     | INTRO-TRMN-0003      |
 | IS 10 - Animals in Disasters: Awareness and Preparedness           | MU-BEK-08     | INTRO-TRMN-0003      |
+
+# PAMA Tsingtao College of Naval Specialization
+
+The specialists of the Imperial Andermani Navy are trained to fulfill the complex tasks of shipboard duty. The courses are recommended for both Enlisted and Officers. The Tsingtao College of Naval Specialization courses are designed to build and broaden a spacer's knowledge so that they can take on larger responsibilities as they progress in rank.
+
+## Deck Department Courses
+
+Deck Department personnel specialize in a range of assignments. They make up the navigation team, send and receive communications, provide ship's maintenance, launch, operate and recover small craft. This group of crewmen are instrumental in the smooth operation of any naval vessel. The Deck Department is divided into two divisions (Command and Navigation), of which each is broken into three sections of specialties.
+
+### Command Division
+
+| Course Name       | Course Number | Course Prerequisites                      |
+| ----------------- | ------------- | ----------------------------------------- |
+| Boatswain         | PAMA-IAN-S111 | INTRO-TRMN-0003                           |
+| Communication     | PAMA-IAN-S112 | INTRO-TRMN-0003                           |
+| Operations Course | PAMA-IAN-S113 | INTRO-TRMN-0003                           |
+| Command           | PAMA-IAN-S211 | PAMA-IAN-S111 PAMA-IAN-S112 PAMA-IAN-S113 |
+
+### Navigation Division
+
+| Course Name          | Course Number | Course Prerequisites                      |
+| -------------------- | ------------- | ----------------------------------------- |
+| Coxswain             | PAMA-IAN-S114 | INTRO-TRMN-0003                           |
+| Plotting             | PAMA-IAN-S115 | INTRO-TRMN-0003                           |
+| Quartermaster Course | PAMA-IAN-S116 | INTRO-TRMN-0003                           |
+| Navigation           | PAMA-IAN-S212 | PAMA-IAN-S114 PAMA-IAN-S115 PAMA-IAN-S116 |
+
+### Deck Department
+
+| Course Name           | Course Number | Course Prerequisites        |
+| --------------------- | ------------- | --------------------------- |
+| Deck                  | PAMA-IAN-S311 | PAMA-IAN-S211 PAMA-IAN-S212 |
+| Deck Extended Studies | PAMA-IAN-S312 | PAMA-IAN-S311               |
+
+## Engineering Department Courses
+
+The Engineering Department is at the heart of every ship. Without their knowledge and expertise, everything on board the vessel would stop working. They have responsibilities from creating all of the ship's power and then maintaining anything that would use that power, especially propulsion and environmental system. The Engineering Department consists of two divisions (Main Systems and Specialty Systems) and each is made up of three sections.
+
+### Main Systems Division
+
+| Course Name  | Course Number | Course Prerequisites                      |
+| ------------ | ------------- | ----------------------------------------- |
+| Impeller     | PAMA-IAN-S121 | INTRO-TRMN-0003                           |
+| Power        | PAMA-IAN-S122 | INTRO-TRMN-0003                           |
+| Electronic   | PAMA-IAN-S123 | INTRO-TRMN-0003                           |
+| Main Systems | PAMA-IAN-S221 | PAMA-IAN-S121 PAMA-IAN-S122 PAMA-IAN-S123 |
+
+### Specialty Systems Division
+
+| Course Name       | Course Number | Course Prerequisites                      |
+| ----------------- | ------------- | ----------------------------------------- |
+| Environmental     | PAMA-IAN-S124 | INTRO-TRMN-0003                           |
+| Damage Control    | PAMA-IAN-S125 | INTRO-TRMN-0003                           |
+| Computer Systems  | PAMA-IAN-S126 | INTRO-TRMN-0003                           |
+| Specialty Systems | PAMA-IAN-S222 | PAMA-IAN-S124 PAMA-IAN-S125 PAMA-IAN-S126 |
+
+### Engineering Department
+
+| Course Name                  | Course Number | Course Prerequisites        |
+| ---------------------------- | ------------- | --------------------------- |
+| Engineering                  | PAMA-IAN-S321 | PAMA-IAN-S221 PAMA-IAN-S222 |
+| Engineering Extended Studies | PAMA-IAN-S320 | PAMA-IAN-S321               |
+
+## Warfare Department Courses
+
+The Warfare Department is dedicated to the traditional sense of ship combat from the time of sails. The department is divided between offensive and defensive capabilities. With the Weapon systems focusing on beam and missile system and the Tactical Systems focused on detection and tracking of all threats. The Warfare Department is made up of two divisions (Weapons and Tactical) and they are each made up of three sections of specialties.
+
+### Weapons Division
+
+| Course Name  | Course Number | Course Prerequisites                      |
+| ------------ | ------------- | ----------------------------------------- |
+| Missiles     | PAMA-IAN-S131 | INTRO-TRMN-0003                           |
+| Beam Weapons | PAMA-IAN-S132 | INTRO-TRMN-0003                           |
+| Mines/Pods   | PAMA-IAN-S133 | INTRO-TRMN-0003                           |
+| Weapons      | PAMA-IAN-S231 | PAMA-IAN-S131 PAMA-IAN-S132 PAMA-IAN-S133 |
+
+### Tactical Division
+
+| Course Name        | Course Number | Course Prerequisites                      |
+| ------------------ | ------------- | ----------------------------------------- |
+| Electronic Warfare | PAMA-IAN-S134 | INTRO-TRMN-0003                           |
+| Sensors and Drones | PAMA-IAN-S135 | INTRO-TRMN-0003                           |
+| Point Defense      | PAMA-IAN-S136 | INTRO-TRMN-0003                           |
+| Tactical           | PAMA-IAN-S232 | PAMA-IAN-S134 PAMA-IAN-S135 PAMA-IAN-S136 |
+
+### Warfare Department
+
+| Course Name              | Course Number | Course Prerequisites        |
+| ------------------------ | ------------- | --------------------------- |
+| Warfare                  | PAMA-IAN-S331 | PAMA-IAN-S231 PAMA-IAN-S232 |
+| Warfare Extended Studies | PAMA-IAN-S332 | PAMA-IAN-S331               |
+
+## General Services Department Courses
+
+The General Services Department is responsible for the general flow of business on board any vessel. The department is broken into those that provide services to a crewman and those that provide services for the crew. But at the heart of this department is the procurement, management and distribution of ships supplies to promote healthy and happy crewmembers. The General Services Department has two divisions (Personal Services and Administrative Services) with each divided into three specialty sections.
+
+### Personal Services Division
+
+| Course Name       | Course Number | Course Prerequisites                      |
+| ----------------- | ------------- | ----------------------------------------- |
+| Commissary Clerk  | PAMA-IAN-S141 | INTRO-TRMN-0003                           |
+| Steward           | PAMA-IAN-S142 | INTRO-TRMN-0003                           |
+| Musician          | PAMA-IAN-S143 | INTRO-TRMN-0003                           |
+| Personal Services | PAMA-IAN-S241 | PAMA-IAN-S141 PAMA-IAN-S142 PAMA-IAN-S143 |
+
+### Administrative Services Division
+
+| Course Name             | Course Number | Course Prerequisites                      |
+| ----------------------- | ------------- | ----------------------------------------- |
+| Store Clerk             | PAMA-IAN-S144 | INTRO-TRMN-0003                           |
+| Yeoman                  | PAMA-IAN-S145 | INTRO-TRMN-0003                           |
+| Staff Services          | PAMA-IAN-S146 | INTRO-TRMN-0003                           |
+| Administrative Services | PAMA-IAN-S242 | PAMA-IAN-S144 PAMA-IAN-S145 PAMA-IAN-S146 |
+
+### General Services Department
+
+| Course Name                       | Course Number | Course Prerequisites        |
+| --------------------------------- | ------------- | --------------------------- |
+| General Services                  | PAMA-IAN-S341 | PAMA-IAN-S241 PAMA-IAN-S242 |
+| General Services Extended Studies | PAMA-IAN-S342 | PAMA-IAN-S341               |
+
+## Special Services Department Courses
+
+The Special Services Department is responsible for the defense of the ship for without and within. This can occur through the gathering and analysis of information or through police action. The unique talents in this department, when combined together, provide the crew with a level of protection to allow them to focus on theirs without worry. The Special Services Department has two main divisions (Force Protection and Naval Planning) with each possessing two specialty sections.
+
+### Force Protection Division
+
+| Course Name            | Course Number | Course Prerequisites                      |
+| ---------------------- | ------------- | ----------------------------------------- |
+| Feldjager              | PAMA-IAN-S151 | INTRO-TRMN-0003                           |
+| Küstenwache            | PAMA-IAN-S152 | INTRO-TRMN-0003                           |
+| Forensic Investigation | PAMA-IAN-S153 | INTRO-TRMN-0003                           |
+| Kriminalpolizei        | PAMA-IAN-S251 | PAMA-IAN-S151 PAMA-IAN-S152 PAMA-IAN-S153 |
+
+### Naval Planning Division
+
+| Course Name             | Course Number | Course Prerequisites                      |
+| ----------------------- | ------------- | ----------------------------------------- |
+| Intelligence Specialist | PAMA-IAN-S154 | INTRO-TRMN-0003                           |
+| Civil Affairs           | PAMA-IAN-S155 | INTRO-TRMN-0003                           |
+| Cryptography            | PAMA-IAN-S156 | INTRO-TRMN-0003                           |
+| Information Warfare     | PAMA-IAN-S252 | PAMA-IAN-S154 PAMA-IAN-S155 PAMA-IAN-S156 |
+
+### Special Services Department
+
+| Course Name                       | Course Number | Course Prerequisites        |
+| --------------------------------- | ------------- | --------------------------- |
+| Special Services                  | PAMA-IAN-S351 | PAMA-IAN-S251 PAMA-IAN-S252 |
+| Special Services Extended Studies | PAMA-IAN-S352 | PAMA-IAN-S351               |
+
+## Medical Department Courses
+
+This service is responsible for finding missing and/or damage personnel through all of their medical care. The combat rescue team will find the injured, perform triage and transport them to a medical facility, no matter the condition. While the patient care team will take over upon delivery and see to it that their care is of the highest quality to allow them to make a complete and speedy recovery.
+
+### Combat Rescue Division
+
+| Course Name               | Course Number | Course Prerequisites                      |
+| ------------------------- | ------------- | ----------------------------------------- |
+| Pararescuemen             | PAMA-IAN-S161 | INTRO-TRMN-0003                           |
+| Combat Medical Specialist | PAMA-IAN-S162 | INTRO-TRMN-0003                           |
+| Hazmat Medical Specialist | PAMA-IAN-S163 | INTRO-TRMN-0003                           |
+| Combat Rescue Specialist  | PAMA-IAN-S261 | PAMA-IAN-S161 PAMA-IAN-S162 PAMA-IAN-S163 |
+
+### Patient Care Division
+
+| Course Name             | Course Number | Course Prerequisites                      |
+| ----------------------- | ------------- | ----------------------------------------- |
+| Pharmacist Mate         | PAMA-IAN-S164 | INTRO-TRMN-0003                           |
+| Medical Assistant       | PAMA-IAN-S165 | INTRO-TRMN-0003                           |
+| Physicians Assistant    | PAMA-IAN-S166 | INTRO-TRMN-0003                           |
+| Patient Care Specialist | PAMA-IAN-S262 | PAMA-IAN-S164 PAMA-IAN-S165 PAMA-IAN-S166 |
+
+### Medical Department
+
+| Course Name                       | Course Number | Course Prerequisites        |
+| --------------------------------- | ------------- | --------------------------- |
+| Medical Services                  | PAMA-IAN-S361 | PAMA-IAN-S261 PAMA-IAN-S262 |
+| Medical Services Extended Studies | PAMA-IAN-S362 | PAMA-IAN-S361               |
+
+## PAMA Light Attack Craft School
+
+The LAC School represents the wide-ranging system defense craft that are part of the IAN's defense policies. With as many planets are part of the Empire and parts being policed by IAN units, there is a lack of hyper-capable ships to go around. As such the Wehrkreis, War Fleets, are the principal response to active threats; however remote stations may have to resort to LAC's. The LAC School is a high honor and seen as the fastest route to a command position because it is made up of only the best and the brightest that the Empire can offer! LAC houses two primary technical divisions (Operations and Tactical) with each of them composed of three technical sections each.
+
+### LAC Operations Division
+
+| Course Name         | Course Number | Course Prerequisites                      |
+| ------------------- | ------------- | ----------------------------------------- |
+| LAC Piloting        | PAMA-IAN-L111 | INTRO-TRMN-0003                           |
+| LAC Flight Engineer | PAMA-IAN-L112 | INTRO-TRMN-0003                           |
+| LAC Maintenance     | PAMA-IAN-L113 | INTRO-TRMN-0003                           |
+| LAC Operations      | PAMA-IAN-L211 | PAMA-IAN-L111 PAMA-IAN-L112 PAMA-IAN-L113 |
+
+### LAC Tactical Division
+
+| Course Name            | Course Number | Course Prerequisites                      |
+| ---------------------- | ------------- | ----------------------------------------- |
+| LAC Weapons            | PAMA-IAN-L114 | INTRO-TRMN-0003                           |
+| LAC Electronic Warfare | PAMA-IAN-L115 | INTRO-TRMN-0003                           |
+| LAC Assault Tactics    | PAMA-IAN-L116 | INTRO-TRMN-0003                           |
+| LAC Tactical           | PAMA-IAN-L212 | PAMA-IAN-L114 PAMA-IAN-L115 PAMA-IAN-L116 |
+
+### LAC Command
+
+| Course Name          | Course Number | Course Prerequisites        |
+| -------------------- | ------------- | --------------------------- |
+| LAC Command          | PAMA-IAN-L311 | PAMA-IAN-L211 PAMA-IAN-L212 |
+| LAC Extended Studies | PAMA-IAN-L312 | PAMA-IAN-L311               |
