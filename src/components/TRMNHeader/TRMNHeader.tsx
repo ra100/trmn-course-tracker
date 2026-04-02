@@ -35,7 +35,7 @@ const headerContainer = css({
     zIndex: 1
   },
 
-  '@media (max-width: md)': {
+  mdDown: {
     paddingX: '4',
     paddingY: '3',
     minHeight: 'sizes.20'
@@ -50,11 +50,11 @@ const contentWrapper = css({
   position: 'relative',
   zIndex: 2,
 
-  '@media (max-width: md)': {
+  mdDown: {
     gap: '4'
   },
 
-  '@media (max-width: sm)': {
+  smDown: {
     gap: '3'
   }
 })
@@ -83,7 +83,7 @@ const mobileMenuButton = css({
     boxShadow: 'shadows.md'
   },
 
-  '@media (max-width: md)': {
+  mdDown: {
     display: 'block'
   }
 })
@@ -109,16 +109,16 @@ const dualLineLogotype = css({
   textAlign: 'left',
 
   // Responsive typography following TRMN style guide principles
-  '@media (max-width: lg)': {
+  lgDown: {
     fontSize: 'fontSizes.2xl',
     letterSpacing: 'letterSpacings.normal'
   },
-  '@media (max-width: md)': {
+  mdDown: {
     fontSize: 'fontSizes.lg',
     letterSpacing: 'letterSpacings.tight',
     lineHeight: 'tight'
   },
-  '@media (max-width: sm)': {
+  smDown: {
     fontSize: 'fontSizes.md',
     letterSpacing: 'letterSpacings.tight'
   }
@@ -134,11 +134,11 @@ const subtitleText = css({
   fontStyle: 'italic',
   textShadow: '0 1px 4px rgba(0,0,0,0.6)',
 
-  '@media (max-width: md)': {
+  mdDown: {
     fontSize: 'fontSizes.xs',
     marginTop: '0.5'
   },
-  '@media (max-width: sm)': {
+  smDown: {
     fontSize: 'fontSizes.2xs',
     marginTop: '0.5'
   }
@@ -181,7 +181,7 @@ export const TRMNHeader: React.FC<TRMNHeaderProps> = ({
       )}
 
       <div className={contentWrapper}>
-        <TRMNLogo size={80} showText={false} glow interactive={false} />
+        <TRMNLogo size={80} showText={false} glow={true} interactive={false} />
 
         <div className={logotypeContainer}>
           <h1 className={dualLineLogotype}>

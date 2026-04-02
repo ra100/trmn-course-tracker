@@ -10,7 +10,7 @@ export const Checkbox = forwardRef<HTMLLabelElement, StyledCheckbox.RootProps>((
         <StyledCheckbox.Indicator>
           <CheckIcon />
         </StyledCheckbox.Indicator>
-        <StyledCheckbox.Indicator indeterminate>
+        <StyledCheckbox.Indicator indeterminate={true}>
           <MinusIcon />
         </StyledCheckbox.Indicator>
       </StyledCheckbox.Control>

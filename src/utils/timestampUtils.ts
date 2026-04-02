@@ -17,7 +17,7 @@ export const formatTimestamp = (timestamp: Date): string => {
   if (diffDays < 14) {
     if (diffDays === 0) {
       return 'today'
-    } else if (diffDays === 1) {
+    }if (diffDays === 1) {
       return '1 day ago'
     }
     return `${diffDays} days ago`

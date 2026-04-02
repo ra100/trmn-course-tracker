@@ -21,8 +21,8 @@ export const ConsentSettingsModal: React.FC<ConsentSettingsModalProps> = React.m
               <ConsentOption
                 label={t.gdpr.essentialCookies}
                 description={t.gdpr.essentialDescription}
-                checked
-                disabled
+                checked={true}
+                disabled={true}
                 ariaDescribedby="essential-desc"
               />
               <ConsentOption
@@ -34,7 +34,7 @@ export const ConsentSettingsModal: React.FC<ConsentSettingsModalProps> = React.m
               />
             </div>
             <div className={modalActions}>
-              <Dialog.CloseTrigger asChild>
+              <Dialog.CloseTrigger asChild={true}>
                 <Button variant="outline">{t.gdpr.cancel}</Button>
               </Dialog.CloseTrigger>
               <Button onClick={onSave}>{t.gdpr.saveSettings}</Button>

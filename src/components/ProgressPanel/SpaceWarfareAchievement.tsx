@@ -247,7 +247,7 @@ export const SpaceWarfareAchievement: React.FC<SpaceWarfareAchievementProps> = (
           </div>
         </div>
       )
-    } else if (req.type === 'department_choice') {
+    }if (req.type === 'department_choice') {
       const displayText = req.name.startsWith('Department Choice')
         ? req.name
         : `Department Choice - ${req.description || req.name}`

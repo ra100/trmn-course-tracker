@@ -29,7 +29,7 @@ export function getCourseSeriesPrefix(courseCode: string, seriesCodes?: string[]
   if (parts.length >= 3) {
     // For most courses like SIA-SRN-XXX, RMACA-RMACS-XXX, etc.
     return `${parts[0]}-${parts[1]}`
-  } else if (parts.length === 2) {
+  }if (parts.length === 2) {
     // For other courses with 2 parts
     return courseCode.substring(0, courseCode.lastIndexOf('-'))
   }

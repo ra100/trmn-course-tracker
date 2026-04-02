@@ -41,7 +41,7 @@ describe('ErrorBoundary', () => {
     it('catches errors and displays error UI', () => {
       renderWithTheme(
         <ErrorBoundary>
-          <ThrowError shouldThrow />
+          <ThrowError shouldThrow={true} />
         </ErrorBoundary>
       )
 
@@ -56,7 +56,7 @@ describe('ErrorBoundary', () => {
 
       renderWithTheme(
         <ErrorBoundary fallback={customFallback}>
-          <ThrowError shouldThrow />
+          <ThrowError shouldThrow={true} />
         </ErrorBoundary>
       )
 
@@ -71,7 +71,7 @@ describe('ErrorBoundary', () => {
 
       renderWithTheme(
         <ErrorBoundary>
-          <ThrowError shouldThrow />
+          <ThrowError shouldThrow={true} />
         </ErrorBoundary>
       )
 
@@ -88,7 +88,7 @@ describe('ErrorBoundary', () => {
 
       renderWithTheme(
         <ErrorBoundary>
-          <ThrowError shouldThrow />
+          <ThrowError shouldThrow={true} />
         </ErrorBoundary>
       )
 
@@ -102,7 +102,7 @@ describe('ErrorBoundary', () => {
     it('resets error state when retry button is clicked', () => {
       renderWithTheme(
         <ErrorBoundary>
-          <ThrowError shouldThrow />
+          <ThrowError shouldThrow={true} />
         </ErrorBoundary>
       )
 
@@ -155,7 +155,7 @@ describe('ErrorBoundary', () => {
 
       renderWithTheme(
         <ErrorBoundary>
-          <ThrowError shouldThrow />
+          <ThrowError shouldThrow={true} />
         </ErrorBoundary>
       )
 

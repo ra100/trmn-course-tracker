@@ -51,7 +51,7 @@ describe('TRMNHeader', () => {
 
   it('shows mobile menu button when showMobileMenu is true', () => {
     const mockToggle = vi.fn()
-    renderWithTheme(<TRMNHeader showMobileMenu onMobileMenuToggle={mockToggle} />)
+    renderWithTheme(<TRMNHeader showMobileMenu={true} onMobileMenuToggle={mockToggle} />)
 
     const menuButton = screen.getByRole('button', { name: /toggle navigation menu/i })
     expect(menuButton).toBeInTheDocument()
@@ -66,7 +66,7 @@ describe('TRMNHeader', () => {
 
   it('calls onMobileMenuToggle when menu button is clicked', () => {
     const mockToggle = vi.fn()
-    renderWithTheme(<TRMNHeader showMobileMenu onMobileMenuToggle={mockToggle} />)
+    renderWithTheme(<TRMNHeader showMobileMenu={true} onMobileMenuToggle={mockToggle} />)
 
     const menuButton = screen.getByRole('button', { name: /toggle navigation menu/i })
     fireEvent.click(menuButton)
@@ -77,7 +77,7 @@ describe('TRMNHeader', () => {
   it('uses custom menu toggle label when provided', () => {
     const customLabel = 'Open navigation'
     const mockToggle = vi.fn()
-    renderWithTheme(<TRMNHeader showMobileMenu onMobileMenuToggle={mockToggle} menuToggleLabel={customLabel} />)
+    renderWithTheme(<TRMNHeader showMobileMenu={true} onMobileMenuToggle={mockToggle} menuToggleLabel={customLabel} />)
 
     const menuButton = screen.getByRole('button', { name: customLabel })
     expect(menuButton).toBeInTheDocument()

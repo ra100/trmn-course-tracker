@@ -29,7 +29,7 @@ const appContainer = css({
   backgroundColor: 'bg.default',
   fontFamily: 'body',
   color: 'fg.default',
-  '@media (max-width: md)': {
+  mdDown: {
     flexDirection: 'column',
     height: '100vh',
     maxHeight: '100vh'
@@ -48,10 +48,10 @@ const sidebar = css({
   borderRightWidth: '1px',
   borderRightStyle: 'solid',
   borderColor: 'border.default',
-  '@media (max-width: lg)': {
+  lgDown: {
     width: '300px'
   },
-  '@media (max-width: md)': {
+  mdDown: {
     position: 'fixed',
     top: 0,
     left: 0,
@@ -67,14 +67,14 @@ const sidebar = css({
 })
 
 const sidebarMobileOpen = css({
-  '@media (max-width: md)': {
+  mdDown: {
     transform: 'translateX(0)',
     transition: 'transform 0.3s ease'
   }
 })
 
 const sidebarMobileClosed = css({
-  '@media (max-width: md)': {
+  mdDown: {
     transform: 'translateX(-100%)',
     transition: 'transform 0.3s ease'
   }
@@ -86,7 +86,7 @@ const mainContent = css({
   flexDirection: 'column',
   overflow: 'hidden',
   minHeight: 0,
-  '@media (max-width: md)': {
+  mdDown: {
     width: '100%'
   }
 })
@@ -96,7 +96,7 @@ const contentArea = css({
   display: 'flex',
   minHeight: 0,
   overflow: 'hidden',
-  '@media (max-width: md)': {
+  mdDown: {
     flexDirection: 'column'
   }
 })
@@ -105,14 +105,14 @@ const skillTreeContainer = css({
   flex: 1,
   overflow: 'auto',
   backgroundColor: 'bg.surface',
-  '@media (max-width: md)': {
+  mdDown: {
     height: '100vh',
     display: 'block'
   }
 })
 
 const skillTreeContainerMobileDetails = css({
-  '@media (max-width: md)': {
+  mdDown: {
     height: '50vh'
   }
 })
@@ -127,10 +127,10 @@ const detailsPanel = css({
   overflowY: 'auto',
   overscrollBehavior: 'contain',
   boxSizing: 'border-box',
-  '@media (max-width: lg)': {
+  lgDown: {
     width: '300px'
   },
-  '@media (max-width: md)': {
+  mdDown: {
     borderLeft: 'none',
     borderTop: 'borders.none',
     borderTopWidth: '1px',
@@ -141,7 +141,7 @@ const detailsPanel = css({
 })
 
 const detailsPanelMobileVisible = css({
-  '@media (max-width: md)': {
+  mdDown: {
     height: '50vh',
     overflow: 'auto',
     transform: 'translateY(0)'
@@ -149,7 +149,7 @@ const detailsPanelMobileVisible = css({
 })
 
 const detailsPanelMobileHidden = css({
-  '@media (max-width: md)': {
+  mdDown: {
     height: '0',
     overflow: 'hidden',
     transform: 'translateY(100%)'
@@ -210,7 +210,7 @@ const errorMessage = css({
 
 const mobileOverlay = css({
   display: 'none',
-  '@media (max-width: md)': {
+  mdDown: {
     position: 'fixed',
     top: 0,
     left: 0,
@@ -222,7 +222,7 @@ const mobileOverlay = css({
 })
 
 const mobileOverlayVisible = css({
-  '@media (max-width: md)': {
+  mdDown: {
     display: 'block'
   }
 })
@@ -248,7 +248,7 @@ const mobileDetailsToggle = css({
     width: 'sizes.14',
     height: 'sizes.14'
   },
-  '@media (max-width: md)': {
+  mdDown: {
     display: 'block'
   }
 })
@@ -272,7 +272,7 @@ const mobileCloseButton = css({
     backgroundColor: 'bg.subtle',
     color: 'brand.primary'
   },
-  '@media (max-width: md)': {
+  mdDown: {
     display: 'block'
   }
 })
@@ -432,7 +432,7 @@ function App() {
 
         <div className={mainContent} id="main-content">
           <TRMNHeader
-            showMobileMenu
+            showMobileMenu={true}
             onMobileMenuToggle={toggleMobileMenu}
             menuToggleLabel={t.accessibility.menuToggle}
           />

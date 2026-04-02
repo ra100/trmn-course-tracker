@@ -49,8 +49,8 @@ const renderWithTheme = (component: React.ReactElement) => {
 describe('CourseDetails Alias Integration', () => {
   let mockCourseData: ParsedCourseData
   let eligibilityEngine: EligibilityEngine
-  let mockOnCourseToggle: ReturnType<typeof vi.fn>
-  let mockOnCourseSelect: ReturnType<typeof vi.fn>
+  let mockOnCourseToggle: (courseCode: string) => void
+  let mockOnCourseSelect: ((course: import('../types').Course) => void) | undefined
 
   beforeEach(() => {
     mockOnCourseToggle = vi.fn()
