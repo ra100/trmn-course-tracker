@@ -29,7 +29,9 @@ The following table defines display names for course series prefixes:
 | LU            | Xenology Society               |
 | GPU-ALC       | Gryphon Planetary University   |
 | GPU-TRMN      | GPU TRMN Leadership Studies    |
+| KR1MA-RMA     | RMA Main Line Courses          |
 | PAMA-IAN      | PAMA Tsingtao College          |
+| SIA-RMMC      | RMMC Main Line Courses         |
 
 ## Course Aliases
 
@@ -107,6 +109,112 @@ The SINC War College provides knowledge and skills to take you to the next level
 | Vice Admiral                      | SIA-RMN-1003  | SIA-RMN-1002 GPU-ALC-1112 |
 | Admiral                           | SIA-RMN-1004  | SIA-RMN-1003              |
 | Fleet Admiral                     | SIA-RMN-1005  | SIA-RMN-1004              |
+
+# Royal Manticoran Army Main Line Department
+
+Having taken the Intro to TRMN 1, 2, 3 sequence, the Enlisted School is the first school all Royal Manticoran Army soldiers experience when they begin their service to the Queen. The noncommissioned officer's courses are where we craft the backbone of the Royal Manticoran Army.
+
+## RMA Enlisted School
+
+| Course Name                   | Course Number  | Course Prerequisites          |
+| ----------------------------- | -------------- | ----------------------------- |
+| NCO Basic Training Course     | KR1MA-RMA-0004 | INTRO-TRMN-0003               |
+| NCO Secondary Training Course | KR1MA-RMA-0005 | KR1MA-RMA-0004 GPU-ALC-0009   |
+| NCO Advanced Training Course  | KR1MA-RMA-0006 | KR1MA-RMA-0005 GPU-ALC-0010   |
+
+## RMA Warrant Officer School
+
+| Course Name                  | Course Number  | Course Prerequisites |
+| ---------------------------- | -------------- | -------------------- |
+| Basic Warrant Course         | KR1MA-RMA-0011 | KR1MA-RMA-0004       |
+| Chief Warrant Course         | KR1MA-RMA-0012 | KR1MA-RMA-0011       |
+| Senior Chief Warrant Course  | KR1MA-RMA-0013 | KR1MA-RMA-0012       |
+| Master Chief Warrant Course  | KR1MA-RMA-0014 | KR1MA-RMA-0013       |
+
+## RMA Junior and Senior Officer Schools
+
+| Course Name                            | Course Number  | Course Prerequisites          |
+| -------------------------------------- | -------------- | ----------------------------- |
+| Basic Officer Training Course          | KR1MA-RMA-0101 | KR1MA-RMA-0004                |
+| Secondary Officer Training Course      | KR1MA-RMA-0102 | KR1MA-RMA-0101                |
+| Advanced Officer Training Course       | KR1MA-RMA-0103 | KR1MA-RMA-0102                |
+| Field Officer Training Course          | KR1MA-RMA-0104 | KR1MA-RMA-0103 GPU-ALC-0113   |
+| Senior Officer Training Course         | KR1MA-RMA-0105 | KR1MA-RMA-0104                |
+| Senior Command Officer Training Course | KR1MA-RMA-0106 | KR1MA-RMA-0105 GPU-ALC-0115   |
+
+## RMA General Officer School
+
+| Course Name                    | Course Number  | Course Prerequisites          |
+| ------------------------------ | -------------- | ----------------------------- |
+| Brigadier Course               | KR1MA-RMA-1001 | KR1MA-RMA-0106                |
+| Large Unit Tactics Course      | KR1MA-RMA-1002 | KR1MA-RMA-1001 GPU-ALC-1111   |
+| Military Administration Course | KR1MA-RMA-1003 | KR1MA-RMA-1002 GPU-ALC-1112   |
+| Advanced Leadership Course     | KR1MA-RMA-1004 | KR1MA-RMA-1003                |
+
+# Royal Manticoran Marine Corps Main Line Department
+
+Following the Intro to TRMN 1, 2, 3 courses are a series of four RMMC schools: Enlisted, Warrant Officer, Jr./Sr. Officer, and General Officer. The courses are designed to test a candidate's knowledge on issues pertaining to the TRMN, the Honorverse, and military history. They are also designed to help develop management and leadership skills.
+
+## Enlisted School
+
+| Course Name                  | Course Number  | Course Prerequisites          |
+| ---------------------------- | -------------- | ----------------------------- |
+| First Sergeant               | SIA-RMMC-0004  | INTRO-TRMN-0003               |
+| Sergeant Major               | SIA-RMMC-0005  | SIA-RMMC-0004 GPU-ALC-0009    |
+| Regimental Sergeant Major    | SIA-RMMC-0006  | SIA-RMMC-0005 GPU-ALC-0010    |
+
+## RMMC Warrant Officer School
+
+| Course Name                  | Course Number  | Course Prerequisites |
+| ---------------------------- | -------------- | -------------------- |
+| Basic Warrant Officer        | SIA-RMMC-0011  | SIA-RMMC-0004        |
+| Chief Warrant Officer        | SIA-RMMC-0012  | SIA-RMMC-0011        |
+| Master Chief Warrant Officer | SIA-RMMC-0013  | SIA-RMMC-0012        |
+
+## Junior and Senior Officer School
+
+| Course Name          | Course Number  | Course Prerequisites          |
+| -------------------- | -------------- | ----------------------------- |
+| Second Lieutenant    | SIA-RMMC-0101  | SIA-RMMC-0004                 |
+| First Lieutenant     | SIA-RMMC-0102  | SIA-RMMC-0101                 |
+| Captain (RMMC)       | SIA-RMMC-0103  | SIA-RMMC-0102                 |
+| Major                | SIA-RMMC-0104  | SIA-RMMC-0103 GPU-ALC-0113    |
+| Lieutenant Colonel   | SIA-RMMC-0105  | SIA-RMMC-0104                 |
+| Colonel              | SIA-RMMC-0106  | SIA-RMMC-0105 GPU-ALC-0115    |
+
+## General Officer School
+
+| Course Name             | Course Number  | Course Prerequisites                   |
+| ----------------------- | -------------- | -------------------------------------- |
+| Brigadier General       | SIA-RMMC-1001  | SIA-RMMC-0106                          |
+| Large Unit Tactics      | SIA-RMMC-1002  | SIA-RMMC-1001 GPU-ALC-1111             |
+| Military Administration | SIA-RMMC-1003  | SIA-RMMC-1002 GPU-ALC-1112             |
+| Advance Leadership      | SIA-RMMC-1004  | SIA-RMMC-1003                          |
+| Marshal Course          | SIA-RMMC-1005  | KR1MA-RMA-1004 or SIA-RMMC-1004        |
+
+## Staff Officer School
+
+| Course Name            | Course Number | Course Prerequisites |
+| ---------------------- | ------------- | -------------------- |
+| Staff Officer Basic    | SIA-RMMC-S-A  | Any branch -0101     |
+| Staff Officer Advanced | SIA-RMMC-S-B  | SIA-RMMC-S-A         |
+| Staff Officer Expert   | SIA-RMMC-S-C  | SIA-RMMC-S-B         |
+
+## General Staff Officer School
+
+| Course Name                    | Course Number | Course Prerequisites |
+| ------------------------------ | ------------- | -------------------- |
+| General Staff Officer Basic    | SIA-RMMC-G-A  | Any branch -0104     |
+| General Staff Officer Advanced | SIA-RMMC-G-B  | SIA-RMMC-G-A         |
+| General Staff Officer Expert   | SIA-RMMC-G-C  | SIA-RMMC-G-B         |
+
+## Joint Task Force Staff Officer School
+
+| Course Name                             | Course Number   | Course Prerequisites |
+| --------------------------------------- | --------------- | -------------------- |
+| Joint Task Force Staff Officer Basic    | SIA-RMMC-JTF-A  | Any branch -0106     |
+| Joint Task Force Staff Officer Advanced | SIA-RMMC-JTF-B  | SIA-RMMC-JTF-A       |
+| Joint Task Force Staff Officer Expert   | SIA-RMMC-JTF-C  | SIA-RMMC-JTF-B       |
 
 ## Saganami Island Technical Specialties College
 

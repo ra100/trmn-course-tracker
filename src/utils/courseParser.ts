@@ -14,10 +14,8 @@ import {
 } from '../types'
 import { logger } from './logger'
 
-// Updated regex to handle both traditional and new course formats:
-// Traditional: SIA-RMN-0001, GPU-ALC-0010, SIA-SRN-20W
-// New formats: LU-XI-CZ01, MU-PLSC-02, RMACA-AOPA-E07, RMACA-RMAIA-07D
-export const COURSE_CODE_REGEX = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/g
+// Handles standard and MLTC formats: SIA-RMN-0001, KR1MA-RMA-0004, SIA-RMMC-S-A.
+export const COURSE_CODE_REGEX = /([A-Z0-9]{2,5}(?:-[A-Z0-9]{1,5}){2,3})/g
 const LEVEL_REGEX = /-(\d{2,4})([ACDW])/
 
 export interface DepartmentMapping {
@@ -298,10 +296,8 @@ export class CourseParser {
         return
       }
 
-      // Extract clean course code from the raw course number field
-      // This handles cases like "SIA-SRN-20W Project" -> "SIA-SRN-20W"
-      // Updated to handle new formats: LU-XI-CZ01, MU-PLSC-02, RMACA-AOPA-E07, etc.
-      const courseCodeRegex = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/
+      // Extract clean course code from the raw course number field.
+      const courseCodeRegex = new RegExp(COURSE_CODE_REGEX.source)
       const courseCodeMatch = rawCourseNumber.match(courseCodeRegex)
       const courseNumber = courseCodeMatch ? courseCodeMatch[1] : rawCourseNumber.trim()
 
@@ -795,6 +791,9 @@ export class CourseParser {
     if (courseCode.startsWith('GPU-')) {
       return 'Gryphon Planetary University'
     }
+    if (courseCode.startsWith('KR1MA-')) {
+      return 'King Roger I Military Academy'
+    }
     if (courseCode.startsWith('SIA-')) {
       return 'Saganami Island Naval Academy'
     }
@@ -865,6 +864,12 @@ export function parseCourseData(markdownContent: string): ParsedCourseData {
     course.prerequisites.forEach((prereq) => {
       if (prereq.type === 'course' && prereq.code) {
         dependencies.push(prereq.code)
+      } else if (prereq.type === 'alternative_group') {
+        prereq.alternativePrerequisites?.forEach((alternative) => {
+          if (alternative.type === 'course' && alternative.code) {
+            dependencies.push(alternative.code)
+          }
+        })
       }
     })
     dependencyGraph.set(course.code, dependencies)

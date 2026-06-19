@@ -3,10 +3,10 @@
 import { logger } from './logger'
 
 // Supports traditional and new formats: SIA-RMN-0001, LU-XI-CZ01, RMACA-AOPA-E07, etc.
-const MEDUSA_COURSE_CODE_REGEX = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/
+const MEDUSA_COURSE_CODE_REGEX = /([A-Z0-9]{2,5}(?:-[A-Z0-9]{1,5}){2,3})/
 
 // Global version for text search (finds all matches)
-const MEDUSA_COURSE_CODE_REGEX_GLOBAL = /([A-Z]{2,5}-[A-Z0-9]{2,5}-(?:[A-Z]*\d+[A-Z]*|\d+[A-Z]*|\d+))/g
+const MEDUSA_COURSE_CODE_REGEX_GLOBAL = /([A-Z0-9]{2,5}(?:-[A-Z0-9]{1,5}){2,3})/g
 
 // Member ID patterns to exclude (e.g., RMN-6421-20, IAN-1234-56, etc.)
 const MEMBER_ID_REGEX = /^[A-Z]{2,4}-\d{4}-\d{2}$/
