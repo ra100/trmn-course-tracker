@@ -13,6 +13,7 @@ import { ProgressPanel } from './components/ProgressPanel'
 import { FilterPanel } from './components/FilterPanel'
 import { SettingsPanel } from './components/SettingsPanel'
 import { GDPRConsentBanner } from './components/GDPRConsentBanner'
+import { NewsPopup } from './components/NewsPopup'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { DebugPanel } from './components/DebugPanel'
 import { SkipLinks } from './components/SkipLinks'
@@ -483,6 +484,7 @@ function App() {
         </div>
 
         <GDPRConsentBanner onConsentChange={handleConsentChange} />
+        <NewsPopup />
       </div>
     </ErrorBoundary>
   )
