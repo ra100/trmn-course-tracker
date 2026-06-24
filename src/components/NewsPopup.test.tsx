@@ -12,14 +12,14 @@ describe('NewsPopup', () => {
     const user = userEvent.setup()
     const { unmount } = render(<NewsPopup />)
 
-    expect(await screen.findByText('New MLTC courses added')).toBeInTheDocument()
+    expect(await screen.findByText('New RMA & RMMC specialty courses added')).toBeInTheDocument()
 
     await user.click(screen.getByRole('button', { name: 'Got it' }))
-    expect(screen.queryByText('New MLTC courses added')).not.toBeInTheDocument()
+    expect(screen.queryByText('New RMA & RMMC specialty courses added')).not.toBeInTheDocument()
 
     unmount()
     render(<NewsPopup />)
 
-    expect(screen.queryByText('New MLTC courses added')).not.toBeInTheDocument()
+    expect(screen.queryByText('New RMA & RMMC specialty courses added')).not.toBeInTheDocument()
   })
 })

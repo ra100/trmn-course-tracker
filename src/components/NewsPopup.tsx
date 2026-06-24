@@ -4,12 +4,11 @@ import { Dialog } from '~/components/ui/dialog'
 import { Button } from '~/components/ui/button'
 
 const NEWS = {
-  id: 'mltc-course-tracks-2026-06',
-  title: 'New MLTC courses added',
+  id: 'specialty-courses-2026-06',
+  title: 'New RMA & RMMC specialty courses added',
   items: [
-    'Royal Manticoran Army main-line courses are now available.',
-    'Royal Manticoran Marine Corps and staff officer tracks were added.',
-    'Marshal Course prerequisites now track both RMA and RMMC paths.'
+    'Royal Manticoran Army Occupational Specialty School added — 9 schools across Force Deployment and Logistics departments.',
+    'RMMC Technical Specialties College added — 11 Marine specialties including Armourer, Rifleman, Assault, Recon, and Heavy Weapons.'
   ]
 }
 
