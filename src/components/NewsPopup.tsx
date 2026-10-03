@@ -7,8 +7,8 @@ const NEWS = {
   id: 'specialty-courses-2026-06',
   title: 'New RMA & RMMC specialty courses added',
   items: [
-    'Royal Manticoran Army Occupational Specialty School added — 9 schools across Force Deployment and Logistics departments.',
-    'RMMC Technical Specialties College added — 11 Marine specialties including Armourer, Rifleman, Assault, Recon, and Heavy Weapons.'
+    'Royal Manticoran Army Occupational Specialty School added: 9 schools across Force Deployment and Logistics departments.',
+    'RMMC Technical Specialties College added: 11 Marine specialties including Armourer, Rifleman, Assault, Recon, and Heavy Weapons.'
   ]
 }
 

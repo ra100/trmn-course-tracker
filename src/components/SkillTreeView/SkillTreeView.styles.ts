@@ -15,17 +15,15 @@ export const categorySection = css({
   margin: { base: '0.5rem', sm: '1rem', md: '2rem' },
   bg: 'bg.surface',
   borderRadius: { base: 'sm', sm: 'md', md: 'lg' },
-  boxShadow: 'md',
+  boxShadow: 'none',
   overflow: 'hidden',
   border: '1px solid',
   borderColor: 'border.default'
 })
 
 export const categoryHeader = css({
-  bgGradient: 'to-br',
-  gradientFrom: 'accent.default',
-  gradientTo: 'accent.a11y',
-  color: 'white',
+  bg: 'bg.subtle',
+  color: 'fg.default',
   padding: '1rem',
   fontWeight: 'bold',
   fontSize: '1.1rem'
@@ -46,7 +44,7 @@ export const subsectionHeader = css({
 
 export const courseGrid = css({
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(min(250px, 100%), 1fr))',
   gap: { base: '0.6rem', sm: '0.8rem', md: '1rem' },
   marginBottom: { base: '1rem', sm: '1rem', md: '2rem' },
   '@media (max-width: 768px)': {

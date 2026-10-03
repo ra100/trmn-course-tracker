@@ -32,7 +32,7 @@ export const courseCode = css({
 })
 
 export const courseSection = css({
-  color: 'trmn.gold',
+  color: 'fg.muted',
   fontWeight: 'medium',
   fontSize: 'sm'
 })
@@ -185,16 +185,16 @@ export const courseAliasBadge = css({
 })
 
 export const clickableUnlockedCourse = css({
-  padding: '1',
-  bg: 'accent.100',
+  padding: '2',
+  minHeight: '44px',
+  bg: 'bg.subtle',
   borderRadius: 'radii.md',
   fontSize: 'sm',
-  color: 'accent.700',
+  color: 'fg.default',
   cursor: 'pointer',
   transition: 'all 0.2s ease',
   _hover: {
-    bg: 'accent.200',
-    transform: 'translateX(0.5)'
+    bg: 'bg.surface'
   }
 })
 

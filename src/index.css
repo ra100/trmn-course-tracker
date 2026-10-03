@@ -44,6 +44,10 @@
   box-sizing: border-box;
 }
 
+button, input, select, textarea { font: inherit; }
+button, select, input:not([type='checkbox']):not([type='radio']) { min-height: 44px; }
+button { touch-action: manipulation; }
+
 html {
   overscroll-behavior: none;
   overflow: hidden;
@@ -57,8 +61,8 @@ body {
     'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, var(--space-dark) 0%, var(--space-blue) 50%, #1a237e 100%);
-  color: #ffffff;
+  background: #f4f0e7;
+  color: #18354b;
   overscroll-behavior: none;
   overflow: hidden;
   height: 100%;
@@ -80,9 +84,9 @@ h5,
 h6 {
   font-family: 'Cinzel', 'Times New Roman', Georgia, serif;
   font-weight: 600;
-  color: #ffffff;
+  color: inherit;
   letter-spacing: 0.025em;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  text-shadow: none;
 }
 
 h1 {
@@ -125,7 +129,7 @@ code {
 *:focus-visible {
   outline: 2px solid var(--trmn-red);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(190, 47, 38, 0.3);
+  outline-color: #18354b;
 }
 
 /* Reduce motion for accessibility */

@@ -49,6 +49,14 @@ export const UnlockedCoursesSection: React.FC<UnlockedCoursesSectionProps> = Rea
                   <div
                     key={unlockedCourse.id}
                     onClick={() => handleCourseClick(unlockedCourse.code)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault()
+                        handleCourseClick(unlockedCourse.code)
+                      }
+                    }}
                     className={clickableUnlockedCourse}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1', flexWrap: 'wrap' }}>

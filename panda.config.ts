@@ -1,6 +1,6 @@
 import { defineConfig } from '@pandacss/dev'
 import { createPreset } from '@park-ui/panda-preset'
-import iris from '@park-ui/panda-preset/colors/iris'
+import blue from '@park-ui/panda-preset/colors/blue'
 import sand from '@park-ui/panda-preset/colors/sand'
 
 export default defineConfig({
@@ -9,7 +9,7 @@ export default defineConfig({
 
   presets: [
     createPreset({
-      accentColor: iris,
+      accentColor: blue,
       grayColor: sand,
       radius: 'sm'
     })
@@ -41,6 +41,18 @@ export default defineConfig({
           }
         },
         colors: {
+          blue: {
+            light: {
+              9: { value: '#18354b' },
+              10: { value: '#24475f' },
+              11: { value: '#18354b' }
+            },
+            dark: {
+              9: { value: '#18354b' },
+              10: { value: '#24475f' },
+              11: { value: '#18354b' }
+            }
+          },
           // TRMN Official Brand Colors from RMN-4-40 Style Guide
           trmn: {
             red: { value: '#BE2F26' }, // PMS 1805 - Official TRMN Red
@@ -76,6 +88,9 @@ export default defineConfig({
 
           // Updated accent color mapping to use TRMN red
           accent: {
+            9: { value: '#18354b' },
+            10: { value: '#24475f' },
+            11: { value: '#18354b' },
             default: { value: '{colors.trmn.red}' },
             emphasized: { value: '#8B2119' },
             fg: { value: 'white' },
@@ -95,9 +110,24 @@ export default defineConfig({
       },
       semanticTokens: {
         colors: {
+          'blue.9': { value: { base: '#18354b', _light: '#18354b', _dark: '#18354b' } },
+          'blue.10': { value: { base: '#24475f', _light: '#24475f', _dark: '#24475f' } },
+          'blue.11': { value: { base: '#18354b', _light: '#18354b', _dark: '#18354b' } },
+          'accent.9': { value: { base: '#18354b', _light: '#18354b', _dark: '#18354b' } },
+          'accent.10': { value: { base: '#24475f', _light: '#24475f', _dark: '#24475f' } },
+          'accent.11': { value: { base: '#18354b', _light: '#18354b', _dark: '#18354b' } },
+          'bg.default': { value: { base: '#f4f0e7', _light: '#f4f0e7', _dark: '#f4f0e7' } },
+          'bg.canvas': { value: { base: '#f4f0e7', _light: '#f4f0e7', _dark: '#f4f0e7' } },
+          'bg.surface': { value: { base: '#fffcf6', _light: '#fffcf6', _dark: '#fffcf6' } },
+          'bg.subtle': { value: { base: '#eae5da', _light: '#eae5da', _dark: '#eae5da' } },
+          'fg.default': { value: { base: '#18354b', _light: '#18354b', _dark: '#18354b' } },
+          'fg.muted': { value: { base: '#56616a', _light: '#56616a', _dark: '#56616a' } },
+          'fg.subtle': { value: { base: '#56616a', _light: '#56616a', _dark: '#56616a' } },
+          'border.default': { value: '#b4b0a6' },
+          'border.subtle': { value: '#d3cec3' },
           // Primary branding colors
           'brand.primary': {
-            value: { _light: '{colors.trmn.red}', _dark: '{colors.trmn.red}' }
+            value: '#18354b'
           },
           'brand.secondary': {
             value: { _light: '{colors.trmn.yellow}', _dark: '{colors.trmn.yellow}' }

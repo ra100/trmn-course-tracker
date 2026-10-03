@@ -83,6 +83,7 @@ const sidebarMobileClosed = css({
 
 const mainContent = css({
   flex: 1,
+  minWidth: 0,
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
@@ -104,6 +105,7 @@ const contentArea = css({
 
 const skillTreeContainer = css({
   flex: 1,
+  minWidth: 0,
   overflow: 'auto',
   backgroundColor: 'bg.surface',
   mdDown: {
@@ -132,6 +134,8 @@ const detailsPanel = css({
     width: '300px'
   },
   mdDown: {
+    width: '100%',
+    flexShrink: 0,
     borderLeft: 'none',
     borderTop: 'borders.none',
     borderTopWidth: '1px',
@@ -328,11 +332,11 @@ function App() {
     }
   }, [settings?.language, setLanguage])
 
-  // Always apply dark mode class
+  // The academy catalogue uses a paper reading surface.
   useEffect(() => {
     const htmlElement = document.documentElement
-    htmlElement.classList.add('dark')
-    htmlElement.classList.remove('light')
+    htmlElement.classList.add('light')
+    htmlElement.classList.remove('dark')
   }, [])
 
   // Initialize analytics on app load
@@ -478,7 +482,7 @@ function App() {
               onClick={toggleMobileLayout}
               aria-label={mobileLayout === 'courses' ? 'Show course details' : 'Show course list'}
             >
-              {mobileLayout === 'courses' ? '📋' : '📚'}
+              {mobileLayout === 'courses' ? 'Details' : 'Courses'}
             </button>
           )}
         </div>

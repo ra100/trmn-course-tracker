@@ -5,9 +5,10 @@ import { useT } from '~/i18n'
 
 const logoContainer = css({
   display: 'inline-block',
-  cursor: 'pointer',
+  cursor: 'default',
   transition: 'all 0.3s ease',
-  filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))',
+  filter: 'none',
+  '&[data-interactive="true"]': { cursor: 'pointer' },
 
   '&[data-interactive="true"]:hover': {
     transform: 'scale(1.05)',
